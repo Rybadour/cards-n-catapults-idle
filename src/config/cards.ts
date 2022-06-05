@@ -11,7 +11,7 @@ const cards = {
   ratSnack: {
     name: "Rat Snack",
     type: CardType.Food,
-    description: "Produces 1 for every adjacent person.",
+    description: "Produces 1 gold for every adjacent person.",
     ability: Ability.ProduceFromMatching,
     abilityStrength: 1,
     abilityMatch: CardType.Person,

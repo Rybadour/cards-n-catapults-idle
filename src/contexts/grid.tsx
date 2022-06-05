@@ -2,7 +2,7 @@
 import { createContext, useState } from "react";
 import cards from "../config/cards";
 import { Card } from "../shared/types";
-import * as d3 from "d3-timer";
+import { getPerSecFromGrid } from "../shared/calculations";
 
 const width = 5;
 const height = 5;
@@ -49,12 +49,11 @@ export function GridProvider(props: Record<string, any>) {
   }
 
   function addCard(x: number, y: number) {
-    const oldGold = gridSpaces[y][x]?.abilityStrength ?? 0;
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = selectedCard;
     setGridSpaces(newGridSpaces);
 
-    setGoldPerSec(goldPerSec - oldGold + (selectedCard?.abilityStrength ?? 0));
+    setGoldPerSec(getPerSecFromGrid(gridSpaces));
   }
 
   function removeCard(x: number, y: number) {

@@ -19,3 +19,5 @@ export enum Ability {
   Produce,
   ProduceFromMatching,
 }
+
+export type Grid = (Card | null)[][];
