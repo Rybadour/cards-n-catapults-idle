@@ -1,0 +1,36 @@
+.grid {
+  display: flex;
+  flex-direction: column;
+  grid-gap: 10px;
+  margin: 30px;
+}
+
+.grid-row {
+  display: flex;
+  flex-direction: row;
+  grid-gap: 10px;
+  width: 100%;
+  height: 60px;
+}
+
+.grid .card {
+  width: 60px;
+  height: 60px;
+  background-color: #888;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid .grid-space {
+  width: 60px;
+  height: 60px;
+  background-color: #666;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
