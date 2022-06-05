@@ -2,6 +2,7 @@
 import { createContext, useState } from "react";
 import cards from "../config/cards";
 import { Card } from "../shared/types";
+import * as d3 from "d3-timer";
 
 const width = 5;
 const height = 5;
@@ -9,17 +10,23 @@ const height = 5;
 export type GridContext = {
   gridSpaces: (Card | null)[][],
   selectedCard: Card | null,
+  totalGold: number,
+  goldPerSec: number,
   addCard: (x: number, y: number) => void,
   removeCard: (x: number, y: number) => void,
   setSelectedCard: (card: Card) => void,
+  update: (elapsed: number) => void,
 };
 
 const defaultContext: GridContext = {
   gridSpaces: [],
   selectedCard: null,
+  totalGold: 0,
+  goldPerSec: 0,
   addCard: (x, y) => {},
   removeCard: (x, y) => {},
   setSelectedCard: (card) => {},
+  update: (elapsed) => {},
 };
 for (let i = 0; i < height; ++i) {
   const row: (Card | null)[] = [];
@@ -29,18 +36,25 @@ for (let i = 0; i < height; ++i) {
   defaultContext.gridSpaces.push(row);
 }
 
-defaultContext.gridSpaces[0][2] = cards.beggar;
-
 export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [totalGold, setTotalGold] = useState(100);
+  const [goldPerSec, setGoldPerSec] = useState(0);
+
+  function update(elapsed: number) {
+    setTotalGold(totalGold + (elapsed/1000) * goldPerSec);
+  }
 
   function addCard(x: number, y: number) {
+    const oldGold = gridSpaces[y][x]?.abilityStrength ?? 0;
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = selectedCard;
     setGridSpaces(newGridSpaces);
+
+    setGoldPerSec(goldPerSec - oldGold + (selectedCard?.abilityStrength ?? 0));
   }
 
   function removeCard(x: number, y: number) {
@@ -50,8 +64,8 @@ export function GridProvider(props: Record<string, any>) {
   return (
     <GridContext.Provider
       value={{
-        gridSpaces, selectedCard,
-        addCard, removeCard, setSelectedCard,
+        gridSpaces, selectedCard, totalGold, goldPerSec,
+        addCard, removeCard, setSelectedCard, update,
       }}
       {...props}
     />
