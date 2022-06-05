@@ -1,7 +1,8 @@
-import { Ability, CardType } from "../shared/types";
+import { Ability, Card, CardType } from "../shared/types";
 
-const cards = {
+const cards: Record<string, Card> = {
   beggar: {
+    id: "",
     name: "Beggar",
     type: CardType.Person,
     description: "Produces 1 gold/s.",
@@ -9,6 +10,7 @@ const cards = {
     abilityStrength: 1,
   },
   ratSnack: {
+    id: "",
     name: "Rat Snack",
     type: CardType.Food,
     description: "Produces 1 gold for every adjacent person.",
@@ -17,5 +19,7 @@ const cards = {
     abilityMatch: CardType.Person,
   }
 };
+
+Object.keys(cards).forEach((cardId) => cards[cardId].id = cardId);
 
 export default cards;

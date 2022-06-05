@@ -1,19 +1,19 @@
 import classNames from 'classnames';
 import { useContext } from 'react';
-import cards from '../config/cards';
-import { GridContext } from '../contexts/grid';
+import cardsConfig from '../config/cards';
+import { CardsContext } from '../contexts/cards';
 import './card-list.css';
 
 export default function CardList() {
-  const grid = useContext(GridContext);
+  const cards = useContext(CardsContext);
 
   return <div className="card-list">
-    {Object.values(cards).map(card =>
+    {Object.values(cardsConfig).map(card =>
       <div
-        className={classNames("card", {selected: card === grid.selectedCard})}
-        onClick={() => grid.setSelectedCard(card)}
+        className={classNames("card", {selected: card === cards.selectedCard})}
+        onClick={() => cards.setSelectedCard(card)}
       >
-        {card.name}
+        {card.name} {cards.cards[card.id]}x
       </div>
     )}
   </div>;

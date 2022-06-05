@@ -1,16 +1,19 @@
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect } from 'react';
+import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
+import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
 import './grid.css';
 
 let lastTime = Date.now();
 
 export default function GridMap() {
   const grid = useContext(GridContext);
+  const cards = useContext(CardsContext);
 
   const addCard = useCallback((x: number, y: number) => 
-    grid.addCard(x, y),
-    [grid]
+    replaceSpaceWithCard(grid, cards, x, y),
+    [grid, cards]
   );
 
   useEffect(() => {

@@ -9,23 +9,17 @@ const height = 5;
 
 export type GridContext = {
   gridSpaces: (Card | null)[][],
-  selectedCard: Card | null,
   totalGold: number,
   goldPerSec: number,
-  addCard: (x: number, y: number) => void,
-  removeCard: (x: number, y: number) => void,
-  setSelectedCard: (card: Card) => void,
+  replaceCard: (x: number, y: number, newCard: Card) => (Card | null),
   update: (elapsed: number) => void,
 };
 
 const defaultContext: GridContext = {
   gridSpaces: [],
-  selectedCard: null,
   totalGold: 0,
   goldPerSec: 0,
-  addCard: (x, y) => {},
-  removeCard: (x, y) => {},
-  setSelectedCard: (card) => {},
+  replaceCard: (x, y, newCard) => null,
   update: (elapsed) => {},
 };
 for (let i = 0; i < height; ++i) {
@@ -40,7 +34,6 @@ export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [totalGold, setTotalGold] = useState(100);
   const [goldPerSec, setGoldPerSec] = useState(0);
 
@@ -48,23 +41,22 @@ export function GridProvider(props: Record<string, any>) {
     setTotalGold(totalGold + (elapsed/1000) * goldPerSec);
   }
 
-  function addCard(x: number, y: number) {
+  function replaceCard(x: number, y: number, newCard: Card) {
+    const oldCard = gridSpaces[y][x];
     const newGridSpaces = [ ...gridSpaces ];
-    newGridSpaces[y][x] = selectedCard;
+    newGridSpaces[y][x] = newCard;
     setGridSpaces(newGridSpaces);
 
     setGoldPerSec(getPerSecFromGrid(gridSpaces));
-  }
 
-  function removeCard(x: number, y: number) {
-
+    return oldCard;
   }
 
   return (
     <GridContext.Provider
       value={{
-        gridSpaces, selectedCard, totalGold, goldPerSec,
-        addCard, removeCard, setSelectedCard, update,
+        gridSpaces, totalGold, goldPerSec,
+        replaceCard, update,
       }}
       {...props}
     />

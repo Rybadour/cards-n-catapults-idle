@@ -7,6 +7,7 @@ export enum CardType {
 }
 
 export type Card = {
+  id: string,
   name: string,
   type: CardType,
   description: string,
@@ -21,3 +22,13 @@ export enum Ability {
 }
 
 export type Grid = (Card | null)[][];
+
+export type CardPack = {
+  name: string,
+  cost: number,
+  quantity: number,
+  possibleCards: [{
+    card: Card,
+    chance: number,
+  }]
+};
