@@ -8,14 +8,18 @@ const height = 5;
 
 export type GridContext = {
   gridSpaces: (Card | null)[][],
-  addCard: (x: number, y: number, card: Card) => void,
+  selectedCard: Card | null,
+  addCard: (x: number, y: number) => void,
   removeCard: (x: number, y: number) => void,
+  setSelectedCard: (card: Card) => void,
 };
 
 const defaultContext: GridContext = {
   gridSpaces: [],
-  addCard: (x, y, card) => {},
+  selectedCard: null,
+  addCard: (x, y) => {},
   removeCard: (x, y) => {},
+  setSelectedCard: (card) => {},
 };
 for (let i = 0; i < height; ++i) {
   const row: (Card | null)[] = [];
@@ -31,10 +35,11 @@ export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
-  function addCard(x: number, y: number, card: Card) {
+  function addCard(x: number, y: number) {
     const newGridSpaces = [ ...gridSpaces ];
-    newGridSpaces[y][x] = card;
+    newGridSpaces[y][x] = selectedCard;
     setGridSpaces(newGridSpaces);
   }
 
@@ -45,8 +50,8 @@ export function GridProvider(props: Record<string, any>) {
   return (
     <GridContext.Provider
       value={{
-        gridSpaces,
-        addCard, removeCard,
+        gridSpaces, selectedCard,
+        addCard, removeCard, setSelectedCard,
       }}
       {...props}
     />

@@ -13,17 +13,6 @@
   height: 60px;
 }
 
-.grid .card {
-  width: 60px;
-  height: 60px;
-  background-color: #888;
-  color: white;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .grid .grid-space {
   width: 60px;
   height: 60px;
@@ -33,4 +22,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+}
+
+.grid .grid-space.card {
+  background-color: #888;
 }
