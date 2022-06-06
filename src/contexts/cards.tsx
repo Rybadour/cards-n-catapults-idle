@@ -7,8 +7,7 @@ export type CardsContext = {
   selectedCard: Card | null,
   setSelectedCard: (card: Card) => void,
   hasCard: (card: Card) => boolean,
-  addCard: (card: Card) => void,
-  removeCard: (card: Card) => void,
+  replaceCard: (existingCard: Card | null) => void,
   openPack: (cardPack: CardPack) => void,
 };
 
@@ -17,8 +16,7 @@ const defaultContext: CardsContext = {
   selectedCard: null,
   setSelectedCard: (card) => {},
   hasCard: (card) => false,
-  addCard: (card) => {},
-  removeCard: (card) => {},
+  replaceCard: (card) => {},
   openPack: (cardPack) => {},
 };
 
@@ -32,19 +30,18 @@ export function CardsProvider(props: Record<string, any>) {
     return (cards[card.id] ?? 0) > 0;
   }
 
-  function addCard(card: Card) {
-    const newCards = {
-      ...cards,
-      [card.id]: (cards[card.id] ?? 0) + 1, 
-    };
-    setCards(newCards);
-  }
+  function replaceCard(existingCard: Card | null) {
+    if (selectedCard == null) {
+      return;
+    }
 
-  function removeCard(card: Card) {
     const newCards = {
       ...cards,
-      [card.id]: (cards[card.id] ?? 0) - 1, 
+      [selectedCard.id]: (cards[selectedCard.id] ?? 0) - 1, 
     };
+    if (existingCard != null) {
+      newCards[existingCard.id] = (cards[existingCard.id] ?? 0) + 1;
+    }
     setCards(newCards);
   }
 
@@ -56,7 +53,7 @@ export function CardsProvider(props: Record<string, any>) {
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, addCard, removeCard, openPack,
+        setSelectedCard, hasCard, replaceCard, openPack,
       }}
       {...props}
     />
