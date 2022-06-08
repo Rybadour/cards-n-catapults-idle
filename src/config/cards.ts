@@ -18,7 +18,7 @@ const cards: Record<string, Card> = {
     abilityStrength: 1,
     abilityMatch: CardType.Person,
   },
-  ratden: {
+  ratDen: {
     id: "",
     name: "Rat Den",
     type: CardType.Building,
