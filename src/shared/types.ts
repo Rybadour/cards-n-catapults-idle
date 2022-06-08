@@ -4,6 +4,7 @@ export enum CardType {
   Soldier,
   Monster,
   Food,
+  Building,
 }
 
 export type Card = {
@@ -14,21 +15,24 @@ export type Card = {
   ability: Ability,
   abilityStrength: number,
   abilityMatch?: CardType,
+  abilityCard?: string,
 }
 
 export enum Ability {
   Produce,
   ProduceFromMatching,
+  ProduceCard,
 }
 
 export type Grid = (Card | null)[][];
 
 export type CardPack = {
+  id: string,
   name: string,
   cost: number,
   quantity: number,
-  possibleCards: [{
+  possibleCards: {
     card: Card,
     chance: number,
-  }]
+  }[]
 };

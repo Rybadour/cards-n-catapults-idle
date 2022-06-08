@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useState } from "react";
+import { generateCards } from "../shared/pack-generation";
 import { Card, CardPack } from "../shared/types";
 
 export type CardsContext = {
@@ -46,7 +47,12 @@ export function CardsProvider(props: Record<string, any>) {
   }
 
   function openPack(cardPack: CardPack) {
-
+    const cardsFromPack = generateCards(cardPack);
+    const newCards = { ...cards };
+    cardsFromPack.forEach(card => {
+      newCards[card.id] = (newCards[card.id] ?? 0) + 1;
+    });
+    setCards(newCards);
   }
 
   return (
