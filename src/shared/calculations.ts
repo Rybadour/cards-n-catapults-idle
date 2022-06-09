@@ -12,6 +12,12 @@ export function getPerSecFromGrid(grid: Grid): number {
           goldPerSec += card.abilityStrength;
         }
       });
+    } else if (card.ability == Ability.BonusToMatching) {
+      iterateAdjacent(grid, x, y, (adj) => {
+        if (adj.type == card.abilityMatch) {
+          goldPerSec += (adj.abilityStrength * card.abilityStrength);
+        }
+      });
     }
   });
 

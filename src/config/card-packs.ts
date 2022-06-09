@@ -15,10 +15,13 @@ const cardPacks: Record<string, CardPack> = {
       chance: 0.05,
     }, {
       card: cards.beggar,
-      chance: 0.2,
+      chance: 0.1,
     }, {
       card: cards.ratSnack,
-      chance: 0.7,
+      chance: 0.4,
+    }, {
+      card: cards.berries,
+      chance: 0.4,
     }],
   }
 }

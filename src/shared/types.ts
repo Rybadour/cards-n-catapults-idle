@@ -10,8 +10,11 @@ export enum CardType {
 export type Card = {
   id: string,
   name: string,
+  icon: string,
   type: CardType,
   description: string,
+  foodDrain?: number,
+  durability?: number,
   ability: Ability,
   abilityStrength: number,
   abilityMatch?: CardType,
@@ -22,6 +25,7 @@ export enum Ability {
   Produce,
   ProduceFromMatching,
   ProduceCard,
+  BonusToMatching,
 }
 
 export type Grid = (Card | null)[][];

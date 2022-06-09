@@ -4,6 +4,7 @@ import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
 import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
 import './grid.css';
+import { ProgressBar } from './progress-bar';
 
 let lastTime = Date.now();
 
@@ -39,7 +40,11 @@ export default function GridMap() {
             className={classNames('grid-space', {card: !!card})}
             onClick={() => addCard(x, y)}
           >
-            {card ? card.name : ''}
+            {card ? <>
+              <img src={"/icons/" + card?.icon + ".png"} />
+              <div>{card ? card.name : ''}</div>
+              <ProgressBar progress={0.5} />
+            </> : null}
           </div>
         )}
       </div>
