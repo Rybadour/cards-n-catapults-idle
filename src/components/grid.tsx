@@ -1,10 +1,14 @@
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect } from 'react';
+
+import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
 import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
-import './grid.css';
 import { ProgressBar } from './progress-bar';
+import { Ability } from '../shared/types';
+
+import './grid.scss';
 
 let lastTime = Date.now();
 
@@ -29,8 +33,11 @@ export default function GridMap() {
 
   return <div className='grid'>
     <div className='grid-totals'>
-      <div className='total'>{grid.totalGold.toFixed(0).toLocaleString()}</div>
-      <div className='per-sec'>{grid.goldPerSec.toFixed(1).toLocaleString()}/s</div>
+      <img src="icons/two-coins-gold.png" />
+      <div className="stats">
+        <div className='total'>{grid.totalGold.toFixed(0).toLocaleString()}</div>
+        <div className='per-sec'>{grid.goldPerSec.toFixed(1).toLocaleString()}/s</div>
+      </div>
     </div>
     <div className='grid-rows'>
     {grid.gridSpaces.map((gridRow, y) => 
@@ -41,8 +48,25 @@ export default function GridMap() {
             onClick={() => addCard(x, y)}
           >
             {card ? <>
-              <img src={"/icons/" + card?.icon + ".png"} />
-              <div>{card ? card.name : ''}</div>
+              <div className="title">
+                <img src={"/icons/" + card?.icon + ".png"} />
+                <div>{card ? card.name : ''}</div>
+              </div>
+              <div className="ability">
+                {card.ability == Ability.Produce ? <>
+                  <img src="icons/two-coins-gold.png" /> {card.abilityStrength}/s
+                </> : null }
+                {card.ability == Ability.BonusToMatching ? <>
+                  <img src="icons/two-coins-gold.png" /> +{card.abilityStrength * 100}%
+                </> : null }
+                {card.ability == Ability.ProduceFromMatching ? <>
+                  <img src="icons/two-coins-gold.png" /> +{card.abilityStrength}/s
+                </> : null }
+                {card.ability == Ability.ProduceCard && card.abilityCard ? <>
+                  +<img src={"icons/" + cardsConfig[card.abilityCard!!].icon + ".png"} />
+                  /{(card.cooldownMs ?? 0)/1000}s
+                </> : null }
+              </div>
               {card.maxDurability ?
                 <ProgressBar progress={(card.durability ?? 0)/card.maxDurability} color="red" /> :
                 null

@@ -1,0 +1,95 @@
+.grid {
+  margin: 30px;
+}
+
+.grid-totals {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.grid-totals img {
+  width: 36px;
+  height: 36px;
+}
+
+.grid-totals .stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+.grid-totals .total {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.grid-rows {
+  display: flex;
+  flex-direction: column;
+  grid-gap: 10px;
+  margin: 30px;
+}
+
+$card-width: 100px;
+$card-height: 100px;
+
+.grid-row {
+  display: flex;
+  flex-direction: row;
+  grid-gap: 10px;
+  width: 100%;
+  height: $card-height;
+}
+
+.grid .grid-space {
+  box-sizing: border-box;
+  width: $card-width;
+  height: $card-height;
+  background-color: #666;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  grid-gap: 6px;
+  padding: 3px;
+
+  .title {
+    display: flex;
+    align-items: center;
+    justify-self: flex-start;
+    grid-gap: 6px;
+    font-size: 16px;
+
+    img {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  .ability {
+    display: flex;
+    align-items: center;
+    grid-gap: 3px;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .progress {
+    height: 10px;
+    margin-top: auto;
+    margin-bottom: 4px;
+  }
+}
+
+.grid .grid-space.card {
+  background-color: #888;
+}
