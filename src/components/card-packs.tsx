@@ -15,6 +15,8 @@ export default function CardPacks() {
   }, [grid, cards]);
 
   return <div className="card-packs">
+    <h4>Card Packs:</h4>
+    <div className="card-pack-list">
     {Object.values(cardPacks).map(cardPack =>
       <div
         className="card-pack"
@@ -23,5 +25,6 @@ export default function CardPacks() {
         {cardPack.name}: {cardPack.cost} gold
       </div>
     )}
+    </div>
   </div>;
 }

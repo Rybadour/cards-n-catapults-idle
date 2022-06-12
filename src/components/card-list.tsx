@@ -13,7 +13,7 @@ export default function CardList() {
         className={classNames("card", {selected: card === cards.selectedCard})}
         onClick={() => cards.setSelectedCard(card)}
       >
-        {card.name} {cards.cards[card.id]}x
+        {card.name} {(cards.cards[card.id] ?? 0).toFixed(1)}x
       </div>
     )}
   </div>;

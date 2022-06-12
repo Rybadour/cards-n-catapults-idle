@@ -7,7 +7,12 @@ export function replaceSpaceWithCard(grid: GridContext, cards: CardsContext, x: 
     return;
   }
 
-  const oldCard = grid.replaceCard(x, y, cards.selectedCard);
+  const quantity = cards.cards[cards.selectedCard.id]; 
+  const oldCard = grid.replaceCard(x, y, {
+    ...cards.selectedCard,
+    durability: (quantity >= 1 ? 1 : quantity) * (cards.selectedCard.maxDurability ?? 0),
+    modifiedStrength: 0,
+  });
   cards.replaceCard(oldCard);
 }
 

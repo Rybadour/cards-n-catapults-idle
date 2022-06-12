@@ -11,7 +11,7 @@ export type GridContext = {
   gridSpaces: Grid,
   totalGold: number,
   goldPerSec: number,
-  replaceCard: (x: number, y: number, newCard: Card) => (RealizedCard | null),
+  replaceCard: (x: number, y: number, newCard: RealizedCard) => (RealizedCard | null),
   update: (elapsed: number) => void,
   useGold: (amount: number) => void,
 };
@@ -55,14 +55,10 @@ export function GridProvider(props: Record<string, any>) {
     setTotalGold(totalGold - amount);
   }
 
-  function replaceCard(x: number, y: number, newCard: Card) {
+  function replaceCard(x: number, y: number, newCard: RealizedCard) {
     const oldCard = gridSpaces[y][x];
     const newGridSpaces = [ ...gridSpaces ];
-    newGridSpaces[y][x] = {
-      ...newCard,
-      durability: newCard.maxDurability,
-      modifiedStrength: 0,
-    };
+    newGridSpaces[y][x] = newCard;
     setGridSpaces(newGridSpaces);
 
     setGoldPerSec(getPerSecFromGrid(gridSpaces));

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useState } from "react";
 import { generateCards } from "../shared/pack-generation";
-import { Card, CardPack } from "../shared/types";
+import { Card, CardPack, RealizedCard } from "../shared/types";
 
 export type CardsContext = {
   cards: Record<string, number>,
   selectedCard: Card | null,
   setSelectedCard: (card: Card) => void,
   hasCard: (card: Card) => boolean,
-  replaceCard: (existingCard: Card | null) => void,
+  replaceCard: (existingCard: RealizedCard | null) => void,
   openPack: (cardPack: CardPack) => void,
 };
 
@@ -31,7 +31,7 @@ export function CardsProvider(props: Record<string, any>) {
     return (cards[card.id] ?? 0) > 0;
   }
 
-  function replaceCard(existingCard: Card | null) {
+  function replaceCard(existingCard: RealizedCard | null) {
     if (selectedCard == null) {
       return;
     }
@@ -40,8 +40,19 @@ export function CardsProvider(props: Record<string, any>) {
       ...cards,
       [selectedCard.id]: (cards[selectedCard.id] ?? 0) - 1, 
     };
+    if (newCards[selectedCard.id] < 0) {
+      newCards[selectedCard.id] = 0;
+    }
+
     if (existingCard != null) {
-      newCards[existingCard.id] = (cards[existingCard.id] ?? 0) + 1;
+      let amount = 1;
+      if (existingCard.durability && existingCard.maxDurability) {
+        amount = existingCard.durability / existingCard.maxDurability;
+        if (amount > 0.95) {
+          amount = 1;
+        }
+      }
+      newCards[existingCard.id] = (cards[existingCard.id] ?? 0) + amount;
     }
     setCards(newCards);
   }
