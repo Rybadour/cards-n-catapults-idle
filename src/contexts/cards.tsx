@@ -52,7 +52,7 @@ export function CardsProvider(props: Record<string, any>) {
           amount = 1;
         }
       }
-      newCards[existingCard.id] = (cards[existingCard.id] ?? 0) + amount;
+      newCards[existingCard.id] = (newCards[existingCard.id] ?? 0) + amount;
     }
     setCards(newCards);
   }
