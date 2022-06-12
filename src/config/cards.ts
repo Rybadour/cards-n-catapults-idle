@@ -31,6 +31,7 @@ const cards: Record<string, Card> = {
     ability: Ability.ProduceCard,
     abilityStrength: 1,
     abilityCard: "ratSnack",
+    cooldownMs: 10000,
   },
   peasant: {
     id: "",

@@ -15,6 +15,7 @@ export type Card = {
   description: string,
   foodDrain?: number,
   maxDurability?: number,
+  cooldownMs?: number,
   ability: Ability,
   abilityStrength: number,
   abilityMatch?: CardType,
@@ -24,6 +25,7 @@ export type Card = {
 export type RealizedCard = Card & {
   durability?: number,
   modifiedStrength: number,
+  timeLeftMs?: number,
 }
 
 export enum Ability {

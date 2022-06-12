@@ -44,7 +44,11 @@ export default function GridMap() {
               <img src={"/icons/" + card?.icon + ".png"} />
               <div>{card ? card.name : ''}</div>
               {card.maxDurability ?
-                <ProgressBar progress={(card.durability ?? 0)/card.maxDurability} /> :
+                <ProgressBar progress={(card.durability ?? 0)/card.maxDurability} color="red" /> :
+                null
+              }
+              {card.cooldownMs ?
+                <ProgressBar progress={(card.cooldownMs-(card.timeLeftMs ?? 0))/card.cooldownMs} color="#72bcd4" /> :
                 null
               }
             </> : null}

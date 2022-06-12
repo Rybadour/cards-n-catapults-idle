@@ -1,4 +1,6 @@
-import { Ability, RealizedCard, Grid, CardType } from "./types";
+import cards from "../config/cards";
+import { createCard } from "./grid-cards";
+import { Ability, RealizedCard, Grid, CardType } from "../shared/types";
 
 export function getPerSecFromGrid(grid: Grid): number {
   let goldPerSec = 0;
@@ -7,13 +9,13 @@ export function getPerSecFromGrid(grid: Grid): number {
     if (card.ability == Ability.Produce) {
       goldPerSec += card.abilityStrength;
     } else if (card.ability == Ability.ProduceFromMatching) {
-      iterateAdjacent(grid, x, y, (adj) => {
+      iterateAdjacentCards(grid, x, y, (adj) => {
         if (adj.type == card.abilityMatch) {
           goldPerSec += card.abilityStrength;
         }
       });
     } else if (card.ability == Ability.BonusToMatching) {
-      iterateAdjacent(grid, x, y, (adj) => {
+      iterateAdjacentCards(grid, x, y, (adj) => {
         if (adj.type == card.abilityMatch) {
           goldPerSec += (adj.abilityStrength * card.abilityStrength);
         }
@@ -24,9 +26,9 @@ export function getPerSecFromGrid(grid: Grid): number {
   return goldPerSec;
 }
 
-export function updateDurabilities(grid: Grid, elapsed: number): {grid: Grid, anyRemoved: boolean} {
+export function updateGrid(grid: Grid, elapsed: number): {grid: Grid, anyChanged: boolean} {
   const newGrid = [...grid];
-  let anyRemoved = false;
+  let anyChanged = false;
   iterateGrid(grid, (card, x, y) => {
     if (card.foodDrain) {
       const adjacentFood: {
@@ -34,7 +36,7 @@ export function updateDurabilities(grid: Grid, elapsed: number): {grid: Grid, an
         x: number,
         y: number,
       }[] = [];
-      iterateAdjacent(grid, x, y, (adjCard, ax, ay) => {
+      iterateAdjacentCards(grid, x, y, (adjCard, ax, ay) => {
         if (adjCard.type == CardType.Food && adjCard.maxDurability) {
           adjacentFood.push({card: adjCard, x: ax, y: ay});
         } 
@@ -45,12 +47,26 @@ export function updateDurabilities(grid: Grid, elapsed: number): {grid: Grid, an
         food.card.durability = (food.card.durability ?? 0) - foodDrain;
         if (food.card.durability <= 0) {
           grid[food.y][food.x] = null;
-          anyRemoved = true;
+          anyChanged = true;
         }
       })
     }
+
+    if (card.ability == Ability.ProduceCard && card.abilityCard) {
+      card.timeLeftMs = (card.timeLeftMs ?? 0) - elapsed;
+      if (card.timeLeftMs > 0) return;
+
+      card.timeLeftMs = card.cooldownMs;
+      let found = false;
+      iterateAdjacent(grid, x, y, (adjCard, ax, ay) => {
+        if (adjCard || found) return;
+
+        found = true;
+        newGrid[ay][ax] = createCard(cards[card.abilityCard!!], 1);
+      });
+    }
   });
-  return {grid: newGrid, anyRemoved};
+  return {grid: newGrid, anyChanged};
 }
 
 function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: number) => void) {
@@ -66,16 +82,25 @@ function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: nu
 const adjacents = [{x: 0, y: 1}, {x: 0, y: -1}, {x: 1, y: 0}, {x: -1, y: 0}];
 function iterateAdjacent(
   grid: Grid, x: number, y: number,
-  callback: (card: RealizedCard, x: number, y: number) => void
+  callback: (card: RealizedCard | null, x: number, y: number) => void
 ) {
   adjacents.forEach(adj => {
     const ax = x + adj.x, ay = y + adj.y;
     if (0 > ay || ay >= grid.length || 0 > ax || ax >= grid[ay].length) {
       return;
     }
-    const adjacent = grid[ay][ax];
-    if (adjacent != null) {
-      callback(adjacent!!, ax, ay);
+
+    callback(grid[ay][ax]!!, ax, ay);
+  });
+}
+
+function iterateAdjacentCards(
+  grid: Grid, x: number, y: number,
+  callback: (card: RealizedCard, x: number, y: number) => void
+) {
+  iterateAdjacent(grid, x, y, (card, ax, ay) => {
+    if (card) {
+      callback(card!!, ax, ay);
     }
   });
 }

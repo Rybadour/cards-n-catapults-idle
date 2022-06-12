@@ -13,7 +13,7 @@ export type CardsContext = {
 };
 
 const defaultContext: CardsContext = {
-  cards: {beggar: 2, ratSnack: 1},
+  cards: {beggar: 2, ratSnack: 1, ratDen: 1},
   selectedCard: null,
   setSelectedCard: (card) => {},
   hasCard: (card) => false,

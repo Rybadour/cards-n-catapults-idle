@@ -1,6 +1,6 @@
 import { CardsContext } from "../contexts/cards";
 import { GridContext } from "../contexts/grid";
-import { CardPack } from "../shared/types";
+import { Card, CardPack, RealizedCard } from "../shared/types";
 
 export function replaceSpaceWithCard(grid: GridContext, cards: CardsContext, x: number, y: number) {
   if (cards.selectedCard == null || !cards.hasCard(cards.selectedCard)) {
@@ -8,11 +8,7 @@ export function replaceSpaceWithCard(grid: GridContext, cards: CardsContext, x: 
   }
 
   const quantity = cards.cards[cards.selectedCard.id]; 
-  const oldCard = grid.replaceCard(x, y, {
-    ...cards.selectedCard,
-    durability: (quantity >= 1 ? 1 : quantity) * (cards.selectedCard.maxDurability ?? 0),
-    modifiedStrength: 0,
-  });
+  const oldCard = grid.replaceCard(x, y, createCard(cards.selectedCard, quantity));
   cards.replaceCard(oldCard);
 }
 
@@ -21,4 +17,13 @@ export function buyPack(grid: GridContext, cards: CardsContext, cardPack: CardPa
     grid.useGold(cardPack.cost);
     cards.openPack(cardPack);
   }
+}
+
+export function createCard(card: Card, quantity: number): RealizedCard {
+  return {
+    ...card,
+    durability: (quantity >= 1 ? 1 : quantity) * (card.maxDurability ?? 0),
+    modifiedStrength: 0,
+    timeLeftMs: card.cooldownMs,
+  };
 }

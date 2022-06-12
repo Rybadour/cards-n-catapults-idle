@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useState } from "react";
-import cards from "../config/cards";
-import { Card, Grid, RealizedCard } from "../shared/types";
-import { getPerSecFromGrid, updateDurabilities } from "../shared/calculations";
+import { Grid, RealizedCard } from "../shared/types";
+import { getPerSecFromGrid, updateGrid } from "../gamelogic/abilities";
 
 const width = 5;
 const height = 5;
@@ -40,11 +39,11 @@ export function GridProvider(props: Record<string, any>) {
   const [goldPerSec, setGoldPerSec] = useState(0);
 
   function update(elapsed: number) {
-    const results = updateDurabilities(gridSpaces, elapsed);
+    const results = updateGrid(gridSpaces, elapsed);
     setGridSpaces(results.grid);
 
     let newGoldPerSec = goldPerSec;
-    if (results.anyRemoved) {
+    if (results.anyChanged) {
       newGoldPerSec = getPerSecFromGrid(results.grid);
       setGoldPerSec(newGoldPerSec);
     }
