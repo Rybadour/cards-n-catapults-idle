@@ -14,11 +14,16 @@ export type Card = {
   type: CardType,
   description: string,
   foodDrain?: number,
-  durability?: number,
+  maxDurability?: number,
   ability: Ability,
   abilityStrength: number,
   abilityMatch?: CardType,
   abilityCard?: string,
+}
+
+export type RealizedCard = Card & {
+  durability?: number,
+  modifiedStrength: number,
 }
 
 export enum Ability {
@@ -28,7 +33,7 @@ export enum Ability {
   BonusToMatching,
 }
 
-export type Grid = (Card | null)[][];
+export type Grid = (RealizedCard | null)[][];
 
 export type CardPack = {
   id: string,

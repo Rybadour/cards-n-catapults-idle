@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useState } from "react";
 import cards from "../config/cards";
-import { Card } from "../shared/types";
-import { getPerSecFromGrid } from "../shared/calculations";
+import { Card, Grid, RealizedCard } from "../shared/types";
+import { getPerSecFromGrid, updateDurabilities } from "../shared/calculations";
 
 const width = 5;
 const height = 5;
 
 export type GridContext = {
-  gridSpaces: (Card | null)[][],
+  gridSpaces: Grid,
   totalGold: number,
   goldPerSec: number,
-  replaceCard: (x: number, y: number, newCard: Card) => (Card | null),
+  replaceCard: (x: number, y: number, newCard: Card) => (RealizedCard | null),
   update: (elapsed: number) => void,
   useGold: (amount: number) => void,
 };
@@ -25,7 +25,7 @@ const defaultContext: GridContext = {
   useGold: (amount) => {},
 };
 for (let i = 0; i < height; ++i) {
-  const row: (Card | null)[] = [];
+  const row: (RealizedCard | null)[] = [];
   for (let j = 0; j < width; ++j) {
     row.push(null);
   }
@@ -40,7 +40,15 @@ export function GridProvider(props: Record<string, any>) {
   const [goldPerSec, setGoldPerSec] = useState(0);
 
   function update(elapsed: number) {
-    setTotalGold(totalGold + (elapsed/1000) * goldPerSec);
+    const results = updateDurabilities(gridSpaces, elapsed);
+    setGridSpaces(results.grid);
+
+    let newGoldPerSec = goldPerSec;
+    if (results.anyRemoved) {
+      newGoldPerSec = getPerSecFromGrid(results.grid);
+      setGoldPerSec(newGoldPerSec);
+    }
+    setTotalGold(totalGold + (elapsed/1000) * newGoldPerSec);
   }
 
   function useGold(amount: number) {
@@ -50,7 +58,11 @@ export function GridProvider(props: Record<string, any>) {
   function replaceCard(x: number, y: number, newCard: Card) {
     const oldCard = gridSpaces[y][x];
     const newGridSpaces = [ ...gridSpaces ];
-    newGridSpaces[y][x] = newCard;
+    newGridSpaces[y][x] = {
+      ...newCard,
+      durability: newCard.maxDurability,
+      modifiedStrength: 0,
+    };
     setGridSpaces(newGridSpaces);
 
     setGoldPerSec(getPerSecFromGrid(gridSpaces));

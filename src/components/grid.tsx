@@ -29,8 +29,8 @@ export default function GridMap() {
 
   return <div className='grid'>
     <div className='grid-totals'>
-      <div className='total'>{grid.totalGold.toLocaleString()}</div>
-      <div className='per-sec'>{grid.goldPerSec.toLocaleString()}/s</div>
+      <div className='total'>{grid.totalGold.toFixed(0).toLocaleString()}</div>
+      <div className='per-sec'>{grid.goldPerSec.toFixed(1).toLocaleString()}/s</div>
     </div>
     <div className='grid-rows'>
     {grid.gridSpaces.map((gridRow, y) => 
@@ -43,7 +43,10 @@ export default function GridMap() {
             {card ? <>
               <img src={"/icons/" + card?.icon + ".png"} />
               <div>{card ? card.name : ''}</div>
-              <ProgressBar progress={0.5} />
+              {card.maxDurability ?
+                <ProgressBar progress={(card.durability ?? 0)/card.maxDurability} /> :
+                null
+              }
             </> : null}
           </div>
         )}
