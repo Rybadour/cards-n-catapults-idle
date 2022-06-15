@@ -41,9 +41,10 @@ export default function GridMap() {
     </div>
     <div className='grid-rows'>
     {grid.gridSpaces.map((gridRow, y) => 
-      <div className='grid-row'>
+      <div key={y} className='grid-row'>
         {gridRow.map((card, x) => 
           <div
+            key={x}
             className={classNames('grid-space', {card: !!card})}
             onClick={() => addCard(x, y)}
           >

@@ -10,6 +10,7 @@ export default function CardList() {
   return <div className="card-list">
     {Object.values(cardsConfig).map(card =>
       <div
+        key={card.id}
         className={classNames("card", {selected: card === cards.selectedCard})}
         onClick={() => cards.setSelectedCard(card)}
       >

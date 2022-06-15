@@ -19,6 +19,7 @@ export default function CardPacks() {
     <div className="card-pack-list">
     {Object.values(cardPacks).map(cardPack =>
       <div
+        key={cardPack.id}
         className="card-pack"
         onClick={() => onBuyPack(cardPack)}
       >
