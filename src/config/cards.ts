@@ -1,4 +1,5 @@
 import { Ability, Card, CardType, ResourceType } from "../shared/types";
+import { formatNumber } from "../shared/utils";
 
 const cards: Record<string, Card> = {
   beggar: {
@@ -6,7 +7,7 @@ const cards: Record<string, Card> = {
     name: "Beggar",
     icon: "bindle",
     type: CardType.Person,
-    description: "Produces 1 gold/s.",
+    description: "Produces {{abilityStrength}} gold/s.",
     foodDrain: 0.2,
     ability: Ability.Produce,
     abilityStrength: 1,
@@ -17,7 +18,7 @@ const cards: Record<string, Card> = {
     name: "Rat Snack",
     icon: "rat",
     type: CardType.Food,
-    description: "Produces 0.5 gold for every adjacent person.",
+    description: "Produces {{abilityStrength}} gold for every adjacent person.",
     maxDurability: 10,
     ability: Ability.ProduceFromMatching,
     abilityStrength: 0.25,
@@ -29,7 +30,7 @@ const cards: Record<string, Card> = {
     name: "Rat Den",
     icon: "cave-entrance",
     type: CardType.Building,
-    description: "Generates 1 Rat Snack1",
+    description: "Generates 1 Rat Snack nearby every {{cooldownSecs}} seconds.",
     ability: Ability.ProduceCard,
     abilityStrength: 1,
     abilityCard: "ratSnack",
@@ -40,7 +41,7 @@ const cards: Record<string, Card> = {
     name: "Peasant",
     icon: "farmer",
     type: CardType.Person,
-    description: "Generates 3 gold/s.",
+    description: "Generates {{abilityStrength}} gold/s.",
     foodDrain: 0.5,
     ability: Ability.Produce,
     abilityStrength: 3,
@@ -51,7 +52,7 @@ const cards: Record<string, Card> = {
     name: "Berries",
     icon: "berries-bowl",
     type: CardType.Food,
-    description: "Increases adjacent persons abilities by 50%.",
+    description: "Increases adjacent persons abilities by {{abilityPercent}}.",
     maxDurability: 8,
     ability: Ability.BonusToMatching,
     abilityStrength: 0.2,
@@ -62,13 +63,30 @@ const cards: Record<string, Card> = {
     name: "Forest",
     icon: "birch-trees",
     type: CardType.Resource,
-    description: "Produces 1 wood/s",
+    description: "Produces {{abilityStrength}} wood/s",
     ability: Ability.Produce,
     abilityStrength: 1,
     abilityResource: ResourceType.Wood,
   },
 };
 
-Object.keys(cards).forEach((cardId) => cards[cardId].id = cardId);
+
+Object.keys(cards)
+  .forEach((cardId) => {
+    const card = cards[cardId];
+    card.id = cardId;
+
+    function replaceInDescription(variable: string, value: string) {
+      card.description = card.description.replaceAll(`{{${variable}}}`, value);
+    }
+
+    replaceInDescription('abilityStrength', String(card.abilityStrength));
+    if (card.cooldownMs) {
+      replaceInDescription('cooldownSecs', formatNumber(card.cooldownMs / 1000, 0, 1));
+    }
+    if (card.ability == Ability.BonusToMatching) {
+      replaceInDescription('abilityPercent', formatNumber(card.abilityStrength * 100, 0, 0)+"%");
+    }
+  });
 
 export default cards;

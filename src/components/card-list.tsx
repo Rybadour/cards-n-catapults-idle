@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
 import { formatNumber } from '../shared/utils';
-import './card-list.css';
+import './card-list.scss';
 
 export default function CardList() {
   const cards = useContext(CardsContext);
@@ -12,10 +12,20 @@ export default function CardList() {
     {Object.values(cardsConfig).map(card =>
       <div
         key={card.id}
-        className={classNames("card", {selected: card === cards.selectedCard})}
+        className={classNames("card", {
+          selected: card === cards.selectedCard,
+          empty: (cards.cards[card.id] ?? 0) <= 0,
+        })}
         onClick={() => cards.setSelectedCard(card)}
       >
-        {card.name} {formatNumber(cards.cards[card.id] ?? 0, 0, 1)}x
+        <div className="title">
+          <img src={`icons/${card.icon}.png`} />
+          <span>{card.name}</span>
+        </div>
+
+        <div className="description">{card.description}</div>
+
+        <span className="amount">{formatNumber(cards.cards[card.id] ?? 0, 0, 1)}</span>
       </div>
     )}
   </div>;
