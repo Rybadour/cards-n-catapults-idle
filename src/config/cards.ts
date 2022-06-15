@@ -1,4 +1,4 @@
-import { Ability, Card, CardType } from "../shared/types";
+import { Ability, Card, CardType, ResourceType } from "../shared/types";
 
 const cards: Record<string, Card> = {
   beggar: {
@@ -10,6 +10,7 @@ const cards: Record<string, Card> = {
     foodDrain: 0.1,
     ability: Ability.Produce,
     abilityStrength: 1,
+    abilityResource: ResourceType.Gold,
   },
   ratSnack: {
     id: "",
@@ -42,6 +43,7 @@ const cards: Record<string, Card> = {
     foodDrain: 0.5,
     ability: Ability.Produce,
     abilityStrength: 3,
+    abilityResource: ResourceType.Gold,
   },
   berries: {
     id: "",
@@ -53,7 +55,17 @@ const cards: Record<string, Card> = {
     ability: Ability.BonusToMatching,
     abilityStrength: 1.5,
     abilityMatch: CardType.Person,
-  }
+  },
+  forest: {
+    id: "",
+    name: "Forest",
+    icon: "birch-trees",
+    type: CardType.Resource,
+    description: "Produces 1 wood/s",
+    ability: Ability.Produce,
+    abilityStrength: 1,
+    abilityResource: ResourceType.Wood,
+  },
 };
 
 Object.keys(cards).forEach((cardId) => cards[cardId].id = cardId);

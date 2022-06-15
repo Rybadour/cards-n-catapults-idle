@@ -6,13 +6,15 @@ import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
 import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
 import { ProgressBar } from './progress-bar';
-import { Ability } from '../shared/types';
+import { Ability, ResourceType } from '../shared/types';
 
 import './grid.scss';
+import { StatsContext } from '../contexts/stats';
 
 let lastTime = Date.now();
 
 export default function GridMap() {
+  const stats = useContext(StatsContext);
   const grid = useContext(GridContext);
   const cards = useContext(CardsContext);
 
@@ -35,8 +37,8 @@ export default function GridMap() {
     <div className='grid-totals'>
       <img src="icons/two-coins-gold.png" />
       <div className="stats">
-        <div className='total'>{grid.totalGold.toFixed(0).toLocaleString()}</div>
-        <div className='per-sec'>{grid.goldPerSec.toFixed(1).toLocaleString()}/s</div>
+        <div className='total'>{stats.resources[ResourceType.Gold].toFixed(0).toLocaleString()}</div>
+        <div className='per-sec'>{stats.resourcesPerSec[ResourceType.Gold].toFixed(1).toLocaleString()}/s</div>
       </div>
     </div>
     <div className='grid-rows'>

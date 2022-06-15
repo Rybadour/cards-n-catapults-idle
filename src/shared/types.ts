@@ -5,6 +5,12 @@ export enum CardType {
   Monster,
   Food,
   Building,
+  Resource,
+}
+
+export enum ResourceType {
+  Gold,
+  Wood,
 }
 
 export type Card = {
@@ -20,6 +26,7 @@ export type Card = {
   abilityStrength: number,
   abilityMatch?: CardType,
   abilityCard?: string,
+  abilityResource?: ResourceType,
 }
 
 export type RealizedCard = Card & {
