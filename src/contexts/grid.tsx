@@ -45,7 +45,7 @@ export function GridProvider(props: Record<string, any>) {
     newGridSpaces[y][x] = newCard;
     setGridSpaces(newGridSpaces);
 
-    //setGoldPerSec(getPerSecFromGrid(gridSpaces));
+    stats.updatePerSec(gridSpaces);
 
     return oldCard;
   }

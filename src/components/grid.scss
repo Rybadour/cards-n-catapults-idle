@@ -2,29 +2,35 @@
   margin: 30px;
 }
 
-.grid-totals {
+.resources {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  grid-gap: 30px;
   color: white;
-}
 
-.grid-totals img {
-  width: 36px;
-  height: 36px;
-}
+  .resource {
+    display: flex;
+    flex-direction: row;
 
-.grid-totals .stats {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-left: 5px;
-}
+    .amounts {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 5px;
 
-.grid-totals .total {
-  font-size: 20px;
-  font-weight: bold;
+      .total {
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+
+    img {
+      width: 36px;
+      height: 36px;
+    }
+  }
 }
 
 .grid-rows {

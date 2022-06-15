@@ -22,6 +22,7 @@ const cards: Record<string, Card> = {
     ability: Ability.ProduceFromMatching,
     abilityStrength: 0.5,
     abilityMatch: CardType.Person,
+    abilityResource: ResourceType.Gold,
   },
   ratDen: {
     id: "",

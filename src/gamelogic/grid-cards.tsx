@@ -12,13 +12,6 @@ export function replaceSpaceWithCard(grid: GridContext, cards: CardsContext, x: 
   cards.replaceCard(oldCard);
 }
 
-export function buyPack(grid: GridContext, cards: CardsContext, cardPack: CardPack) {
-  if (grid.totalGold >= cardPack.cost) {
-    grid.useGold(cardPack.cost);
-    cards.openPack(cardPack);
-  }
-}
-
 export function createCard(card: Card, quantity: number): RealizedCard {
   return {
     ...card,

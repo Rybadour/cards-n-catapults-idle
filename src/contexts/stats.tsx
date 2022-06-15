@@ -2,11 +2,14 @@
 import { createContext, useState } from "react";
 import { getPerSecFromGrid } from "../gamelogic/abilities";
 import { Grid, ResourceType } from "../shared/types";
+import { enumFromKey } from "../shared/utils";
 
 export type StatsContext = {
   resources: Record<ResourceType, number>,
   resourcesPerSec: Record<ResourceType, number>,
   update: (elapsed: number, shouldRecalculate: boolean, grid: Grid) => void,
+  updatePerSec: (grid: Grid) => void,
+  useResource: (resource: ResourceType, amount: number) => void,
 };
 
 const defaultContext: StatsContext = {
@@ -19,6 +22,8 @@ const defaultContext: StatsContext = {
     [ResourceType.Wood]: 0,
   },
   update: (elapsed, shouldRecalculate, grid) => {},
+  updatePerSec: (grid) => {},
+  useResource: (resource, amount) => {},
 };
 
 export const StatsContext = createContext(defaultContext);
@@ -30,12 +35,28 @@ export function StatsProvider(props: Record<string, any>) {
   function update(elapsed: number, shouldRecalculate: boolean, grid: Grid) {
     if (shouldRecalculate) {
       const newPerSec = getPerSecFromGrid(grid);
-      //setResourcesPerSec(newPerSec);
+      setResourcesPerSec(newPerSec);
     }
 
     const elapsedSecs = (elapsed/1000);
     const newResources = {...resources};
-    newResources[ResourceType.Gold] += elapsedSecs * resourcesPerSec[ResourceType.Gold];
+    Object.keys(resourcesPerSec).forEach(r => {
+      const resource = enumFromKey(ResourceType, r);
+      if (resource) {
+        newResources[resource] += elapsedSecs * resourcesPerSec[resource];
+      }
+    })
+    setResources(newResources);
+  }
+
+  function updatePerSec(grid: Grid) {
+    const newPerSec = getPerSecFromGrid(grid);
+    setResourcesPerSec(newPerSec);
+  }
+
+  function useResource(resource: ResourceType, amount: number) {
+    const newResources = {...resources};
+    newResources[resource] -= amount;
     setResources(newResources);
   }
 
@@ -43,7 +64,7 @@ export function StatsProvider(props: Record<string, any>) {
     <StatsContext.Provider
       value={{
         resources, resourcesPerSec,
-        update,
+        update, updatePerSec, useResource,
       }}
       {...props}
     />

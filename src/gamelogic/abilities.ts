@@ -1,29 +1,32 @@
 import cards from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType } from "../shared/types";
 
-export function getPerSecFromGrid(grid: Grid): number {
-  let goldPerSec = 0;
+export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
+  let resourcesPerSec = {
+    [ResourceType.Gold]: 0,
+    [ResourceType.Wood]: 0,
+  };
 
   iterateGrid(grid, (card, x, y) => {
-    if (card.ability == Ability.Produce) {
-      goldPerSec += card.abilityStrength;
+    if (card.ability == Ability.Produce && card.abilityResource) {
+      resourcesPerSec[card.abilityResource] += card.abilityStrength;
     } else if (card.ability == Ability.ProduceFromMatching) {
       iterateAdjacentCards(grid, x, y, (adj) => {
-        if (adj.type == card.abilityMatch) {
-          goldPerSec += card.abilityStrength;
+        if (adj.type == card.abilityMatch && card.abilityResource) {
+          resourcesPerSec[card.abilityResource] += card.abilityStrength;
         }
       });
     } else if (card.ability == Ability.BonusToMatching) {
       iterateAdjacentCards(grid, x, y, (adj) => {
-        if (adj.type == card.abilityMatch) {
-          goldPerSec += (adj.abilityStrength * card.abilityStrength);
+        if (adj.type == card.abilityMatch && adj.abilityResource) {
+          resourcesPerSec[adj.abilityResource] += (adj.abilityStrength * card.abilityStrength);
         }
       });
     }
   });
 
-  return goldPerSec;
+  return resourcesPerSec;
 }
 
 export function updateGrid(grid: Grid, elapsed: number): {grid: Grid, anyChanged: boolean} {

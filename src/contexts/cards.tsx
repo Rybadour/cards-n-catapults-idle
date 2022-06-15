@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { generateCards } from "../shared/pack-generation";
-import { Card, CardPack, RealizedCard } from "../shared/types";
+import { Card, CardPack, RealizedCard, ResourceType } from "../shared/types";
+import { StatsContext } from "./stats";
 
 export type CardsContext = {
   cards: Record<string, number>,
@@ -9,21 +10,22 @@ export type CardsContext = {
   setSelectedCard: (card: Card) => void,
   hasCard: (card: Card) => boolean,
   replaceCard: (existingCard: RealizedCard | null) => void,
-  openPack: (cardPack: CardPack) => void,
+  buyPack: (cardPack: CardPack) => void,
 };
 
 const defaultContext: CardsContext = {
-  cards: {beggar: 2, ratSnack: 1, ratDen: 1},
+  cards: {beggar: 2, ratSnack: 1, ratDen: 1, forest: 1},
   selectedCard: null,
   setSelectedCard: (card) => {},
   hasCard: (card) => false,
   replaceCard: (card) => {},
-  openPack: (cardPack) => {},
+  buyPack: (cardPack) => {},
 };
 
 export const CardsContext = createContext(defaultContext);
 
 export function CardsProvider(props: Record<string, any>) {
+  const stats = useContext(StatsContext);
   const [cards, setCards] = useState(defaultContext.cards);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
@@ -57,7 +59,11 @@ export function CardsProvider(props: Record<string, any>) {
     setCards(newCards);
   }
 
-  function openPack(cardPack: CardPack) {
+  function buyPack(cardPack: CardPack) {
+    if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
+
+    stats.useResource(ResourceType.Gold, cardPack.cost);
+
     const cardsFromPack = generateCards(cardPack);
     const newCards = { ...cards };
     cardsFromPack.forEach(card => {
@@ -70,7 +76,7 @@ export function CardsProvider(props: Record<string, any>) {
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, replaceCard, openPack,
+        setSelectedCard, hasCard, replaceCard, buyPack,
       }}
       {...props}
     />

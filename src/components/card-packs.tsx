@@ -1,18 +1,15 @@
 import { useCallback, useContext } from 'react';
 import cardPacks from '../config/card-packs';
 import { CardsContext } from '../contexts/cards';
-import { GridContext } from '../contexts/grid';
-import { buyPack } from '../gamelogic/grid-cards';
 import { CardPack } from '../shared/types';
 import './card-packs.css';
 
 export default function CardPacks() {
-  const grid = useContext(GridContext);
   const cards = useContext(CardsContext);
 
   const onBuyPack = useCallback((cardPack: CardPack) => {
-    buyPack(grid, cards, cardPack);
-  }, [grid, cards]);
+    cards.buyPack(cardPack);
+  }, [cards]);
 
   return <div className="card-packs">
     <h4>Card Packs:</h4>

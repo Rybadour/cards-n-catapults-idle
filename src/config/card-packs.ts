@@ -14,6 +14,9 @@ const cardPacks: Record<string, CardPack> = {
       card: cards.peasant,
       chance: 0.05,
     }, {
+      card: cards.forest,
+      chance: 0.1,
+    }, {
       card: cards.beggar,
       chance: 0.1,
     }, {
@@ -21,7 +24,7 @@ const cardPacks: Record<string, CardPack> = {
       chance: 0.4,
     }, {
       card: cards.berries,
-      chance: 0.4,
+      chance: 0.3,
     }],
   }
 }

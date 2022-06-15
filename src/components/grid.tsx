@@ -10,6 +10,8 @@ import { Ability, ResourceType } from '../shared/types';
 
 import './grid.scss';
 import { StatsContext } from '../contexts/stats';
+import { enumFromKey, formatNumber } from '../shared/utils';
+import resourceIconMap from '../config/resources';
 
 let lastTime = Date.now();
 
@@ -34,12 +36,14 @@ export default function GridMap() {
   }, [grid]);
 
   return <div className='grid'>
-    <div className='grid-totals'>
-      <img src="icons/two-coins-gold.png" />
-      <div className="stats">
-        <div className='total'>{stats.resources[ResourceType.Gold].toFixed(0).toLocaleString()}</div>
-        <div className='per-sec'>{stats.resourcesPerSec[ResourceType.Gold].toFixed(1).toLocaleString()}/s</div>
-      </div>
+    <div className='resources'>
+      {Object.keys(stats.resources).map(resource =>
+        <Resource
+          key={resource}
+          resource={enumFromKey(ResourceType, resource)}
+          stats={stats}
+        />
+      )}
     </div>
     <div className='grid-rows'>
     {grid.gridSpaces.map((gridRow, y) => 
@@ -56,14 +60,14 @@ export default function GridMap() {
                 <div>{card ? card.name : ''}</div>
               </div>
               <div className="ability">
-                {card.ability == Ability.Produce ? <>
-                  <img src="icons/two-coins-gold.png" /> {card.abilityStrength}/s
+                {card.ability == Ability.Produce && card.abilityResource ? <>
+                  <img src={"icons/" + resourceIconMap[card.abilityResource]} /> {card.abilityStrength}/s
                 </> : null }
                 {card.ability == Ability.BonusToMatching ? <>
-                  <img src="icons/two-coins-gold.png" /> +{card.abilityStrength * 100}%
+                  +{card.abilityStrength * 100}%
                 </> : null }
-                {card.ability == Ability.ProduceFromMatching ? <>
-                  <img src="icons/two-coins-gold.png" /> +{card.abilityStrength}/s
+                {card.ability == Ability.ProduceFromMatching && card.abilityResource ? <>
+                  <img src={"icons/" + resourceIconMap[card.abilityResource]} /> +{card.abilityStrength}/s
                 </> : null }
                 {card.ability == Ability.ProduceCard && card.abilityCard ? <>
                   +<img src={"icons/" + cardsConfig[card.abilityCard!!].icon + ".png"} />
@@ -83,6 +87,18 @@ export default function GridMap() {
         )}
       </div>
     )}
+    </div>
+  </div>;
+}
+
+function Resource(props: {resource: ResourceType | undefined, stats: StatsContext}) {
+  if (!props.resource) return null;
+
+  return <div className="resource">
+    <img src={"icons/" + resourceIconMap[props.resource]} />
+    <div className="amounts">
+      <div className='total'>{formatNumber(props.stats.resources[props.resource], 0, 0)}</div>
+      <div className='per-sec'>{formatNumber(props.stats.resourcesPerSec[props.resource], 0, 1)}/s</div>
     </div>
   </div>;
 }

@@ -9,8 +9,8 @@ export enum CardType {
 }
 
 export enum ResourceType {
-  Gold,
-  Wood,
+  Gold = "gold",
+  Wood = "wood",
 }
 
 export type Card = {
