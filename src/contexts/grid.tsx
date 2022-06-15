@@ -10,12 +10,14 @@ const height = 5;
 export type GridContext = {
   gridSpaces: Grid,
   replaceCard: (x: number, y: number, newCard: RealizedCard) => (RealizedCard | null),
+  returnCard: (x: number, y: number) => void,
   update: (elapsed: number) => void,
 };
 
 const defaultContext: GridContext = {
   gridSpaces: [],
   replaceCard: (x, y, newCard) => null,
+  returnCard: (x, y) => {},
   update: (elapsed) => {},
 };
 for (let i = 0; i < height; ++i) {
@@ -49,12 +51,20 @@ export function GridProvider(props: Record<string, any>) {
 
     return oldCard;
   }
+  
+  function returnCard(x: number, y: number) {
+    const newGridSpaces = [ ...gridSpaces ];
+    newGridSpaces[y][x] = null;
+    setGridSpaces(newGridSpaces);
+
+    stats.updatePerSec(gridSpaces);
+  }
 
   return (
     <GridContext.Provider
       value={{
         gridSpaces,
-        replaceCard, update,
+        replaceCard, returnCard, update,
       }}
       {...props}
     />

@@ -10,6 +10,7 @@ export type CardsContext = {
   selectedCard: Card | null,
   setSelectedCard: (card: Card) => void,
   hasCard: (card: Card) => boolean,
+  returnCard: (card: RealizedCard) => void,
   replaceCard: (existingCard: RealizedCard | null) => void,
   buyPack: (cardPack: CardPack) => void,
 };
@@ -19,6 +20,7 @@ const defaultContext: CardsContext = {
   selectedCard: null,
   setSelectedCard: (card) => {},
   hasCard: (card) => false,
+  returnCard: (card) => {},
   replaceCard: (card) => {},
   buyPack: (cardPack) => {},
 };
@@ -32,6 +34,13 @@ export function CardsProvider(props: Record<string, any>) {
 
   function hasCard(card: Card) {
     return (cards[card.id] ?? 0) > 0;
+  }
+
+  function returnCard(card: RealizedCard) {
+    const newCards = {...cards};
+    addRealizedCard(newCards, card);
+
+    setCards(newCards);
   }
 
   function replaceCard(existingCard: RealizedCard | null) {
@@ -48,16 +57,20 @@ export function CardsProvider(props: Record<string, any>) {
     }
 
     if (existingCard != null) {
-      let amount = 1;
-      if (existingCard.durability && existingCard.maxDurability) {
-        amount = existingCard.durability / existingCard.maxDurability;
-        if (amount > 0.95) {
-          amount = 1;
-        }
-      }
-      newCards[existingCard.id] = (newCards[existingCard.id] ?? 0) + amount;
+      addRealizedCard(newCards, existingCard);
     }
     setCards(newCards);
+  }
+
+  function addRealizedCard(cards: Record<string, number>, card: RealizedCard) {
+    let amount = 1;
+    if (card.durability && card.maxDurability) {
+      amount = card.durability / card.maxDurability;
+      if (amount > 0.95) {
+        amount = 1;
+      }
+    }
+    cards[card.id] = (cards[card.id] ?? 0) + amount;
   }
 
   function buyPack(cardPack: CardPack) {
@@ -77,7 +90,7 @@ export function CardsProvider(props: Record<string, any>) {
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, replaceCard, buyPack,
+        setSelectedCard, hasCard, returnCard, replaceCard, buyPack,
       }}
       {...props}
     />

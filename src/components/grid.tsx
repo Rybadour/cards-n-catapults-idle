@@ -6,7 +6,7 @@ import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
 import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
 import { ProgressBar } from './progress-bar';
-import { Ability, ResourceType } from '../shared/types';
+import { Ability, RealizedCard, ResourceType } from '../shared/types';
 
 import './grid.scss';
 import { StatsContext } from '../contexts/stats';
@@ -24,6 +24,14 @@ export default function GridMap() {
     replaceSpaceWithCard(grid, cards, x, y),
     [grid, cards]
   );
+
+  const returnCard = useCallback((evt, x: number, y: number, card: RealizedCard | null) => {
+    evt.preventDefault();
+    if (card) {
+      grid.returnCard(x, y);
+      cards.returnCard(card);
+    }
+  }, [cards]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,6 +61,7 @@ export default function GridMap() {
             key={x}
             className={classNames('grid-space', {card: !!card})}
             onClick={() => addCard(x, y)}
+            onContextMenu={(evt) => returnCard(evt, x, y, card)}
           >
             {card ? <>
               <div className="title">
