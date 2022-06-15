@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
+import global from "../config/global";
 import { generateCards } from "../shared/pack-generation";
 import { Card, CardPack, RealizedCard, ResourceType } from "../shared/types";
 import { StatsContext } from "./stats";
@@ -14,7 +15,7 @@ export type CardsContext = {
 };
 
 const defaultContext: CardsContext = {
-  cards: {beggar: 2, ratSnack: 1, ratDen: 1, forest: 1},
+  cards: global.startingCards,
   selectedCard: null,
   setSelectedCard: (card) => {},
   hasCard: (card) => false,

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useState } from "react";
+import global from "../config/global";
 import { getPerSecFromGrid } from "../gamelogic/abilities";
 import { Grid, ResourceType } from "../shared/types";
 import { enumFromKey } from "../shared/utils";
@@ -14,11 +15,11 @@ export type StatsContext = {
 
 const defaultContext: StatsContext = {
   resources: {
-    [ResourceType.Gold]: 100,
+    [ResourceType.Gold]: global.startingGold,
     [ResourceType.Wood]: 0,
   },
   resourcesPerSec: {
-    [ResourceType.Gold]: 1,
+    [ResourceType.Gold]: 0,
     [ResourceType.Wood]: 0,
   },
   update: (elapsed, shouldRecalculate, grid) => {},
@@ -43,7 +44,7 @@ export function StatsProvider(props: Record<string, any>) {
     Object.keys(resourcesPerSec).forEach(r => {
       const resource = enumFromKey(ResourceType, r);
       if (resource) {
-        newResources[resource] += elapsedSecs * resourcesPerSec[resource];
+        newResources[resource] += elapsedSecs * resourcesPerSec[resource] * global.produceModifier;
       }
     })
     setResources(newResources);

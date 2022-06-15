@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useContext } from 'react';
 import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
+import { formatNumber } from '../shared/utils';
 import './card-list.css';
 
 export default function CardList() {
@@ -14,7 +15,7 @@ export default function CardList() {
         className={classNames("card", {selected: card === cards.selectedCard})}
         onClick={() => cards.setSelectedCard(card)}
       >
-        {card.name} {(cards.cards[card.id] ?? 0).toFixed(1)}x
+        {card.name} {formatNumber(cards.cards[card.id] ?? 0, 0, 1)}x
       </div>
     )}
   </div>;

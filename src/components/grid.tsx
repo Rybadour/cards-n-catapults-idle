@@ -64,10 +64,10 @@ export default function GridMap() {
                   <img src={"icons/" + resourceIconMap[card.abilityResource]} /> {card.abilityStrength}/s
                 </> : null }
                 {card.ability == Ability.BonusToMatching ? <>
-                  +{card.abilityStrength * 100}%
+                  +{formatNumber(card.abilityStrength * 100, 0, 0)}%
                 </> : null }
                 {card.ability == Ability.ProduceFromMatching && card.abilityResource ? <>
-                  <img src={"icons/" + resourceIconMap[card.abilityResource]} /> +{card.abilityStrength}/s
+                  <img src={"icons/" + resourceIconMap[card.abilityResource]} /> +{formatNumber(card.abilityStrength, 0, 2)}/s
                 </> : null }
                 {card.ability == Ability.ProduceCard && card.abilityCard ? <>
                   +<img src={"icons/" + cardsConfig[card.abilityCard!!].icon + ".png"} />
