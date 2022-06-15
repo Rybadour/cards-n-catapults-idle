@@ -7,7 +7,7 @@ const cards: Record<string, Card> = {
     icon: "bindle",
     type: CardType.Person,
     description: "Produces 1 gold/s.",
-    foodDrain: 0.1,
+    foodDrain: 0.2,
     ability: Ability.Produce,
     abilityStrength: 1,
     abilityResource: ResourceType.Gold,

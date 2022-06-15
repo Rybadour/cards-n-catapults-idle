@@ -1,8 +1,18 @@
+import classNames from 'classnames';
 import './progress-bar.css';
 
-export function ProgressBar(props: { progress: number, color: string }) {
+type ProgressBarProps = {
+  progress: number,
+  color: string,
+  noBorder: boolean,  
+  height?: number,
+}
+
+export function ProgressBar(props: ProgressBarProps) {
+  const height = props.height ?? 10;
+
   return (
-    <div className="progress">
+    <div className={classNames("progress", {"no-border": props.noBorder})} style={{height: height + "px"}}>
       <div className="progress-bar" style={{
         width: props.progress * 100 + "%",
         backgroundColor: props.color,

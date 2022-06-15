@@ -75,11 +75,21 @@ export default function GridMap() {
                 </> : null }
               </div>
               {card.maxDurability ?
-                <ProgressBar progress={(card.durability ?? 0)/card.maxDurability} color="red" /> :
+                <ProgressBar 
+                  progress={(card.durability ?? 0)/card.maxDurability}
+                  noBorder
+                  color="#C22"
+                  height={6}
+                /> :
                 null
               }
               {card.cooldownMs ?
-                <ProgressBar progress={(card.cooldownMs-(card.timeLeftMs ?? 0))/card.cooldownMs} color="#72bcd4" /> :
+                <ProgressBar
+                  progress={(card.cooldownMs-(card.timeLeftMs ?? 0))/card.cooldownMs}
+                  noBorder
+                  color="#72bcd4"
+                  height={6}
+                /> :
                 null
               }
             </> : null}
