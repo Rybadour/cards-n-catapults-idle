@@ -11,15 +11,15 @@ import { StatsProvider } from './contexts/stats';
 function App() {
   return (
     <StatsProvider>
-    <GridProvider>
     <CardsProvider>
+    <GridProvider>
       <div className="App">
         <CardPacks />
         <Grid />
         <CardList />
       </div>
-    </CardsProvider>
     </GridProvider>
+    </CardsProvider>
     </StatsProvider>
   );
 }

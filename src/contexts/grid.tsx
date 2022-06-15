@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 import { Grid, RealizedCard } from "../shared/types";
 import { getPerSecFromGrid, updateGrid } from "../gamelogic/abilities";
 import { StatsContext } from "./stats";
+import { CardsContext } from "./cards";
 
 const width = 5;
 const height = 5;
@@ -32,6 +33,7 @@ export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
   const stats = useContext(StatsContext);
+  const cards = useContext(CardsContext);
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
 
   function update(elapsed: number) {
@@ -39,6 +41,8 @@ export function GridProvider(props: Record<string, any>) {
     setGridSpaces(results.grid);
 
     stats.update(elapsed, results.anyChanged, gridSpaces);
+
+    cards.addCards(results.extraCards);
   }
 
   function replaceCard(x: number, y: number, newCard: RealizedCard) {

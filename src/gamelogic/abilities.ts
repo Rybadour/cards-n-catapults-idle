@@ -1,6 +1,6 @@
 import cards from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card } from "../shared/types";
 
 export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
   let resourcesPerSec = {
@@ -29,9 +29,11 @@ export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
   return resourcesPerSec;
 }
 
-export function updateGrid(grid: Grid, elapsed: number): {grid: Grid, anyChanged: boolean} {
+export function updateGrid(grid: Grid, elapsed: number): {grid: Grid, anyChanged: boolean, extraCards: Card[]} {
   const newGrid = [...grid];
   let anyChanged = false;
+  const extraCards: Card[] = [];
+
   iterateGrid(grid, (card, x, y) => {
     if (card.foodDrain) {
       const adjacentFood: {
@@ -67,9 +69,12 @@ export function updateGrid(grid: Grid, elapsed: number): {grid: Grid, anyChanged
         found = true;
         newGrid[ay][ax] = createCard(cards[card.abilityCard!!], 1);
       });
+      if (!found) {
+        extraCards.push(cards[card.abilityCard]);
+      }
     }
   });
-  return {grid: newGrid, anyChanged};
+  return {grid: newGrid, anyChanged, extraCards};
 }
 
 function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: number) => void) {

@@ -12,6 +12,7 @@ export type CardsContext = {
   hasCard: (card: Card) => boolean,
   returnCard: (card: RealizedCard) => void,
   replaceCard: (existingCard: RealizedCard | null) => void,
+  addCards: (newCards: Card[]) => void,
   buyPack: (cardPack: CardPack) => void,
 };
 
@@ -22,6 +23,7 @@ const defaultContext: CardsContext = {
   hasCard: (card) => false,
   returnCard: (card) => {},
   replaceCard: (card) => {},
+  addCards: (newCards) => {},
   buyPack: (cardPack) => {},
 };
 
@@ -73,6 +75,14 @@ export function CardsProvider(props: Record<string, any>) {
     cards[card.id] = (cards[card.id] ?? 0) + amount;
   }
 
+  function addCards(newCards: Card[]) {
+    if (newCards.length <= 0) return;
+
+    const newCardMap = {...cards};
+    newCards.forEach(card => newCardMap[card.id] = (newCardMap[card.id] ?? 0) + 1)
+    setCards(newCardMap);
+  }
+
   function buyPack(cardPack: CardPack) {
     if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
 
@@ -90,7 +100,7 @@ export function CardsProvider(props: Record<string, any>) {
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, returnCard, replaceCard, buyPack,
+        setSelectedCard, hasCard, returnCard, replaceCard, addCards, buyPack,
       }}
       {...props}
     />
