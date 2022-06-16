@@ -53,46 +53,60 @@ $card-height: 100px;
 
 .grid .grid-space {
   box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  grid-gap: 6px;
+
   width: $card-width;
   height: $card-height;
   background-color: #666;
   color: white;
   border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  grid-gap: 6px;
   padding: 3px;
+  position: relative;
 
-  .title {
-    display: flex;
-    align-items: center;
-    justify-self: flex-start;
-    grid-gap: 6px;
-    font-size: 16px;
-
-    img {
-      width: 26px;
-      height: 26px;
-    }
-  }
-
-  .ability {
-    display: flex;
-    align-items: center;
-    grid-gap: 3px;
-
-    img {
-      width: 20px;
-      height: 20px;
-    }
+  img {
+    width: 50px;
+    height: 50px;
+    filter: drop-shadow(1px 1px 6px black);
   }
 
   .progress {
     height: 10px;
-    margin-top: auto;
-    margin-bottom: 4px;
+  }
+
+  .details {
+    display: none;
+  }
+
+  &:hover .details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    grid-gap: 8px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(100, 100, 100, 0.9);
+    border-radius: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+
+    .ability {
+      display: flex;
+      align-items: center;
+      grid-gap: 3px;
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
   }
 }
 

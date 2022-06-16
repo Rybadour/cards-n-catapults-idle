@@ -64,25 +64,7 @@ export default function GridMap() {
             onContextMenu={(evt) => returnCard(evt, x, y, card)}
           >
             {card ? <>
-              <div className="title">
-                <img src={"icons/" + card?.icon + ".png"} />
-                <div>{card ? card.name : ''}</div>
-              </div>
-              <div className="ability">
-                {card.ability == Ability.Produce && card.abilityResource ? <>
-                  <img src={"icons/" + resourceIconMap[card.abilityResource]} /> {card.abilityStrength}/s
-                </> : null }
-                {card.ability == Ability.BonusToMatching ? <>
-                  +{formatNumber(card.abilityStrength * 100, 0, 0)}%
-                </> : null }
-                {card.ability == Ability.ProduceFromMatching && card.abilityResource ? <>
-                  <img src={"icons/" + resourceIconMap[card.abilityResource]} /> +{formatNumber(card.abilityStrength, 0, 2)}/s
-                </> : null }
-                {card.ability == Ability.ProduceCard && card.abilityCard ? <>
-                  +<img src={"icons/" + cardsConfig[card.abilityCard!!].icon + ".png"} />
-                  /{(card.cooldownMs ?? 0)/1000}s
-                </> : null }
-              </div>
+              <img src={"icons/" + card?.icon + ".png"} />
               {card.maxDurability ?
                 <ProgressBar 
                   progress={(card.durability ?? 0)/card.maxDurability}
@@ -101,6 +83,14 @@ export default function GridMap() {
                 /> :
                 null
               }
+              <div className="details">
+                <div className="name">{card.name}</div>
+                <div className="ability">
+                  {card.ability == Ability.Produce && card.abilityResource ? <>
+                    <img src={"icons/" + resourceIconMap[card.abilityResource]} /> {card.abilityStrength}/s
+                  </> : null }
+                </div>
+              </div>
             </> : null}
           </div>
         )}
