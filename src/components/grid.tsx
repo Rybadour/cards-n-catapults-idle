@@ -65,7 +65,7 @@ export default function GridMap() {
           >
             {card ? <>
               <div className="title">
-                <img src={"/icons/" + card?.icon + ".png"} />
+                <img src={"icons/" + card?.icon + ".png"} />
                 <div>{card ? card.name : ''}</div>
               </div>
               <div className="ability">
