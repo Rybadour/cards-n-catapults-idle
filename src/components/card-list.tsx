@@ -2,14 +2,18 @@ import classNames from 'classnames';
 import { useContext } from 'react';
 import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
+import { DiscoveryContext } from '../contexts/discovery';
 import { formatNumber } from '../shared/utils';
 import './card-list.scss';
 
 export default function CardList() {
   const cards = useContext(CardsContext);
+  const discovery = useContext(DiscoveryContext);
 
   return <div className="card-list">
-    {Object.values(cardsConfig).map(card =>
+    {Object.values(cardsConfig)
+    .filter(card => discovery.discoveredCards[card.id])
+    .map(card =>
       <div
         key={card.id}
         className={classNames("card", {

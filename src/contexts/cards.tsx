@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 import global from "../config/global";
 import { generateCards } from "../shared/pack-generation";
 import { Card, CardPack, RealizedCard, ResourceType } from "../shared/types";
+import { DiscoveryContext } from "./discovery";
 import { StatsContext } from "./stats";
 
 export type CardsContext = {
@@ -30,6 +31,7 @@ const defaultContext: CardsContext = {
 export const CardsContext = createContext(defaultContext);
 
 export function CardsProvider(props: Record<string, any>) {
+  const discovery = useContext(DiscoveryContext);
   const stats = useContext(StatsContext);
   const [cards, setCards] = useState(defaultContext.cards);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
@@ -89,6 +91,8 @@ export function CardsProvider(props: Record<string, any>) {
     stats.useResource(ResourceType.Gold, cardPack.cost);
 
     const cardsFromPack = generateCards(cardPack);
+    discovery.discoverCards(cardsFromPack);
+
     const newCards = { ...cards };
     cardsFromPack.forEach(card => {
       newCards[card.id] = (newCards[card.id] ?? 0) + 1;

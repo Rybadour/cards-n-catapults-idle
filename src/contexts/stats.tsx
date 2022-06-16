@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import global from "../config/global";
 import { getPerSecFromGrid } from "../gamelogic/abilities";
 import { Grid, ResourceType } from "../shared/types";
 import { enumFromKey } from "../shared/utils";
+import { DiscoveryContext } from "./discovery";
 
 export type StatsContext = {
   resources: Record<ResourceType, number>,
@@ -30,6 +31,7 @@ const defaultContext: StatsContext = {
 export const StatsContext = createContext(defaultContext);
 
 export function StatsProvider(props: Record<string, any>) {
+  const discovery = useContext(DiscoveryContext);
   const [resources, setResources] = useState(defaultContext.resources);
   const [resourcesPerSec, setResourcesPerSec] = useState(defaultContext.resourcesPerSec);
 
@@ -52,6 +54,11 @@ export function StatsProvider(props: Record<string, any>) {
 
   function updatePerSec(grid: Grid) {
     const newPerSec = getPerSecFromGrid(grid);
+    discovery.discoverResources(
+      Object.keys(newPerSec)
+        .map(r => enumFromKey(ResourceType, r)!!)
+        .filter(r => r && newPerSec[r] > 0)
+    );
     setResourcesPerSec(newPerSec);
   }
 

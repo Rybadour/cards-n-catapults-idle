@@ -4,6 +4,7 @@ import { Grid, RealizedCard } from "../shared/types";
 import { getPerSecFromGrid, updateGrid } from "../gamelogic/abilities";
 import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
+import { DiscoveryContext } from "./discovery";
 
 const width = 5;
 const height = 5;
@@ -32,6 +33,7 @@ for (let i = 0; i < height; ++i) {
 export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
+  const discovery = useContext(DiscoveryContext);
   const stats = useContext(StatsContext);
   const cards = useContext(CardsContext);
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
@@ -40,6 +42,9 @@ export function GridProvider(props: Record<string, any>) {
     const results = updateGrid(gridSpaces, elapsed);
     setGridSpaces(results.grid);
 
+    if (results.anyChanged) {
+      discovery.discoverCards(results.newCards);
+    }
     stats.update(elapsed, results.anyChanged, gridSpaces);
 
     cards.addCards(results.extraCards);

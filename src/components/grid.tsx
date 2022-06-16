@@ -12,10 +12,12 @@ import './grid.scss';
 import { StatsContext } from '../contexts/stats';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import resourceIconMap from '../config/resources';
+import { DiscoveryContext } from '../contexts/discovery';
 
 let lastTime = Date.now();
 
 export default function GridMap() {
+  const discovery = useContext(DiscoveryContext);
   const stats = useContext(StatsContext);
   const grid = useContext(GridContext);
   const cards = useContext(CardsContext);
@@ -45,10 +47,14 @@ export default function GridMap() {
 
   return <div className='grid'>
     <div className='resources'>
-      {Object.keys(stats.resources).map(resource =>
+      {Object.keys(stats.resources)
+      .map(res => enumFromKey(ResourceType, res))
+      .filter(resource => resource)
+      .filter(resource => discovery.discoveredResources[resource!!])
+      .map(resource =>
         <Resource
           key={resource}
-          resource={enumFromKey(ResourceType, resource)}
+          resource={resource!!}
           stats={stats}
         />
       )}
@@ -100,9 +106,7 @@ export default function GridMap() {
   </div>;
 }
 
-function Resource(props: {resource: ResourceType | undefined, stats: StatsContext}) {
-  if (!props.resource) return null;
-
+function Resource(props: {resource: ResourceType, stats: StatsContext}) {
   return <div className="resource">
     <img src={"icons/" + resourceIconMap[props.resource]} />
     <div className="amounts">
