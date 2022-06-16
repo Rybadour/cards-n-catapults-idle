@@ -1,6 +1,6 @@
 import cards from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId } from "../shared/types";
 import global from "../config/global";
 
 export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
@@ -33,7 +33,7 @@ export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
 export type UpdateGridResults = {
   grid: Grid,
   anyChanged: boolean,
-  extraCards: Card[],
+  inventoryDelta: Record<CardId, number>,
   newCards: Card[],
 }
 
@@ -41,7 +41,7 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
   const newGrid = [...grid];
   let anyChanged = false;
   const newCards: Card[] = [];
-  const extraCards: Card[] = [];
+  const inventoryDelta: Record<CardId, number> = {};
 
   iterateGrid(grid, (card, x, y) => {
     if (card.foodDrain) {
@@ -72,7 +72,7 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
 
       card.timeLeftMs = card.cooldownMs;
       let found = false;
-      iterateAdjacent(grid, x, y, (adjCard, ax, ay) => {
+      iterateAdjacent(newGrid, x, y, (adjCard, ax, ay) => {
         if (adjCard || found) return;
 
         found = true;
@@ -81,12 +81,12 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
         anyChanged = true;
       });
       if (!found) {
-        extraCards.push(cards[card.abilityCard]);
+        inventoryDelta[card.abilityCard] = (inventoryDelta[card.abilityCard] ?? 0) + 1;
         newCards.push(cards[card.abilityCard]);
       }
     }
   });
-  return {grid: newGrid, anyChanged, extraCards, newCards};
+  return {grid: newGrid, anyChanged, inventoryDelta, newCards};
 }
 
 function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: number) => void) {

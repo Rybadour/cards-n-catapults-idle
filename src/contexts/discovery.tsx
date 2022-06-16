@@ -31,6 +31,8 @@ export function DiscoveryProvider(props: Record<string, any>) {
   const [discoveredResources, setDiscoveredResources] = useState(defaultContext.discoveredResources);
 
   function discoverCards(cards: Card[]) {
+    if (cards.length <= 0) return;
+
     const newDiscover = {...discoveredCards};
     cards.forEach(card => {
       newDiscover[card.id] = true;

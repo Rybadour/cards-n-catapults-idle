@@ -47,7 +47,7 @@ export function GridProvider(props: Record<string, any>) {
     }
     stats.update(elapsed, results.anyChanged, gridSpaces);
 
-    cards.addCards(results.extraCards);
+    cards.updateInventory(results.inventoryDelta);
   }
 
   function replaceCard(x: number, y: number, newCard: RealizedCard) {

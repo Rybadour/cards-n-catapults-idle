@@ -27,6 +27,8 @@ export type Card = {
   abilityMatch?: CardType,
   abilityCard?: string,
   abilityResource?: ResourceType,
+  abilityCost?: number,
+  abilityCostResource?: ResourceType,
 }
 
 export type RealizedCard = Card & {
@@ -40,6 +42,7 @@ export enum Ability {
   ProduceFromMatching,
   ProduceCard,
   BonusToMatching,
+  AutoPlace,
 }
 
 export type Grid = (RealizedCard | null)[][];
@@ -54,3 +57,5 @@ export type CardPack = {
     chance: number,
   }[]
 };
+
+export type CardId = string;

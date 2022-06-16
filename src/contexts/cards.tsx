@@ -2,18 +2,18 @@
 import { createContext, useContext, useState } from "react";
 import global from "../config/global";
 import { generateCards } from "../shared/pack-generation";
-import { Card, CardPack, RealizedCard, ResourceType } from "../shared/types";
+import { Card, CardId, CardPack, RealizedCard, ResourceType } from "../shared/types";
 import { DiscoveryContext } from "./discovery";
 import { StatsContext } from "./stats";
 
 export type CardsContext = {
-  cards: Record<string, number>,
+  cards: Record<CardId, number>,
   selectedCard: Card | null,
   setSelectedCard: (card: Card) => void,
   hasCard: (card: Card) => boolean,
   returnCard: (card: RealizedCard) => void,
   replaceCard: (existingCard: RealizedCard | null) => void,
-  addCards: (newCards: Card[]) => void,
+  updateInventory: (cardsDelta: Record<CardId, number>) => void,
   buyPack: (cardPack: CardPack) => void,
 };
 
@@ -24,7 +24,7 @@ const defaultContext: CardsContext = {
   hasCard: (card) => false,
   returnCard: (card) => {},
   replaceCard: (card) => {},
-  addCards: (newCards) => {},
+  updateInventory: (cardsDelta) => {},
   buyPack: (cardPack) => {},
 };
 
@@ -77,11 +77,14 @@ export function CardsProvider(props: Record<string, any>) {
     cards[card.id] = (cards[card.id] ?? 0) + amount;
   }
 
-  function addCards(newCards: Card[]) {
-    if (newCards.length <= 0) return;
+  function updateInventory(cardsDelta: Record<CardId, number>) {
+    if (Object.keys(cardsDelta).length <= 0) return;
 
     const newCardMap = {...cards};
-    newCards.forEach(card => newCardMap[card.id] = (newCardMap[card.id] ?? 0) + 1)
+    Object.entries(cardsDelta)
+      .forEach(([cardId, amount]) => {
+        newCardMap[cardId] = (newCardMap[cardId] ?? 0) + amount
+      });
     setCards(newCardMap);
   }
 
@@ -104,7 +107,7 @@ export function CardsProvider(props: Record<string, any>) {
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, returnCard, replaceCard, addCards, buyPack,
+        setSelectedCard, hasCard, returnCard, replaceCard, updateInventory, buyPack,
       }}
       {...props}
     />

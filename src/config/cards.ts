@@ -68,6 +68,19 @@ const cards: Record<string, Card> = {
     abilityStrength: 1,
     abilityResource: ResourceType.Wood,
   },
+  campfire: {
+    id: "",
+    name: "Campfire",
+    icon: "campfire",
+    type: CardType.Building,
+    description: "Automatically places food when used up for a cost of wood.",
+    ability: Ability.AutoPlace,
+    abilityStrength: 1,
+    abilityMatch: CardType.Food,
+    abilityCost: 1,
+    abilityCostResource: ResourceType.Wood,
+    cooldownMs: 2000,
+  }
 };
 
 
