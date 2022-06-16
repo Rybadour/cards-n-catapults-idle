@@ -69,7 +69,7 @@ $card-height: 100px;
   padding: 3px;
   position: relative;
 
-  img {
+  img.main-icon {
     width: 50px;
     height: 50px;
     filter: drop-shadow(1px 1px 6px black);
@@ -109,8 +109,15 @@ $card-height: 100px;
       }
     }
   }
-}
 
-.grid .grid-space.card {
-  background-color: #888;
+  &.card {
+    background-color: #888;
+
+    &.expired {
+      background-color: #666;
+      img.main-icon {
+        filter: opacity(0.5);
+      }
+    }
+  }
 }

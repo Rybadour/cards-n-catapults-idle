@@ -32,8 +32,9 @@ export type Card = {
 }
 
 export type RealizedCard = Card & {
-  durability?: number,
   modifiedStrength: number,
+  isExpiredAndReserved: boolean,
+  durability?: number,
   timeLeftMs?: number,
 }
 

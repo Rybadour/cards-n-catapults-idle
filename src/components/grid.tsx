@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect } from 'react';
 
-import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
 import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
@@ -65,12 +64,12 @@ export default function GridMap() {
         {gridRow.map((card, x) => 
           <div
             key={x}
-            className={classNames('grid-space', {card: !!card})}
+            className={classNames('grid-space', {card: !!card, expired: card?.isExpiredAndReserved})}
             onClick={() => addCard(x, y)}
             onContextMenu={(evt) => returnCard(evt, x, y, card)}
           >
             {card ? <>
-              <img src={"icons/" + card?.icon + ".png"} />
+              <img src={"icons/" + card?.icon + ".png"} className="main-icon" />
               {card.maxDurability ?
                 <ProgressBar 
                   progress={(card.durability ?? 0)/card.maxDurability}

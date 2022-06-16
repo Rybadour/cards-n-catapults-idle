@@ -51,7 +51,7 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
         y: number,
       }[] = [];
       iterateAdjacentCards(grid, x, y, (adjCard, ax, ay) => {
-        if (adjCard.type == CardType.Food && adjCard.maxDurability) {
+        if (adjCard.type == CardType.Food && adjCard.maxDurability && !adjCard.isExpiredAndReserved) {
           adjacentFood.push({card: adjCard, x: ax, y: ay});
         } 
       }); 
@@ -60,7 +60,9 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
       adjacentFood.forEach(food => {
         food.card.durability = (food.card.durability ?? 0) - foodDrain;
         if (food.card.durability <= 0) {
-          grid[food.y][food.x] = null;
+          food.card.isExpiredAndReserved = true;
+          food.card.durability = 0;
+          newGrid[food.y][food.x] = food.card;
           anyChanged = true;
         }
       })
@@ -73,7 +75,7 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
       card.timeLeftMs = card.cooldownMs;
       let found = false;
       iterateAdjacent(newGrid, x, y, (adjCard, ax, ay) => {
-        if (adjCard || found) return;
+        if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
 
         found = true;
         newGrid[ay][ax] = createCard(cards[card.abilityCard!!], 1);
@@ -84,6 +86,13 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
         inventoryDelta[card.abilityCard] = (inventoryDelta[card.abilityCard] ?? 0) + 1;
         newCards.push(cards[card.abilityCard]);
       }
+    }
+
+    if (card.ability == Ability.AutoPlace && card.abilityMatch && card.abilityCost && card.abilityCostResource) {
+      card.timeLeftMs = (card.timeLeftMs ?? 0) - elapsed * global.produceModifier;
+      if (card.timeLeftMs > 0) return;
+
+      card.timeLeftMs = card.cooldownMs;
     }
   });
   return {grid: newGrid, anyChanged, inventoryDelta, newCards};

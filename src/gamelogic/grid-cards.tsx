@@ -15,8 +15,9 @@ export function replaceSpaceWithCard(grid: GridContext, cards: CardsContext, x: 
 export function createCard(card: Card, quantity: number): RealizedCard {
   return {
     ...card,
-    durability: (quantity >= 1 ? 1 : quantity) * (card.maxDurability ?? 0),
     modifiedStrength: 0,
+    isExpiredAndReserved: false,
+    durability: (quantity >= 1 ? 1 : quantity) * (card.maxDurability ?? 0),
     timeLeftMs: card.cooldownMs,
   };
 }

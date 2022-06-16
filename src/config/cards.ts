@@ -19,7 +19,7 @@ const cards: Record<string, Card> = {
     icon: "rat",
     type: CardType.Food,
     description: "Produces {{abilityStrength}} gold for every adjacent person.",
-    maxDurability: 10,
+    maxDurability: 1,
     ability: Ability.ProduceFromMatching,
     abilityStrength: 0.25,
     abilityMatch: CardType.Person,

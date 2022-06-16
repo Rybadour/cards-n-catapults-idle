@@ -68,7 +68,7 @@ export function CardsProvider(props: Record<string, any>) {
 
   function addRealizedCard(cards: Record<string, number>, card: RealizedCard) {
     let amount = 1;
-    if (card.durability && card.maxDurability) {
+    if (card.durability !== undefined && card.maxDurability) {
       amount = card.durability / card.maxDurability;
       if (amount > 0.95) {
         amount = 1;
