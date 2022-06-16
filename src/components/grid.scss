@@ -13,6 +13,7 @@
   .resource {
     display: flex;
     flex-direction: row;
+    min-width: 100px;
 
     .amounts {
       display: flex;
