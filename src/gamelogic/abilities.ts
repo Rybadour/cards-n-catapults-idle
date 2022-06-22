@@ -1,6 +1,6 @@
-import cards from "../config/cards";
+import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap } from "../shared/types";
 import global from "../config/global";
 
 export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
@@ -32,16 +32,25 @@ export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
 
 export type UpdateGridResults = {
   grid: Grid,
+  resourcesSpent: ResourcesMap,
   anyChanged: boolean,
   inventoryDelta: Record<CardId, number>,
   newCards: Card[],
 }
 
-export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
-  const newGrid = [...grid];
-  let anyChanged = false;
-  const newCards: Card[] = [];
-  const inventoryDelta: Record<CardId, number> = {};
+export function updateGrid(
+  grid: Grid,
+  resources: Record<ResourceType, number>,
+  cards: Record<string, number>,
+  elapsed: number
+): UpdateGridResults {
+  const results = {
+    grid: [...grid],
+    resourcesSpent: { ...defaultResourcesMap },
+    anyChanged: false,
+    inventoryDelta: {},
+    newCards: [],
+  } as UpdateGridResults;
 
   iterateGrid(grid, (card, x, y) => {
     if (card.foodDrain) {
@@ -62,40 +71,83 @@ export function updateGrid(grid: Grid, elapsed: number): UpdateGridResults {
         if (food.card.durability <= 0) {
           food.card.isExpiredAndReserved = true;
           food.card.durability = 0;
-          newGrid[food.y][food.x] = food.card;
-          anyChanged = true;
+          results.grid[food.y][food.x] = food.card;
+          results.anyChanged = true;
         }
       })
     }
 
-    if (card.ability == Ability.ProduceCard && card.abilityCard) {
-      card.timeLeftMs = (card.timeLeftMs ?? 0) - elapsed * global.produceModifier;
-      if (card.timeLeftMs > 0) return;
+    if (card.cooldownMs) {
+      if ((card.timeLeftMs ?? 0) > 0) {
+        card.timeLeftMs = (card.timeLeftMs ?? 0) - elapsed * global.produceModifier;
+        if (card.timeLeftMs > 0) return;
+      }
 
-      card.timeLeftMs = card.cooldownMs;
-      let found = false;
-      iterateAdjacent(newGrid, x, y, (adjCard, ax, ay) => {
-        if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
+      // Don't activate or reset cooldown if not enough resources
+      if (card.abilityCost && card.abilityCostResource) {
+        if (resources[card.abilityCostResource] < card.abilityCost) {
+          return;
+        }
+      }
 
-        found = true;
-        newGrid[ay][ax] = createCard(cards[card.abilityCard!!], 1);
-        newCards.push(cards[card.abilityCard!!]);
-        anyChanged = true;
-      });
-      if (!found) {
-        inventoryDelta[card.abilityCard] = (inventoryDelta[card.abilityCard] ?? 0) + 1;
-        newCards.push(cards[card.abilityCard]);
+      const didActivate = activateCard(results, cards, card, x, y);
+
+      if (didActivate) {
+        card.timeLeftMs = card.cooldownMs;
+
+        if (card.abilityCost && card.abilityCostResource) {
+          results.resourcesSpent[card.abilityCostResource] += card.abilityCost;
+          resources[card.abilityCostResource] -= card.abilityCost;
+        }
+      } else {
+        card.timeLeftMs = 0;
       }
     }
-
-    if (card.ability == Ability.AutoPlace && card.abilityMatch && card.abilityCost && card.abilityCostResource) {
-      card.timeLeftMs = (card.timeLeftMs ?? 0) - elapsed * global.produceModifier;
-      if (card.timeLeftMs > 0) return;
-
-      card.timeLeftMs = card.cooldownMs;
-    }
   });
-  return {grid: newGrid, anyChanged, inventoryDelta, newCards};
+  return results;
+}
+
+function activateCard(
+  results: UpdateGridResults,
+  cards: Record<string, number>,
+  card: RealizedCard,
+  x: number,
+  y: number
+): boolean {
+  if (card.ability == Ability.ProduceCard && card.abilityCard) {
+    let found = false;
+    iterateAdjacent(results.grid, x, y, (adjCard, ax, ay) => {
+      if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
+
+      found = true;
+      results.grid[ay][ax] = createCard(cardsConfig[card.abilityCard!!], 1);
+      results.newCards.push(cardsConfig[card.abilityCard!!]);
+      results.anyChanged = true;
+    });
+    if (!found) {
+      results.inventoryDelta[card.abilityCard] = (results.inventoryDelta[card.abilityCard] ?? 0) + 1;
+      results.newCards.push(cardsConfig[card.abilityCard]);
+    }
+    return true;
+  }
+
+  if (card.ability == Ability.AutoPlace && card.abilityMatch) {
+    let found = false;
+    iterateGrid(results.grid, (otherCard, x2, y2) => {
+      if (x == x2 && y == y2) return;
+      if (!otherCard || !otherCard.isExpiredAndReserved || found) return;
+      if (otherCard.type != card.abilityMatch) return;
+      if ((cards[otherCard.id] ?? 0) <= 0) return;
+
+      found = true;
+      results.grid[y2][x2] = createCard(cardsConfig[otherCard.id], cards[otherCard.id]);
+      results.inventoryDelta[otherCard.id] = (results.inventoryDelta[otherCard.id] ?? 0) - 1;
+      results.anyChanged = true;
+    });
+    return found;
+  }
+
+  return false;
 }
 
 function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: number) => void) {

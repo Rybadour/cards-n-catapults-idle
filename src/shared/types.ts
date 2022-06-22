@@ -13,6 +13,12 @@ export enum ResourceType {
   Wood = "wood",
 }
 
+export type ResourcesMap = Record<ResourceType, number>;
+export const defaultResourcesMap: ResourcesMap = {
+  [ResourceType.Gold]: 0,
+  [ResourceType.Wood]: 0,
+};
+
 export type Card = {
   id: string,
   name: string,

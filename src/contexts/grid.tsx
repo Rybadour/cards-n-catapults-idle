@@ -39,7 +39,7 @@ export function GridProvider(props: Record<string, any>) {
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
 
   function update(elapsed: number) {
-    const results = updateGrid(gridSpaces, elapsed);
+    const results = updateGrid(gridSpaces, stats.resources, cards.cards, elapsed);
     setGridSpaces(results.grid);
 
     if (results.anyChanged) {

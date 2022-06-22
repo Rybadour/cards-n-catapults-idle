@@ -79,7 +79,7 @@ const cards: Record<string, Card> = {
     abilityMatch: CardType.Food,
     abilityCost: 1,
     abilityCostResource: ResourceType.Wood,
-    cooldownMs: 2000,
+    cooldownMs: 5000,
   }
 };
 

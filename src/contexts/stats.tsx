@@ -1,32 +1,28 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { resourceUsage } from "process";
 import { createContext, useContext, useState } from "react";
 import global from "../config/global";
 import { getPerSecFromGrid } from "../gamelogic/abilities";
-import { Grid, ResourceType } from "../shared/types";
+import { defaultResourcesMap, Grid, ResourcesMap, ResourceType } from "../shared/types";
 import { enumFromKey } from "../shared/utils";
 import { DiscoveryContext } from "./discovery";
 
 export type StatsContext = {
-  resources: Record<ResourceType, number>,
-  resourcesPerSec: Record<ResourceType, number>,
+  resources: ResourcesMap,
+  resourcesPerSec: ResourcesMap,
   update: (elapsed: number, shouldRecalculate: boolean, grid: Grid) => void,
   updatePerSec: (grid: Grid) => void,
   useResource: (resource: ResourceType, amount: number) => void,
 };
 
 const defaultContext: StatsContext = {
-  resources: {
-    [ResourceType.Gold]: global.startingGold,
-    [ResourceType.Wood]: 0,
-  },
-  resourcesPerSec: {
-    [ResourceType.Gold]: 0,
-    [ResourceType.Wood]: 0,
-  },
+  resources: { ...defaultResourcesMap },
+  resourcesPerSec: { ...defaultResourcesMap },
   update: (elapsed, shouldRecalculate, grid) => {},
   updatePerSec: (grid) => {},
   useResource: (resource, amount) => {},
 };
+defaultContext.resources[ResourceType.Gold] = global.startingGold;
 
 export const StatsContext = createContext(defaultContext);
 
