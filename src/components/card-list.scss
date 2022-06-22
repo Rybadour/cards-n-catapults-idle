@@ -11,7 +11,7 @@
 .card-list .card {
   position: relative;
   width: 100%;
-  height: 100px;
+  height: 120px;
   color: white;
   background-color: #555;
   padding: 5px;
@@ -28,7 +28,7 @@
     }
   }
 
-  &.selected {
+  &.selected:not(.empty) {
     border: 2px solid white;
     background-color: #777;
   }
@@ -48,6 +48,27 @@
   .description {
     font-size: 14px;
     padding: 0 5px;
+  }
+
+  .stats {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+
+    .stat {
+      border: 2px solid #333;
+      border-radius: 3px;
+      padding: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      margin-left: 6px;
+    }
   }
 
   .amount {

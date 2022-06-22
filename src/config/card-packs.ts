@@ -8,6 +8,9 @@ const cardPacks: Record<string, CardPack> = {
     cost: 150,
     quantity: 3,
     possibleCards: [{
+      card: cards.campfire,
+      chance: 0.025,
+    }, {
       card: cards.ratDen,
       chance: 0.025,
     }, {
@@ -24,7 +27,7 @@ const cardPacks: Record<string, CardPack> = {
       chance: 0.4,
     }, {
       card: cards.berries,
-      chance: 0.3,
+      chance: 0.275,
     }],
   }
 }

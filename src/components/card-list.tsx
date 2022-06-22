@@ -29,6 +29,23 @@ export default function CardList() {
 
         <div className="description">{card.description}</div>
 
+        <div className="stats">
+          {card.maxDurability ? 
+            <div className="stat">
+              <span>{card.maxDurability}</span>
+              <img src="icons/ham-shank.png" />
+            </div>:
+            null
+          }
+          {card.foodDrain ? 
+            <div className="stat">
+              <span>-{card.foodDrain}</span>
+              <img src="icons/ham-shank.png" />
+              <span>/s</span>
+            </div>:
+            null
+          }
+        </div>
         <span className="amount">{formatNumber(cards.cards[card.id] ?? 0, 0, 1)}</span>
       </div>
     )}
