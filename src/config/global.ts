@@ -1,5 +1,5 @@
 const global = {
-  startingGold: 200,
+  startingGold: 20000,
   startingCards: {beggar: 1, ratDen: 1},
   produceModifier: 1,
 };

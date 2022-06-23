@@ -1,11 +1,11 @@
 export enum CardType {
-  Treasure,
-  Person,
-  Soldier,
-  Monster,
-  Food,
-  Building,
-  Resource,
+  Building = "Building",
+  Food = "Food",
+  Monster = "Monster",
+  Person = "Person",
+  Resource = "Resource",
+  Soldier = "Soldier",
+  Treasure = "Treasure",
 }
 
 export enum ResourceType {

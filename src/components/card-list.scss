@@ -1,21 +1,58 @@
+.card-inventory {
+  box-sizing: border-box;
+  margin: 50px 0;
+  width: 100%;
+  max-width: 350px;
+  max-height: 600px;
+  overflow: auto;
+
+  > .title {
+    font-size: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #AAA;
+  }
+
+  .category {
+    margin-bottom: 10px;
+
+    .header {
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+
+      .label {
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
 .card-list {
   box-sizing: border-box;
-  float: right;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
 
-  width: 140px;
+  width: 100%;
   grid-gap: 10px;
+  margin: 10px;
+  margin-bottom: 20px;
+
+  &.hidden {
+    display: none;
+  }
 }
 
 .card-list .card {
   position: relative;
-  width: 100%;
+  width: 140px;
   height: 120px;
   color: white;
   background-color: #555;
   padding: 5px;
   cursor: pointer;
+  border-radius: 5px;
 
   &:hover {
     background-color: #666;
