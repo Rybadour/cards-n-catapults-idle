@@ -1,7 +1,8 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, DisableBehaviour } from "../shared/types";
 import global from "../config/global";
+import { getRandomFromArray } from "../shared/utils";
 
 export type UpdateGridTotalsResults = {
   resourcesPerSec: Record<ResourceType, number>;
@@ -15,14 +16,18 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
   } as UpdateGridTotalsResults;
 
   iterateGrid(grid, (card, x, y) => {
-    if (card.disableWhenNear) {
-      card.isDisabled = false;
+    if (card.disableBehaviour) {
+      const isDisabling = card.disableBehaviour == DisableBehaviour.Near;
+      card.isDisabled = !isDisabling;
       iterateAdjacentCards(grid, x, y, (adj) => {
         if (card.disableMaxTier && adj.tier <= card.disableMaxTier) {
-          card.isDisabled = true;
+          card.isDisabled = isDisabling;
         }
         if (card.disableCardType && adj.type == card.disableCardType) {
-          card.isDisabled = true;
+          card.isDisabled = isDisabling;
+        }
+        if (card.disableCards && card.disableCards.includes(adj.id)) {
+          card.isDisabled = isDisabling;
         }
       });
       results.grid[y][x] = card;
@@ -48,6 +53,12 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
 
         if (adj.type == card.abilityMatch && adj.abilityResource) {
           results.resourcesPerSec[adj.abilityResource] += (adj.abilityStrength * card.abilityStrength);
+        }
+      });
+    } else if (card.ability == Ability.BonusToEmpty && card.abilityResource) {
+      iterateAdjacent(grid, x, y, (adj) => {
+        if (!adj || adj.isExpiredAndReserved) {
+          results.resourcesPerSec[card.abilityResource!!] += card.abilityStrength;
         }
       });
     }
@@ -142,19 +153,20 @@ function activateCard(
   x: number,
   y: number
 ): boolean {
-  if (card.ability == Ability.ProduceCard && card.abilityCard) {
+  if (card.ability == Ability.ProduceCard && card.abilityCards) {
+    const newCard = getRandomFromArray(card.abilityCards);
     let found = false;
     iterateAdjacent(results.grid, x, y, (adjCard, ax, ay) => {
       if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
 
       found = true;
-      results.grid[ay][ax] = createCard(cardsConfig[card.abilityCard!!], 1);
-      results.newCards.push(cardsConfig[card.abilityCard!!]);
+      results.grid[ay][ax] = createCard(cardsConfig[newCard], 1);
+      results.newCards.push(cardsConfig[newCard]);
       results.anyChanged = true;
     });
     if (!found) {
-      results.inventoryDelta[card.abilityCard] = (results.inventoryDelta[card.abilityCard] ?? 0) + 1;
-      results.newCards.push(cardsConfig[card.abilityCard]);
+      results.inventoryDelta[newCard] = (results.inventoryDelta[newCard] ?? 0) + 1;
+      results.newCards.push(cardsConfig[newCard]);
     }
     return true;
   }

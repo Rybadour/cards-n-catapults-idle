@@ -32,11 +32,12 @@ export type Card = {
   ability: Ability,
   abilityStrength: number,
   abilityMatch?: CardType,
-  abilityCard?: string,
+  abilityCards?: string[],
   abilityResource?: ResourceType,
   abilityCost?: number,
   abilityCostResource?: ResourceType,
-  disableWhenNear?: boolean,
+  disableBehaviour?: DisableBehaviour,
+  disableCards?: string[],
   disableCardType?: CardType,
   disableMaxTier?: number,
 }
@@ -54,7 +55,13 @@ export enum Ability {
   ProduceFromMatching,
   ProduceCard,
   BonusToMatching,
+  BonusToEmpty,
   AutoPlace,
+}
+
+export enum DisableBehaviour {
+  Near = "near",
+  NotNear = "not-near",
 }
 
 export type Grid = (RealizedCard | null)[][];

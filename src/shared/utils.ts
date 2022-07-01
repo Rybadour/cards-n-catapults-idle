@@ -9,3 +9,8 @@ export function enumFromKey<T> (enm: { [s: string]: T}, value: string): T | unde
     ? value as unknown as T
     : undefined;
 }
+
+export function getRandomFromArray<T>(array: T[]) {
+  const r = Math.random() * array.length;
+  return array[Math.floor(r)];
+}
