@@ -45,7 +45,7 @@ const cards: Record<string, Card> = {
     icon: "farmer",
     tier: 2,
     type: CardType.Person,
-    description: "Generates {{abilityStrength}} gold/s.",
+    description: "Generates {{abilityStrength}} gold/s except when near low tier cards.",
     foodDrain: 0.5,
     ability: Ability.Produce,
     abilityStrength: 3,

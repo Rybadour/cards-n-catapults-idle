@@ -61,8 +61,19 @@
 
   &.empty {
     color: #999;
-    .title img {
-      filter: opacity(0.5);
+    .title {
+      img {
+        filter: opacity(0.5);
+      }
+      .tier {
+        .value {
+          color: #444;
+
+        }
+        img {
+          filter: brightness(0.5);
+        }
+      }
     }
   }
 
@@ -75,11 +86,31 @@
     display: flex;
     grid-gap: 10px;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 10px;
 
     img {
       width: 26px;
       height: 26px;
+    }
+
+    .tier {
+      position: relative;
+
+      img {
+        filter: brightness(0.8);
+      }
+
+      .value {
+        display: inline-block;
+        width: 100%;
+        position: absolute;
+        top: 8px;
+        left: 0;
+        color: black;
+        font-weight: bold;
+        text-align: center;
+      }
     }
   }
 

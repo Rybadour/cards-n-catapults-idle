@@ -52,6 +52,10 @@ export default function CardList() {
               <div className="title">
                 <img src={`icons/${card.icon}.png`} />
                 <span>{card.name}</span>
+                <span className="tier">
+                  <img src='icons/round-star.png' />
+                  <span className="value">{card.tier}</span>
+                </span>
               </div>
 
               <div className="description">{card.description}</div>
