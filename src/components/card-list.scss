@@ -4,7 +4,11 @@
   width: 100%;
   max-width: 350px;
   max-height: 600px;
-  overflow: auto;
+  
+  > .cards {
+    overflow: auto;
+    height: 100%;
+  }
 
   > .title {
     font-size: 20px;

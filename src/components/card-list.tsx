@@ -21,6 +21,7 @@ export default function CardList() {
 
   return <div className="card-inventory">
     <div className="title">Your Cards</div>
+    <div className="cards">
     {Object.keys(CardType)
       .map(c => enumFromKey(CardType, c))
       .filter(cardType => cardType)
@@ -83,5 +84,6 @@ export default function CardList() {
         </div>
       </div>
     )}
+    </div>
   </div>;
 }
