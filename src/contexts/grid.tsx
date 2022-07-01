@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
 import { Grid, RealizedCard } from "../shared/types";
-import { getPerSecFromGrid, updateGrid } from "../gamelogic/abilities";
+import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
 import { DiscoveryContext } from "./discovery";
@@ -40,12 +40,16 @@ export function GridProvider(props: Record<string, any>) {
 
   function update(elapsed: number) {
     const results = updateGrid(gridSpaces, stats.resources, cards.cards, elapsed);
-    setGridSpaces(results.grid);
 
+    let totalResults: UpdateGridTotalsResults | null = null;
     if (results.anyChanged) {
       discovery.discoverCards(results.newCards);
+      totalResults = updateGridTotals(results.grid);
+      results.grid = totalResults.grid;
     }
-    stats.update(elapsed, results.anyChanged, gridSpaces);
+    stats.update(elapsed, totalResults?.resourcesPerSec ?? null, results.grid);
+
+    setGridSpaces(results.grid);
 
     cards.updateInventory(results.inventoryDelta);
   }
@@ -54,9 +58,10 @@ export function GridProvider(props: Record<string, any>) {
     const oldCard = gridSpaces[y][x];
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = newCard;
-    setGridSpaces(newGridSpaces);
 
-    stats.updatePerSec(gridSpaces);
+    const results = updateGridTotals(newGridSpaces);
+    setGridSpaces(results.grid);
+    stats.updatePerSec(results.resourcesPerSec);
 
     return oldCard;
   }
@@ -64,9 +69,10 @@ export function GridProvider(props: Record<string, any>) {
   function returnCard(x: number, y: number) {
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = null;
-    setGridSpaces(newGridSpaces);
 
-    stats.updatePerSec(gridSpaces);
+    const results = updateGridTotals(newGridSpaces);
+    setGridSpaces(results.grid);
+    stats.updatePerSec(results.resourcesPerSec);
   }
 
   return (

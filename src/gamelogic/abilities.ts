@@ -3,31 +3,57 @@ import { createCard } from "./grid-cards";
 import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap } from "../shared/types";
 import global from "../config/global";
 
-export function getPerSecFromGrid(grid: Grid): Record<ResourceType, number> {
-  let resourcesPerSec = {
-    [ResourceType.Gold]: 0,
-    [ResourceType.Wood]: 0,
-  };
+export type UpdateGridTotalsResults = {
+  resourcesPerSec: Record<ResourceType, number>;
+  grid: Grid;
+};
+
+export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
+  const results = {
+    grid: [...grid],
+    resourcesPerSec: { ...defaultResourcesMap },
+  } as UpdateGridTotalsResults;
 
   iterateGrid(grid, (card, x, y) => {
+    if (card.disableWhenNear) {
+      card.isDisabled = false;
+      iterateAdjacentCards(grid, x, y, (adj) => {
+        if (card.disableMaxTier && adj.tier <= card.disableMaxTier) {
+          card.isDisabled = true;
+        }
+        if (card.disableCardType && adj.type == card.disableCardType) {
+          card.isDisabled = true;
+        }
+      });
+      results.grid[y][x] = card;
+    }
+  });
+
+  iterateGrid(grid, (card, x, y) => {
+    if (card.isDisabled) return;
+
     if (card.ability == Ability.Produce && card.abilityResource) {
-      resourcesPerSec[card.abilityResource] += card.abilityStrength;
+      results.resourcesPerSec[card.abilityResource] += card.abilityStrength;
     } else if (card.ability == Ability.ProduceFromMatching) {
       iterateAdjacentCards(grid, x, y, (adj) => {
+        if (adj.isDisabled) return;
+
         if (adj.type == card.abilityMatch && card.abilityResource) {
-          resourcesPerSec[card.abilityResource] += card.abilityStrength;
+          results.resourcesPerSec[card.abilityResource] += card.abilityStrength;
         }
       });
     } else if (card.ability == Ability.BonusToMatching) {
       iterateAdjacentCards(grid, x, y, (adj) => {
+        if (adj.isDisabled) return;
+
         if (adj.type == card.abilityMatch && adj.abilityResource) {
-          resourcesPerSec[adj.abilityResource] += (adj.abilityStrength * card.abilityStrength);
+          results.resourcesPerSec[adj.abilityResource] += (adj.abilityStrength * card.abilityStrength);
         }
       });
     }
   });
 
-  return resourcesPerSec;
+  return results;
 }
 
 export type UpdateGridResults = {
@@ -53,6 +79,8 @@ export function updateGrid(
   } as UpdateGridResults;
 
   iterateGrid(grid, (card, x, y) => {
+    if (card.isDisabled) return;
+
     if (card.foodDrain) {
       const adjacentFood: {
         card: RealizedCard,

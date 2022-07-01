@@ -23,6 +23,7 @@ export type Card = {
   id: string,
   name: string,
   icon: string,
+  tier: number,
   type: CardType,
   description: string,
   foodDrain?: number,
@@ -35,11 +36,15 @@ export type Card = {
   abilityResource?: ResourceType,
   abilityCost?: number,
   abilityCostResource?: ResourceType,
+  disableWhenNear?: boolean,
+  disableCardType?: CardType,
+  disableMaxTier?: number,
 }
 
 export type RealizedCard = Card & {
   modifiedStrength: number,
   isExpiredAndReserved: boolean,
+  isDisabled: boolean,
   durability?: number,
   timeLeftMs?: number,
 }
