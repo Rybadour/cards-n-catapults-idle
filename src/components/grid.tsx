@@ -12,6 +12,7 @@ import { StatsContext } from '../contexts/stats';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import resourceIconMap from '../config/resources';
 import { DiscoveryContext } from '../contexts/discovery';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 let lastTime = Date.now();
 
@@ -64,12 +65,18 @@ export default function GridMap() {
         {gridRow.map((card, x) => 
           <div
             key={x}
-            className={classNames('grid-space', {card: !!card, expired: card?.isExpiredAndReserved})}
+            className={classNames('grid-space', {
+              card: !!card,
+              expired: card?.isExpiredAndReserved || card?.isDisabled
+            })}
             onClick={() => addCard(x, y)}
             onContextMenu={(evt) => returnCard(evt, x, y, card)}
           >
             {card ? <>
               <img src={"icons/" + card?.icon + ".png"} className="main-icon" />
+              {card.isDisabled ? <div className="disabled-slash">
+                <FontAwesomeIcon icon="slash" size='3x' />
+              </div> : null}
               {card.maxDurability ?
                 <ProgressBar 
                   progress={(card.durability ?? 0)/card.maxDurability}
@@ -90,6 +97,7 @@ export default function GridMap() {
               }
               <div className="details">
                 <div className="name">{card.name}</div>
+                <div className="status">{card.isDisabled ? '(disabled)' : ''}</div>
                 <div className="ability">
                   {card.ability == Ability.Produce && card.abilityResource ? <>
                     <img src={"icons/" + resourceIconMap[card.abilityResource]} /> {card.abilityStrength}/s
