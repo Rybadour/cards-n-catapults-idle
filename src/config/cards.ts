@@ -1,4 +1,4 @@
-import { Ability, Card, CardType, DisableBehaviour, MatchingGridShape, ResourceType } from "../shared/types";
+import { Ability, Card, CardType, MatchingGridShape, ResourceType } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 
 const cards: Record<string, Card> = {
@@ -25,9 +25,11 @@ const cards: Record<string, Card> = {
     ability: Ability.Produce,
     abilityStrength: 3,
     abilityResource: ResourceType.Gold,
-    disableBehaviour: DisableBehaviour.Near,
-    disableMaxTier: 1,
-    disableShape: MatchingGridShape.OrthoAdjacent,
+    disableShape: {
+      onMatch: true,
+      shape: MatchingGridShape.OrthoAdjacent,
+      maxTier: 1,
+    }
   },
   forager: {
     id: "",
@@ -41,9 +43,11 @@ const cards: Record<string, Card> = {
     abilityCards: ['mushrooms', 'berries'],
     abilityShape: MatchingGridShape.OrthoAdjacent,
     cooldownMs: 10000,
-    disableBehaviour: DisableBehaviour.NotNear,
-    disableCards: ['forest'],
-    disableShape: MatchingGridShape.OrthoAdjacent,
+    disableShape: {
+      onMatch: false,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cards: ['forest'],
+    }
   },
   ratSnack: {
     id: "",
@@ -132,8 +136,10 @@ const cards: Record<string, Card> = {
     ability: Ability.AutoPlace,
     abilityStrength: 1,
     abilityMatch: [CardType.Food],
-    abilityCost: 1,
-    abilityCostResource: ResourceType.Wood,
+    abilityCost: {
+      resource: ResourceType.Wood,
+      cost: 1,
+    },
     cooldownMs: 5000,
   },
   pigPen: {
@@ -147,9 +153,11 @@ const cards: Record<string, Card> = {
     ability: Ability.DrawCard,
     abilityStrength: 1,
     abilityCards: ['haunch'],
-    disableBehaviour: DisableBehaviour.NotNear,
-    disableCardType: CardType.Food,
-    disableShape: MatchingGridShape.OrthoAdjacent,
+    disableShape: {
+      onMatch: false,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cardType: CardType.Food,
+    },
     cooldownMs: 5000,
   },
   carpenter: {
@@ -162,11 +170,12 @@ const cards: Record<string, Card> = {
     ability: Ability.BonusToMatching,
     abilityStrength: 0.2,
     abilityMatch: [CardType.Person, CardType.Building],
-    abilityResource: ResourceType.Wood,
-    abilityCostPerSec: 2,
+    abilityCostPerSec: {
+      resource: ResourceType.Wood,
+      cost: 2,
+    },
     abilityShape: MatchingGridShape.RowAndColumn,
     // TODO: Implement cards using resource per second
-    // Different shaped bonuses
     // bonuses applied to non-resource production.
   }
 };

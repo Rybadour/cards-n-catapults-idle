@@ -1,6 +1,6 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, DisableBehaviour, MatchingGridShape } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape } from "../shared/types";
 import global from "../config/global";
 import { getRandomFromArray } from "../shared/utils";
 
@@ -15,20 +15,24 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
     resourcesPerSec: { ...defaultResourcesMap },
   } as UpdateGridTotalsResults;
 
+  // Disable and reset
   iterateGrid(grid, (card, x, y) => {
-    if (card.disableBehaviour && card.disableShape) {
-      const isDisabling = card.disableBehaviour == DisableBehaviour.Near;
+    card.bonus = 1;
+
+    if (card.disableShape) {
+      const isDisabling = card.disableShape.onMatch;
+      const disable = card.disableShape;
       card.isDisabled = !isDisabling;
-      iterateGridShapeCards(grid, x, y, card.disableShape, (adj) => {
+      iterateGridShapeCards(grid, x, y, card.disableShape.shape, (adj) => {
         if (adj.isExpiredAndReserved) return;
 
-        if (card.disableMaxTier && adj.tier <= card.disableMaxTier) {
+        if (disable.maxTier && adj.tier <= disable.maxTier) {
           card.isDisabled = isDisabling;
         }
-        if (card.disableCardType && adj.type == card.disableCardType) {
+        if (disable.cardType && adj.type == disable.cardType) {
           card.isDisabled = isDisabling;
         }
-        if (card.disableCards && card.disableCards.includes(adj.id)) {
+        if (disable.cards && disable.cards.includes(adj.id)) {
           card.isDisabled = isDisabling;
         }
       });
@@ -36,34 +40,45 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
     }
   });
 
+  // Apply bonuses
   iterateGrid(grid, (card, x, y) => {
     if (card.isDisabled || card.isExpiredAndReserved) return;
 
+    if (card.ability == Ability.BonusToMatching && card.abilityMatch && card.abilityShape) {
+      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
+        if (card.abilityMatch?.includes(adj.type)) {
+          adj.bonus += card.abilityStrength;
+        }
+      });
+    }
+  });
+
+  // Calculate per second abilities
+  iterateGrid(grid, (card, x, y) => {
+    if (card.isDisabled || card.isExpiredAndReserved) return;
+
+    const strength = card.abilityStrength * card.bonus;
+
     if (card.ability == Ability.Produce && card.abilityResource) {
-      results.resourcesPerSec[card.abilityResource] += card.abilityStrength;
+      results.resourcesPerSec[card.abilityResource] += strength;
     } else if (card.ability == Ability.ProduceFromMatching && card.abilityShape) {
       iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
         if (adj.isDisabled) return;
 
         if (card.abilityMatch?.includes(adj.type) && card.abilityResource) {
-          results.resourcesPerSec[card.abilityResource] += card.abilityStrength;
-        }
-      });
-    } else if (card.ability == Ability.BonusToMatching && card.abilityShape) {
-      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
-        if (adj.isDisabled) return;
-
-        // TODO: Time to stop doing double the logic here. Should just increase strength in a different pass
-        if (card.abilityMatch?.includes(adj.type) && adj.abilityResource) {
-          results.resourcesPerSec[adj.abilityResource] += (adj.abilityStrength * card.abilityStrength);
+          results.resourcesPerSec[card.abilityResource] += strength;
         }
       });
     } else if (card.ability == Ability.BonusToEmpty && card.abilityResource && card.abilityShape) {
       iterateGridShape(grid, x, y, card.abilityShape, (adj) => {
         if (!adj || adj.isExpiredAndReserved) {
-          results.resourcesPerSec[card.abilityResource!!] += card.abilityStrength;
+          results.resourcesPerSec[card.abilityResource!!] += strength;
         }
       });
+    }
+
+    if (card.abilityCostPerSec) {
+      results.resourcesPerSec[card.abilityCostPerSec.resource] -= card.abilityCostPerSec.cost;
     }
   });
 
@@ -121,13 +136,13 @@ export function updateGrid(
 
     if (card.cooldownMs) {
       if ((card.timeLeftMs ?? 0) > 0) {
-        card.timeLeftMs = (card.timeLeftMs ?? 0) - elapsed * global.produceModifier;
+        card.timeLeftMs = (card.timeLeftMs ?? 0) - (elapsed * card.bonus * global.produceModifier);
         if (card.timeLeftMs > 0) return;
       }
 
       // Don't activate or reset cooldown if not enough resources
-      if (card.abilityCost && card.abilityCostResource) {
-        if (resources[card.abilityCostResource] < card.abilityCost) {
+      if (card.abilityCost) {
+        if (resources[card.abilityCost.resource] < card.abilityCost.cost) {
           return;
         }
       }
@@ -137,9 +152,9 @@ export function updateGrid(
       if (didActivate) {
         card.timeLeftMs = card.cooldownMs;
 
-        if (card.abilityCost && card.abilityCostResource) {
-          results.resourcesSpent[card.abilityCostResource] += card.abilityCost;
-          resources[card.abilityCostResource] -= card.abilityCost;
+        if (card.abilityCost) {
+          results.resourcesSpent[card.abilityCost.resource] += card.abilityCost.cost;
+          resources[card.abilityCost.resource] -= card.abilityCost.cost;
         }
       } else {
         card.timeLeftMs = 0;

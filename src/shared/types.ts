@@ -34,19 +34,26 @@ export type Card = {
   abilityMatch?: CardType[],
   abilityCards?: string[],
   abilityResource?: ResourceType,
-  abilityCost?: number,
-  abilityCostPerSec?: number,
-  abilityCostResource?: ResourceType,
+  abilityCost?: {
+    resource: ResourceType,
+    cost: number,
+  },
+  abilityCostPerSec?: {
+    resource: ResourceType,
+    cost: number,
+  },
   abilityShape?: MatchingGridShape,
-  disableBehaviour?: DisableBehaviour,
-  disableCards?: string[],
-  disableCardType?: CardType,
-  disableMaxTier?: number,
-  disableShape?: MatchingGridShape,
+  disableShape?: {
+    onMatch: boolean,
+    shape: MatchingGridShape,
+    cards?: string[],
+    cardType?: CardType,
+    maxTier?: number,
+  },
 }
 
 export type RealizedCard = Card & {
-  modifiedStrength: number,
+  bonus: number,
   isExpiredAndReserved: boolean,
   isDisabled: boolean,
   durability?: number,
@@ -68,9 +75,9 @@ export enum MatchingGridShape {
   RowAndColumn = "rowAndColumn",
 }
 
-export enum DisableBehaviour {
-  Near = "near",
-  NotNear = "not-near",
+export enum AbilityImprovementStat {
+  Strength,
+  Cooldown,
 }
 
 export type Grid = (RealizedCard | null)[][];
