@@ -1,6 +1,6 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, DisableBehaviour } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, DisableBehaviour, MatchingGridShape } from "../shared/types";
 import global from "../config/global";
 import { getRandomFromArray } from "../shared/utils";
 
@@ -16,10 +16,10 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
   } as UpdateGridTotalsResults;
 
   iterateGrid(grid, (card, x, y) => {
-    if (card.disableBehaviour) {
+    if (card.disableBehaviour && card.disableShape) {
       const isDisabling = card.disableBehaviour == DisableBehaviour.Near;
       card.isDisabled = !isDisabling;
-      iterateAdjacentCards(grid, x, y, (adj) => {
+      iterateGridShapeCards(grid, x, y, card.disableShape, (adj) => {
         if (adj.isExpiredAndReserved) return;
 
         if (card.disableMaxTier && adj.tier <= card.disableMaxTier) {
@@ -41,24 +41,25 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
 
     if (card.ability == Ability.Produce && card.abilityResource) {
       results.resourcesPerSec[card.abilityResource] += card.abilityStrength;
-    } else if (card.ability == Ability.ProduceFromMatching) {
-      iterateAdjacentCards(grid, x, y, (adj) => {
+    } else if (card.ability == Ability.ProduceFromMatching && card.abilityShape) {
+      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
         if (adj.isDisabled) return;
 
-        if (adj.type == card.abilityMatch && card.abilityResource) {
+        if (card.abilityMatch?.includes(adj.type) && card.abilityResource) {
           results.resourcesPerSec[card.abilityResource] += card.abilityStrength;
         }
       });
-    } else if (card.ability == Ability.BonusToMatching) {
-      iterateAdjacentCards(grid, x, y, (adj) => {
+    } else if (card.ability == Ability.BonusToMatching && card.abilityShape) {
+      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
         if (adj.isDisabled) return;
 
-        if (adj.type == card.abilityMatch && adj.abilityResource) {
+        // TODO: Time to stop doing double the logic here. Should just increase strength in a different pass
+        if (card.abilityMatch?.includes(adj.type) && adj.abilityResource) {
           results.resourcesPerSec[adj.abilityResource] += (adj.abilityStrength * card.abilityStrength);
         }
       });
-    } else if (card.ability == Ability.BonusToEmpty && card.abilityResource) {
-      iterateAdjacent(grid, x, y, (adj) => {
+    } else if (card.ability == Ability.BonusToEmpty && card.abilityResource && card.abilityShape) {
+      iterateGridShape(grid, x, y, card.abilityShape, (adj) => {
         if (!adj || adj.isExpiredAndReserved) {
           results.resourcesPerSec[card.abilityResource!!] += card.abilityStrength;
         }
@@ -100,7 +101,7 @@ export function updateGrid(
         x: number,
         y: number,
       }[] = [];
-      iterateAdjacentCards(grid, x, y, (adjCard, ax, ay) => {
+      iterateGridShapeCards(grid, x, y, MatchingGridShape.OrthoAdjacent, (adjCard, ax, ay) => {
         if (adjCard.type == CardType.Food && adjCard.maxDurability && !adjCard.isExpiredAndReserved) {
           adjacentFood.push({card: adjCard, x: ax, y: ay});
         } 
@@ -155,10 +156,10 @@ function activateCard(
   x: number,
   y: number
 ): boolean {
-  if (card.ability == Ability.ProduceCard && card.abilityCards) {
+  if (card.ability == Ability.ProduceCard && card.abilityCards && card.abilityShape) {
     const newCard = getRandomFromArray(card.abilityCards);
     let found = false;
-    iterateAdjacent(results.grid, x, y, (adjCard, ax, ay) => {
+    iterateGridShape(results.grid, x, y, card.abilityShape, (adjCard, ax, ay) => {
       if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
 
       found = true;
@@ -185,7 +186,7 @@ function activateCard(
     iterateGrid(results.grid, (otherCard, x2, y2) => {
       if (x == x2 && y == y2) return;
       if (!otherCard || !otherCard.isExpiredAndReserved || found) return;
-      if (otherCard.type != card.abilityMatch) return;
+      if (!card.abilityMatch?.includes(otherCard.type)) return;
       if ((cards[otherCard.id] ?? 0) <= 0) return;
 
       found = true;
@@ -209,26 +210,39 @@ function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: nu
   }
 }
 
-const adjacents = [{x: 0, y: 1}, {x: 0, y: -1}, {x: 1, y: 0}, {x: -1, y: 0}];
-function iterateAdjacent(
-  grid: Grid, x: number, y: number,
+const orthoAdjacent = [{x: 0, y: 1}, {x: 0, y: -1}, {x: 1, y: 0}, {x: -1, y: 0}];
+function iterateGridShape(
+  grid: Grid, x: number, y: number, shape: MatchingGridShape,
   callback: (card: RealizedCard | null, x: number, y: number) => void
 ) {
-  adjacents.forEach(adj => {
-    const ax = x + adj.x, ay = y + adj.y;
-    if (0 > ay || ay >= grid.length || 0 > ax || ax >= grid[ay].length) {
-      return;
-    }
+  if (shape == MatchingGridShape.OrthoAdjacent) {
+    orthoAdjacent.forEach(adj => {
+      const ax = x + adj.x, ay = y + adj.y;
+      if (0 > ay || ay >= grid.length || 0 > ax || ax >= grid[ay].length) {
+        return;
+      }
 
-    callback(grid[ay][ax]!!, ax, ay);
-  });
+      callback(grid[ay][ax], ax, ay);
+    });
+  } else if (shape == MatchingGridShape.RowAndColumn) {
+    for (let x2 = 0; x2 < grid[y].length; x2++) {
+      if (x2 == x) continue;
+
+      callback(grid[y][x2], x2, y);
+    }
+    for (let y2 = 0; y2 < grid.length; y2++) {
+      if (y2 == y) continue;
+
+      callback(grid[y2][x], x, y2);
+    }
+  }
 }
 
-function iterateAdjacentCards(
-  grid: Grid, x: number, y: number,
+function iterateGridShapeCards(
+  grid: Grid, x: number, y: number, shape: MatchingGridShape,
   callback: (card: RealizedCard, x: number, y: number) => void
 ) {
-  iterateAdjacent(grid, x, y, (card, ax, ay) => {
+  iterateGridShape(grid, x, y, shape, (card, ax, ay) => {
     if (card) {
       callback(card!!, ax, ay);
     }

@@ -31,15 +31,18 @@ export type Card = {
   cooldownMs?: number,
   ability: Ability,
   abilityStrength: number,
-  abilityMatch?: CardType,
+  abilityMatch?: CardType[],
   abilityCards?: string[],
   abilityResource?: ResourceType,
   abilityCost?: number,
+  abilityCostPerSec?: number,
   abilityCostResource?: ResourceType,
+  abilityShape?: MatchingGridShape,
   disableBehaviour?: DisableBehaviour,
   disableCards?: string[],
   disableCardType?: CardType,
   disableMaxTier?: number,
+  disableShape?: MatchingGridShape,
 }
 
 export type RealizedCard = Card & {
@@ -58,6 +61,11 @@ export enum Ability {
   BonusToMatching,
   BonusToEmpty,
   AutoPlace,
+}
+
+export enum MatchingGridShape {
+  OrthoAdjacent = "ortho",
+  RowAndColumn = "rowAndColumn",
 }
 
 export enum DisableBehaviour {

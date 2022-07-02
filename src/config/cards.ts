@@ -1,4 +1,4 @@
-import { Ability, Card, CardType, DisableBehaviour, ResourceType } from "../shared/types";
+import { Ability, Card, CardType, DisableBehaviour, MatchingGridShape, ResourceType } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 
 const cards: Record<string, Card> = {
@@ -27,6 +27,7 @@ const cards: Record<string, Card> = {
     abilityResource: ResourceType.Gold,
     disableBehaviour: DisableBehaviour.Near,
     disableMaxTier: 1,
+    disableShape: MatchingGridShape.OrthoAdjacent,
   },
   forager: {
     id: "",
@@ -38,9 +39,11 @@ const cards: Record<string, Card> = {
     ability: Ability.ProduceCard,
     abilityStrength: 1,
     abilityCards: ['mushrooms', 'berries'],
+    abilityShape: MatchingGridShape.OrthoAdjacent,
     cooldownMs: 10000,
     disableBehaviour: DisableBehaviour.NotNear,
     disableCards: ['forest'],
+    disableShape: MatchingGridShape.OrthoAdjacent,
   },
   ratSnack: {
     id: "",
@@ -52,8 +55,9 @@ const cards: Record<string, Card> = {
     maxDurability: 12,
     ability: Ability.ProduceFromMatching,
     abilityStrength: 0.25,
-    abilityMatch: CardType.Person,
+    abilityMatch: [CardType.Person],
     abilityResource: ResourceType.Gold,
+    abilityShape: MatchingGridShape.OrthoAdjacent,
   },
   berries: {
     id: "",
@@ -65,7 +69,8 @@ const cards: Record<string, Card> = {
     maxDurability: 8,
     ability: Ability.BonusToMatching,
     abilityStrength: 0.2,
-    abilityMatch: CardType.Person,
+    abilityMatch: [CardType.Person],
+    abilityShape: MatchingGridShape.OrthoAdjacent,
   },
   mushrooms: {
     id: "",
@@ -78,6 +83,7 @@ const cards: Record<string, Card> = {
     ability: Ability.BonusToEmpty,
     abilityStrength: 0.1,
     abilityResource: ResourceType.Gold,
+    abilityShape: MatchingGridShape.OrthoAdjacent,
   },
   haunch: {
     id: "",
@@ -89,7 +95,8 @@ const cards: Record<string, Card> = {
     maxDurability: 5,
     ability: Ability.BonusToMatching,
     abilityStrength: 1,
-    abilityMatch: CardType.Person,
+    abilityMatch: [CardType.Person],
+    abilityShape: MatchingGridShape.OrthoAdjacent,
   },
   forest: {
     id: "",
@@ -112,6 +119,7 @@ const cards: Record<string, Card> = {
     ability: Ability.ProduceCard,
     abilityStrength: 1,
     abilityCards: ["ratSnack"],
+    abilityShape: MatchingGridShape.OrthoAdjacent,
     cooldownMs: 20000,
   },
   campfire: {
@@ -123,7 +131,7 @@ const cards: Record<string, Card> = {
     description: "Automatically places food when used up for a cost of wood.",
     ability: Ability.AutoPlace,
     abilityStrength: 1,
-    abilityMatch: CardType.Food,
+    abilityMatch: [CardType.Food],
     abilityCost: 1,
     abilityCostResource: ResourceType.Wood,
     cooldownMs: 5000,
@@ -141,7 +149,25 @@ const cards: Record<string, Card> = {
     abilityCards: ['haunch'],
     disableBehaviour: DisableBehaviour.NotNear,
     disableCardType: CardType.Food,
+    disableShape: MatchingGridShape.OrthoAdjacent,
     cooldownMs: 5000,
+  },
+  carpenter: {
+    id: "",
+    name: "Carpenter",
+    icon: "hammer-nails",
+    tier: 2,
+    type: CardType.Building,
+    description: "Improves buildings and people in the same row and column by {{abilityPercent}}.",
+    ability: Ability.BonusToMatching,
+    abilityStrength: 0.2,
+    abilityMatch: [CardType.Person, CardType.Building],
+    abilityResource: ResourceType.Wood,
+    abilityCostPerSec: 2,
+    abilityShape: MatchingGridShape.RowAndColumn,
+    // TODO: Implement cards using resource per second
+    // Different shaped bonuses
+    // bonuses applied to non-resource production.
   }
 };
 
