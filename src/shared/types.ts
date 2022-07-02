@@ -54,6 +54,7 @@ export enum Ability {
   Produce,
   ProduceFromMatching,
   ProduceCard,
+  DrawCard,
   BonusToMatching,
   BonusToEmpty,
   AutoPlace,

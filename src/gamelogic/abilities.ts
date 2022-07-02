@@ -20,6 +20,8 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
       const isDisabling = card.disableBehaviour == DisableBehaviour.Near;
       card.isDisabled = !isDisabling;
       iterateAdjacentCards(grid, x, y, (adj) => {
+        if (adj.isExpiredAndReserved) return;
+
         if (card.disableMaxTier && adj.tier <= card.disableMaxTier) {
           card.isDisabled = isDisabling;
         }
@@ -35,7 +37,7 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
   });
 
   iterateGrid(grid, (card, x, y) => {
-    if (card.isDisabled) return;
+    if (card.isDisabled || card.isExpiredAndReserved) return;
 
     if (card.ability == Ability.Produce && card.abilityResource) {
       results.resourcesPerSec[card.abilityResource] += card.abilityStrength;
@@ -168,6 +170,13 @@ function activateCard(
       results.inventoryDelta[newCard] = (results.inventoryDelta[newCard] ?? 0) + 1;
       results.newCards.push(cardsConfig[newCard]);
     }
+    return true;
+  }
+
+  if (card.ability == Ability.DrawCard && card.abilityCards) {
+    const newCard = getRandomFromArray(card.abilityCards);
+    results.inventoryDelta[newCard] = (results.inventoryDelta[newCard] ?? 0) + 1;
+    results.newCards.push(cardsConfig[newCard]);
     return true;
   }
 
