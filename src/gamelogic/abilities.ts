@@ -20,9 +20,6 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
   iterateGrid(grid, (card, x, y) => {
     card.bonus = 1;
 
-    // TODO: CostPerSec should disable here
-    // And should reenable when there is a enough for 1 second of running time.
-
     card.isDisabled = false;
     if (card.abilityCostPerSec) {
       if (!canAfford(stats.resources, card.abilityCostPerSec)) {

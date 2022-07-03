@@ -175,8 +175,6 @@ const cards: Record<string, Card> = {
       cost: 2,
     },
     abilityShape: MatchingGridShape.RowAndColumn,
-    // TODO: Implement cards using resource per second
-    // bonuses applied to non-resource production.
   }
 };
 
