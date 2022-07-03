@@ -34,14 +34,8 @@ export type Card = {
   abilityMatch?: CardType[],
   abilityCards?: string[],
   abilityResource?: ResourceType,
-  abilityCost?: {
-    resource: ResourceType,
-    cost: number,
-  },
-  abilityCostPerSec?: {
-    resource: ResourceType,
-    cost: number,
-  },
+  abilityCost?: ResourceCost,
+  abilityCostPerSec?: ResourceCost,
   abilityShape?: MatchingGridShape,
   disableShape?: {
     onMatch: boolean,
@@ -58,6 +52,11 @@ export type RealizedCard = Card & {
   isDisabled: boolean,
   durability?: number,
   timeLeftMs?: number,
+}
+
+export type ResourceCost = {
+  resource: ResourceType,
+  cost: number,
 }
 
 export enum Ability {

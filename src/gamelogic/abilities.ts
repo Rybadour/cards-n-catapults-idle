@@ -1,15 +1,16 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost } from "../shared/types";
 import global from "../config/global";
 import { getRandomFromArray } from "../shared/utils";
+import { StatsContext } from "../contexts/stats";
 
 export type UpdateGridTotalsResults = {
   resourcesPerSec: Record<ResourceType, number>;
   grid: Grid;
 };
 
-export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
+export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTotalsResults {
   const results = {
     grid: [...grid],
     resourcesPerSec: { ...defaultResourcesMap },
@@ -19,7 +20,18 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
   iterateGrid(grid, (card, x, y) => {
     card.bonus = 1;
 
-    if (card.disableShape) {
+    // TODO: CostPerSec should disable here
+    // And should reenable when there is a enough for 1 second of running time.
+
+    card.isDisabled = false;
+    if (card.abilityCostPerSec) {
+      if (!canAfford(stats.resources, card.abilityCostPerSec)) {
+        card.isDisabled = true;
+      }
+    }
+
+    // Should only change disabled state if the above logic didn't disable the card already
+    if (card.disableShape && !card.isDisabled) {
       const isDisabling = card.disableShape.onMatch;
       const disable = card.disableShape;
       card.isDisabled = !isDisabling;
@@ -36,8 +48,9 @@ export function updateGridTotals(grid: Grid): UpdateGridTotalsResults {
           card.isDisabled = isDisabling;
         }
       });
-      results.grid[y][x] = card;
     }
+
+    results.grid[y][x] = card;
   });
 
   // Apply bonuses
@@ -108,6 +121,15 @@ export function updateGrid(
   } as UpdateGridResults;
 
   iterateGrid(grid, (card, x, y) => {
+    if (card.abilityCostPerSec) {
+      if (card.isDisabled && canAfford(resources, card.abilityCostPerSec)) {
+        results.anyChanged = true;
+      } else if (!card.isDisabled && resources[card.abilityCostPerSec.resource] <= 0) {
+        card.isDisabled = true;
+        results.anyChanged = true;
+      }
+    }
+
     if (card.isDisabled) return;
 
     if (card.foodDrain) {
@@ -142,7 +164,7 @@ export function updateGrid(
 
       // Don't activate or reset cooldown if not enough resources
       if (card.abilityCost) {
-        if (resources[card.abilityCost.resource] < card.abilityCost.cost) {
+        if (!canAfford(resources, card.abilityCost)) {
           return;
         }
       }
@@ -262,4 +284,8 @@ function iterateGridShapeCards(
       callback(card!!, ax, ay);
     }
   });
+}
+
+function canAfford(resources: ResourcesMap, cost: ResourceCost) {
+  return resources[cost.resource] >= cost.cost;
 }

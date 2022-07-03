@@ -44,7 +44,7 @@ export function GridProvider(props: Record<string, any>) {
     let totalResults: UpdateGridTotalsResults | null = null;
     if (results.anyChanged) {
       discovery.discoverCards(results.newCards);
-      totalResults = updateGridTotals(results.grid);
+      totalResults = updateGridTotals(results.grid, stats);
       results.grid = totalResults.grid;
     }
     stats.update(elapsed, totalResults?.resourcesPerSec ?? null, results.grid);
@@ -59,7 +59,7 @@ export function GridProvider(props: Record<string, any>) {
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = newCard;
 
-    const results = updateGridTotals(newGridSpaces);
+    const results = updateGridTotals(newGridSpaces, stats);
     setGridSpaces(results.grid);
     stats.updatePerSec(results.resourcesPerSec);
 
@@ -70,7 +70,7 @@ export function GridProvider(props: Record<string, any>) {
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = null;
 
-    const results = updateGridTotals(newGridSpaces);
+    const results = updateGridTotals(newGridSpaces, stats);
     setGridSpaces(results.grid);
     stats.updatePerSec(results.resourcesPerSec);
   }
