@@ -31,24 +31,6 @@ const cards: Record<string, Card> = {
       maxTier: 1,
     }
   },
-  forager: {
-    id: "",
-    name: "Forager",
-    icon: "granary",
-    tier: 2,
-    type: CardType.Building,
-    description: "Generates Mushrooms and Berries when next to a forest.",
-    ability: Ability.ProduceCard,
-    abilityStrength: 1,
-    abilityCards: ['mushrooms', 'berries'],
-    abilityShape: MatchingGridShape.OrthoAdjacent,
-    cooldownMs: 10000,
-    disableShape: {
-      onMatch: false,
-      shape: MatchingGridShape.OrthoAdjacent,
-      cards: ['forest'],
-    }
-  },
   ratSnack: {
     id: "",
     name: "Rat Snack",
@@ -152,6 +134,24 @@ const cards: Record<string, Card> = {
       cost: 1,
     },
     cooldownMs: 5000,
+  },
+  forager: {
+    id: "",
+    name: "Forager",
+    icon: "granary",
+    tier: 2,
+    type: CardType.Building,
+    description: "Generates Mushrooms and Berries when next to a forest.",
+    ability: Ability.ProduceCard,
+    abilityStrength: 1,
+    abilityCards: ['mushrooms', 'berries'],
+    abilityShape: MatchingGridShape.OrthoAdjacent,
+    cooldownMs: 10000,
+    disableShape: {
+      onMatch: false,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cards: ['forest'],
+    }
   },
   pigPen: {
     id: "",

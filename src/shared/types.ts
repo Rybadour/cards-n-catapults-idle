@@ -85,12 +85,18 @@ export type Grid = (RealizedCard | null)[][];
 export type CardPack = {
   id: string,
   name: string,
-  cost: number,
+  baseCost: number,
+  costGrowth: number,
   quantity: number,
   possibleCards: {
     card: Card,
     chance: number,
   }[]
+};
+
+export type RealizedCardPack = CardPack & {
+  cost: number,
+  amountBought: number,
 };
 
 export type CardId = string;

@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
 import global from "../config/global";
-import { generateCards } from "../shared/pack-generation";
-import { Card, CardId, CardPack, RealizedCard, ResourceType } from "../shared/types";
+import { Card, CardId, RealizedCard } from "../shared/types";
 import { DiscoveryContext } from "./discovery";
-import { StatsContext } from "./stats";
 
 export type CardsContext = {
   cards: Record<CardId, number>,
@@ -14,7 +12,7 @@ export type CardsContext = {
   returnCard: (card: RealizedCard) => void,
   replaceCard: (existingCard: RealizedCard | null) => void,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
-  buyPack: (cardPack: CardPack) => void,
+  drawCards: (cardsToDraw: Card[]) => void,
 };
 
 const defaultContext: CardsContext = {
@@ -25,14 +23,13 @@ const defaultContext: CardsContext = {
   returnCard: (card) => {},
   replaceCard: (card) => {},
   updateInventory: (cardsDelta) => {},
-  buyPack: (cardPack) => {},
+  drawCards: (cardsToDraw) => {},
 };
 
 export const CardsContext = createContext(defaultContext);
 
 export function CardsProvider(props: Record<string, any>) {
   const discovery = useContext(DiscoveryContext);
-  const stats = useContext(StatsContext);
   const [cards, setCards] = useState(defaultContext.cards);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
@@ -88,16 +85,11 @@ export function CardsProvider(props: Record<string, any>) {
     setCards(newCardMap);
   }
 
-  function buyPack(cardPack: CardPack) {
-    if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
-
-    stats.useResource(ResourceType.Gold, cardPack.cost);
-
-    const cardsFromPack = generateCards(cardPack);
-    discovery.discoverCards(cardsFromPack);
+  function drawCards(cardsToDraw: Card[]) {
+    discovery.discoverCards(cardsToDraw);
 
     const newCards = { ...cards };
-    cardsFromPack.forEach(card => {
+    cardsToDraw.forEach(card => {
       newCards[card.id] = (newCards[card.id] ?? 0) + 1;
     });
     setCards(newCards);
@@ -107,7 +99,7 @@ export function CardsProvider(props: Record<string, any>) {
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, returnCard, replaceCard, updateInventory, buyPack,
+        setSelectedCard, hasCard, returnCard, replaceCard, updateInventory, drawCards,
       }}
       {...props}
     />

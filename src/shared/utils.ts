@@ -14,3 +14,7 @@ export function getRandomFromArray<T>(array: T[]) {
   const r = Math.random() * array.length;
   return array[Math.floor(r)];
 }
+
+export function getExponentialValue(base: number, growth: number, growthCount: number) {
+  return base * Math.pow(growth, growthCount);
+}
