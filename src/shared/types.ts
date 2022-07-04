@@ -60,6 +60,7 @@ export type ResourceCost = {
 }
 
 export enum Ability {
+  None,
   Produce,
   ProduceFromMatching,
   ProduceCard,

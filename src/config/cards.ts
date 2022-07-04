@@ -102,6 +102,17 @@ const cards: Record<string, Card> = {
     abilityMatch: [CardType.Person],
     abilityShape: MatchingGridShape.OrthoAdjacent,
   },
+  bread: {
+    id: "",
+    name: "Bread",
+    icon: "sliced-bread",
+    tier: 2,
+    type: CardType.Food,
+    description: "Just food, that's it.",
+    maxDurability: 40,
+    ability: Ability.None,
+    abilityStrength: 0,
+  },
   forest: {
     id: "",
     name: "Forest",

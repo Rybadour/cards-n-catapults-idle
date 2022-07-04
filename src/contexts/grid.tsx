@@ -41,9 +41,12 @@ export function GridProvider(props: Record<string, any>) {
   function update(elapsed: number) {
     const results = updateGrid(gridSpaces, stats.resources, cards.cards, elapsed);
 
+    if (results.newCards.length > 0) {
+      discovery.discoverCards(results.newCards);
+    }
+
     let totalResults: UpdateGridTotalsResults | null = null;
     if (results.anyChanged) {
-      discovery.discoverCards(results.newCards);
       totalResults = updateGridTotals(results.grid, stats);
       results.grid = totalResults.grid;
     }

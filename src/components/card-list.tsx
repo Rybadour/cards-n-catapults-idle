@@ -32,7 +32,7 @@ export default function CardList() {
       }))
       .filter(({cardType, cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>
-      <div className="category">
+      <div className="category" key={cardType}>
         <div className="header" onClick={() => onToggleCategory(cardType!!)}>
           {closedCategories[cardType!!] ?
             <FontAwesomeIcon icon="chevron-up" /> :
