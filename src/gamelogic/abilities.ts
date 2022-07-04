@@ -1,6 +1,6 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD } from "../shared/types";
 import global from "../config/global";
 import { getRandomFromArray } from "../shared/utils";
 import { StatsContext } from "../contexts/stats";
@@ -79,9 +79,12 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
           results.resourcesPerSec[card.abilityResource] += strength;
         }
       });
-    } else if (card.ability == Ability.BonusToEmpty && card.abilityResource && card.abilityShape) {
+    } else if (card.ability == Ability.ProduceFromCards && card.abilityShape && card.abilityCards && card.abilityResource) {
       iterateGridShape(grid, x, y, card.abilityShape, (adj) => {
-        if (!adj || adj.isExpiredAndReserved) {
+        if (adj && adj.isDisabled) return;
+
+        const cardId = adj ? adj.id : EMPTY_CARD;
+        if (card.abilityCards!!.includes(cardId)) {
           results.resourcesPerSec[card.abilityResource!!] += strength;
         }
       });
@@ -245,20 +248,12 @@ function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: nu
 }
 
 const orthoAdjacent = [{x: 0, y: 1}, {x: 0, y: -1}, {x: 1, y: 0}, {x: -1, y: 0}];
+const diagAdjacent = [{x: 1, y: 1}, {x: 1, y: -1}, {x: -1, y: -1}, {x: -1, y: 1}];
 function iterateGridShape(
   grid: Grid, x: number, y: number, shape: MatchingGridShape,
   callback: (card: RealizedCard | null, x: number, y: number) => void
 ) {
-  if (shape == MatchingGridShape.OrthoAdjacent) {
-    orthoAdjacent.forEach(adj => {
-      const ax = x + adj.x, ay = y + adj.y;
-      if (0 > ay || ay >= grid.length || 0 > ax || ax >= grid[ay].length) {
-        return;
-      }
-
-      callback(grid[ay][ax], ax, ay);
-    });
-  } else if (shape == MatchingGridShape.RowAndColumn) {
+  if (shape == MatchingGridShape.RowAndColumn) {
     for (let x2 = 0; x2 < grid[y].length; x2++) {
       if (x2 == x) continue;
 
@@ -269,6 +264,23 @@ function iterateGridShape(
 
       callback(grid[y2][x], x, y2);
     }
+  } else {
+    let adjacent: {x: number, y: number}[] = [];
+    if (shape === MatchingGridShape.OrthoAdjacent || shape === MatchingGridShape.AllAdjacent) {
+      adjacent = adjacent.concat(orthoAdjacent);
+    }
+    if (shape === MatchingGridShape.DiagAdjacent || shape === MatchingGridShape.AllAdjacent) {
+      adjacent = adjacent.concat(diagAdjacent);
+    }
+
+    adjacent.forEach(adj => {
+      const ax = x + adj.x, ay = y + adj.y;
+      if (0 > ay || ay >= grid.length || 0 > ax || ax >= grid[ay].length) {
+        return;
+      }
+
+      callback(grid[ay][ax], ax, ay);
+    });
   }
 }
 

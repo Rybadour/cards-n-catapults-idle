@@ -1,6 +1,6 @@
 const global = {
-  startingGold: 20000,
-  startingCards: {beggar: 1},
+  startingGold: 200,
+  startingCards: {beggar: 1, mushrooms: 3},
   produceModifier: 1,
   isDebug: true,
 };

@@ -1,4 +1,4 @@
-import { Ability, Card, CardType, MatchingGridShape, ResourceType } from "../shared/types";
+import { Ability, Card, CardType, EMPTY_CARD, MatchingGridShape, ResourceType } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 
 const cards: Record<string, Card> = {
@@ -64,12 +64,13 @@ const cards: Record<string, Card> = {
     icon: "mushrooms",
     tier: 1,
     type: CardType.Food,
-    description: "Produces {{abilityStrength}} gold for every nearby empty tile.",
+    description: "Produces {{abilityStrength}} gold for every nearby empty or mushroom tile.",
     maxDurability: 10,
-    ability: Ability.BonusToEmpty,
+    ability: Ability.ProduceFromCards,
     abilityStrength: 0.1,
+    abilityCards: ['mushrooms', EMPTY_CARD],
     abilityResource: ResourceType.Gold,
-    abilityShape: MatchingGridShape.OrthoAdjacent,
+    abilityShape: MatchingGridShape.AllAdjacent,
   },
   haunch: {
     id: "",

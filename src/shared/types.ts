@@ -63,15 +63,17 @@ export enum Ability {
   None,
   Produce,
   ProduceFromMatching,
+  ProduceFromCards,
   ProduceCard,
   DrawCard,
   BonusToMatching,
-  BonusToEmpty,
   AutoPlace,
 }
 
 export enum MatchingGridShape {
-  OrthoAdjacent = "ortho",
+  OrthoAdjacent = "orthoAdjacent",
+  DiagAdjacent = "diagAdjacent",
+  AllAdjacent = "allAdjacent",
   RowAndColumn = "rowAndColumn",
 }
 
@@ -100,3 +102,5 @@ export type RealizedCardPack = CardPack & {
 };
 
 export type CardId = string;
+
+export const EMPTY_CARD = 'EMPTY';

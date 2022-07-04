@@ -6,7 +6,7 @@ const cardPacks: Record<string, CardPack> = {
     id: "",
     name: "Dirt",
     baseCost: 150,
-    costGrowth: 1.1,
+    costGrowth: 1.08,
     quantity: 4,
     possibleCards: [{
       card: cards.campfire,
@@ -37,7 +37,7 @@ const cardPacks: Record<string, CardPack> = {
   stone: {
     id: "",
     name: "Stone Pack",
-    baseCost: 1000,
+    baseCost: 1200,
     costGrowth: 1.1,
     quantity: 4,
     possibleCards: [{
