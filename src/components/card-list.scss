@@ -6,7 +6,6 @@
   max-height: 600px;
   
   > .cards {
-    overflow: auto;
     height: 100%;
   }
 
@@ -40,7 +39,7 @@
 
   width: 100%;
   grid-gap: 10px;
-  margin: 10px;
+  padding: 10px;
   margin-bottom: 20px;
 
   &.hidden {
@@ -51,6 +50,7 @@
 $card-width: 160px;
 $card-height: 220px;
 .card-list .card-container {
+  position: relative;
   width: $card-width;
   height: 40px;
   overflow: hidden;
@@ -62,7 +62,9 @@ $card-height: 220px;
 }
 
 .card-list .card {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: $card-width;
   height: $card-height;
   color: white;
@@ -71,9 +73,11 @@ $card-height: 220px;
   cursor: pointer;
   border-radius: 5px;
   box-sizing: border-box;
+  border: 2px solid #555;
 
   &:hover {
     background-color: #666;
+    box-shadow: #222 0px 0px 3px 2px;
   }
 
   &.empty {
@@ -86,7 +90,7 @@ $card-height: 220px;
   }
 
   &.selected:not(.empty) {
-    outline: 2px solid white;
+    border: 2px solid white;
     background-color: #777;
   }
 

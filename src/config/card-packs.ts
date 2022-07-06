@@ -4,7 +4,7 @@ import cards from "./cards";
 const cardPacks: Record<string, CardPack> = {
   dirt: {
     id: "",
-    name: "Dirt",
+    name: "Dirt Pack",
     baseCost: 150,
     costGrowth: 1.08,
     quantity: 4,

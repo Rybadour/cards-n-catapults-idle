@@ -3,9 +3,9 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
-import { faChevronDown, faChevronUp, faSlash } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faSlash, faQuestion } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faChevronDown, faChevronUp, faSlash);
+library.add(faChevronDown, faChevronUp, faSlash, faQuestion);
 dom.watch();
 
 ReactDOM.render(

@@ -11,4 +11,9 @@ body {
 .App {
   display: flex;
   justify-content: center;
+  padding: 0 30px;
+}
+
+* {
+  box-sizing: border-box;
 }
