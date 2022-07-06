@@ -48,10 +48,23 @@
   }
 }
 
+$card-width: 160px;
+$card-height: 220px;
+.card-list .card-container {
+  width: $card-width;
+  height: 40px;
+  overflow: hidden;
+
+  &:hover {
+    z-index: 10;
+    overflow: visible;
+  }
+}
+
 .card-list .card {
   position: relative;
-  width: 140px;
-  height: 130px;
+  width: $card-width;
+  height: $card-height;
   color: white;
   background-color: #555;
   padding: 5px;
@@ -64,19 +77,10 @@
   }
 
   &.empty {
-    color: #999;
     .title {
+      color: #999;
       img {
         filter: opacity(0.5);
-      }
-      .tier {
-        .value {
-          color: #444;
-
-        }
-        img {
-          filter: brightness(0.5);
-        }
       }
     }
   }
@@ -90,36 +94,44 @@
     display: flex;
     grid-gap: 10px;
     align-items: center;
-    justify-content: space-between;
     margin-bottom: 10px;
+    padding-right: 3px;
+
+    .name {
+      width: 100%;
+    }
 
     img {
       width: 26px;
       height: 26px;
     }
+  }
 
-    .tier {
-      position: relative;
+  .tier {
+    position: relative;
+    width: 30px;
+    height: 30px;
 
-      img {
-        filter: brightness(0.8);
-      }
+    img {
+      width: 100%;
+      filter: brightness(0.8);
+    }
 
-      .value {
-        display: inline-block;
-        width: 100%;
-        position: absolute;
-        top: 8px;
-        left: 0;
-        color: black;
-        font-weight: bold;
-        text-align: center;
-      }
+    .value {
+      display: inline-block;
+      width: 100%;
+      position: absolute;
+      top: 10px;
+      left: 0;
+      color: black;
+      font-weight: bold;
+      text-align: center;
     }
   }
 
   .description {
-    font-size: 14px;
+    margin-top: 20px;
+    font-size: 16px;
     padding: 0 5px;
   }
 
@@ -127,6 +139,8 @@
     position: absolute;
     bottom: 5px;
     left: 5px;
+    display: flex;
+    grid-gap: 10px;
 
     .stat {
       border: 2px solid #333;
@@ -135,18 +149,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-    }
 
-    img {
-      width: 16px;
-      height: 16px;
-      margin-left: 6px;
+      img {
+        width: 16px;
+        height: 16px;
+        margin-left: 6px;
+      }
     }
-  }
-
-  .amount {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
   }
 }

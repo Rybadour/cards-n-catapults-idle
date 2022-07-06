@@ -42,43 +42,44 @@ export default function CardList() {
         </div>
         <div className={classNames("card-list", {hidden: closedCategories[cardType!!]})}>
           {cardList.map(card =>
-            <div
-              key={card.id}
-              className={classNames("card", {
-                selected: card === cards.selectedCard,
-                empty: (cards.cards[card.id] ?? 0) <= 0,
-              })}
-              onClick={() => cards.setSelectedCard(card)}
-            >
-              <div className="title">
-                <img src={`icons/${card.icon}.png`} />
-                <span>{card.name}</span>
-                <span className="tier">
-                  <img src='icons/round-star.png' />
-                  <span className="value">{card.tier}</span>
-                </span>
-              </div>
+            <div className="card-container" key={card.id}>
+              <div
+                className={classNames("card", {
+                  selected: card === cards.selectedCard,
+                  empty: (cards.cards[card.id] ?? 0) <= 0,
+                })}
+                onClick={() => cards.setSelectedCard(card)}
+              >
+                <div className="title">
+                  <img src={`icons/${card.icon}.png`} />
+                  <span className="name">{card.name}</span>
+                  <span className="amount">{formatNumber(cards.cards[card.id] ?? 0, 0, 1)}</span>
+                </div>
 
-              <div className="description">{card.description}</div>
+                <div className="description">{card.description}</div>
 
-              <div className="stats">
-                {card.maxDurability ? 
-                  <div className="stat">
-                    <span>{card.maxDurability}</span>
-                    <img src="icons/ham-shank.png" />
-                  </div>:
-                  null
-                }
-                {card.foodDrain ? 
-                  <div className="stat">
-                    <span>-{card.foodDrain}</span>
-                    <img src="icons/ham-shank.png" />
-                    <span>/s</span>
-                  </div>:
-                  null
-                }
+                <div className="stats">
+                  {card.maxDurability ? 
+                    <div className="stat">
+                      <span>{card.maxDurability}</span>
+                      <img src="icons/ham-shank.png" />
+                    </div>:
+                    null
+                  }
+                  {card.foodDrain ? 
+                    <div className="stat">
+                      <span>-{card.foodDrain}</span>
+                      <img src="icons/ham-shank.png" />
+                      <span>/s</span>
+                    </div>:
+                    null
+                  }
+                  <div className="tier">
+                    <img src='icons/round-star.png' />
+                    <span className="value">{card.tier}</span>
+                  </div>
+                </div>
               </div>
-              <span className="amount">{formatNumber(cards.cards[card.id] ?? 0, 0, 1)}</span>
             </div>
           )}
         </div>
