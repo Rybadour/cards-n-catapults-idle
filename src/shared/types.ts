@@ -58,6 +58,12 @@ export type RealizedCard = Card & {
   isDisabled: boolean,
   durability?: number,
   timeLeftMs?: number,
+  cardMarks: Record<string, MarkType>,
+}
+
+export enum MarkType {
+  Buff,
+  Exclusion
 }
 
 export type ResourceCost = {

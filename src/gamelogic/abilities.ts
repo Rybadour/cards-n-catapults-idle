@@ -1,6 +1,6 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType } from "../shared/types";
 import global from "../config/global";
 import { getRandomFromArray } from "../shared/utils";
 import { StatsContext } from "../contexts/stats";
@@ -19,6 +19,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
   // Disable and reset
   iterateGrid(grid, (card, x, y) => {
     card.bonus = 1;
+    card.cardMarks = {};
 
     card.isDisabled = false;
     if (card.abilityCostPerSec) {
@@ -32,17 +33,23 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
       const isDisabling = card.disableShape.onMatch;
       const disable = card.disableShape;
       card.isDisabled = !isDisabling;
-      iterateGridShapeCards(grid, x, y, card.disableShape.shape, (adj) => {
+      iterateGridShapeCards(grid, x, y, card.disableShape.shape, (adj, x2, y2) => {
         if (adj.isExpiredAndReserved) return;
 
+        let setDisabled = false;
         if (disable.maxTier && adj.tier <= disable.maxTier) {
-          card.isDisabled = isDisabling;
+          setDisabled = true;
         }
         if (disable.cardType && adj.type == disable.cardType) {
-          card.isDisabled = isDisabling;
+          setDisabled = true;
         }
         if (disable.cards && disable.cards.includes(adj.id)) {
+          setDisabled = true;
+        }
+
+        if (setDisabled) {
           card.isDisabled = isDisabling;
+          card.cardMarks[`${x2}:${y2}`] = isDisabling ? MarkType.Exclusion : MarkType.Buff;
         }
       });
     }
@@ -55,9 +62,10 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
     if (card.isDisabled || card.isExpiredAndReserved) return;
 
     if (card.ability == Ability.BonusToMatching && card.abilityMatch && card.abilityShape) {
-      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
+      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj, x2, y2) => {
         if (card.abilityMatch?.includes(adj.type)) {
           adj.bonus += card.abilityStrength;
+          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
         }
       });
     }
@@ -87,21 +95,23 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
       results.resourcesPerSec[card.abilityResource] += strength;
 
     } else if (card.ability == Ability.ProduceFromMatching && card.abilityShape) {
-      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
+      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj, x2, y2) => {
         if (adj.isDisabled) return;
 
         if (card.abilityMatch?.includes(adj.type) && card.abilityResource) {
           results.resourcesPerSec[card.abilityResource] += strength;
+          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
         }
       });
 
     } else if (card.ability == Ability.ProduceFromCards && card.abilityShape && card.abilityCards && card.abilityResource) {
-      iterateGridShape(grid, x, y, card.abilityShape, (adj) => {
+      iterateGridShape(grid, x, y, card.abilityShape, (adj, x2, y2) => {
         if (adj && adj.isDisabled) return;
 
         const cardId = (adj && !adj.isExpiredAndReserved) ? adj.id : EMPTY_CARD;
         if (card.abilityCards!!.includes(cardId)) {
           results.resourcesPerSec[card.abilityResource!!] += strength;
+          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
         }
       });
     }

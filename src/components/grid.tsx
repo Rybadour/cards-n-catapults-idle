@@ -1,11 +1,11 @@
 import classNames from 'classnames';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
 import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
 import { ProgressBar } from './progress-bar';
-import { Ability, RealizedCard, ResourceType } from '../shared/types';
+import { Ability, MarkType, RealizedCard, ResourceType } from '../shared/types';
 
 import './grid.scss';
 import { StatsContext } from '../contexts/stats';
@@ -45,6 +45,15 @@ export default function GridMap() {
     return () => clearInterval(interval);
   }, [grid]);
 
+
+  const [marks, setMarks] = useState<Record<string, MarkType>>({});
+
+  const hoverCard = useCallback((card: RealizedCard | null) => {
+    if (card) {
+      setMarks(card.cardMarks);
+    }
+  }, []);
+
   return <div className='grid'>
     <div className='resources'>
       {Object.keys(stats.resources)
@@ -67,10 +76,14 @@ export default function GridMap() {
             key={x}
             className={classNames('grid-space', {
               card: !!card,
-              expired: card?.isExpiredAndReserved || card?.isDisabled
+              expired: card?.isExpiredAndReserved || card?.isDisabled,
+              'marked-exclusion': marks[`${x}:${y}`] == MarkType.Exclusion,
+              'marked-buff': marks[`${x}:${y}`] == MarkType.Buff,
             })}
             onClick={() => addCard(x, y)}
             onContextMenu={(evt) => returnCard(evt, x, y, card)}
+            onMouseEnter={() => hoverCard(card)}
+            onMouseLeave={() => setMarks({})}
           >
             {card ? <>
               <img src={"icons/" + card?.icon + ".png"} className="main-icon" />

@@ -132,4 +132,14 @@ $card-height: 100px;
       align-items: center;
     }
   }
+
+  &.marked-exclusion {
+    //border: 2px solid rgba(255, 0, 0, 0.5);
+    box-shadow: rgba(255, 0, 0, 1) 0px 0px 4px 2px;
+  }
+
+  &.marked-buff {
+    //border: 1px solid rgba(0, 255, 0, 0.5);
+    box-shadow: rgba(76, 197, 76, 1) 0px 0px 4px 2px;
+  }
 }
