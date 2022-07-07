@@ -9,6 +9,10 @@ body {
 }
 
 .App {
+
+}
+
+.content {
   display: flex;
   justify-content: center;
   padding: 0 30px;

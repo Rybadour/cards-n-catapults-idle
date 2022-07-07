@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames';
 import { useCallback, useContext } from 'react';
 import { CardPacksContext } from '../contexts/card-packs';
 import { DiscoveryContext } from '../contexts/discovery';
@@ -26,7 +27,9 @@ export default function CardPacks() {
 
         <div className="cards">
           {cardPack.possibleCards.map(({card}) => 
-            <div className="possible-card" key={card.id}>
+            <div
+              className={classNames("possible-card", {discovered: discovery.discoveredCards[card.id]})}
+              key={card.id}>
               {discovery.discoveredCards[card.id] ? 
                 <img src={"icons/" + card.icon + ".png"} /> :
                 <FontAwesomeIcon icon="question" />

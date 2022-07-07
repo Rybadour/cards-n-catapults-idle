@@ -9,6 +9,7 @@ import CardPacks from './components/card-packs';
 import { StatsProvider } from './contexts/stats';
 import { DiscoveryProvider } from './contexts/discovery';
 import { CardPacksProvider } from './contexts/card-packs';
+import Header from './components/header';
 
 function App() {
   return (
@@ -18,9 +19,13 @@ function App() {
     <CardPacksProvider>
     <GridProvider>
       <div className="App">
-        <CardPacks />
-        <Grid />
-        <CardList />
+        <Header />
+
+        <div className="content">
+          <CardPacks />
+          <Grid />
+          <CardList />
+        </div>
       </div>
     </GridProvider>
     </CardPacksProvider>

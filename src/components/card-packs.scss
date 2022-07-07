@@ -44,6 +44,12 @@
       height: 40px;
       border-radius: 3px;
 
+      &:not(.discovered) {
+        color: #888;
+        background-color: #666;
+        border: 1px dashed #333;
+      }
+
       img {
         width: 16px;
         height: 16px;
