@@ -83,7 +83,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
       iterateGridShape(grid, x, y, card.abilityShape, (adj) => {
         if (adj && adj.isDisabled) return;
 
-        const cardId = adj ? adj.id : EMPTY_CARD;
+        const cardId = (adj && !adj.isExpiredAndReserved) ? adj.id : EMPTY_CARD;
         if (card.abilityCards!!.includes(cardId)) {
           results.resourcesPerSec[card.abilityResource!!] += strength;
         }

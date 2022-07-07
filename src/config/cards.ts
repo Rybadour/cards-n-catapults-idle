@@ -64,11 +64,11 @@ const cards: Record<string, Card> = {
     icon: "mushrooms",
     tier: 1,
     type: CardType.Food,
-    description: "Produces {{abilityStrength}} gold for every nearby empty or mushroom tile.",
+    description: "Produces {{abilityStrength}} gold for every nearby empty, mushroom, or forest tile.",
     maxDurability: 10,
     ability: Ability.ProduceFromCards,
     abilityStrength: 0.1,
-    abilityCards: ['mushrooms', EMPTY_CARD],
+    abilityCards: ['mushrooms', 'forest', EMPTY_CARD],
     abilityResource: ResourceType.Gold,
     abilityShape: MatchingGridShape.AllAdjacent,
   },
@@ -126,7 +126,7 @@ const cards: Record<string, Card> = {
     icon: "campfire",
     tier: 1,
     type: CardType.Building,
-    description: "Automatically places food when used up for a cost of wood.",
+    description: "Automatically places food every {{cooldownSecs}} seconds for {{abilityCostValue}} wood.",
     ability: Ability.AutoPlace,
     abilityStrength: 1,
     abilityMatch: [CardType.Food],
@@ -142,7 +142,7 @@ const cards: Record<string, Card> = {
     icon: "granary",
     tier: 2,
     type: CardType.Building,
-    description: "Generates Mushrooms and Berries when next to a forest.",
+    description: "Generates Mushrooms and Berries when next to a forest every {{cooldownSecs}} seconds.",
     ability: Ability.ProduceCard,
     abilityStrength: 1,
     abilityCards: ['mushrooms', 'berries'],
@@ -206,6 +206,9 @@ Object.keys(cards)
     }
     if (card.ability == Ability.BonusToMatching) {
       replaceInDescription('abilityPercent', formatNumber(card.abilityStrength * 100, 0, 0)+"%");
+    }
+    if (card.abilityCost) {
+      replaceInDescription('abilityCostValue', formatNumber(card.abilityCost.cost, 0, 1));
     }
   });
 
