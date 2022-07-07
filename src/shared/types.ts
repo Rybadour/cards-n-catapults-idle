@@ -37,6 +37,12 @@ export type Card = {
   abilityCost?: ResourceCost,
   abilityCostPerSec?: ResourceCost,
   abilityShape?: MatchingGridShape,
+  abilityStrengthModifier?: {
+    factor: number,
+    whenMatching: boolean,
+    types: CardType[],
+    gridShape: MatchingGridShape,
+  },
   disableShape?: {
     onMatch: boolean,
     shape: MatchingGridShape,

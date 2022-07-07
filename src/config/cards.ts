@@ -25,6 +25,12 @@ const cards: Record<string, Card> = {
     ability: Ability.Produce,
     abilityStrength: 3,
     abilityResource: ResourceType.Gold,
+    abilityStrengthModifier: {
+      factor: 0.333,
+      whenMatching: false,
+      types: [CardType.Food],
+      gridShape: MatchingGridShape.OrthoAdjacent,
+    },
     disableShape: {
       onMatch: true,
       shape: MatchingGridShape.OrthoAdjacent,
@@ -126,7 +132,7 @@ const cards: Record<string, Card> = {
     icon: "campfire",
     tier: 1,
     type: CardType.Building,
-    description: "Automatically places food every {{cooldownSecs}} seconds for {{abilityCostValue}} wood.",
+    description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{abilityCostValue}} wood.",
     ability: Ability.AutoPlace,
     abilityStrength: 1,
     abilityMatch: [CardType.Food],
@@ -180,7 +186,7 @@ const cards: Record<string, Card> = {
     type: CardType.Building,
     description: "Improves buildings and people in the same row and column by {{abilityPercent}}.",
     ability: Ability.BonusToMatching,
-    abilityStrength: 0.2,
+    abilityStrength: 0.25,
     abilityMatch: [CardType.Person, CardType.Building],
     abilityCostPerSec: {
       resource: ResourceType.Wood,

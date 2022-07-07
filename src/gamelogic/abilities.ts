@@ -61,6 +61,20 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
         }
       });
     }
+    
+    if (card.abilityStrengthModifier) {
+      const mod = card.abilityStrengthModifier;
+      let isModified = !mod.whenMatching;
+      iterateGridShapeCards(grid, x, y, mod.gridShape, (adj) => {
+        if (mod.types.includes(adj.type)) {
+          isModified = mod.whenMatching;
+        }
+      });
+
+      if (isModified) {
+        card.bonus *= mod.factor;
+      }
+    }
   });
 
   // Calculate per second abilities
@@ -71,6 +85,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
 
     if (card.ability == Ability.Produce && card.abilityResource) {
       results.resourcesPerSec[card.abilityResource] += strength;
+
     } else if (card.ability == Ability.ProduceFromMatching && card.abilityShape) {
       iterateGridShapeCards(grid, x, y, card.abilityShape, (adj) => {
         if (adj.isDisabled) return;
@@ -79,6 +94,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
           results.resourcesPerSec[card.abilityResource] += strength;
         }
       });
+
     } else if (card.ability == Ability.ProduceFromCards && card.abilityShape && card.abilityCards && card.abilityResource) {
       iterateGridShape(grid, x, y, card.abilityShape, (adj) => {
         if (adj && adj.isDisabled) return;
