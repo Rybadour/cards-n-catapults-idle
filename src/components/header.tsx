@@ -83,9 +83,10 @@ function HelpModal() {
           This is the rate at which they eat food and it’s always listed as per second. Cards generally eat food that is
           adjacent to them (orthogonally) and will eat food from all those cards at an equal rate.</p>
           <p>Ex. In these screenshots we have a Beggar next to one food card and another Beggar surrounded by food cards.</p>
+          <img className="help-screenshot" src="food-drain-screenshot1.png" />
           <p>A Beggar eats food at 0.2 units per second so in the first screenshot it will eat that food card at 0.2
-          units per second. In the second since it’s surrounded by 4 food cards each will be drained at ¼ the speed or
-          0.05 units per second.</p>
+          units per second. In the second since it’s surrounded by 4 food cards each will be drained at <b>¼ the speed</b> or
+          0.05 units per second. This means that each food card will <b>last 4 times as long.</b></p>
         </div>
 
         <div className={classNames({selected: selected == 'expired-food'})}>

@@ -39,6 +39,11 @@ header {
   color: #DDD;
   border-radius: 0;
   padding: 20px;
+  display: block;
+
+  > div {
+    height: 100%;
+  }
 
   h2 {
     margin-top: 0;
@@ -72,6 +77,7 @@ header {
 
   .help-body {
     margin-left: 20px;
+    overflow-y: auto;
 
     h3 {
       margin-top: 0;
@@ -79,6 +85,10 @@ header {
 
     > :not(.selected) {
       display: none;
+    }
+
+    .help-screenshot {
+      height: 200px;
     }
   }
 }
