@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from "react-dom";
-import './App.css';
+import './App.scss';
 import {GridProvider} from './contexts/grid';
 import Grid from './components/grid';
 import CardList from './components/card-list';
@@ -26,6 +26,13 @@ function App() {
           <Grid />
           <CardList />
         </div>
+
+        <footer>
+          <div className="attribution">
+            Game icons provided by <a href="https://game-icons.net/">game-icons.net</a>
+            under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+          </div>
+        </footer>
       </div>
     </GridProvider>
     </CardPacksProvider>
