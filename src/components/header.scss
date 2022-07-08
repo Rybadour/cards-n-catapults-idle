@@ -32,14 +32,12 @@ header {
   margin-right: -50%;
   transform: translate(-50%, -50%);
   max-width: 800px;
-  max-height: 500px;
   width: 80%;
   background-color: #444;
   border-color: #222;
   color: #DDD;
   border-radius: 0;
   padding: 20px;
-  display: block;
 
   > div {
     height: 100%;
@@ -77,6 +75,7 @@ header {
 
   .help-body {
     margin-left: 20px;
+    max-height: 500px;
     overflow-y: auto;
 
     h3 {
