@@ -64,7 +64,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
     if (card.ability == Ability.BonusToMatching && card.abilityMatch && card.abilityShape) {
       iterateGridShapeCards(grid, x, y, card.abilityShape, (adj, x2, y2) => {
         if (card.abilityMatch?.includes(adj.type)) {
-          adj.bonus += card.abilityStrength;
+          adj.bonus *= 1 + card.abilityStrength;
           card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
         }
       });

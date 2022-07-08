@@ -113,7 +113,8 @@ export default function GridMap() {
                 <div className="status">{card.isDisabled ? '(disabled)' : ''}</div>
                 <div className="ability">
                   {card.ability == Ability.Produce && card.abilityResource ? <>
-                    <img src={"icons/" + resourceIconMap[card.abilityResource]} /> {card.abilityStrength}/s
+                    <img src={"icons/" + resourceIconMap[card.abilityResource]} />
+                    {formatNumber(card.abilityStrength * card.bonus, 0, 1)}/s
                   </> : null }
                 </div>
               </div>

@@ -20,7 +20,7 @@ const cards: Record<string, Card> = {
     icon: "farmer",
     tier: 2,
     type: CardType.Person,
-    description: "Generates {{abilityStrength}} gold/s except when near low tier cards.",
+    description: "Generates {{abilityStrength}} gold/s except when near low tier cards. When not fed with food it's production is reduced to {{modifiedStrength}} gold/s.",
     foodDrain: 0.5,
     ability: Ability.Produce,
     abilityStrength: 3,
@@ -215,6 +215,9 @@ Object.keys(cards)
     }
     if (card.abilityCost) {
       replaceInDescription('abilityCostValue', formatNumber(card.abilityCost.cost, 0, 1));
+    }
+    if (card.abilityStrengthModifier) {
+      replaceInDescription('modifiedStrength', formatNumber(card.abilityStrength * card.abilityStrengthModifier.factor, 0, 1));
     }
   });
 
