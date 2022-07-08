@@ -70,7 +70,7 @@ const cards: Record<string, Card> = {
     icon: "mushrooms",
     tier: 1,
     type: CardType.Food,
-    description: "Produces {{abilityStrength}} gold for every nearby empty, mushroom, or forest tile.",
+    description: "Produces {{abilityStrength}} gold for every nearby empty, mushroom, or forest tile. Considers both orthogonal and diagonal tiles.",
     maxDurability: 10,
     ability: Ability.ProduceFromCards,
     abilityStrength: 0.1,

@@ -54,6 +54,8 @@ export type Card = {
 
 export type RealizedCard = Card & {
   bonus: number,
+  totalStrength: number,
+  totalCost: number,
   isExpiredAndReserved: boolean,
   isDisabled: boolean,
   durability?: number,

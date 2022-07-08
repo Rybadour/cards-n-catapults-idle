@@ -19,6 +19,8 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
   // Disable and reset
   iterateGrid(grid, (card, x, y) => {
     card.bonus = 1;
+    card.totalStrength = 0;
+    card.totalCost = 0;
     card.cardMarks = {};
 
     card.isDisabled = false;
@@ -100,6 +102,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
 
         if (card.abilityMatch?.includes(adj.type) && card.abilityResource) {
           results.resourcesPerSec[card.abilityResource] += strength;
+          card.totalStrength += strength;
           card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
         }
       });
@@ -111,6 +114,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
         const cardId = (adj && !adj.isExpiredAndReserved) ? adj.id : EMPTY_CARD;
         if (card.abilityCards!!.includes(cardId)) {
           results.resourcesPerSec[card.abilityResource!!] += strength;
+          card.totalStrength += strength;
           card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
         }
       });
@@ -118,6 +122,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
 
     if (card.abilityCostPerSec) {
       results.resourcesPerSec[card.abilityCostPerSec.resource] -= card.abilityCostPerSec.cost;
+      card.totalCost += card.abilityCostPerSec.cost;
     }
   });
 

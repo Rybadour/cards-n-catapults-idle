@@ -110,11 +110,24 @@ export default function GridMap() {
               }
               <div className="details">
                 <div className="name">{card.name}</div>
-                <div className="status">{card.isDisabled ? '(disabled)' : ''}</div>
+                <div className="status">
+                  {card.isDisabled ? '(disabled)' : ''}
+                  {card.isExpiredAndReserved ? '(expired)' : ''}
+                </div>
                 <div className="ability">
                   {card.ability == Ability.Produce && card.abilityResource ? <>
                     <img src={"icons/" + resourceIconMap[card.abilityResource]} />
-                    {formatNumber(card.abilityStrength * card.bonus, 0, 1)}/s
+                    {formatNumber(card.abilityStrength * card.bonus, 0, 2)}/s
+                  </> : null }
+                  {card.totalStrength && card.abilityResource ? <>
+                    <img src={"icons/" + resourceIconMap[card.abilityResource]} />
+                    {formatNumber(card.totalStrength * card.bonus, 0, 2)}/s
+                  </> : null }
+                </div>
+                <div className="ability-cost">
+                  {card.totalCost && card.abilityCostPerSec ? <>
+                    <img src={"icons/" + resourceIconMap[card.abilityCostPerSec.resource]} />
+                    -{formatNumber(card.totalCost, 0, 1)}/s
                   </> : null }
                 </div>
               </div>

@@ -98,7 +98,7 @@ $card-height: 100px;
     left: 0;
     font-weight: bold;
 
-    .ability {
+    .ability, .ability-cost {
       display: flex;
       align-items: center;
       grid-gap: 3px;
