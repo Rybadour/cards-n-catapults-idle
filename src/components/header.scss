@@ -22,3 +22,63 @@ header {
     }
   }
 }
+
+.help-modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  max-width: 800px;
+  max-height: 500px;
+  width: 80%;
+  background-color: #444;
+  border-color: #222;
+  color: #DDD;
+  border-radius: 0;
+  padding: 20px;
+
+  h2 {
+    margin-top: 0;
+  }
+
+  .help-body-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .help-tip-menu {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 120px;
+    border-right: 2px solid #BBB;
+
+    li {
+      padding: 7px 6px 6px;
+      cursor: pointer;
+
+      &:hover, &.selected {
+        font-weight: bold;
+        background-color: #555;
+      }
+    }
+  }
+
+  .help-body {
+    margin-left: 20px;
+
+    h3 {
+      margin-top: 0;
+    }
+
+    > :not(.selected) {
+      display: none;
+    }
+  }
+}

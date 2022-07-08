@@ -21,3 +21,6 @@ body {
 * {
   box-sizing: border-box;
 }
+p {
+  line-height: 1.2rem;
+}
