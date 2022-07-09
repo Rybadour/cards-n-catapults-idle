@@ -1,6 +1,5 @@
 // shared config (dev and prod)
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 
 module.exports = {
@@ -33,10 +32,9 @@ module.exports = {
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: "index.html" }),
-     new webpack.ProvidePlugin({
+    new webpack.ProvidePlugin({
       "React": "react",
-   }),
+    }),
   ],
   performance: {
     hints: false,

@@ -1,5 +1,6 @@
 // production config
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { merge } = require("webpack-merge");
 const { resolve } = require("path");
 
@@ -15,6 +16,7 @@ module.exports = merge(commonConfig, {
   },
   devtool: "source-map",
   plugins: [
+    new HtmlWebpackPlugin({ template: "prod-index.html" }),
     new CopyWebpackPlugin({
       patterns: [{ from: "../public" }],
     }),
