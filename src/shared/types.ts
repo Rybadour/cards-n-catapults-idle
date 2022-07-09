@@ -11,12 +11,14 @@ export enum CardType {
 export enum ResourceType {
   Gold = "gold",
   Wood = "wood",
+  Renown = "renown",
 }
 
 export type ResourcesMap = Record<ResourceType, number>;
 export const defaultResourcesMap: ResourcesMap = {
   [ResourceType.Gold]: 0,
   [ResourceType.Wood]: 0,
+  [ResourceType.Renown]: 0,
 };
 
 export type Card = {

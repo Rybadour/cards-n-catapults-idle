@@ -37,6 +37,20 @@ const cards: Record<string, Card> = {
       maxTier: 1,
     }
   },
+  bard: {
+    id: "",
+    name: "Bard",
+    icon: "lyre",
+    tier: 2,
+    type: CardType.Person,
+    description: "Generates {{abilityStrength}} renown/s for each person next to them, in all directions.",
+    foodDrain: 0.2,
+    ability: Ability.ProduceFromMatching,
+    abilityStrength: 2,
+    abilityResource: ResourceType.Renown,
+    abilityMatch: [CardType.Person],
+    abilityShape: MatchingGridShape.AllAdjacent,
+  },
   ratSnack: {
     id: "",
     name: "Rat Snack",
