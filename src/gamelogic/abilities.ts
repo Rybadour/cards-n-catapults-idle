@@ -76,6 +76,8 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
       const mod = card.abilityStrengthModifier;
       let isModified = !mod.whenMatching;
       iterateGridShapeCards(grid, x, y, mod.gridShape, (adj) => {
+        if (adj.isExpiredAndReserved) return;
+
         if (mod.types.includes(adj.type)) {
           isModified = mod.whenMatching;
         }
