@@ -97,6 +97,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
 
     if (card.ability == Ability.Produce && card.abilityResource) {
       results.resourcesPerSec[card.abilityResource] += strength;
+      card.totalStrength += strength;
 
     } else if (card.ability == Ability.ProduceFromMatching && card.abilityShape) {
       iterateGridShapeCards(grid, x, y, card.abilityShape, (adj, x2, y2) => {
