@@ -8,29 +8,29 @@ const cardPacks: Record<string, CardPack> = {
     baseCost: 150,
     costGrowth: 1.08,
     quantity: 4,
-    possibleCards: [{
-      card: cards.campfire,
+    possibleThings: [{
+      thing: cards.campfire,
       chance: 0.05,
     }, {
-      card: cards.ratDen,
+      thing: cards.ratDen,
       chance: 0.05,
     }, {
-      card: cards.peasant,
+      thing: cards.peasant,
       chance: 0.025,
     }, {
-      card: cards.forest,
+      thing: cards.forest,
       chance: 0.1,
     }, {
-      card: cards.beggar,
+      thing: cards.beggar,
       chance: 0.10,
     }, {
-      card: cards.ratSnack,
+      thing: cards.ratSnack,
       chance: 0.325,
     }, {
-      card: cards.berries,
+      thing: cards.berries,
       chance: 0.175,
     }, {
-      card: cards.mushrooms,
+      thing: cards.mushrooms,
       chance: 0.175,
     }],
   },
@@ -40,23 +40,23 @@ const cardPacks: Record<string, CardPack> = {
     baseCost: 1200,
     costGrowth: 1.1,
     quantity: 4,
-    possibleCards: [{
-      card: cards.forager,
+    possibleThings: [{
+      thing: cards.forager,
       chance: 0.1,
     }, {
-      card: cards.carpenter,
+      thing: cards.carpenter,
       chance: 0.075,
     }, {
-      card: cards.pigPen,
+      thing: cards.pigPen,
       chance: 0.075,
     }, {
-      card: cards.peasant,
+      thing: cards.peasant,
       chance: 0.15,
     }, {
-      card: cards.bread,
+      thing: cards.bread,
       chance: 0.25,
     }, {
-      card: cards.haunch,
+      thing: cards.haunch,
       chance: 0.35,
     }]
   }

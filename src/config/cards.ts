@@ -210,7 +210,6 @@ const cards: Record<string, Card> = {
   }
 };
 
-
 Object.keys(cards)
   .forEach((cardId) => {
     const card = cards[cardId];

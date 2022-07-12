@@ -2,7 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import cardPacks from "../config/card-packs";
 import global from "../config/global";
-import { generateCards } from "../shared/pack-generation";
+import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
 import { RealizedCardPack, ResourceType } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardsContext } from "./cards";
@@ -12,19 +12,13 @@ const realizedCardPacks: Record<string, RealizedCardPack> = {};
 Object.values(cardPacks).forEach(cardPack => {
   // In debug mode verify that packs have reasonable chances in them (should add up to 100%)
   if (global.isDebug) {
-    let totalChance = 0;
-    cardPack.possibleCards.forEach(card => {
-      totalChance += card.chance;
-    });
-    if (totalChance < 0.98 || 1.01 < totalChance) {
-      console.error('WARNING: CardPack ' + cardPack.id + ' does not add up to 100% chance instead its ' + totalChance);
-    }
+    debugLogPackChance('CardPack', cardPack);
   }
 
   realizedCardPacks[cardPack.id] = {
     ...cardPack,
     cost: cardPack.baseCost,
-    amountBought: 0,
+    numBought: 0,
   };
 });
 
@@ -50,12 +44,12 @@ export function CardPacksProvider(props: Record<string, any>) {
 
     stats.useResource(ResourceType.Gold, cardPack.cost);
 
-    const cardsFromPack = generateCards(cardPack);
+    const cardsFromPack = generateFromPack(cardPack);
     cards.drawCards(cardsFromPack);
 
     const newCardPacks = {...cardPacks};
-    newCardPacks[cardPack.id].amountBought += 1;
-    newCardPacks[cardPack.id].cost = getExponentialValue(cardPack.baseCost, cardPack.costGrowth, cardPack.amountBought);
+    newCardPacks[cardPack.id].numBought += 1;
+    newCardPacks[cardPack.id].cost = getExponentialValue(cardPack.baseCost, cardPack.costGrowth, cardPack.numBought);
     setCardPacks(newCardPacks);
   }
 

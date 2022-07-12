@@ -100,23 +100,40 @@ export enum AbilityImprovementStat {
 
 export type Grid = (RealizedCard | null)[][];
 
-export type CardPack = {
+export type Pack<T> = {
   id: string,
   name: string,
   baseCost: number,
   costGrowth: number,
   quantity: number,
-  possibleCards: {
-    card: Card,
+  possibleThings: {
+    thing: T,
     chance: number,
   }[]
 };
 
-export type RealizedCardPack = CardPack & {
+export type RealizedPack<T> = Pack<T> & {
   cost: number,
-  amountBought: number,
+  numBought: number,
 };
+
+export type CardPack = Pack<Card>;
+export type RealizedCardPack = RealizedPack<Card>;
 
 export type CardId = string;
 
 export const EMPTY_CARD = 'EMPTY';
+
+export type PrestigeUpgrade = {
+  id: string,
+  name: string,
+  description: string,
+};
+
+export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
+  quantity: number;
+};
+
+export type PrestigePack = Pack<PrestigeUpgrade>;
+
+export type RealizedPrestigePack = RealizedPack<PrestigeUpgrade>;

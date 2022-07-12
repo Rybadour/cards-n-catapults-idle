@@ -26,7 +26,7 @@ export default function CardPacks() {
         <div className="name">{cardPack.name}</div>
 
         <div className="cards">
-          {cardPack.possibleCards.map(({card}) => 
+          {cardPack.possibleThings.map(({thing: card}) => 
             <div
               className={classNames("possible-card", {discovered: discovery.discoveredCards[card.id]})}
               key={card.id}>
