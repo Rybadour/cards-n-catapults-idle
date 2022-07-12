@@ -262,7 +262,8 @@ function activateCard(
 
       found = true;
       results.grid[y2][x2] = createCard(cardsConfig[otherCard.id], cards[otherCard.id]);
-      results.inventoryDelta[otherCard.id] = (results.inventoryDelta[otherCard.id] ?? 0) - 1;
+      const quantityUsed = cards[otherCard.id] > 1 ? 1 : cards[otherCard.id];
+      results.inventoryDelta[otherCard.id] = (results.inventoryDelta[otherCard.id] ?? 0) - quantityUsed;
       results.anyChanged = true;
     });
     return found;
