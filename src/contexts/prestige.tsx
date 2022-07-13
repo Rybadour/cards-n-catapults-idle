@@ -5,6 +5,7 @@ import global from "../config/global";
 import { getExponentialValue } from "../shared/utils";
 import { RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
+import { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH } from "../config/prestige";
 
 const realizedPacks: Record<string, RealizedPrestigePack> = {};
 Object.values(packsConfig).forEach(pack => {
@@ -22,22 +23,33 @@ Object.values(packsConfig).forEach(pack => {
 
 export type PrestigeContext = {
   prestigePoints: number,
+  nextPoints: number,
+  currentRenownCost: number,
+  nextRenownCost: number,
   upgrades: Record<string, RealizedPrestigeUpgrade>,
   packs: Record<string, RealizedPrestigePack>,
   buyPack: (cardPack: RealizedPrestigePack) => void,
+  update: (renown: number) => void,
 };
 
 const defaultContext: PrestigeContext = {
   prestigePoints: 0,
+  nextPoints: 0,
+  currentRenownCost: 0,
+  nextRenownCost: PRESTIGE_BASE_COST,
   upgrades: {},
   packs: realizedPacks,
   buyPack: (pack) => {},
+  update: (renown) => {},
 };
 
 export const PrestigeContext = createContext(defaultContext);
 
 export function PrestigeProvider(props: Record<string, any>) {
   const [prestigePoints, setPoints] = useState(defaultContext.prestigePoints);
+  const [nextPoints, setNextPoints] = useState(defaultContext.nextPoints);
+  const [currentRenownCost, setCurrentRenownCost] = useState(defaultContext.currentRenownCost);
+  const [nextRenownCost, setNextRenownCost] = useState(defaultContext.nextRenownCost);
   const [upgrades, setUpgrades] = useState(defaultContext.upgrades);
   const [packs, setPacks] = useState(defaultContext.packs);
 
@@ -63,11 +75,21 @@ export function PrestigeProvider(props: Record<string, any>) {
     setPacks(newPrestigePacks);
   }
 
+  function update(renown: number) {
+    if (currentRenownCost + nextRenownCost <= renown) {
+      setNextPoints(nextPoints + 1);
+      const newCost = getExponentialValue(PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, nextPoints + 1);
+      setNextRenownCost(newCost);
+      setCurrentRenownCost(currentRenownCost + newCost);
+    }
+  }
+
   return (
     <PrestigeContext.Provider
       value={{
         prestigePoints, upgrades, packs,
-        buyPack,
+        nextPoints, nextRenownCost, currentRenownCost,
+        buyPack, update,
       }}
       {...props}
     />

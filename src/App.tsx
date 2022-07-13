@@ -10,9 +10,11 @@ import { StatsProvider } from './contexts/stats';
 import { DiscoveryProvider } from './contexts/discovery';
 import { CardPacksProvider } from './contexts/card-packs';
 import Header from './components/header';
+import { PrestigeProvider } from './contexts/prestige';
 
 function App() {
   return (
+    <PrestigeProvider>
     <DiscoveryProvider>
     <StatsProvider>
     <CardsProvider>
@@ -39,6 +41,7 @@ function App() {
     </CardsProvider>
     </StatsProvider>
     </DiscoveryProvider>
+    </PrestigeProvider>
   );
 }
 

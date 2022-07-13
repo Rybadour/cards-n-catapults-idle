@@ -1,7 +1,9 @@
 import './header.scss';
 import Modal from 'react-modal';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import classNames from 'classnames';
+import { PrestigeContext } from '../contexts/prestige';
+import { formatNumber } from '../shared/utils';
 
 const modalStyles = {
   overlay: {
@@ -12,10 +14,16 @@ const modalStyles = {
 Modal.setAppElement('#root');
 
 function Header() {
+  const prestige = useContext(PrestigeContext);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   return <header>
     <h1>Cards & Catapults Idle</h1>
+
+    <div className="prestige">
+      <button onClick={() => {}}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
+      <span>Next at {formatNumber(prestige.currentRenownCost + prestige.nextRenownCost, 0, 0)} Renown</span>
+    </div>
 
     <div className="options">
       <button onClick={() => setIsHelpModalOpen(true)}>Help</button>

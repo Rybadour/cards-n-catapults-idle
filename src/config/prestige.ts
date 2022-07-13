@@ -1,5 +1,8 @@
 import { PrestigeUpgrade } from "../shared/types";
 
+export const PRESTIGE_BASE_COST = 1000;
+export const PRESTIGE_COST_GROWTH = 1.1;
+
 const upgrades: Record<string, PrestigeUpgrade> = {
   ratz: {
     id: '',

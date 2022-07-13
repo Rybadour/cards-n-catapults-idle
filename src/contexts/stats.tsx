@@ -4,6 +4,7 @@ import global from "../config/global";
 import { defaultResourcesMap, Grid, ResourcesMap, ResourceType } from "../shared/types";
 import { enumFromKey } from "../shared/utils";
 import { DiscoveryContext } from "./discovery";
+import { PrestigeContext } from "./prestige";
 
 export type StatsContext = {
   resources: ResourcesMap,
@@ -25,6 +26,7 @@ defaultContext.resources[ResourceType.Gold] = global.startingGold;
 export const StatsContext = createContext(defaultContext);
 
 export function StatsProvider(props: Record<string, any>) {
+  const prestige = useContext(PrestigeContext);
   const discovery = useContext(DiscoveryContext);
   const [resources, setResources] = useState(defaultContext.resources);
   const [resourcesPerSec, setResourcesPerSec] = useState(defaultContext.resourcesPerSec);
@@ -41,8 +43,12 @@ export function StatsProvider(props: Record<string, any>) {
       if (resource) {
         newResources[resource] += elapsedSecs * resourcesPerSec[resource] * global.produceModifier;
       }
-    })
+    });
     setResources(newResources);
+
+    if (resourcesPerSec.renown > 0) {
+      prestige.update(newResources.renown);
+    }
   }
 
   function updatePerSec(newPerSec: ResourcesMap) {
