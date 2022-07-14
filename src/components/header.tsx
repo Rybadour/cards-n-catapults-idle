@@ -1,9 +1,14 @@
 import './header.scss';
 import Modal from 'react-modal';
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import classNames from 'classnames';
 import { PrestigeContext } from '../contexts/prestige';
 import { formatNumber } from '../shared/utils';
+import { StatsContext } from '../contexts/stats';
+import { GridContext } from '../contexts/grid';
+import { CardsContext } from '../contexts/cards';
+import { CardPacksContext } from '../contexts/card-packs';
+import { DiscoveryContext } from '../contexts/discovery';
 
 const modalStyles = {
   overlay: {
@@ -14,14 +19,29 @@ const modalStyles = {
 Modal.setAppElement('#root');
 
 function Header() {
+  const stats = useContext(StatsContext);
+  const grid = useContext(GridContext);
+  const cards = useContext(CardsContext);
+  const cardPacks = useContext(CardPacksContext);
+  const discovery = useContext(DiscoveryContext);
   const prestige = useContext(PrestigeContext);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+
+  const onPrestige = useCallback((prestige) => {
+    if (prestige.prestige()) {
+      stats.prestigeReset();
+      cards.prestigeReset();
+      cardPacks.prestigeReset();
+      grid.prestigeReset();
+      discovery.prestigeReset();
+    }
+  }, [prestige]);
 
   return <header>
     <h1>Cards & Catapults Idle</h1>
 
     <div className="prestige">
-      <button onClick={() => {}}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
+      <button onClick={() => onPrestige(prestige)}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
       <span>Next at {formatNumber(prestige.currentRenownCost + prestige.nextRenownCost, 0, 0)} Renown</span>
     </div>
 

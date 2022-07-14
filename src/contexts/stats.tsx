@@ -12,6 +12,7 @@ export type StatsContext = {
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null, grid: Grid) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
   useResource: (resource: ResourceType, amount: number) => void,
+  prestigeReset: () => void,
 };
 
 const defaultContext: StatsContext = {
@@ -20,6 +21,7 @@ const defaultContext: StatsContext = {
   update: (elapsed, newResourcesPerSec, grid) => {},
   updatePerSec: (newPerSec) => {},
   useResource: (resource, amount) => {},
+  prestigeReset: () => {},
 };
 defaultContext.resources[ResourceType.Gold] = global.startingGold;
 
@@ -66,11 +68,16 @@ export function StatsProvider(props: Record<string, any>) {
     setResources(newResources);
   }
 
+  function prestigeReset() {
+    setResources({...defaultContext.resources});
+    setResourcesPerSec({...defaultResourcesMap});
+  }
+
   return (
     <StatsContext.Provider
       value={{
         resources, resourcesPerSec,
-        update, updatePerSec, useResource,
+        update, updatePerSec, useResource, prestigeReset,
       }}
       {...props}
     />

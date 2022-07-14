@@ -28,6 +28,7 @@ export type PrestigeContext = {
   nextRenownCost: number,
   upgrades: Record<string, RealizedPrestigeUpgrade>,
   packs: Record<string, RealizedPrestigePack>,
+  prestige: () => boolean,
   buyPack: (cardPack: RealizedPrestigePack) => void,
   update: (renown: number) => void,
 };
@@ -39,6 +40,7 @@ const defaultContext: PrestigeContext = {
   nextRenownCost: PRESTIGE_BASE_COST,
   upgrades: {},
   packs: realizedPacks,
+  prestige: () => false,
   buyPack: (pack) => {},
   update: (renown) => {},
 };
@@ -52,6 +54,17 @@ export function PrestigeProvider(props: Record<string, any>) {
   const [nextRenownCost, setNextRenownCost] = useState(defaultContext.nextRenownCost);
   const [upgrades, setUpgrades] = useState(defaultContext.upgrades);
   const [packs, setPacks] = useState(defaultContext.packs);
+
+  function prestige() {
+    if (nextPoints <= 0) {
+      return false;
+    }
+
+    setPoints(prestigePoints + nextPoints);
+    setNextPoints(0);
+    setCurrentRenownCost(0);
+    return true;
+  }
 
   function buyPack(pack: RealizedPrestigePack) {
     if (prestigePoints < pack.cost) return;
@@ -89,7 +102,7 @@ export function PrestigeProvider(props: Record<string, any>) {
       value={{
         prestigePoints, upgrades, packs,
         nextPoints, nextRenownCost, currentRenownCost,
-        buyPack, update,
+        prestige, buyPack, update,
       }}
       {...props}
     />

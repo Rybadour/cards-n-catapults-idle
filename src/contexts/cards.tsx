@@ -13,6 +13,7 @@ export type CardsContext = {
   replaceCard: (existingCard: RealizedCard | null) => void,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   drawCards: (cardsToDraw: Card[]) => void,
+  prestigeReset: () => void,
 };
 
 const defaultContext: CardsContext = {
@@ -24,6 +25,7 @@ const defaultContext: CardsContext = {
   replaceCard: (card) => {},
   updateInventory: (cardsDelta) => {},
   drawCards: (cardsToDraw) => {},
+  prestigeReset: () => {},
 };
 
 export const CardsContext = createContext(defaultContext);
@@ -95,11 +97,15 @@ export function CardsProvider(props: Record<string, any>) {
     setCards(newCards);
   }
 
+  function prestigeReset() {
+    setCards(global.startingCards);
+  }
+
   return (
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, returnCard, replaceCard, updateInventory, drawCards,
+        setSelectedCard, hasCard, returnCard, replaceCard, updateInventory, drawCards, prestigeReset,
       }}
       {...props}
     />

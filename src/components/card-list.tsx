@@ -28,7 +28,7 @@ export default function CardList() {
       .map(cardType => ({
         cardType,
         cardList: Object.values(cardsConfig)
-          .filter(card => discovery.discoveredCards[card.id] && card.type == cardType)
+          .filter(card => discovery.cardsDiscoveredThisPrestige[card.id] && card.type == cardType)
       }))
       .filter(({cardType, cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>

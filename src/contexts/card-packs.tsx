@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { cloneDeep } from "lodash";
 import { createContext, useContext, useState } from "react";
 import cardPacks from "../config/card-packs";
 import global from "../config/global";
@@ -25,11 +26,13 @@ Object.values(cardPacks).forEach(cardPack => {
 export type CardPacksContext = {
   cardPacks: Record<string, RealizedCardPack>,
   buyPack: (cardPack: RealizedCardPack) => void,
+  prestigeReset: () => void,
 };
 
 const defaultContext: CardPacksContext = {
-  cardPacks: realizedCardPacks,
+  cardPacks: cloneDeep(realizedCardPacks),
   buyPack: (cardPack) => {},
+  prestigeReset: () => {},
 };
 
 export const CardPacksContext = createContext(defaultContext);
@@ -53,11 +56,15 @@ export function CardPacksProvider(props: Record<string, any>) {
     setCardPacks(newCardPacks);
   }
 
+  function prestigeReset() {
+    setCardPacks(cloneDeep(realizedCardPacks));
+  }
+
   return (
     <CardPacksContext.Provider
       value={{
         cardPacks,
-        buyPack,
+        buyPack, prestigeReset,
       }}
       {...props}
     />

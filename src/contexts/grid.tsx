@@ -14,21 +14,16 @@ export type GridContext = {
   replaceCard: (x: number, y: number, newCard: RealizedCard) => (RealizedCard | null),
   returnCard: (x: number, y: number) => void,
   update: (elapsed: number) => void,
+  prestigeReset: () => void,
 };
 
 const defaultContext: GridContext = {
-  gridSpaces: [],
+  gridSpaces: getEmptyGrid(),
   replaceCard: (x, y, newCard) => null,
   returnCard: (x, y) => {},
   update: (elapsed) => {},
+  prestigeReset: () => {},
 };
-for (let i = 0; i < height; ++i) {
-  const row: (RealizedCard | null)[] = [];
-  for (let j = 0; j < width; ++j) {
-    row.push(null);
-  }
-  defaultContext.gridSpaces.push(row);
-}
 
 export const GridContext = createContext(defaultContext);
 
@@ -78,13 +73,29 @@ export function GridProvider(props: Record<string, any>) {
     stats.updatePerSec(results.resourcesPerSec);
   }
 
+  function prestigeReset() {
+    setGridSpaces(getEmptyGrid());
+  }
+
   return (
     <GridContext.Provider
       value={{
         gridSpaces,
-        replaceCard, returnCard, update,
+        replaceCard, returnCard, update, prestigeReset,
       }}
       {...props}
     />
   );
+}
+
+function getEmptyGrid() {
+  const gridSpaces = [];
+  for (let i = 0; i < height; ++i) {
+    const row: (RealizedCard | null)[] = [];
+    for (let j = 0; j < width; ++j) {
+      row.push(null);
+    }
+    gridSpaces.push(row);
+  }
+  return gridSpaces;
 }
