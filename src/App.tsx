@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ReactDOM from "react-dom";
 import './App.scss';
 import {GridProvider} from './contexts/grid';
@@ -10,7 +10,8 @@ import { StatsProvider } from './contexts/stats';
 import { DiscoveryProvider } from './contexts/discovery';
 import { CardPacksProvider } from './contexts/card-packs';
 import Header from './components/header';
-import { PrestigeProvider } from './contexts/prestige';
+import { PrestigeContext, PrestigeProvider } from './contexts/prestige';
+import Prestige from './components/prestige';
 
 function App() {
   return (
@@ -23,11 +24,7 @@ function App() {
       <div className="App">
         <Header />
 
-        <div className="content">
-          <CardPacks />
-          <Grid />
-          <CardList />
-        </div>
+        <Content />
 
         <footer>
           <div className="attribution">
@@ -43,6 +40,21 @@ function App() {
     </DiscoveryProvider>
     </PrestigeProvider>
   );
+}
+
+function Content() {
+  const prestige = useContext(PrestigeContext);
+
+  return <div className="content">
+    {prestige.isMenuOpen ? 
+      <Prestige /> :
+      <>
+        <CardPacks />
+        <Grid />
+        <CardList />
+      </>
+    }
+  </div>;
 }
 
 export default App;

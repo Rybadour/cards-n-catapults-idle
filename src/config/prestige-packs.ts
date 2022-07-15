@@ -1,16 +1,18 @@
 import { PrestigePack } from "../shared/types";
-import upgrades from "./prestige";
+import upgrades from "./prestige-upgrades";
 
 const packs: Record<string, PrestigePack> = {
-  dirt: {
+  stoneAge: {
     id: "",
-    name: "Dirt Pack",
+    name: "Stone Age Pack",
     baseCost: 10,
     costGrowth: 1.12,
-    quantity: 2,
-    possibleThings: [{
-      thing: upgrades.ratz,
-      chance: 0.05,
+    upgrades: [{
+      upgrade: upgrades.ratz,
+      quantity: 1,
+    }, {
+      upgrade: upgrades.rationing,
+      quantity: 10,
     }],
   },
 }

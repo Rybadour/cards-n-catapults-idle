@@ -1,0 +1,67 @@
+@import '../shared/shared.scss';
+
+.prestige-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: $text-color;
+
+  .header {
+    text-align: center;
+  }
+
+  .packs-and-upgrades {
+    display: flex;
+    margin-top: 30px;
+    grid-gap: 30px;
+  }
+
+  .packs {
+    width: 100%;
+    min-width: 200px;
+    max-width: 350px;
+
+    h4 {
+      font-size: 20px;
+      margin: 0;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #AAA;
+    }
+  }
+
+  .pack-list {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 20px;
+  }
+
+  .pack-list .pack {
+    width: 100%;
+    color: white;
+    background-color: #555;
+    padding: 8px;
+
+    .name {
+      margin-bottom: 10px;
+    }
+
+    .cards-left {
+      margin-bottom: 10px;
+    }
+
+    .purchase-button {
+      float: right;
+      background-color: #888;
+      border: 1px solid #777;
+      box-shadow: #222 0px 0px 3px 1px;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #AAA;
+      }   
+    }
+  }
+}

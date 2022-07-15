@@ -27,7 +27,7 @@ function Header() {
   const prestige = useContext(PrestigeContext);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
-  const onPrestige = useCallback((prestige) => {
+  const onPrestige = useCallback(() => {
     if (prestige.prestige()) {
       stats.prestigeReset();
       cards.prestigeReset();
@@ -37,12 +37,27 @@ function Header() {
     }
   }, [prestige]);
 
+  const onOpenPrestigeMenu = useCallback(() => {
+    prestige.openMenu();
+  }, [prestige]);
+
+  const onClosePrestigeMenu = useCallback(() => {
+    prestige.closeMenu();
+  }, [prestige]);
+
   return <header>
     <h1>Cards & Catapults Idle</h1>
 
     <div className="prestige">
-      <button onClick={() => onPrestige(prestige)}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
-      <span>Next at {formatNumber(prestige.currentRenownCost + prestige.nextRenownCost, 0, 0)} Renown</span>
+      {prestige.isMenuOpen ? <>
+        <button className="close-menu" onClick={() => onClosePrestigeMenu()}>Close and Reset</button>
+      </> : <>
+        <button className="open-menu" onClick={() => onOpenPrestigeMenu()}>
+          <img src="icons/upgrade.png" />
+        </button>
+        <button onClick={() => onPrestige()}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
+        <span>Next at {formatNumber(prestige.currentRenownCost + prestige.nextRenownCost, 0, 0)} Renown</span>
+      </>}
     </div>
 
     <div className="options">

@@ -1,23 +1,25 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createContext, useContext, useState } from "react";
+import { createContext, useState } from "react";
 import packsConfig from "../config/prestige-packs";
-import global from "../config/global";
 import { getExponentialValue } from "../shared/utils";
 import { RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
-import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
-import { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH } from "../config/prestige";
+import { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH } from "../config/prestige-upgrades";
+import { shuffle } from "lodash";
 
 const realizedPacks: Record<string, RealizedPrestigePack> = {};
 Object.values(packsConfig).forEach(pack => {
-  // In debug mode verify that packs have reasonable chances in them (should add up to 100%)
-  if (global.isDebug) {
-    debugLogPackChance('PrestigePack', pack);
-  }
+  const totalUpgrades: string[] = [];
+  pack.upgrades.forEach(u => {
+    for (let i = 0; i < u.quantity; ++i) {
+      totalUpgrades.push(u.upgrade.id);
+    }
+  });
 
   realizedPacks[pack.id] = {
     ...pack,
     cost: pack.baseCost,
     numBought: 0,
+    remainingUpgrades: shuffle(totalUpgrades),
   };
 });
 
@@ -28,9 +30,12 @@ export type PrestigeContext = {
   nextRenownCost: number,
   upgrades: Record<string, RealizedPrestigeUpgrade>,
   packs: Record<string, RealizedPrestigePack>,
+  isMenuOpen: boolean,
   prestige: () => boolean,
   buyPack: (cardPack: RealizedPrestigePack) => void,
   update: (renown: number) => void,
+  openMenu: () => void,
+  closeMenu: () => void,
 };
 
 const defaultContext: PrestigeContext = {
@@ -40,9 +45,12 @@ const defaultContext: PrestigeContext = {
   nextRenownCost: PRESTIGE_BASE_COST,
   upgrades: {},
   packs: realizedPacks,
+  isMenuOpen: false,
   prestige: () => false,
   buyPack: (pack) => {},
   update: (renown) => {},
+  openMenu: () => {},
+  closeMenu: () => {},
 };
 
 export const PrestigeContext = createContext(defaultContext);
@@ -54,6 +62,7 @@ export function PrestigeProvider(props: Record<string, any>) {
   const [nextRenownCost, setNextRenownCost] = useState(defaultContext.nextRenownCost);
   const [upgrades, setUpgrades] = useState(defaultContext.upgrades);
   const [packs, setPacks] = useState(defaultContext.packs);
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
 
   function prestige() {
     if (nextPoints <= 0) {
@@ -63,6 +72,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     setPoints(prestigePoints + nextPoints);
     setNextPoints(0);
     setCurrentRenownCost(0);
+    setIsMenuOpen(true);
     return true;
   }
 
@@ -72,14 +82,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     setPoints(prestigePoints - pack.cost);
 
     const newUpgrades = {...upgrades};
-    const upgradesFromPack = generateFromPack(pack);
-    upgradesFromPack.forEach(up => {
-      if (newUpgrades.hasOwnProperty(up.id)) {
-        newUpgrades[up.id].quantity += 1;
-      } else {
-        newUpgrades[up.id] = {...up, quantity: 1};
-      }
-    });
+    
     setUpgrades(newUpgrades);
 
     const newPrestigePacks = {...packs};
@@ -97,12 +100,15 @@ export function PrestigeProvider(props: Record<string, any>) {
     }
   }
 
+  const openMenu = () => setIsMenuOpen(true);
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <PrestigeContext.Provider
       value={{
         prestigePoints, upgrades, packs,
-        nextPoints, nextRenownCost, currentRenownCost,
-        prestige, buyPack, update,
+        nextPoints, nextRenownCost, currentRenownCost, isMenuOpen,
+        prestige, buyPack, update, openMenu, closeMenu,
       }}
       {...props}
     />

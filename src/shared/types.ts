@@ -128,12 +128,26 @@ export type PrestigeUpgrade = {
   id: string,
   name: string,
   description: string,
+  abilityStrength: number,
 };
 
 export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
   quantity: number;
 };
 
-export type PrestigePack = Pack<PrestigeUpgrade>;
+export type PrestigePack = {
+  id: string,
+  name: string,
+  baseCost: number,
+  costGrowth: number,
+  upgrades: {
+    upgrade: PrestigeUpgrade,
+    quantity: number,
+  }[]
+};
 
-export type RealizedPrestigePack = RealizedPack<PrestigeUpgrade>;
+export type RealizedPrestigePack = PrestigePack & {
+  cost: number,
+  numBought: number,
+  remainingUpgrades: string[],
+};
