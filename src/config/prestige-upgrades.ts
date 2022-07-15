@@ -9,15 +9,18 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     id: '',
     name: 'Ratz!',
     icon: 'cave-entrance',
-    description: 'Get a Rat Den at the start of the next game.',
-    abilityStrength: 1,
+    description: 'Get a Rat Den at the start of each game.',
+    extraStartingCards: {ratDen: 1},
   },
   rationing: {
     id: '',
     name: 'Rationing',
     icon: 'cornucopia',
-    description: 'Food has {{strengthAsPercent}} more capacity',
-    abilityStrength: 0.05,
+    description: 'Food has {{bonusAsPercent}} more capacity',
+    bonus: {
+      amount: 0.05,
+      field: 'foodCapacity',
+    }
   }
 };
 
@@ -30,7 +33,9 @@ Object.keys(upgrades)
       upgrade.description = upgrade.description.replaceAll(`{{${variable}}}`, value);
     }
 
-    replaceInDescription('strengthAsPercent', formatNumber(upgrade.abilityStrength * 100, 0, 0) + '%');
+    if (upgrade.bonus) {
+      replaceInDescription('bonusAsPercent', formatNumber(upgrade.bonus.amount * 100, 0, 0) + '%');
+    }
   });
 
 export default upgrades;

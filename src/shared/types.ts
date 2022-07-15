@@ -129,12 +129,21 @@ export type PrestigeUpgrade = {
   name: string,
   icon: string,
   description: string,
-  abilityStrength: number,
+  extraStartingCards?: Record<string, number>,
+  bonus?: {
+    amount: number,
+    field: keyof(PrestigeEffects),
+  },
 };
 
 export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
   quantity: number;
 };
+
+export type PrestigeEffects = {
+  extraStartCards: Record<string, number>,
+  foodCapacity: number,
+}
 
 export type PrestigePack = {
   id: string,
