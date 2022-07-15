@@ -8,12 +8,14 @@ const upgrades: Record<string, PrestigeUpgrade> = {
   ratz: {
     id: '',
     name: 'Ratz!',
+    icon: 'cave-entrance',
     description: 'Get a Rat Den at the start of the next game.',
     abilityStrength: 1,
   },
   rationing: {
     id: '',
     name: 'Rationing',
+    icon: 'cornucopia',
     description: 'Food has {{strengthAsPercent}} more capacity',
     abilityStrength: 0.05,
   }

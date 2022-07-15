@@ -6,10 +6,6 @@ import './prestige.scss';
 export default function Prestige() {
   const prestige = useContext(PrestigeContext);
 
-  const closeMenu = useCallback(() => {
-    prestige.closeMenu();
-  }, [prestige]);
-
   const onBuyPack = useCallback((pack) => {
     prestige.buyPack(pack);
   }, [prestige]);
@@ -19,7 +15,7 @@ export default function Prestige() {
       <h3>Prestige Upgrades</h3>
 
       <div className="points">
-        You have <b>{prestige.prestigePoints}</b> prestige points.
+        You have <b>{formatNumber(prestige.prestigePoints, 0, 0)}</b> prestige points.
       </div>
     </div>
 
@@ -47,7 +43,23 @@ export default function Prestige() {
       <div className="upgrades">
         <h3>Upgrades</h3>
 
-        <p>Upgrades go here!</p>
+        <div className="upgrade-list">
+          {Object.entries(prestige.upgrades).map(([uId, upgrade]) =>
+            <div className="upgrade-container" key={uId}>
+              <div className="upgrade" >
+                <div className="title">
+                  <img src={`icons/${upgrade.icon}.png`} />
+                  <span className="name">{upgrade.name}</span>
+                  <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}</span>
+                </div>
+
+                <div className="ability-summary">+15% food capacity</div>
+
+                <div className="description">{upgrade.description}</div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   </div>;

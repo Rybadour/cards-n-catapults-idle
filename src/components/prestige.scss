@@ -64,4 +64,135 @@
       }   
     }
   }
+
+  .upgrade-list {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    width: 100%;
+    grid-gap: 16px;
+    margin-bottom: 20px;
+
+    &.hidden {
+      display: none;
+    }
+  }
+
+  $upgrade-width: 160px;
+  $upgrade-height: 220px;
+  .upgrade-list .upgrade-container {
+    position: relative;
+    width: $upgrade-width;
+    height: 70px;
+    overflow: hidden;
+
+    &:hover {
+      z-index: 10;
+      overflow: visible;
+    }
+  }
+
+  .upgrade-list .upgrade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $upgrade-width;
+    height: $upgrade-height;
+    color: white;
+    background-color: #555;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: 2px solid #555;
+
+    &:hover {
+      background-color: #666;
+      box-shadow: #222 0px 0px 3px 2px;
+    }
+
+    &.empty {
+      .title {
+        color: #999;
+        img {
+          filter: opacity(0.5);
+        }
+      }
+    }
+
+    &.selected:not(.empty) {
+      border: 2px solid white;
+      background-color: #777;
+    }
+
+    .title {
+      display: flex;
+      grid-gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-right: 3px;
+
+      .name {
+        width: 100%;
+      }
+
+      img {
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    .tier {
+      position: relative;
+      width: 30px;
+      height: 30px;
+
+      img {
+        width: 100%;
+        filter: brightness(0.8);
+      }
+
+      .value {
+        display: inline-block;
+        width: 100%;
+        position: absolute;
+        top: 10px;
+        left: 0;
+        color: black;
+        font-weight: bold;
+        text-align: center;
+      }
+    }
+
+    .description {
+      margin-top: 20px;
+      font-size: 16px;
+      padding: 0 5px;
+    }
+
+    .stats {
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      display: flex;
+      grid-gap: 10px;
+
+      .stat {
+        border: 2px solid #333;
+        border-radius: 3px;
+        padding: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          width: 16px;
+          height: 16px;
+          margin-left: 6px;
+        }
+      }
+    }
+  }
 }

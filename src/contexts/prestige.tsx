@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useState } from "react";
+import { shuffle } from "lodash";
+
 import packsConfig from "../config/prestige-packs";
 import { getExponentialValue } from "../shared/utils";
 import { RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
-import { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH } from "../config/prestige-upgrades";
-import { shuffle } from "lodash";
+import upgradesConfig, { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH } from "../config/prestige-upgrades";
+import global from "../config/global";
 
 const realizedPacks: Record<string, RealizedPrestigePack> = {};
 Object.values(packsConfig).forEach(pack => {
@@ -39,7 +41,7 @@ export type PrestigeContext = {
 };
 
 const defaultContext: PrestigeContext = {
-  prestigePoints: 0,
+  prestigePoints: global.startingPrestige,
   nextPoints: 0,
   currentRenownCost: 0,
   nextRenownCost: PRESTIGE_BASE_COST,
@@ -82,12 +84,23 @@ export function PrestigeProvider(props: Record<string, any>) {
     setPoints(prestigePoints - pack.cost);
 
     const newUpgrades = {...upgrades};
-    
+    const upgradeId = pack.remainingUpgrades.splice(0, 1)[0];
+    let upgrade = newUpgrades[upgradeId];
+    if (!upgrade) {
+      upgrade = {
+        ...(upgradesConfig[upgradeId]),
+        quantity: 1,
+      } as RealizedPrestigeUpgrade;
+    } else {
+      upgrade.quantity += 1;
+    }
+    newUpgrades[upgradeId] = upgrade;
     setUpgrades(newUpgrades);
 
     const newPrestigePacks = {...packs};
     newPrestigePacks[pack.id].numBought += 1;
     newPrestigePacks[pack.id].cost = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought);
+    newPrestigePacks[pack.id].remainingUpgrades = pack.remainingUpgrades;
     setPacks(newPrestigePacks);
   }
 

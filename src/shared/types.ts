@@ -127,6 +127,7 @@ export const EMPTY_CARD = 'EMPTY';
 export type PrestigeUpgrade = {
   id: string,
   name: string,
+  icon: string,
   description: string,
   abilityStrength: number,
 };
