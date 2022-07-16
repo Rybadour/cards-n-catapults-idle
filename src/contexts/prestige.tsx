@@ -85,6 +85,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     setPoints(prestigePoints + nextPoints);
     setNextPoints(0);
     setCurrentRenownCost(0);
+    setNextRenownCost(PRESTIGE_BASE_COST);
     setIsMenuOpen(true);
     setIsReseting(true);
     return true;
