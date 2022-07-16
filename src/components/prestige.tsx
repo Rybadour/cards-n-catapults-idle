@@ -55,7 +55,10 @@ export default function Prestige() {
                   <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}</span>
                 </div>
 
-                <div className="ability-summary">{getSummary(upgrade)}</div>
+                {upgrade.summary ?
+                  <div className="ability-summary">{getSummary(upgrade)}</div> :
+                  null
+                }
 
                 <div className="description">{upgrade.description}</div>
               </div>

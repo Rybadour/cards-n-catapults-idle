@@ -18,7 +18,9 @@ export default function CardPacks() {
   return <div className="card-packs">
     <h4>Card Packs</h4>
     <div className="card-pack-list">
-    {Object.values(cardPacks.cardPacks).map(cardPack =>
+    {Object.values(cardPacks.cardPacks)
+    .filter(pack => discovery.discoveredCardPacks[pack.id])
+    .map(cardPack =>
       <div
         key={cardPack.id}
         className="card-pack"

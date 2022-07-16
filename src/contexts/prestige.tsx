@@ -57,6 +57,7 @@ const defaultContext: PrestigeContext = {
       startingGold: 0,
     },
     extraStartCards: {},
+    unlockedCardPacks: [],
   },
   prestige: () => false,
   buyPack: (pack) => {},
@@ -116,6 +117,9 @@ export function PrestigeProvider(props: Record<string, any>) {
       Object.entries(upgrade.extraStartingCards).forEach(([c, amount]) => {
         newEffects.extraStartCards[c] = (newEffects.extraStartCards[c] ?? 0) + amount;
       })
+    }
+    if (upgrade.unlockedCardPack) {
+      newEffects.unlockedCardPacks.push(upgrade.unlockedCardPack);
     }
     if (upgrade.bonus) {
       newEffects.bonuses[upgrade.bonus.field] = (newEffects.bonuses[upgrade.bonus.field] ?? 0) + upgrade.bonus.amount;

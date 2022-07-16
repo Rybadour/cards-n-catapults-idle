@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   color: $text-color;
+  width: 100%;
 
   .header {
     text-align: center;
@@ -13,13 +14,12 @@
   .packs-and-upgrades {
     display: flex;
     margin-top: 30px;
-    grid-gap: 30px;
+    grid-gap: 100px;
+    width: 100%;
   }
 
   .packs {
-    width: 100%;
-    min-width: 200px;
-    max-width: 350px;
+    width: 260px;
 
     h4 {
       font-size: 20px;
@@ -63,6 +63,10 @@
         background-color: #AAA;
       }   
     }
+  }
+
+  .upgrades {
+    width: 100%;
   }
 
   .upgrade-list {

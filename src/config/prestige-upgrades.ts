@@ -42,6 +42,14 @@ const upgrades: Record<string, PrestigeUpgrade> = {
       amount: 50,
       field: 'startingGold',
     }
+  },
+  market: {
+    id: '',
+    name: 'Marketplace',
+    icon: 'desert-camp',
+    description: 'Unlocks the food pack',
+    summary: '',
+    unlockedCardPack: 'food',
   }
 };
 

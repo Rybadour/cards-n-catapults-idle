@@ -8,6 +8,7 @@ const cardPacks: Record<string, CardPack> = {
     baseCost: 150,
     costGrowth: 1.08,
     quantity: 4,
+    unlocked: true,
     possibleThings: [{
       thing: cards.campfire,
       chance: 0.05,
@@ -40,6 +41,7 @@ const cardPacks: Record<string, CardPack> = {
     baseCost: 1200,
     costGrowth: 1.1,
     quantity: 4,
+    unlocked: true,
     possibleThings: [{
       thing: cards.bard,
       chance: 0.075,
@@ -62,7 +64,31 @@ const cardPacks: Record<string, CardPack> = {
       thing: cards.haunch,
       chance: 0.35,
     }]
-  }
+  },
+  food: {
+    id: "",
+    name: "Food Pack",
+    baseCost: 100,
+    costGrowth: 1.1,
+    quantity: 4,
+    unlocked: false,
+    possibleThings: [{
+      thing: cards.bread,
+      chance: 0.1,
+    }, {
+      thing: cards.haunch,
+      chance: 0.1,
+    }, {
+      thing: cards.mushrooms,
+      chance: 0.2,
+    }, {
+      thing: cards.ratSnack,
+      chance: 0.3,
+    }, {
+      thing: cards.berries,
+      chance: 0.3,
+    }]
+  },
 }
 
 Object.keys(cardPacks).forEach((id) => cardPacks[id].id = id);

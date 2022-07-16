@@ -19,6 +19,9 @@ const packs: Record<string, PrestigePack> = {
     }, {
       upgrade: upgrades.charity,
       quantity: 4,
+    }, {
+      upgrade: upgrades.market,
+      quantity: 1,
     }],
   },
 }

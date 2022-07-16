@@ -106,6 +106,7 @@ export type Pack<T> = {
   baseCost: number,
   costGrowth: number,
   quantity: number,
+  unlocked: boolean,
   possibleThings: {
     thing: T,
     chance: number,
@@ -131,6 +132,7 @@ export type PrestigeUpgrade = {
   description: string,
   summary: string,
   extraStartingCards?: Record<string, number>,
+  unlockedCardPack?: string,
   bonus?: {
     amount: number,
     field: keyof(PrestigeBonuses),
@@ -143,6 +145,7 @@ export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
 
 export type PrestigeEffects = {
   extraStartCards: Record<string, number>,
+  unlockedCardPacks: string[],
   bonuses: PrestigeBonuses,
 }
 
