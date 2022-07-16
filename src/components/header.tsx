@@ -23,14 +23,12 @@ function Header() {
   const grid = useContext(GridContext);
   const cards = useContext(CardsContext);
   const cardPacks = useContext(CardPacksContext);
-  const discovery = useContext(DiscoveryContext);
   const prestige = useContext(PrestigeContext);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const onPrestige = useCallback(() => {
     if (prestige.prestige()) {
       stats.prestigeReset();
-      cards.prestigeReset();
       cardPacks.prestigeReset();
       grid.prestigeReset();
     }
@@ -41,6 +39,9 @@ function Header() {
   }, [prestige]);
 
   const onClosePrestigeMenu = useCallback(() => {
+    if (prestige.isReseting) {
+      cards.prestigeReset();
+    }
     prestige.closeMenu();
   }, [prestige]);
 
@@ -49,7 +50,9 @@ function Header() {
 
     <div className="prestige">
       {prestige.isMenuOpen ? <>
-        <button className="close-menu" onClick={() => onClosePrestigeMenu()}>Close and Reset</button>
+        <button className="close-menu" onClick={() => onClosePrestigeMenu()}>
+          {prestige.isReseting ? 'Back to Grid and Reset' : 'Return To Grid'}
+        </button>
       </> : <>
         <button className="open-menu" onClick={() => onOpenPrestigeMenu()}>
           <img src="icons/upgrade.png" />

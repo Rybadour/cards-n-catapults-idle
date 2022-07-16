@@ -10,13 +10,15 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     name: 'Ratz!',
     icon: 'cave-entrance',
     description: 'Get a Rat Den at the start of each game.',
+    summary: '+1 Rat Den on reset',
     extraStartingCards: {ratDen: 1},
   },
   rationing: {
     id: '',
     name: 'Rationing',
     icon: 'cornucopia',
-    description: 'Food has {{bonusAsPercent}} more capacity',
+    description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
+    summary: '+{{bonusAsPercent}} food capacity',
     bonus: {
       amount: 0.05,
       field: 'foodCapacity',

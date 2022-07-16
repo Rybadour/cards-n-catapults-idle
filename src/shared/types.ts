@@ -129,6 +129,7 @@ export type PrestigeUpgrade = {
   name: string,
   icon: string,
   description: string,
+  summary: string,
   extraStartingCards?: Record<string, number>,
   bonus?: {
     amount: number,

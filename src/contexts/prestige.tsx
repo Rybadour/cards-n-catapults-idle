@@ -33,6 +33,7 @@ export type PrestigeContext = {
   upgrades: Record<string, RealizedPrestigeUpgrade>,
   packs: Record<string, RealizedPrestigePack>,
   isMenuOpen: boolean,
+  isReseting: boolean,
   prestigeEffects: PrestigeEffects,
   prestige: () => boolean,
   buyPack: (cardPack: RealizedPrestigePack) => void,
@@ -49,6 +50,7 @@ const defaultContext: PrestigeContext = {
   upgrades: {},
   packs: realizedPacks,
   isMenuOpen: false,
+  isReseting: false,
   prestigeEffects: {
     bonuses: {
       foodCapacity: 1,
@@ -71,7 +73,8 @@ export function PrestigeProvider(props: Record<string, any>) {
   const [nextRenownCost, setNextRenownCost] = useState(defaultContext.nextRenownCost);
   const [upgrades, setUpgrades] = useState(defaultContext.upgrades);
   const [packs, setPacks] = useState(defaultContext.packs);
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isReseting, setIsReseting] = useState(false);
   const [prestigeEffects, setPrestigeEffects] = useState(defaultContext.prestigeEffects);
 
   function prestige() {
@@ -83,6 +86,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     setNextPoints(0);
     setCurrentRenownCost(0);
     setIsMenuOpen(true);
+    setIsReseting(true);
     return true;
   }
 
@@ -133,12 +137,16 @@ export function PrestigeProvider(props: Record<string, any>) {
   }
 
   const openMenu = () => setIsMenuOpen(true);
-  const closeMenu = () => setIsMenuOpen(false);
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    setIsReseting(false);
+  };
 
   return (
     <PrestigeContext.Provider
       value={{
-        prestigePoints, upgrades, packs, nextPoints, nextRenownCost, currentRenownCost, isMenuOpen, prestigeEffects,
+        prestigePoints, upgrades, packs, nextPoints, nextRenownCost, currentRenownCost, isMenuOpen, isReseting,
+        prestigeEffects,
         prestige, buyPack, update, openMenu, closeMenu,
       }}
       {...props}

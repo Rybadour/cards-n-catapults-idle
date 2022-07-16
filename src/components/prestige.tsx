@@ -1,5 +1,6 @@
 import { useCallback, useContext } from "react";
 import { PrestigeContext } from "../contexts/prestige";
+import { PrestigeUpgrade, RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 import './prestige.scss';
 
@@ -53,7 +54,7 @@ export default function Prestige() {
                   <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}</span>
                 </div>
 
-                <div className="ability-summary">+15% food capacity</div>
+                <div className="ability-summary">{getSummary(upgrade)}</div>
 
                 <div className="description">{upgrade.description}</div>
               </div>
@@ -63,4 +64,12 @@ export default function Prestige() {
       </div>
     </div>
   </div>;
+}
+
+function getSummary(upgrade: RealizedPrestigeUpgrade) {
+  let summary = upgrade.summary.replaceAll(
+    '{{bonusAsPercent}}',
+    formatNumber((upgrade.bonus?.amount ?? 0) * 100 * upgrade.quantity, 0, 0) + '%'
+  );
+  return summary;
 }
