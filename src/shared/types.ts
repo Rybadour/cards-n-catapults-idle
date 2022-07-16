@@ -28,6 +28,7 @@ export type Card = {
   tier: number,
   type: CardType,
   description: string,
+  rarity: Rarity,
   foodDrain?: number,
   maxDurability?: number,
   cooldownMs?: number,
@@ -64,6 +65,11 @@ export type RealizedCard = Card & {
   durability?: number,
   timeLeftMs?: number,
   cardMarks: Record<string, MarkType>,
+}
+
+export enum Rarity {
+  Common,
+  UltraRare,
 }
 
 export enum MarkType {
