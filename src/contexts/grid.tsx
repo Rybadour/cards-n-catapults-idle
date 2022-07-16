@@ -5,6 +5,7 @@ import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelo
 import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
 import { DiscoveryContext } from "./discovery";
+import { PrestigeContext } from "./prestige";
 
 const width = 5;
 const height = 5;
@@ -29,12 +30,13 @@ export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
   const discovery = useContext(DiscoveryContext);
+  const prestige = useContext(PrestigeContext);
   const stats = useContext(StatsContext);
   const cards = useContext(CardsContext);
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
 
   function update(elapsed: number) {
-    const results = updateGrid(gridSpaces, stats.resources, cards.cards, elapsed);
+    const results = updateGrid(gridSpaces, stats.resources, cards.cards, prestige.prestigeEffects, elapsed);
 
     if (results.newCards.length > 0) {
       discovery.discoverCards(results.newCards);

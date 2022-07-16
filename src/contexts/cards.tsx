@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 import global from "../config/global";
 import { Card, CardId, RealizedCard } from "../shared/types";
 import { DiscoveryContext } from "./discovery";
+import { PrestigeContext } from "./prestige";
 
 export type CardsContext = {
   cards: Record<CardId, number>,
@@ -32,6 +33,7 @@ export const CardsContext = createContext(defaultContext);
 
 export function CardsProvider(props: Record<string, any>) {
   const discovery = useContext(DiscoveryContext);
+  const prestige = useContext(PrestigeContext);
   const [cards, setCards] = useState(defaultContext.cards);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
@@ -98,7 +100,13 @@ export function CardsProvider(props: Record<string, any>) {
   }
 
   function prestigeReset() {
-    setCards(global.startingCards);
+    const newCards: Record<string, number> = {...global.startingCards};
+    Object.entries(prestige.prestigeEffects.extraStartCards)
+      .forEach(([c, amount]) => {
+        newCards[c] = (newCards[c] ?? 0) + amount;
+      });
+    setCards(newCards);
+    discovery.prestigeReset(newCards);
   }
 
   return (

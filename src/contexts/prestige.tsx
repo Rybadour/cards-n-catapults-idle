@@ -4,7 +4,7 @@ import { shuffle } from "lodash";
 
 import packsConfig from "../config/prestige-packs";
 import { getExponentialValue } from "../shared/utils";
-import { RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
+import { PrestigeEffects, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import upgradesConfig, { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH } from "../config/prestige-upgrades";
 import global from "../config/global";
 
@@ -33,6 +33,7 @@ export type PrestigeContext = {
   upgrades: Record<string, RealizedPrestigeUpgrade>,
   packs: Record<string, RealizedPrestigePack>,
   isMenuOpen: boolean,
+  prestigeEffects: PrestigeEffects,
   prestige: () => boolean,
   buyPack: (cardPack: RealizedPrestigePack) => void,
   update: (renown: number) => void,
@@ -48,6 +49,12 @@ const defaultContext: PrestigeContext = {
   upgrades: {},
   packs: realizedPacks,
   isMenuOpen: false,
+  prestigeEffects: {
+    bonuses: {
+      foodCapacity: 1,
+    },
+    extraStartCards: {},
+  },
   prestige: () => false,
   buyPack: (pack) => {},
   update: (renown) => {},
@@ -65,6 +72,7 @@ export function PrestigeProvider(props: Record<string, any>) {
   const [upgrades, setUpgrades] = useState(defaultContext.upgrades);
   const [packs, setPacks] = useState(defaultContext.packs);
   const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [prestigeEffects, setPrestigeEffects] = useState(defaultContext.prestigeEffects);
 
   function prestige() {
     if (nextPoints <= 0) {
@@ -97,6 +105,17 @@ export function PrestigeProvider(props: Record<string, any>) {
     newUpgrades[upgradeId] = upgrade;
     setUpgrades(newUpgrades);
 
+    const newEffects = {...prestigeEffects};
+    if (upgrade.extraStartingCards) {
+      Object.entries(upgrade.extraStartingCards).forEach(([c, amount]) => {
+        newEffects.extraStartCards[c] = (newEffects.extraStartCards[c] ?? 0) + amount;
+      })
+    }
+    if (upgrade.bonus) {
+      newEffects.bonuses[upgrade.bonus.field] = (newEffects.bonuses[upgrade.bonus.field] ?? 0) + upgrade.bonus.amount;
+    }
+    setPrestigeEffects(newEffects);
+
     const newPrestigePacks = {...packs};
     newPrestigePacks[pack.id].numBought += 1;
     newPrestigePacks[pack.id].cost = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought);
@@ -119,8 +138,7 @@ export function PrestigeProvider(props: Record<string, any>) {
   return (
     <PrestigeContext.Provider
       value={{
-        prestigePoints, upgrades, packs,
-        nextPoints, nextRenownCost, currentRenownCost, isMenuOpen,
+        prestigePoints, upgrades, packs, nextPoints, nextRenownCost, currentRenownCost, isMenuOpen, prestigeEffects,
         prestige, buyPack, update, openMenu, closeMenu,
       }}
       {...props}

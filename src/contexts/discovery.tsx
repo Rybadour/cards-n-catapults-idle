@@ -9,7 +9,7 @@ export type DiscoveryContext = {
   discoveredResources: Partial<Record<ResourceType, boolean>>,
   discoverCards: (cards: Card[]) => void,
   discoverResources: (resources: ResourceType[]) => void,
-  prestigeReset: () => void,
+  prestigeReset: (startingCards: Record<string, number>) => void,
 };
 
 const defaultContext: DiscoveryContext = {
@@ -20,7 +20,7 @@ const defaultContext: DiscoveryContext = {
   },
   discoverCards: (cards) => {},
   discoverResources: (resources) => {},
-  prestigeReset: () => {},
+  prestigeReset: (startingCards) => {},
 };
 
 function addToDiscoverMap<K extends string | symbol>(map: Record<K, boolean>, keys: K[]) {
@@ -61,9 +61,9 @@ export function DiscoveryProvider(props: Record<string, any>) {
     setDiscoveredResources(newDiscover);
   }
 
-  function prestigeReset() {
+  function prestigeReset(startingCards: Record<string, number>) {
     const newDiscovered = {};
-    addToDiscoverMap(newDiscovered, Object.keys(global.startingCards));
+    addToDiscoverMap(newDiscovered, Object.keys(startingCards));
     setCardsDiscoveredThisPrestige(newDiscovered);
   }
 

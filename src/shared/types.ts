@@ -132,7 +132,7 @@ export type PrestigeUpgrade = {
   extraStartingCards?: Record<string, number>,
   bonus?: {
     amount: number,
-    field: keyof(PrestigeEffects),
+    field: keyof(PrestigeBonuses),
   },
 };
 
@@ -142,6 +142,10 @@ export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
 
 export type PrestigeEffects = {
   extraStartCards: Record<string, number>,
+  bonuses: PrestigeBonuses,
+}
+
+export type PrestigeBonuses = {
   foodCapacity: number,
 }
 

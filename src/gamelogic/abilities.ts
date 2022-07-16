@@ -1,6 +1,6 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType } from "../shared/types";
+import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, PrestigeEffects } from "../shared/types";
 import global from "../config/global";
 import { getRandomFromArray } from "../shared/utils";
 import { StatsContext } from "../contexts/stats";
@@ -144,6 +144,7 @@ export function updateGrid(
   grid: Grid,
   resources: Record<ResourceType, number>,
   cards: Record<string, number>,
+  effects: PrestigeEffects,
   elapsed: number
 ): UpdateGridResults {
   const results = {
@@ -203,7 +204,7 @@ export function updateGrid(
         }
       }
 
-      const didActivate = activateCard(results, cards, card, x, y);
+      const didActivate = activateCard(results, cards, effects, card, x, y);
 
       if (didActivate) {
         card.timeLeftMs = card.cooldownMs;
@@ -223,6 +224,7 @@ export function updateGrid(
 function activateCard(
   results: UpdateGridResults,
   cards: Record<string, number>,
+  effects: PrestigeEffects,
   card: RealizedCard,
   x: number,
   y: number
@@ -234,7 +236,7 @@ function activateCard(
       if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
 
       found = true;
-      results.grid[ay][ax] = createCard(cardsConfig[newCard], 1);
+      results.grid[ay][ax] = createCard(cardsConfig[newCard], 1, effects);
       results.newCards.push(cardsConfig[newCard]);
       results.anyChanged = true;
     });
@@ -261,7 +263,7 @@ function activateCard(
       if ((cards[otherCard.id] ?? 0) <= 0) return;
 
       found = true;
-      results.grid[y2][x2] = createCard(cardsConfig[otherCard.id], cards[otherCard.id]);
+      results.grid[y2][x2] = createCard(cardsConfig[otherCard.id], cards[otherCard.id], effects);
       const quantityUsed = cards[otherCard.id] > 1 ? 1 : cards[otherCard.id];
       results.inventoryDelta[otherCard.id] = (results.inventoryDelta[otherCard.id] ?? 0) - quantityUsed;
       results.anyChanged = true;

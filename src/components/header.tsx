@@ -33,7 +33,6 @@ function Header() {
       cards.prestigeReset();
       cardPacks.prestigeReset();
       grid.prestigeReset();
-      discovery.prestigeReset();
     }
   }, [prestige]);
 

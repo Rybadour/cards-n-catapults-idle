@@ -3,9 +3,9 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { CardsContext } from '../contexts/cards';
 import { GridContext } from '../contexts/grid';
-import { replaceSpaceWithCard } from '../gamelogic/grid-cards';
+import { createCard } from '../gamelogic/grid-cards';
 import { ProgressBar } from './progress-bar';
-import { Ability, MarkType, RealizedCard, ResourceType } from '../shared/types';
+import { MarkType, RealizedCard, ResourceType } from '../shared/types';
 
 import './grid.scss';
 import { StatsContext } from '../contexts/stats';
@@ -13,19 +13,26 @@ import { enumFromKey, formatNumber } from '../shared/utils';
 import resourceIconMap from '../config/resources';
 import { DiscoveryContext } from '../contexts/discovery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { PrestigeContext } from '../contexts/prestige';
 
 let lastTime = Date.now();
 
 export default function GridMap() {
   const discovery = useContext(DiscoveryContext);
+  const prestige = useContext(PrestigeContext);
   const stats = useContext(StatsContext);
   const grid = useContext(GridContext);
   const cards = useContext(CardsContext);
 
-  const addCard = useCallback((x: number, y: number) => 
-    replaceSpaceWithCard(grid, cards, x, y),
-    [grid, cards]
-  );
+  const addCard = useCallback((x: number, y: number) => {
+    if (cards.selectedCard == null || !cards.hasCard(cards.selectedCard)) {
+      return;
+    }
+
+    const quantity = cards.cards[cards.selectedCard.id]; 
+    const oldCard = grid.replaceCard(x, y, createCard(cards.selectedCard, quantity, prestige.prestigeEffects));
+    cards.replaceCard(oldCard);
+  }, [grid, cards]);
 
   const returnCard = useCallback((evt, x: number, y: number, card: RealizedCard | null) => {
     evt.preventDefault();
