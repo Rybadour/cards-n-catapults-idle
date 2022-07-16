@@ -68,11 +68,15 @@ export default function Prestige() {
 }
 
 function getSummary(upgrade: RealizedPrestigeUpgrade) {
-  let summary = '';
+  let summary = upgrade.summary;
   if (upgrade.bonus) {
-    summary = upgrade.summary.replaceAll(
+    summary = summary.replaceAll(
       '{{bonusAsPercent}}',
       formatNumber((upgrade.bonus?.amount ?? 0) * 100 * upgrade.quantity, 0, 0) + '%'
+    );
+    summary = summary.replaceAll(
+      '{{bonusAsAmount}}',
+      formatNumber((upgrade.bonus?.amount ?? 0) * upgrade.quantity, 0, 0)
     );
   }
 
@@ -82,7 +86,7 @@ function getSummary(upgrade: RealizedPrestigeUpgrade) {
         '+' + (amount * upgrade.quantity) + ' ' + cards[c].name
       ).join(', ');
 
-    summary = upgrade.summary.replaceAll('{{extraCards}}', extraCardsSummary);
+    summary = summary.replaceAll('{{extraCards}}', extraCardsSummary);
   }
 
   return summary;

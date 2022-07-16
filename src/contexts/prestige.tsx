@@ -54,6 +54,7 @@ const defaultContext: PrestigeContext = {
   prestigeEffects: {
     bonuses: {
       foodCapacity: 1,
+      startingGold: 0,
     },
     extraStartCards: {},
   },

@@ -28,7 +28,6 @@ function Header() {
 
   const onPrestige = useCallback(() => {
     if (prestige.prestige()) {
-      stats.prestigeReset();
       cardPacks.prestigeReset();
       grid.prestigeReset();
     }
@@ -41,6 +40,7 @@ function Header() {
   const onClosePrestigeMenu = useCallback(() => {
     if (prestige.isReseting) {
       cards.prestigeReset();
+      stats.prestigeReset();
     }
     prestige.closeMenu();
   }, [prestige]);

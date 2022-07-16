@@ -31,6 +31,17 @@ const upgrades: Record<string, PrestigeUpgrade> = {
       amount: 0.05,
       field: 'foodCapacity',
     }
+  },
+  charity: {
+    id: '',
+    name: 'Charity',
+    icon: 'receive-money',
+    description: 'Provides {{bonusAsAmount}} extra gold on reset',
+    summary: '+{{bonusAsAmount}} gold on reset',
+    bonus: {
+      amount: 50,
+      field: 'startingGold',
+    }
   }
 };
 
@@ -45,6 +56,7 @@ Object.keys(upgrades)
 
     if (upgrade.bonus) {
       replaceInDescription('bonusAsPercent', formatNumber(upgrade.bonus.amount * 100, 0, 0) + '%');
+      replaceInDescription('bonusAsAmount', formatNumber(upgrade.bonus.amount, 0, 0));
     }
   });
 

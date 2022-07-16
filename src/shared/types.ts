@@ -148,6 +148,7 @@ export type PrestigeEffects = {
 
 export type PrestigeBonuses = {
   foodCapacity: number,
+  startingGold: number,
 }
 
 export type PrestigePack = {

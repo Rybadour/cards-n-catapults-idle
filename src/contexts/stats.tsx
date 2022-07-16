@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
 import global from "../config/global";
-import { defaultResourcesMap, Grid, ResourcesMap, ResourceType } from "../shared/types";
+import { defaultResourcesMap, Grid, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
 import { enumFromKey } from "../shared/utils";
 import { DiscoveryContext } from "./discovery";
 import { PrestigeContext } from "./prestige";
@@ -69,7 +69,9 @@ export function StatsProvider(props: Record<string, any>) {
   }
 
   function prestigeReset() {
-    setResources({...defaultContext.resources});
+    const newResources = {...defaultContext.resources};
+    newResources.gold += prestige.prestigeEffects.bonuses.startingGold;
+    setResources(newResources);
     setResourcesPerSec({...defaultResourcesMap});
   }
 
