@@ -1,7 +1,7 @@
 const global = {
   startingGold: 200,
-  startingCards: {beggar: 1, peasant: 1, berries: 3, bard: 6},
-  startingPrestige: 1000,
+  startingCards: {beggar: 1},
+  startingPrestige: 0,
   produceModifier: 1,
   isDebug: false,
 };

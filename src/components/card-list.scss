@@ -91,7 +91,7 @@ $card-height: 220px;
 
   &.selected:not(.empty) {
     border: 2px solid white;
-    background-color: #777;
+    background-color: #666;
   }
 
   .title {
@@ -108,6 +108,7 @@ $card-height: 220px;
     img {
       width: 26px;
       height: 26px;
+      filter: drop-shadow(1px 1px 6px black);
     }
   }
 
