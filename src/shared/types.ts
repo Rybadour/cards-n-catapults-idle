@@ -9,9 +9,9 @@ export enum CardType {
 }
 
 export enum ResourceType {
-  Gold = "gold",
-  Wood = "wood",
-  Renown = "renown",
+  Gold = "Gold",
+  Wood = "Wood",
+  Renown = "Renown",
 }
 
 export type ResourcesMap = Record<ResourceType, number>;

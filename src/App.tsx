@@ -27,7 +27,7 @@ function App() {
 
         <Content />
 
-        <ReactTooltip place="bottom" effect="solid" />
+        <ReactTooltip place="bottom" effect="solid" className="standard-tooltip" />
 
         <footer>
           <div className="attribution">
