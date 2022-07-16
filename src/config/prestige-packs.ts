@@ -11,6 +11,9 @@ const packs: Record<string, PrestigePack> = {
       upgrade: upgrades.ratz,
       quantity: 1,
     }, {
+      upgrade: upgrades.hoboVillage,
+      quantity: 3,
+    }, {
       upgrade: upgrades.rationing,
       quantity: 10,
     }],

@@ -1,4 +1,5 @@
 import { useCallback, useContext } from "react";
+import cards from "../config/cards";
 import { PrestigeContext } from "../contexts/prestige";
 import { PrestigeUpgrade, RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
@@ -67,9 +68,22 @@ export default function Prestige() {
 }
 
 function getSummary(upgrade: RealizedPrestigeUpgrade) {
-  let summary = upgrade.summary.replaceAll(
-    '{{bonusAsPercent}}',
-    formatNumber((upgrade.bonus?.amount ?? 0) * 100 * upgrade.quantity, 0, 0) + '%'
-  );
+  let summary = '';
+  if (upgrade.bonus) {
+    summary = upgrade.summary.replaceAll(
+      '{{bonusAsPercent}}',
+      formatNumber((upgrade.bonus?.amount ?? 0) * 100 * upgrade.quantity, 0, 0) + '%'
+    );
+  }
+
+  if (upgrade.extraStartingCards) {
+    let extraCardsSummary = Object.entries(upgrade.extraStartingCards)
+      .map(([c, amount]) => 
+        '+' + (amount * upgrade.quantity) + ' ' + cards[c].name
+      ).join(', ');
+
+    summary = upgrade.summary.replaceAll('{{extraCards}}', extraCardsSummary);
+  }
+
   return summary;
 }

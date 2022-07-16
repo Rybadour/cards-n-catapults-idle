@@ -1,9 +1,9 @@
 const global = {
   startingGold: 200,
-  startingCards: {beggar: 1},
-  startingPrestige: 0,
+  startingCards: {beggar: 1, bard: 6},
+  startingPrestige: 100,
   produceModifier: 1,
-  isDebug: false,
+  isDebug: true,
 };
 
 export default global;

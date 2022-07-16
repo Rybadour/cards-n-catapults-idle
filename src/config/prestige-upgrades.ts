@@ -10,8 +10,16 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     name: 'Ratz!',
     icon: 'cave-entrance',
     description: 'Get a Rat Den at the start of each game.',
-    summary: '+1 Rat Den on reset',
+    summary: '{{extraCards}} on reset',
     extraStartingCards: {ratDen: 1},
+  },
+  hoboVillage: {
+    id: '',
+    name: 'Hobo Village',
+    icon: 'camping-tent',
+    description: 'Get more Beggars at the start of each game.',
+    summary: '{{extraCards}} on reset',
+    extraStartingCards: {beggar: 1},
   },
   rationing: {
     id: '',

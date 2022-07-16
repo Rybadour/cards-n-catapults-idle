@@ -41,8 +41,11 @@ const cardPacks: Record<string, CardPack> = {
     costGrowth: 1.1,
     quantity: 4,
     possibleThings: [{
+      thing: cards.bard,
+      chance: 0.075,
+    }, {
       thing: cards.forager,
-      chance: 0.1,
+      chance: 0.075,
     }, {
       thing: cards.carpenter,
       chance: 0.075,
@@ -51,7 +54,7 @@ const cardPacks: Record<string, CardPack> = {
       chance: 0.075,
     }, {
       thing: cards.peasant,
-      chance: 0.15,
+      chance: 0.1,
     }, {
       thing: cards.bread,
       chance: 0.25,
