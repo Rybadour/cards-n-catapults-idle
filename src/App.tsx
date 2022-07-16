@@ -12,6 +12,7 @@ import { CardPacksProvider } from './contexts/card-packs';
 import Header from './components/header';
 import { PrestigeContext, PrestigeProvider } from './contexts/prestige';
 import Prestige from './components/prestige';
+import ReactTooltip from 'react-tooltip';
 
 function App() {
   return (
@@ -25,6 +26,8 @@ function App() {
         <Header />
 
         <Content />
+
+        <ReactTooltip place="bottom" effect="solid" />
 
         <footer>
           <div className="attribution">

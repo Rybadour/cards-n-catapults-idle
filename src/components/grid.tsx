@@ -144,7 +144,7 @@ export default function GridMap() {
 }
 
 function Resource(props: {resource: ResourceType, stats: StatsContext}) {
-  return <div className="resource">
+  return <div className="resource" data-tip={props.resource}>
     <img src={"icons/" + resourceIconMap[props.resource]} />
     <div className="amounts">
       <div className='total'>{formatNumber(props.stats.resources[props.resource], 0, 0)}</div>

@@ -54,7 +54,7 @@ function Header() {
           {prestige.isReseting ? 'Back to Grid and Reset' : 'Return To Grid'}
         </button>
       </> : <>
-        <button className="open-menu" onClick={() => onOpenPrestigeMenu()}>
+        <button className="open-menu" onClick={() => onOpenPrestigeMenu()} data-tip="View Prestige Upgrades">
           <img src="icons/upgrade.png" />
         </button>
         <button onClick={() => onPrestige()}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>

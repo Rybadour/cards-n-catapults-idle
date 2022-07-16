@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import ReactTooltip from 'react-tooltip';
 import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
 import { DiscoveryContext } from '../contexts/discovery';
@@ -18,6 +19,10 @@ export default function CardList() {
     newClosedCategories[cardType] = !newClosedCategories[cardType];
     setClosedCategories(newClosedCategories);
   }, [closedCategories]);
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, [discovery]);
 
   return <div className="card-inventory">
     <div className="title">Your Cards</div>
@@ -60,21 +65,21 @@ export default function CardList() {
 
                 <div className="stats">
                   {card.maxDurability ? 
-                    <div className="stat">
+                    <div className="stat" data-tip="Food capacity" data-offset="{'bottom': -5}">
                       <span>{card.maxDurability}</span>
                       <img src="icons/ham-shank.png" />
                     </div>:
                     null
                   }
                   {card.foodDrain ? 
-                    <div className="stat">
+                    <div className="stat" data-tip="Food Drain" data-offset="{'bottom': -5}">
                       <span>-{card.foodDrain}</span>
                       <img src="icons/ham-shank.png" />
                       <span>/s</span>
                     </div>:
                     null
                   }
-                  <div className="tier">
+                  <div className="tier" data-tip="Tier" data-offset="{'bottom': -5}">
                     <img src='icons/round-star.png' />
                     <span className="value">{card.tier}</span>
                   </div>

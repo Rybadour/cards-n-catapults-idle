@@ -29,7 +29,9 @@ export default function CardPacks() {
           {cardPack.possibleThings.map(({thing: card}) => 
             <div
               className={classNames("possible-card", {discovered: discovery.discoveredCards[card.id]})}
-              key={card.id}>
+              key={card.id}
+              data-tip={discovery.discoveredCards[card.id] ? card.name : "???"}
+            >
               {discovery.discoveredCards[card.id] ? 
                 <img src={"icons/" + card.icon + ".png"} /> :
                 <FontAwesomeIcon icon="question" />
@@ -39,7 +41,7 @@ export default function CardPacks() {
         </div>
 
         <button className="purchase-button" onClick={() => onBuyPack(cardPack)}>
-          Purchase for {formatNumber(cardPack.cost, 0, 0)} gold
+          Purchase {cardPack.quantity} cards for {formatNumber(cardPack.cost, 0, 0)} gold
         </button>
       </div>
     )}
