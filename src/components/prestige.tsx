@@ -56,7 +56,7 @@ export default function Prestige() {
                 </div>
 
                 {upgrade.summary ?
-                  <div className="ability-summary">{getSummary(upgrade)}</div> :
+                  <div className="summary">{getSummary(upgrade)}</div> :
                   null
                 }
 

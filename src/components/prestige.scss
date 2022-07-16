@@ -148,30 +148,12 @@
       }
     }
 
-    .tier {
-      position: relative;
-      width: 30px;
-      height: 30px;
-
-      img {
-        width: 100%;
-        filter: brightness(0.8);
-      }
-
-      .value {
-        display: inline-block;
-        width: 100%;
-        position: absolute;
-        top: 10px;
-        left: 0;
-        color: black;
-        font-weight: bold;
-        text-align: center;
-      }
+    .summary {
+      padding: 0 5px;
+      margin-bottom: 20px;
     }
 
     .description {
-      margin-top: 20px;
       font-size: 16px;
       padding: 0 5px;
     }
