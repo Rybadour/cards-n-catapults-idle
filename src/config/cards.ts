@@ -207,6 +207,24 @@ const cards: Record<string, Card> = {
       cost: 2,
     },
     abilityShape: MatchingGridShape.RowAndColumn,
+  },
+  lumbermill: {
+    id: "",
+    name: "Lumbermill",
+    icon: "cleaver",
+    tier: 2,
+    type: CardType.Building,
+    description: "Sells 1 wood/s for 2 gold/s for each adjacent forest, in all directions",
+    ability: Ability.ProduceFromCards,
+    abilityStrength: 2,
+    abilityResource: ResourceType.Gold,
+    abilityMultiplyByAdjacent: true,
+    abilityCards: ['forest'],
+    abilityCostPerSec: {
+      resource: ResourceType.Wood,
+      cost: 0.5,
+    },
+    abilityShape: MatchingGridShape.AllAdjacent,
   }
 };
 

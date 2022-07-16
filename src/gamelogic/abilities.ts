@@ -94,6 +94,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
     if (card.isDisabled || card.isExpiredAndReserved) return;
 
     const strength = card.abilityStrength * card.bonus;
+    let numAdjacent = 0;
 
     if (card.ability == Ability.Produce && card.abilityResource) {
       results.resourcesPerSec[card.abilityResource] += strength;
@@ -107,6 +108,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
           results.resourcesPerSec[card.abilityResource] += strength;
           card.totalStrength += strength;
           card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
+          numAdjacent += 1;
         }
       });
 
@@ -119,13 +121,15 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
           results.resourcesPerSec[card.abilityResource!!] += strength;
           card.totalStrength += strength;
           card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
+          numAdjacent += 1;
         }
       });
     }
 
     if (card.abilityCostPerSec) {
-      results.resourcesPerSec[card.abilityCostPerSec.resource] -= card.abilityCostPerSec.cost;
-      card.totalCost += card.abilityCostPerSec.cost;
+      const cost = card.abilityCostPerSec.cost * (card.abilityMultiplyByAdjacent ? numAdjacent : 1);
+      results.resourcesPerSec[card.abilityCostPerSec.resource] -= cost;
+      card.totalCost += cost;
     }
   });
 

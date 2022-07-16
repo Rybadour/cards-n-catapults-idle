@@ -50,10 +50,13 @@ const cardPacks: Record<string, CardPack> = {
       chance: 0.075,
     }, {
       thing: cards.carpenter,
-      chance: 0.075,
+      chance: 0.05,
+    }, {
+      thing: cards.lumbermill,
+      chance: 0.05,
     }, {
       thing: cards.pigPen,
-      chance: 0.075,
+      chance: 0.05,
     }, {
       thing: cards.peasant,
       chance: 0.1,
