@@ -122,14 +122,14 @@ export default function GridMap() {
                   {card.isExpiredAndReserved ? '(expired)' : ''}
                 </div>
                 <div className="ability">
-                  {card.totalStrength && card.abilityResource ? <>
-                    <img src={"icons/" + resourceIconMap[card.abilityResource]} />
+                  {card.totalStrength && card.passive ? <>
+                    <img src={"icons/" + resourceIconMap[card.passive.resource]} />
                     {formatNumber(card.totalStrength, 0, 2)}/s
                   </> : null }
                 </div>
                 <div className="ability-cost">
-                  {card.totalCost && card.abilityCostPerSec ? <>
-                    <img src={"icons/" + resourceIconMap[card.abilityCostPerSec.resource]} />
+                  {card.totalCost && card.costPerSec ? <>
+                    <img src={"icons/" + resourceIconMap[card.costPerSec.resource]} />
                     -{formatNumber(card.totalCost, 0, 1)}/s
                   </> : null }
                 </div>

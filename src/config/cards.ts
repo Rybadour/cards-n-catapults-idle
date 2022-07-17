@@ -1,5 +1,6 @@
-import { Ability, Card, CardType, EMPTY_CARD, MatchingGridShape, Rarity, ResourceType } from "../shared/types";
-import { formatNumber } from "../shared/utils";
+import { replace } from "lodash";
+import { Card, CardType, EMPTY_CARD, MatchingGridShape, ModifierBehaviour, Rarity, ResourceType } from "../shared/types";
+import { formatNumber, using } from "../shared/utils";
 
 const cards: Record<string, Card> = {
   beggar: {
@@ -9,11 +10,12 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Person,
     rarity: Rarity.Common,
-    description: "Produces {{abilityStrength}} gold/s.",
+    description: "{{passive}}.",
     foodDrain: 0.2,
-    ability: Ability.Produce,
-    abilityStrength: 1,
-    abilityResource: ResourceType.Gold,
+    passive: {
+      strength: 1,
+      resource: ResourceType.Gold,
+    }
   },
   peasant: {
     id: "",
@@ -22,16 +24,19 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Person,
     rarity: Rarity.Common,
-    description: "Generates {{abilityStrength}} gold/s except when near low tier cards. When not fed with food it's production is reduced to {{modifiedStrength}} gold/s.",
+    description: "{{passive}} except when near low tier cards. When not fed it's production is reduced to {{modifiedStrength}}.",
     foodDrain: 0.5,
-    ability: Ability.Produce,
-    abilityStrength: 3,
-    abilityResource: ResourceType.Gold,
+    passive: {
+      strength: 3,
+      resource: ResourceType.Gold,
+    },
     abilityStrengthModifier: {
+      behaviour: ModifierBehaviour.WhenNotMatching,
       factor: 0.333,
-      whenMatching: false,
-      types: [CardType.Food],
-      gridShape: MatchingGridShape.OrthoAdjacent,
+      match: {
+        shape: MatchingGridShape.OrthoAdjacent,
+        cardTypes: [CardType.Food],
+      }
     },
     disableShape: {
       onMatch: true,
@@ -46,13 +51,16 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Person,
     rarity: Rarity.Common,
-    description: "Generates {{abilityStrength}} renown/s for each person next to them, in all directions.",
+    description: "{{passive}}",
     foodDrain: 0.2,
-    ability: Ability.ProduceFromMatching,
-    abilityStrength: 2,
-    abilityResource: ResourceType.Renown,
-    abilityMatch: [CardType.Person],
-    abilityShape: MatchingGridShape.AllAdjacent,
+    passive: {
+      strength: 2,
+      resource: ResourceType.Renown,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cardTypes: [CardType.Person],
+      }
+    },
   },
   ratSnack: {
     id: "",
@@ -61,13 +69,16 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Food,
     rarity: Rarity.Common,
-    description: "Produces {{abilityStrength}} gold for every adjacent person.",
+    description: "{{passive}}",
     maxDurability: 12,
-    ability: Ability.ProduceFromMatching,
-    abilityStrength: 0.25,
-    abilityMatch: [CardType.Person],
-    abilityResource: ResourceType.Gold,
-    abilityShape: MatchingGridShape.OrthoAdjacent,
+    passive: {
+      strength: 0.25,
+      resource: ResourceType.Gold,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.OrthoAdjacent,
+        cardTypes: [CardType.Person],
+      }
+    },
   },
   berries: {
     id: "",
@@ -76,12 +87,13 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Food,
     rarity: Rarity.Common,
-    description: "Increases adjacent persons abilities by {{abilityPercent}}.",
+    description: "{{bonusToAdjacent}}",
     maxDurability: 8,
-    ability: Ability.BonusToMatching,
-    abilityStrength: 0.2,
-    abilityMatch: [CardType.Person],
-    abilityShape: MatchingGridShape.OrthoAdjacent,
+    bonusToAdjacent: {
+      strength: 0.2,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cardTypes: [CardType.Person],
+    },
   },
   mushrooms: {
     id: "",
@@ -92,11 +104,14 @@ const cards: Record<string, Card> = {
     rarity: Rarity.Common,
     description: "Produces {{abilityStrength}} gold for every nearby empty, mushroom, or forest tile. Considers both orthogonal and diagonal tiles.",
     maxDurability: 10,
-    ability: Ability.ProduceFromCards,
-    abilityStrength: 0.1,
-    abilityCards: ['mushrooms', 'forest', EMPTY_CARD],
-    abilityResource: ResourceType.Gold,
-    abilityShape: MatchingGridShape.AllAdjacent,
+    passive: {
+      strength: 0.1,
+      resource: ResourceType.Gold,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cards: ['mushrooms', 'forest', EMPTY_CARD],
+      }
+    },
   },
   haunch: {
     id: "",
@@ -105,12 +120,13 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Food,
     rarity: Rarity.Common,
-    description: "Improves nearby people by {{abilityPercent}}",
+    description: "{{bonusToAdjacent}}",
     maxDurability: 5,
-    ability: Ability.BonusToMatching,
-    abilityStrength: 1,
-    abilityMatch: [CardType.Person],
-    abilityShape: MatchingGridShape.OrthoAdjacent,
+    bonusToAdjacent: {
+      strength: 1,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cardTypes: [CardType.Person],
+    },
   },
   bread: {
     id: "",
@@ -121,8 +137,6 @@ const cards: Record<string, Card> = {
     rarity: Rarity.Common,
     description: "Just food, that's it.",
     maxDurability: 40,
-    ability: Ability.None,
-    abilityStrength: 0,
   },
   ambrosia: {
     id: "",
@@ -131,10 +145,13 @@ const cards: Record<string, Card> = {
     tier: 4,
     type: CardType.Food,
     rarity: Rarity.UltraRare,
-    description: "Food of the gods. Massive bonus to adjacent people and bonus to all food.",
+    description: "Food of the gods. Massive bonus to any nearby Person and to all food capacity.",
     maxDurability: 1000,
-    ability: Ability.BonusToMatching,
-    abilityStrength: 0,
+    bonusToAdjacent: {
+      strength: 2,
+      shape: MatchingGridShape.AllAdjacent,
+      cardTypes: [CardType.Person],
+    },
   },
   forest: {
     id: "",
@@ -143,10 +160,11 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Resource,
     rarity: Rarity.Common,
-    description: "Produces {{abilityStrength}} wood/s",
-    ability: Ability.Produce,
-    abilityStrength: 1,
-    abilityResource: ResourceType.Wood,
+    description: "{{passive}}",
+    passive: {
+      strength: 1,
+      resource: ResourceType.Wood,
+    }
   },
   ratDen: {
     id: "",
@@ -155,11 +173,11 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Building,
     rarity: Rarity.Common,
-    description: "Generates 1 Rat Snack nearby every {{cooldownSecs}} seconds.",
-    ability: Ability.ProduceCard,
-    abilityStrength: 1,
-    abilityCards: ["ratSnack"],
-    abilityShape: MatchingGridShape.OrthoAdjacent,
+    description: "{{produceCard}} every {{cooldownSecs}} seconds.",
+    produceCardEffect: {
+      shape: MatchingGridShape.OrthoAdjacent,
+      possibleCards: ["ratSnack"],
+    },
     cooldownMs: 20000,
   },
   campfire: {
@@ -170,10 +188,10 @@ const cards: Record<string, Card> = {
     type: CardType.Building,
     rarity: Rarity.Common,
     description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{abilityCostValue}} wood.",
-    ability: Ability.AutoPlace,
-    abilityStrength: 1,
-    abilityMatch: [CardType.Food],
-    abilityCost: {
+    autoReplaceEffect: {
+      cardType: CardType.Food,
+    },
+    costPerUse: {
       resource: ResourceType.Wood,
       cost: 1,
     },
@@ -186,11 +204,11 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Building,
     rarity: Rarity.Common,
-    description: "Generates Mushrooms and Berries when next to a forest every {{cooldownSecs}} seconds.",
-    ability: Ability.ProduceCard,
-    abilityStrength: 1,
-    abilityCards: ['mushrooms', 'berries'],
-    abilityShape: MatchingGridShape.OrthoAdjacent,
+    description: "{{produceCard}} when next to a forest every {{cooldownSecs}} seconds.",
+    produceCardEffect: {
+      shape: MatchingGridShape.OrthoAdjacent,
+      possibleCards: ['mushrooms', 'berries'],
+    },
     cooldownMs: 10000,
     disableShape: {
       onMatch: false,
@@ -207,13 +225,13 @@ const cards: Record<string, Card> = {
     rarity: Rarity.Common,
     description: "Generates meat every {{cooldownSecs}}s while consuming food.",
     foodDrain: 2,
-    ability: Ability.DrawCard,
-    abilityStrength: 1,
-    abilityCards: ['haunch'],
+    drawCardEffect: {
+      possibleCards: ['haunch'],
+    },
     disableShape: {
       onMatch: false,
       shape: MatchingGridShape.OrthoAdjacent,
-      cardType: CardType.Food,
+      cardTypes: [CardType.Food],
     },
     cooldownMs: 5000,
   },
@@ -225,14 +243,15 @@ const cards: Record<string, Card> = {
     type: CardType.Building,
     rarity: Rarity.Common,
     description: "Improves buildings and people in the same row and column by {{abilityPercent}}.",
-    ability: Ability.BonusToMatching,
-    abilityStrength: 0.25,
-    abilityMatch: [CardType.Person, CardType.Building],
-    abilityCostPerSec: {
+    bonusToAdjacent: {
+      strength: 0.25,
+      shape: MatchingGridShape.RowAndColumn,
+      cardTypes: [CardType.Person, CardType.Building],
+    },
+    costPerSec: {
       resource: ResourceType.Wood,
       cost: 2,
     },
-    abilityShape: MatchingGridShape.RowAndColumn,
   },
   lumbermill: {
     id: "",
@@ -242,16 +261,18 @@ const cards: Record<string, Card> = {
     type: CardType.Building,
     rarity: Rarity.Common,
     description: "Sells 1 wood/s for 2 gold/s for each adjacent forest, in all directions",
-    ability: Ability.ProduceFromCards,
-    abilityStrength: 2,
-    abilityResource: ResourceType.Gold,
-    abilityMultiplyByAdjacent: true,
-    abilityCards: ['forest'],
-    abilityCostPerSec: {
+    passive: {
+      strength: 2,
+      resource: ResourceType.Gold,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cards: ['forest'],
+      }
+    },
+    costPerSec: {
       resource: ResourceType.Wood,
       cost: 0.5,
     },
-    abilityShape: MatchingGridShape.AllAdjacent,
   }
 };
 
@@ -264,19 +285,51 @@ Object.keys(cards)
       card.description = card.description.replaceAll(`{{${variable}}}`, value);
     }
 
-    replaceInDescription('abilityStrength', String(card.abilityStrength));
+    using(card.passive, (p) => {
+      let multiplyText = '';
+      using(p.multiplyByAdjacent, (mba) => {
+        const cardTypes = mba.cardTypes?.map(ct => String(ct)).join(' or ');
+        const shape = 'nearby' + (mba.shape == MatchingGridShape.AllAdjacent ? ', in all directions' : '');
+        multiplyText = ` for each ${cardTypes} ${shape}`;
+      });
+      replaceInDescription('passive', `Produces ${p.strength} ${p.resource}/s${multiplyText}`);
+    });
+
     if (card.cooldownMs) {
       replaceInDescription('cooldownSecs', formatNumber(card.cooldownMs / 1000, 0, 1));
     }
+
+    using(card.abilityStrengthModifier, (mod) => {
+      if (card.passive) { 
+        replaceInDescription('modifiedStrength', formatNumber(card.passive.strength * mod.factor, 0, 1));
+      }
+    });
+
+    using(card.bonusToAdjacent, (bta) => {
+      let matching = '';
+      if (bta.cardTypes) {
+        matching = bta.cardTypes.map(ct => String(ct)).join(' or ');
+      } else if (bta.cards) {
+        matching = bta.cards.map(c => cards[c].name).join(' or ');
+      }
+
+      replaceInDescription(
+        'bonusToAdjacent',
+        `Improves all nearby ${matching} cards by ${formatNumber(bta.strength * 100, 0, 0)}%.`
+      );
+    });
+
+    /* *
+    using(card.produceCardEffect, (prod) => {
+      replaceInDescription('produceCard', formatNumber(card.abilityStrength * 100, 0, 0)+"%");
+    });
     if (card.ability == Ability.BonusToMatching) {
       replaceInDescription('abilityPercent', formatNumber(card.abilityStrength * 100, 0, 0)+"%");
     }
     if (card.abilityCost) {
       replaceInDescription('abilityCostValue', formatNumber(card.abilityCost.cost, 0, 1));
     }
-    if (card.abilityStrengthModifier) {
-      replaceInDescription('modifiedStrength', formatNumber(card.abilityStrength * card.abilityStrengthModifier.factor, 0, 1));
-    }
+    /* */
   });
 
 export default cards;

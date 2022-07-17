@@ -1,3 +1,5 @@
+import cards from "../config/cards";
+
 export enum CardType {
   Building = "Building",
   Food = "Food",
@@ -32,28 +34,44 @@ export type Card = {
   foodDrain?: number,
   maxDurability?: number,
   cooldownMs?: number,
-  ability: Ability,
-  abilityStrength: number,
-  abilityMatch?: CardType[],
-  abilityCards?: string[],
-  abilityResource?: ResourceType,
-  abilityCost?: ResourceCost,
-  abilityCostPerSec?: ResourceCost,
-  abilityShape?: MatchingGridShape,
-  abilityMultiplyByAdjacent?: boolean,
+
+  passive?: {
+    strength: number,
+    resource: ResourceType,
+    multiplyByAdjacent?: GridMatch,
+  },
+  bonusToAdjacent?: {
+    strength: number,
+  } & GridMatch,
+  produceCardEffect?: {
+    shape: MatchingGridShape,
+    possibleCards: string[],
+  },
+  autoReplaceEffect?: {
+    cardType: CardType,
+  },
+  drawCardEffect?: {
+    possibleCards: string[],
+  },
+
+  costPerUse?: ResourceCost,
+  costPerSec?: ResourceCost,
+  multiplyCostPerAdjacent?: boolean,
   abilityStrengthModifier?: {
+    behaviour: ModifierBehaviour,
     factor: number,
-    whenMatching: boolean,
-    types: CardType[],
-    gridShape: MatchingGridShape,
+    match: GridMatch,
   },
   disableShape?: {
     onMatch: boolean,
-    shape: MatchingGridShape,
-    cards?: string[],
-    cardType?: CardType,
     maxTier?: number,
-  },
+  } & GridMatch,
+}
+
+export type GridMatch = {
+  shape: MatchingGridShape,
+  cards?: string[],
+  cardTypes?: CardType[],
 }
 
 export type RealizedCard = Card & {
@@ -82,17 +100,6 @@ export type ResourceCost = {
   cost: number,
 }
 
-export enum Ability {
-  None,
-  Produce,
-  ProduceFromMatching,
-  ProduceFromCards,
-  ProduceCard,
-  DrawCard,
-  BonusToMatching,
-  AutoPlace,
-}
-
 export enum MatchingGridShape {
   OrthoAdjacent = "orthoAdjacent",
   DiagAdjacent = "diagAdjacent",
@@ -103,6 +110,11 @@ export enum MatchingGridShape {
 export enum AbilityImprovementStat {
   Strength,
   Cooldown,
+}
+
+export enum ModifierBehaviour {
+  WhenMatching,
+  WhenNotMatching,
 }
 
 export type Grid = (RealizedCard | null)[][];

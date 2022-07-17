@@ -1,6 +1,6 @@
 .card-packs {
   width: 100%;
-  min-width: 200px;
+  min-width: 240px;
   max-width: 350px;
   margin-top: 50px;
 
@@ -33,6 +33,7 @@
   > .cards {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     grid-gap: 6px;
     margin-bottom: 10px;
 

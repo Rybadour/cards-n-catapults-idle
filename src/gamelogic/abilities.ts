@@ -1,8 +1,8 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { Ability, RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, PrestigeEffects } from "../shared/types";
+import { RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, PrestigeEffects, GridMatch, ModifierBehaviour } from "../shared/types";
 import global from "../config/global";
-import { getRandomFromArray } from "../shared/utils";
+import { getRandomFromArray, using } from "../shared/utils";
 import { StatsContext } from "../contexts/stats";
 
 export type UpdateGridTotalsResults = {
@@ -24,8 +24,8 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
     card.cardMarks = {};
 
     card.isDisabled = false;
-    if (card.abilityCostPerSec) {
-      if (!canAfford(stats.resources, card.abilityCostPerSec)) {
+    if (card.costPerSec) {
+      if (!canAfford(stats.resources, card.costPerSec)) {
         card.isDisabled = true;
       }
     }
@@ -36,13 +36,11 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
       const disable = card.disableShape;
       card.isDisabled = !isDisabling;
       iterateGridShapeCards(grid, x, y, card.disableShape.shape, (adj, x2, y2) => {
-        if (adj.isExpiredAndReserved) return;
-
         let setDisabled = false;
         if (disable.maxTier && adj.tier <= disable.maxTier) {
           setDisabled = true;
         }
-        if (disable.cardType && adj.type == disable.cardType) {
+        if (disable.cardTypes?.includes(adj.type)) {
           setDisabled = true;
         }
         if (disable.cards && disable.cards.includes(adj.id)) {
@@ -63,74 +61,57 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
   iterateGrid(grid, (card, x, y) => {
     if (card.isDisabled || card.isExpiredAndReserved) return;
 
-    if (card.ability == Ability.BonusToMatching && card.abilityMatch && card.abilityShape) {
-      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj, x2, y2) => {
-        if (card.abilityMatch?.includes(adj.type)) {
-          adj.bonus *= 1 + card.abilityStrength;
-          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
-        }
+    using(card.bonusToAdjacent, (bta) => {
+      iterateGridMatch(grid, x, y, bta, (adj, x2, y2) => {
+        if (!adj) return;
+        adj.bonus *= 1 + bta.strength;
+        card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
       });
-    }
+    });
     
-    if (card.abilityStrengthModifier) {
-      const mod = card.abilityStrengthModifier;
-      let isModified = !mod.whenMatching;
-      iterateGridShapeCards(grid, x, y, mod.gridShape, (adj) => {
-        if (adj.isExpiredAndReserved) return;
+    using(card.abilityStrengthModifier, (mod) => {
+      const shouldModify = mod.behaviour == ModifierBehaviour.WhenMatching;
+      let isModified = !shouldModify;
+      iterateGridMatch(grid, x, y, mod.match, (adj) => {
+        if (!adj || adj.isExpiredAndReserved) return;
 
-        if (mod.types.includes(adj.type)) {
-          isModified = mod.whenMatching;
-        }
+        isModified = shouldModify;
       });
 
       if (isModified) {
         card.bonus *= mod.factor;
       }
-    }
+    });
   });
 
   // Calculate per second abilities
   iterateGrid(grid, (card, x, y) => {
     if (card.isDisabled || card.isExpiredAndReserved) return;
 
-    const strength = card.abilityStrength * card.bonus;
     let numAdjacent = 0;
 
-    if (card.ability == Ability.Produce && card.abilityResource) {
-      results.resourcesPerSec[card.abilityResource] += strength;
-      card.totalStrength += strength;
+    using(card.passive, (p) => {
+      const strength = p.strength * card.bonus;
+      if (p.multiplyByAdjacent) {
+        const mba = p.multiplyByAdjacent;
+        iterateGridMatch(grid, x, y, mba, (adj, ax, ay) => {
+          if (adj?.isDisabled) return;
 
-    } else if (card.ability == Ability.ProduceFromMatching && card.abilityShape) {
-      iterateGridShapeCards(grid, x, y, card.abilityShape, (adj, x2, y2) => {
-        if (adj.isDisabled) return;
-
-        if (card.abilityMatch?.includes(adj.type) && card.abilityResource) {
-          results.resourcesPerSec[card.abilityResource] += strength;
           card.totalStrength += strength;
-          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
+          card.cardMarks[`${ax}:${ay}`] = MarkType.Buff;
           numAdjacent += 1;
-        }
-      });
+        });
+      } else {
+        card.totalStrength += strength;
+      }
+      results.resourcesPerSec[p.resource] += card.totalStrength;
+    });
 
-    } else if (card.ability == Ability.ProduceFromCards && card.abilityShape && card.abilityCards && card.abilityResource) {
-      iterateGridShape(grid, x, y, card.abilityShape, (adj, x2, y2) => {
-        if (adj && adj.isDisabled) return;
-
-        const cardId = (adj && !adj.isExpiredAndReserved) ? adj.id : EMPTY_CARD;
-        if (card.abilityCards!!.includes(cardId)) {
-          results.resourcesPerSec[card.abilityResource!!] += strength;
-          card.totalStrength += strength;
-          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
-          numAdjacent += 1;
-        }
-      });
-    }
-
-    if (card.abilityCostPerSec) {
-      const cost = card.abilityCostPerSec.cost * (card.abilityMultiplyByAdjacent ? numAdjacent : 1);
-      results.resourcesPerSec[card.abilityCostPerSec.resource] -= cost;
+    using(card.costPerSec, (cps) => {
+      const cost = cps.cost * (numAdjacent > 0 ? numAdjacent : 1);
+      results.resourcesPerSec[cps.resource] -= cost;
       card.totalCost += cost;
-    }
+    });
   });
 
   return results;
@@ -160,14 +141,14 @@ export function updateGrid(
   } as UpdateGridResults;
 
   iterateGrid(grid, (card, x, y) => {
-    if (card.abilityCostPerSec) {
-      if (card.isDisabled && canAfford(resources, card.abilityCostPerSec)) {
+    using(card.costPerSec, (cps) => {
+      if (card.isDisabled && canAfford(resources, cps)) {
         results.anyChanged = true;
-      } else if (!card.isDisabled && resources[card.abilityCostPerSec.resource] <= 0) {
+      } else if (!card.isDisabled && resources[cps.resource] <= 0) {
         card.isDisabled = true;
         results.anyChanged = true;
       }
-    }
+    });
 
     if (card.isDisabled) return;
 
@@ -178,7 +159,7 @@ export function updateGrid(
         y: number,
       }[] = [];
       iterateGridShapeCards(grid, x, y, MatchingGridShape.OrthoAdjacent, (adjCard, ax, ay) => {
-        if (adjCard.type == CardType.Food && adjCard.maxDurability && !adjCard.isExpiredAndReserved) {
+        if (adjCard.type == CardType.Food && adjCard.maxDurability && !adjCard.isDisabled) {
           adjacentFood.push({card: adjCard, x: ax, y: ay});
         } 
       }); 
@@ -202,8 +183,8 @@ export function updateGrid(
       }
 
       // Don't activate or reset cooldown if not enough resources
-      if (card.abilityCost) {
-        if (!canAfford(resources, card.abilityCost)) {
+      if (card.costPerUse) {
+        if (!canAfford(resources, card.costPerUse)) {
           return;
         }
       }
@@ -213,10 +194,10 @@ export function updateGrid(
       if (didActivate) {
         card.timeLeftMs = card.cooldownMs;
 
-        if (card.abilityCost) {
-          results.resourcesSpent[card.abilityCost.resource] += card.abilityCost.cost;
-          resources[card.abilityCost.resource] -= card.abilityCost.cost;
-        }
+        using(card.costPerUse, (cpu) => {
+          results.resourcesSpent[cpu.resource] += cpu.cost;
+          resources[cpu.resource] -= cpu.cost;
+        });
       } else {
         card.timeLeftMs = 0;
       }
@@ -233,10 +214,11 @@ function activateCard(
   x: number,
   y: number
 ): boolean {
-  if (card.ability == Ability.ProduceCard && card.abilityCards && card.abilityShape) {
-    const newCard = getRandomFromArray(card.abilityCards);
+  if (card.produceCardEffect) {
+    const pc = card.produceCardEffect;
+    const newCard = getRandomFromArray(pc.possibleCards);
     let found = false;
-    iterateGridShape(results.grid, x, y, card.abilityShape, (adjCard, ax, ay) => {
+    iterateGridShape(results.grid, x, y, pc.shape, (adjCard, ax, ay) => {
       if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
 
       found = true;
@@ -249,21 +231,19 @@ function activateCard(
       results.newCards.push(cardsConfig[newCard]);
     }
     return true;
-  }
 
-  if (card.ability == Ability.DrawCard && card.abilityCards) {
-    const newCard = getRandomFromArray(card.abilityCards);
+  } else if (card.drawCardEffect) {
+    const newCard = getRandomFromArray(card.drawCardEffect.possibleCards);
     results.inventoryDelta[newCard] = (results.inventoryDelta[newCard] ?? 0) + 1;
     results.newCards.push(cardsConfig[newCard]);
     return true;
-  }
 
-  if (card.ability == Ability.AutoPlace && card.abilityMatch) {
+  } else if (card.autoReplaceEffect) {
     let found = false;
     iterateGrid(results.grid, (otherCard, x2, y2) => {
       if (x == x2 && y == y2) return;
       if (!otherCard || !otherCard.isExpiredAndReserved || found) return;
-      if (!card.abilityMatch?.includes(otherCard.type)) return;
+      if (card.autoReplaceEffect?.cardType !== otherCard.type) return;
       if ((cards[otherCard.id] ?? 0) <= 0) return;
 
       found = true;
@@ -330,8 +310,23 @@ function iterateGridShapeCards(
   callback: (card: RealizedCard, x: number, y: number) => void
 ) {
   iterateGridShape(grid, x, y, shape, (card, ax, ay) => {
-    if (card) {
+    if (card && !card.isExpiredAndReserved) {
       callback(card!!, ax, ay);
+    }
+  });
+}
+
+function iterateGridMatch(
+  grid: Grid, x: number, y: number, match: GridMatch,
+  callback: (card: RealizedCard | null, x: number, y: number) => void
+) {
+  iterateGridShape(grid, x, y, match.shape, (card, ax, ay) => {
+    const cardId = (card && !card.isExpiredAndReserved) ? card.id : EMPTY_CARD;
+    if (match.cards?.includes(cardId)) {
+      callback(card, ax, ay);
+    }
+    if (card && match.cardTypes?.includes(card.type)) {
+      callback(card, ax, ay);
     }
   });
 }

@@ -18,3 +18,9 @@ export function getRandomFromArray<T>(array: T[]) {
 export function getExponentialValue(base: number, growth: number, growthCount: number) {
   return base * Math.pow(growth, growthCount);
 }
+
+export function using<T>(thing: T | undefined, closure: (thing: T) => void) {
+  if (thing) {
+    closure(thing);
+  }
+}
