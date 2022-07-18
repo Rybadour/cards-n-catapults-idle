@@ -102,7 +102,7 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Food,
     rarity: Rarity.Common,
-    description: "Produces {{abilityStrength}} gold for every nearby empty, mushroom, or forest tile. Considers both orthogonal and diagonal tiles.",
+    description: "{{passive}}",
     maxDurability: 10,
     passive: {
       strength: 0.1,
@@ -145,7 +145,7 @@ const cards: Record<string, Card> = {
     tier: 4,
     type: CardType.Food,
     rarity: Rarity.UltraRare,
-    description: "Food of the gods. Massive bonus to any nearby Person and to all food capacity.",
+    description: "Food of the gods. {{bonusToAdjacentAmount}} bonus to any nearby Person and {{bonusToFoodAmount}} to all food capacity.",
     maxDurability: 1000,
     bonusToAdjacent: {
       strength: 2,
@@ -187,7 +187,7 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Building,
     rarity: Rarity.Common,
-    description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{abilityCostValue}} wood.",
+    description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{costPerUse}}.",
     autoReplaceEffect: {
       cardType: CardType.Food,
     },
@@ -223,7 +223,7 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Building,
     rarity: Rarity.Common,
-    description: "Generates meat every {{cooldownSecs}}s while consuming food.",
+    description: "{{drawCard}} every {{cooldownSecs}} seconds while consuming food.",
     foodDrain: 2,
     drawCardEffect: {
       possibleCards: ['haunch'],
@@ -242,7 +242,7 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Building,
     rarity: Rarity.Common,
-    description: "Improves buildings and people in the same row and column by {{abilityPercent}}.",
+    description: "{{bonusToAdjacent}}.",
     bonusToAdjacent: {
       strength: 0.25,
       shape: MatchingGridShape.RowAndColumn,
@@ -260,7 +260,7 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Building,
     rarity: Rarity.Common,
-    description: "Sells 1 wood/s for 2 gold/s for each adjacent forest, in all directions",
+    description: "Sells {{costPerSec}} for {{passiveAmount}} for each adjacent forest, in all directions",
     passive: {
       strength: 2,
       resource: ResourceType.Gold,
@@ -288,11 +288,22 @@ Object.keys(cards)
     using(card.passive, (p) => {
       let multiplyText = '';
       using(p.multiplyByAdjacent, (mba) => {
-        const cardTypes = mba.cardTypes?.map(ct => String(ct)).join(' or ');
+        let matchingText = '';
+        if (mba.cardTypes) {
+          matchingText = mba.cardTypes.map(ct => String(ct)).join(' or ');
+        } else if (mba.cards) {
+          matchingText = mba.cards
+            .map(c => c === EMPTY_CARD ? 'empty tile' : cards[c].name)
+            .join(' or ');
+        }
+
         const shape = 'nearby' + (mba.shape == MatchingGridShape.AllAdjacent ? ', in all directions' : '');
-        multiplyText = ` for each ${cardTypes} ${shape}`;
+        multiplyText = ` for each ${matchingText} ${shape}`;
       });
-      replaceInDescription('passive', `Produces ${p.strength} ${p.resource}/s${multiplyText}`);
+      const amount = `${p.strength} ${p.resource}/s`;
+      replaceInDescription('passive', `Produces ${amount}${multiplyText}`);
+
+      replaceInDescription('passiveAmount', amount);
     });
 
     if (card.cooldownMs) {
@@ -313,23 +324,33 @@ Object.keys(cards)
         matching = bta.cards.map(c => cards[c].name).join(' or ');
       }
 
+      const prefix = (bta.shape === MatchingGridShape.RowAndColumn ?
+        `Improves all ${matching} cards in the same row and column` :
+        `Improves all nearby ${matching} cards`
+      );
+
       replaceInDescription(
         'bonusToAdjacent',
-        `Improves all nearby ${matching} cards by ${formatNumber(bta.strength * 100, 0, 0)}%.`
+        `${prefix} by ${formatNumber(bta.strength * 100, 0, 0)}%.`
       );
     });
 
-    /* *
     using(card.produceCardEffect, (prod) => {
-      replaceInDescription('produceCard', formatNumber(card.abilityStrength * 100, 0, 0)+"%");
+      const possibleCards = prod.possibleCards.map(c => cards[c].name).join(' or ');
+      replaceInDescription('produceCard', `Generates ${possibleCards} cards nearby`);
     });
-    if (card.ability == Ability.BonusToMatching) {
-      replaceInDescription('abilityPercent', formatNumber(card.abilityStrength * 100, 0, 0)+"%");
-    }
-    if (card.abilityCost) {
-      replaceInDescription('abilityCostValue', formatNumber(card.abilityCost.cost, 0, 1));
-    }
-    /* */
+
+    using(card.drawCardEffect, (draw) => {
+      const possibleCards = draw.possibleCards.map(c => cards[c].name).join(' or ');
+      replaceInDescription('drawCard', `Generates ${possibleCards} cards `);
+    });
+
+    using(card.costPerSec, (cps) => {
+      replaceInDescription('costPerSec', `${cps.cost} ${cps.resource}/s`);
+    });
+    using(card.costPerUse, (cpu) => {
+      replaceInDescription('costPerUse', cpu.cost + ' ' + cpu.resource);
+    });
   });
 
 export default cards;
