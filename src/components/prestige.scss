@@ -89,7 +89,7 @@
   .upgrade-list .upgrade-container {
     position: relative;
     width: $upgrade-width;
-    height: 70px;
+    height: 80px;
     overflow: hidden;
 
     &:hover {
@@ -149,8 +149,7 @@
     }
 
     .summary {
-      padding: 0 5px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .description {

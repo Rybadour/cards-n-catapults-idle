@@ -1,5 +1,6 @@
 import { useCallback, useContext } from "react";
 import cards from "../config/cards";
+import { totalUpgrades } from "../config/prestige-packs";
 import { PrestigeContext } from "../contexts/prestige";
 import { PrestigeUpgrade, RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
@@ -52,7 +53,7 @@ export default function Prestige() {
                 <div className="title">
                   <img src={`icons/${upgrade.icon}.png`} />
                   <span className="name">{upgrade.name}</span>
-                  <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}</span>
+                  <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}/{totalUpgrades[upgrade.id]}</span>
                 </div>
 
                 {upgrade.summary ?

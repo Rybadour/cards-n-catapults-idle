@@ -26,6 +26,12 @@ const packs: Record<string, PrestigePack> = {
   },
 }
 
-Object.keys(packs).forEach((id) => packs[id].id = id);
+export const totalUpgrades: Record<string, number> = {};
+Object.keys(packs).forEach((id) => {
+  packs[id].id = id;
+  packs[id].upgrades.forEach((up) => {
+    totalUpgrades[up.upgrade.id] = (totalUpgrades[up.upgrade.id] ?? 0) + up.quantity;
+  });
+});
 
 export default packs;
