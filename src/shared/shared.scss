@@ -1,3 +1,16 @@
 $text-color: white;
 $light-bg: #444;
 $light-border: 1px solid #333;
+
+.on-card-button {
+  background-color: #888;
+  border: 1px solid #777;
+  box-shadow: #222 0px 0px 3px 1px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #AAA;
+  }   
+}

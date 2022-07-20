@@ -191,6 +191,7 @@ export type PrestigePack = {
 
 export type RealizedPrestigePack = PrestigePack & {
   cost: number,
+  refund: number,
   numBought: number,
   remainingUpgrades: string[],
 };

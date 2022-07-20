@@ -95,6 +95,11 @@
     &:hover {
       z-index: 10;
       overflow: visible;
+
+      .upgrade {
+        background-color: #666;
+        box-shadow: #222 0px 0px 3px 2px;
+      }
     }
   }
 
@@ -107,15 +112,11 @@
     color: white;
     background-color: #555;
     padding: 5px;
-    cursor: pointer;
     border-radius: 5px;
     box-sizing: border-box;
     border: 2px solid #555;
-
-    &:hover {
-      background-color: #666;
-      box-shadow: #222 0px 0px 3px 2px;
-    }
+    display: flex;
+    flex-direction: column;
 
     &.empty {
       .title {
@@ -178,6 +179,12 @@
           margin-left: 6px;
         }
       }
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      margin: auto 5px 5px;
     }
   }
 }

@@ -1,8 +1,9 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
+import ReactTooltip from "react-tooltip";
 import cards from "../config/cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import { PrestigeContext } from "../contexts/prestige";
-import { PrestigeUpgrade, RealizedPrestigeUpgrade } from "../shared/types";
+import { RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 import './prestige.scss';
 
@@ -11,6 +12,14 @@ export default function Prestige() {
 
   const onBuyPack = useCallback((pack) => {
     prestige.buyPack(pack);
+  }, [prestige]);
+
+  const onRefund = useCallback((upgrade) => {
+    prestige.refundUpgrade(upgrade);
+  }, [prestige]);
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
   }, [prestige]);
 
   return <div className="prestige-page">
@@ -47,23 +56,33 @@ export default function Prestige() {
         <h3>Upgrades</h3>
 
         <div className="upgrade-list">
-          {Object.entries(prestige.upgrades).map(([uId, upgrade]) =>
-            <div className="upgrade-container" key={uId}>
-              <div className="upgrade" >
-                <div className="title">
-                  <img src={`icons/${upgrade.icon}.png`} />
-                  <span className="name">{upgrade.name}</span>
-                  <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}/{totalUpgrades[upgrade.id]}</span>
+          {Object.values(prestige.packs).map(pack => 
+            Object.entries(prestige.upgrades[pack.id]).map(([uId, upgrade]) =>
+              <div className="upgrade-container" key={uId}>
+                <div className="upgrade" >
+                  <div className="title">
+                    <img src={`icons/${upgrade.icon}.png`} />
+                    <span className="name">{upgrade.name}</span>
+                    <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}/{totalUpgrades[upgrade.id]}</span>
+                  </div>
+
+                  {upgrade.summary ?
+                    <div className="summary">{getSummary(upgrade)}</div> :
+                    null
+                  }
+
+                  <div className="description">{upgrade.description}</div>
+
+                  <div className="buttons">
+                    <button
+                      className="on-card-button"
+                      data-tip="Returns the upgrade back to its pack and refunds some prestige points."
+                      onClick={() => onRefund(upgrade)}
+                    >Return for {formatNumber(pack.refund, 0, 0)} points</button>
+                  </div>
                 </div>
-
-                {upgrade.summary ?
-                  <div className="summary">{getSummary(upgrade)}</div> :
-                  null
-                }
-
-                <div className="description">{upgrade.description}</div>
               </div>
-            </div>
+            )
           )}
         </div>
       </div>

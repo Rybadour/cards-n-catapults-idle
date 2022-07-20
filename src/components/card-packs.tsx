@@ -45,7 +45,7 @@ export default function CardPacks() {
           )}
         </div>
 
-        <button className="purchase-button" onClick={() => onBuyPack(cardPack)}>
+        <button className="purchase-button on-card-button" onClick={() => onBuyPack(cardPack)}>
           Purchase {cardPack.quantity} cards for {formatNumber(cardPack.cost, 0, 0)} gold
         </button>
       </div>

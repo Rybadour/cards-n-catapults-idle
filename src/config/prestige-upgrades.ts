@@ -3,6 +3,7 @@ import { formatNumber } from "../shared/utils";
 
 export const PRESTIGE_BASE_COST = 100;
 export const PRESTIGE_COST_GROWTH = 1.1;
+export const PRESTIGE_REFUND_FACTOR = 0.5;
 
 const upgrades: Record<string, PrestigeUpgrade> = {
   ratz: {
