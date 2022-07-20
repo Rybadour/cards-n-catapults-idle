@@ -53,6 +53,9 @@ export type Card = {
   drawCardEffect?: {
     possibleCards: string[],
   },
+  bonusToFoodCapacity?: {
+    strength: number,
+  } & GridMatch,
 
   costPerUse?: ResourceCost,
   costPerSec?: ResourceCost,
@@ -81,13 +84,14 @@ export type RealizedCard = Card & {
   isExpiredAndReserved: boolean,
   isDisabled: boolean,
   durability?: number,
+  durabilityBonus: number,
   timeLeftMs?: number,
   cardMarks: Record<string, MarkType>,
 }
 
 export enum Rarity {
-  Common,
-  UltraRare,
+  Common = "Common",
+  UltraRare = "Ultra Rare",
 }
 
 export enum MarkType {
@@ -105,6 +109,7 @@ export enum MatchingGridShape {
   DiagAdjacent = "diagAdjacent",
   AllAdjacent = "allAdjacent",
   RowAndColumn = "rowAndColumn",
+  Grid = "Grid",
 }
 
 export enum AbilityImprovementStat {

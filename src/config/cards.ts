@@ -151,6 +151,11 @@ const cards: Record<string, Card> = {
       shape: MatchingGridShape.AllAdjacent,
       cardTypes: [CardType.Person],
     },
+    bonusToFoodCapacity: {
+      strength: 2,
+      shape: MatchingGridShape.Grid,
+      cardTypes: [CardType.Food],
+    }
   },
   forest: {
     id: "",
@@ -332,6 +337,14 @@ Object.keys(cards)
         'bonusToAdjacent',
         `${prefix} by ${formatNumber(bta.strength * 100, 0, 0)}%.`
       );
+      replaceInDescription(
+        'bonusToAdjacentAmount',
+        formatNumber(bta.strength * 100, 0, 0) + '%'
+      );
+    });
+
+    using(card.bonusToFoodCapacity, (btfc) => {
+      replaceInDescription('bonusToFoodAmount', formatNumber(btfc.strength * 100, 0, 0) + '%');
     });
 
     using(card.produceCardEffect, (prod) => {

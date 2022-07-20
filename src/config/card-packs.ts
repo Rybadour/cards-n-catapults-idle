@@ -76,6 +76,9 @@ const cardPacks: Record<string, CardPack> = {
     quantity: 4,
     unlocked: false,
     possibleThings: [{
+      thing: cards.ambrosia,
+      chance: 0.002,
+    }, {
       thing: cards.bread,
       chance: 0.1,
     }, {

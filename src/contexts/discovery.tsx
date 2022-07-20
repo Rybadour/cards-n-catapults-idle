@@ -2,7 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import cardPacks from "../config/card-packs";
 import global from "../config/global";
-import { Card, PrestigeEffects, ResourceType } from "../shared/types";
+import { Card, ResourceType } from "../shared/types";
 import { PrestigeContext } from "./prestige";
 
 export type DiscoveryContext = {
@@ -40,12 +40,11 @@ function addCardPacks(map: Record<string, boolean>, unlocked: string[]) {
       .filter(pack => pack.unlocked || unlocked.includes(pack.id))
       .map(pack => pack.id)
   );
-  
 }
 
 addToDiscoverMap(defaultContext.discoveredCards, Object.keys(global.startingCards));
 addToDiscoverMap(defaultContext.cardsDiscoveredThisPrestige, Object.keys(global.startingCards));
-addCardPacks(defaultContext.discoveredCardPacks, []);
+addCardPacks(defaultContext.discoveredCardPacks, global.unlockedPacks);
 
 export const DiscoveryContext = createContext(defaultContext);
 

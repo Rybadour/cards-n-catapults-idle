@@ -11,6 +11,7 @@ export function createCard(card: Card, quantity: number, prestigeEffects: Presti
     isDisabled: false,
     isExpiredAndReserved: false,
     durability: (quantity >= 1 ? 1 : quantity) * durability,
+    durabilityBonus: 1,
     timeLeftMs: card.cooldownMs,
     cardMarks: {},
   };

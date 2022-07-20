@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useCallback, useContext } from 'react';
 import { CardPacksContext } from '../contexts/card-packs';
 import { DiscoveryContext } from '../contexts/discovery';
-import { RealizedCardPack } from '../shared/types';
+import { Rarity, RealizedCardPack } from '../shared/types';
 import { formatNumber } from '../shared/utils';
 import './card-packs.scss';
 
@@ -30,9 +30,12 @@ export default function CardPacks() {
         <div className="cards">
           {cardPack.possibleThings.map(({thing: card}) => 
             <div
-              className={classNames("possible-card", {discovered: discovery.discoveredCards[card.id]})}
+              className={classNames("possible-card", {
+                discovered: discovery.discoveredCards[card.id],
+                'ultra-rare': card.rarity == Rarity.UltraRare,
+              })}
               key={card.id}
-              data-tip={discovery.discoveredCards[card.id] ? card.name : "???"}
+              data-tip={discovery.discoveredCards[card.id] ? card.name : "Undiscovered " + card.rarity}
             >
               {discovery.discoveredCards[card.id] ? 
                 <img src={"icons/" + card.icon + ".png"} /> :

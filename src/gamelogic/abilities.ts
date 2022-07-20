@@ -19,6 +19,7 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
   // Disable and reset
   iterateGrid(grid, (card, x, y) => {
     card.bonus = 1;
+    card.durabilityBonus = 1;
     card.totalStrength = 0;
     card.totalCost = 0;
     card.cardMarks = {};
@@ -65,6 +66,14 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
       iterateGridMatch(grid, x, y, bta, (adj, x2, y2) => {
         if (!adj) return;
         adj.bonus *= 1 + bta.strength;
+        card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
+      });
+    });
+
+    using(card.bonusToFoodCapacity, (btfc) => {
+      iterateGridMatch(grid, x, y, btfc, (adj, x2, y2) => {
+        if (!adj) return;
+        adj.durabilityBonus *= btfc.strength;
         card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
       });
     });
@@ -166,7 +175,7 @@ export function updateGrid(
 
       const foodDrain = (elapsed/1000 * card.foodDrain) / adjacentFood.length;
       adjacentFood.forEach(food => {
-        food.card.durability = (food.card.durability ?? 0) - foodDrain;
+        food.card.durability = (food.card.durability ?? 0) - (foodDrain / food.card.durabilityBonus);
         if (food.card.durability <= 0) {
           food.card.isExpiredAndReserved = true;
           food.card.durability = 0;
@@ -274,7 +283,12 @@ function iterateGridShape(
   grid: Grid, x: number, y: number, shape: MatchingGridShape,
   callback: (card: RealizedCard | null, x: number, y: number) => void
 ) {
-  if (shape == MatchingGridShape.RowAndColumn) {
+  if (shape == MatchingGridShape.Grid) {
+    iterateGrid(grid, (adj, ax, ay) => {
+      if (x == ax && y == ay) return;
+      callback(adj, ax, ay);
+    });
+  } else if (shape == MatchingGridShape.RowAndColumn) {
     for (let x2 = 0; x2 < grid[y].length; x2++) {
       if (x2 == x) continue;
 
