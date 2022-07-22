@@ -9,6 +9,7 @@ import { GridContext } from '../contexts/grid';
 import { CardsContext } from '../contexts/cards';
 import { CardPacksContext } from '../contexts/card-packs';
 import { DiscoveryContext } from '../contexts/discovery';
+import Icon from '../shared/components/icon';
 
 const modalStyles = {
   overlay: {
@@ -44,7 +45,7 @@ function Header() {
         </button>
       </> : <>
         <button className="open-menu" onClick={() => onOpenPrestigeMenu()} data-tip="View Prestige Upgrades">
-          <img src="icons/upgrade.png" />
+          <Icon size="sm" icon="upgrade" />
         </button>
         <button onClick={() => onPrestige()}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
         <span>Next at {formatNumber(prestige.currentRenownCost + prestige.nextRenownCost, 0, 0)} Renown</span>

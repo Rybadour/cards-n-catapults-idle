@@ -133,7 +133,7 @@ export default function GridMap() {
                 </div>
                 <div className="ability-cost">
                   {card.totalCost && card.costPerSec ? <>
-                    <img src={"icons/" + resourceIconMap[card.costPerSec.resource]} />
+                    <Icon size="sm" icon={resourceIconMap[card.costPerSec.resource]} />
                     -{formatNumber(card.totalCost, 0, 1)}/s
                   </> : null }
                 </div>

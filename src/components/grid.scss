@@ -26,11 +26,6 @@
         font-weight: bold;
       }
     }
-
-    img {
-      width: 36px;
-      height: 36px;
-    }
   }
 }
 
@@ -69,9 +64,7 @@ $card-height: 100px;
   padding: 3px;
   position: relative;
 
-  img.main-icon {
-    width: 50px;
-    height: 50px;
+  .main-icon {
     filter: drop-shadow(1px 1px 6px black);
   }
 
@@ -102,11 +95,6 @@ $card-height: 100px;
       display: flex;
       align-items: center;
       grid-gap: 3px;
-
-      img {
-        width: 20px;
-        height: 20px;
-      }
     }
   }
 
@@ -115,7 +103,7 @@ $card-height: 100px;
 
     &.expired {
       background-color: #666;
-      img.main-icon {
+      .main-icon {
         filter: opacity(0.5);
       }
     }

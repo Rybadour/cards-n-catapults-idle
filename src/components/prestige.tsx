@@ -3,6 +3,7 @@ import ReactTooltip from "react-tooltip";
 import cards from "../config/cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import { PrestigeContext } from "../contexts/prestige";
+import Icon from "../shared/components/icon";
 import { RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 import './prestige.scss';
@@ -61,7 +62,7 @@ export default function Prestige() {
               <div className="upgrade-container" key={uId}>
                 <div className="upgrade" >
                   <div className="title">
-                    <img src={`icons/${upgrade.icon}.png`} />
+                    <Icon size="sm" icon={upgrade.icon} />
                     <span className="name">{upgrade.name}</span>
                     <span className="amount">{formatNumber(upgrade.quantity, 0, 0)}/{totalUpgrades[upgrade.id]}</span>
                   </div>

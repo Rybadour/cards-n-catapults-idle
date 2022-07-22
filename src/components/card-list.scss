@@ -83,7 +83,7 @@ $card-height: 220px;
   &.empty {
     .title {
       color: #999;
-      img {
+      .icon {
         filter: opacity(0.5);
       }
     }
@@ -105,19 +105,17 @@ $card-height: 220px;
       width: 100%;
     }
 
-    img {
-      width: 26px;
-      height: 26px;
+    .icon {
       filter: drop-shadow(1px 1px 6px black);
     }
   }
 
   .tier {
     position: relative;
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
 
-    img {
+    .icon {
       width: 100%;
       filter: brightness(0.8);
     }
@@ -126,7 +124,7 @@ $card-height: 220px;
       display: inline-block;
       width: 100%;
       position: absolute;
-      top: 10px;
+      top: 8px;
       left: 0;
       color: black;
       font-weight: bold;
@@ -155,9 +153,7 @@ $card-height: 220px;
       justify-content: center;
       align-items: center;
 
-      img {
-        width: 16px;
-        height: 16px;
+      .icon {
         margin-left: 6px;
       }
     }

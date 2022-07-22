@@ -68,20 +68,20 @@ export default function CardList() {
                   {card.maxDurability ? 
                     <div className="stat" data-tip="Food capacity" data-offset="{'bottom': -5}">
                       <span>{card.maxDurability}</span>
-                      <img src="icons/ham-shank.png" />
+                      <Icon size="xs" icon="ham-shank" />
                     </div>:
                     null
                   }
                   {card.foodDrain ? 
                     <div className="stat" data-tip="Food Drain" data-offset="{'bottom': -5}">
                       <span>-{card.foodDrain}</span>
-                      <img src="icons/ham-shank.png" />
+                      <Icon size="xs" icon="ham-shank" />
                       <span>/s</span>
                     </div>:
                     null
                   }
                   <div className="tier" data-tip="Tier" data-offset="{'bottom': -5}">
-                    <img src='icons/round-star.png' />
+                    <Icon size="sm" icon="round-star" />
                     <span className="value">{card.tier}</span>
                   </div>
                 </div>
