@@ -37,7 +37,7 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     id: '',
     name: 'Charity',
     icon: 'receive-money',
-    description: 'Provides {{bonusAsAmount}} extra gold on reset',
+    description: 'Provides {{bonusAsAmount}} extra gold on reset per upgrade',
     summary: '+{{bonusAsAmount}} gold on reset',
     bonus: {
       amount: 50,
@@ -56,11 +56,22 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     id: '',
     name: 'Trade Deal',
     icon: 'trade',
-    description: 'Reduces the cost of card packs by ',
+    description: 'Reduces the cost of card packs by {{bonusAsPercent}} per upgrade',
     summary: '-{{bonusAsPercent}} card pack cost',
     bonus: {
       amount: 0.1,
       field: 'cardPackCostReduction',
+    }
+  },
+  taxes: {
+    id: '',
+    name: 'Taxes',
+    icon: 'cash',
+    description: 'Increases all gold gain by {{bonusAsPercent}} per upgrade',
+    summary: '+{{bonusAsPercent}} gold gain',
+    bonus: {
+      amount: 0.1,
+      field: 'goldGain',
     }
   }
 };

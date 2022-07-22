@@ -1,27 +1,32 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { cloneDeep } from "lodash";
 import { createContext, useContext, useState } from "react";
 import global from "../config/global";
 import { defaultResourcesMap, Grid, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
 import { enumFromKey } from "../shared/utils";
 import { DiscoveryContext } from "./discovery";
-import { PrestigeContext } from "./prestige";
+import { DEFAULT_EFFECTS } from "./prestige";
 
 export type StatsContext = {
   resources: ResourcesMap,
   resourcesPerSec: ResourcesMap,
+  prestigeEffects: PrestigeEffects,
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null, grid: Grid) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
   useResource: (resource: ResourceType, amount: number) => void,
-  prestigeReset: (prestigeEffects: PrestigeEffects) => void,
+  prestigeReset: (effects: PrestigeEffects) => void,
+  prestigeUpdate: (effects: PrestigeEffects) => void,
 };
 
 const defaultContext: StatsContext = {
   resources: { ...defaultResourcesMap },
   resourcesPerSec: { ...defaultResourcesMap },
+  prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
   update: (elapsed, newResourcesPerSec, grid) => {},
   updatePerSec: (newPerSec) => {},
   useResource: (resource, amount) => {},
-  prestigeReset: (prestigeEffects) => {},
+  prestigeReset: (effects) => {},
+  prestigeUpdate: (effects) => {},
 };
 defaultContext.resources[ResourceType.Gold] = global.startingGold;
 
@@ -31,6 +36,7 @@ export function StatsProvider(props: Record<string, any>) {
   const discovery = useContext(DiscoveryContext);
   const [resources, setResources] = useState(defaultContext.resources);
   const [resourcesPerSec, setResourcesPerSec] = useState(defaultContext.resourcesPerSec);
+  const [prestigeEffects, setPrestigeEffects] = useState(defaultContext.prestigeEffects);
 
   function update(elapsed: number, newResourcesPerSec: ResourcesMap | null, grid: Grid) {
     if (newResourcesPerSec) {
@@ -41,8 +47,9 @@ export function StatsProvider(props: Record<string, any>) {
     const newResources = {...resources};
     Object.keys(resourcesPerSec).forEach(r => {
       const resource = enumFromKey(ResourceType, r);
+      const prestigeBonus = (resource === ResourceType.Gold ? prestigeEffects.bonuses.goldGain : 1);
       if (resource) {
-        newResources[resource] += elapsedSecs * resourcesPerSec[resource] * global.produceModifier;
+        newResources[resource] += elapsedSecs * resourcesPerSec[resource] * global.produceModifier * prestigeBonus;
       }
     });
     setResources(newResources);
@@ -63,18 +70,23 @@ export function StatsProvider(props: Record<string, any>) {
     setResources(newResources);
   }
 
-  function prestigeReset(prestigeEffects: PrestigeEffects) {
+  function prestigeReset(effects: PrestigeEffects) {
     const newResources = {...defaultContext.resources};
-    newResources.Gold += prestigeEffects.bonuses.startingGold;
+    newResources.Gold += effects.bonuses.startingGold;
     setResources(newResources);
     setResourcesPerSec({...defaultResourcesMap});
+    setPrestigeEffects(effects);
+  }
+
+  function prestigeUpdate(effects: PrestigeEffects) {
+    setPrestigeEffects(effects);
   }
 
   return (
     <StatsContext.Provider
       value={{
-        resources, resourcesPerSec,
-        update, updatePerSec, useResource, prestigeReset,
+        resources, resourcesPerSec, prestigeEffects,
+        update, updatePerSec, useResource, prestigeReset, prestigeUpdate,
       }}
       {...props}
     />

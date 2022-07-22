@@ -7,6 +7,7 @@ import { debugLogPackChance, generateFromPack } from "../shared/pack-generation"
 import { PrestigeEffects, RealizedCardPack, ResourceType } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardsContext } from "./cards";
+import { DEFAULT_EFFECTS } from "./prestige";
 import { StatsContext } from "./stats";
 
 const realizedCardPacks: Record<string, RealizedCardPack> = {};
@@ -33,7 +34,7 @@ export type CardPacksContext = {
 
 const defaultContext: CardPacksContext = {
   cardPacks: cloneDeep(realizedCardPacks),
-  prestigeEffects: {} as PrestigeEffects,
+  prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
   buyPack: (cardPack) => {},
   prestigeReset: () => {},
   prestigeUpdate: (effects) => {},

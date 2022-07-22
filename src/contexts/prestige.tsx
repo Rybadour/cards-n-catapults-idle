@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
-import { shuffle } from "lodash";
+import { cloneDeep, shuffle } from "lodash";
 
 import packsConfig from "../config/prestige-packs";
 import { getExponentialValue } from "../shared/utils";
@@ -11,6 +11,17 @@ import { StatsContext } from "./stats";
 import { GridContext } from "./grid";
 import { CardsContext } from "./cards";
 import { CardPacksContext } from "./card-packs";
+
+export const DEFAULT_EFFECTS: PrestigeEffects = {
+  bonuses: {
+    foodCapacity: 1,
+    startingGold: 0,
+    goldGain: 1,
+    cardPackCostReduction: 0,
+  },
+  extraStartCards: {},
+  unlockedCardPacks: [],
+};
 
 const defaultUpgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};
 const realizedPacks: Record<string, RealizedPrestigePack> = {};
@@ -59,15 +70,7 @@ const defaultContext: PrestigeContext = {
   packs: realizedPacks,
   isMenuOpen: false,
   isReseting: false,
-  prestigeEffects: {
-    bonuses: {
-      foodCapacity: 1,
-      startingGold: 0,
-      cardPackCostReduction: 0,
-    },
-    extraStartCards: {},
-    unlockedCardPacks: [],
-  },
+  prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
   prestige: () => false,
   buyPack: (pack) => {},
   refundUpgrade: (upgrade) => {},
@@ -223,6 +226,7 @@ export function PrestigeProvider(props: Record<string, any>) {
 
   function onUpgradesChanged(newEffects: PrestigeEffects) {
     cardPacks.prestigeUpdate(newEffects);
+    stats.prestigeUpdate(newEffects);
   }
 
   const openMenu = () => setIsMenuOpen(true);

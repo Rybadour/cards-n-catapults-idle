@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip';
 import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
 import { DiscoveryContext } from '../contexts/discovery';
+import Icon from '../shared/components/icon';
 import { CardType } from '../shared/types';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
@@ -56,7 +57,7 @@ export default function CardList() {
                 onClick={() => cards.setSelectedCard(card)}
               >
                 <div className="title">
-                  <img src={`icons/${card.icon}.png`} />
+                  <Icon size="sm" icon={card.icon} />
                   <span className="name">{card.name}</span>
                   <span className="amount">{formatNumber(cards.cards[card.id] ?? 0, 0, 1)}</span>
                 </div>

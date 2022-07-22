@@ -1,0 +1,24 @@
+@import './../sprite-sheet';
+
+$sizes: (
+  xs: 16,
+  sm: 26,
+  md: 36,
+);
+
+.icon {
+  @each $class, $size in $sizes {
+    &.icon--#{$class} {
+      width: $size + 0px;
+      height: $size + 0px;
+      transform: scale(calc($size/64));
+      transform-origin: top left;
+    }
+  }
+
+  i {
+    display: inline-block;
+  }
+
+  @include sprites($spritesheet-sprites)
+}

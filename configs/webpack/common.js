@@ -1,10 +1,12 @@
 // shared config (dev and prod)
 const path = require("path");
 const webpack = require("webpack");
+var SpritesmithPlugin = require('webpack-spritesmith');
 
 module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
+    modules: ["node_modules", "public"],
   },
   context: path.resolve(__dirname, "../../src/"),
   module: {
@@ -22,19 +24,25 @@ module.exports = {
         test: /\.(scss|sass)$/,
         use: ["style-loader", "css-loader", "sass-loader"],
       },
-      {
-        test: /\.(jpe?g|png|gif|svg)$/i,
-        use: [
-          "file-loader?hash=sha512&digest=hex&name=img/[contenthash].[ext]",
-          "image-webpack-loader?bypassOnDebug&optipng.optimizationLevel=7&gifsicle.interlaced=false",
-        ],
-      },
     ],
   },
   plugins: [
     new webpack.ProvidePlugin({
       "React": "react",
     }),
+    new SpritesmithPlugin({
+      src: {
+        cwd: path.resolve(__dirname, '../../public/icons'),
+        glob: '*.png'
+      },
+      target: {
+        image: path.resolve(__dirname, '../../public/sprite-sheet.png'),
+        css: path.resolve(__dirname, '../../src/shared/sprite-sheet.scss')
+      },
+      apiOptions: {
+        cssImageRef: "~sprite-sheet.png"
+      }
+    })
   ],
   performance: {
     hints: false,

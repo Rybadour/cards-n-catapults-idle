@@ -14,6 +14,7 @@ import resourceIconMap from '../config/resources';
 import { DiscoveryContext } from '../contexts/discovery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PrestigeContext } from '../contexts/prestige';
+import Icon from '../shared/components/icon';
 
 let lastTime = Date.now();
 
@@ -94,7 +95,9 @@ export default function GridMap() {
             onMouseLeave={() => setMarks({})}
           >
             {card ? <>
-              <img src={"icons/" + card?.icon + ".png"} className="main-icon" />
+              <div className="main-icon">
+                <Icon size="lg" icon={card?.icon} />
+              </div>
               {card.isDisabled ? <div className="disabled-slash">
                 <FontAwesomeIcon icon="slash" size='3x' />
               </div> : null}
@@ -124,7 +127,7 @@ export default function GridMap() {
                 </div>
                 <div className="ability">
                   {card.totalStrength && card.passive ? <>
-                    <img src={"icons/" + resourceIconMap[card.passive.resource]} />
+                    <Icon size="sm" icon={resourceIconMap[card.passive.resource]} />
                     {formatNumber(card.totalStrength, 0, 2)}/s
                   </> : null }
                 </div>
@@ -145,11 +148,12 @@ export default function GridMap() {
 }
 
 function Resource(props: {resource: ResourceType, stats: StatsContext}) {
+  const prestigeBonus = (props.resource === ResourceType.Gold ? props.stats.prestigeEffects.bonuses.goldGain : 1);
   return <div className="resource" data-tip={props.resource}>
-    <img src={"icons/" + resourceIconMap[props.resource]} />
+    <Icon size="md" icon={resourceIconMap[props.resource]} />
     <div className="amounts">
       <div className='total'>{formatNumber(props.stats.resources[props.resource], 0, 0)}</div>
-      <div className='per-sec'>{formatNumber(props.stats.resourcesPerSec[props.resource], 0, 1)}/s</div>
+      <div className='per-sec'>{formatNumber(props.stats.resourcesPerSec[props.resource] * prestigeBonus, 0, 1)}/s</div>
     </div>
   </div>;
 }
