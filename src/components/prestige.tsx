@@ -12,7 +12,9 @@ export default function Prestige() {
   const prestige = useContext(PrestigeContext);
 
   const onBuyPack = useCallback((pack) => {
-    prestige.buyPack(pack);
+    if (pack.remainingUpgrades.length > 0) {
+      prestige.buyPack(pack);
+    }
   }, [prestige]);
 
   const onRefund = useCallback((upgrade) => {
@@ -45,9 +47,12 @@ export default function Prestige() {
 
             <div className="cards-left"><b>{pack.remainingUpgrades.length}</b> upgrades left in pack</div>
 
-            <button className="purchase-button" onClick={() => onBuyPack(pack)}>
-              1 upgrade for {formatNumber(pack.cost, 0, 0)} points
-            </button>
+            {pack.remainingUpgrades.length > 0 ?
+              <button className="purchase-button" onClick={() => onBuyPack(pack)}>
+                1 upgrade for {formatNumber(pack.cost, 0, 0)} points
+              </button> :
+              null
+            }
           </div>
         )}
         </div>
