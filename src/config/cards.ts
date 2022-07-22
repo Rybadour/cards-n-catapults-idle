@@ -32,6 +32,8 @@ const cards: Record<string, Card> = {
     abilityStrengthModifier: {
       behaviour: ModifierBehaviour.WhenNotMatching,
       factor: 0.333,
+      statusIcon: 'opened-food-can',
+      statusText: '(Hungry)',
       match: {
         shape: MatchingGridShape.OrthoAdjacent,
         cardTypes: [CardType.Food],

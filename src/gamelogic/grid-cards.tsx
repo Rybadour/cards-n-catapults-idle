@@ -14,5 +14,7 @@ export function createCard(card: Card, quantity: number, prestigeEffects: Presti
     durabilityBonus: 1,
     timeLeftMs: card.cooldownMs,
     cardMarks: {},
+    statusIcon: '',
+    statusText: '',
   };
 }

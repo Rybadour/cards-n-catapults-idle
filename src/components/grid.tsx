@@ -119,11 +119,18 @@ export default function GridMap() {
                 /> :
                 null
               }
+              <div className="status-icon">
+                {card.statusIcon ?
+                  <Icon size="xs" icon={card.statusIcon} /> :
+                  null
+                }
+              </div>
               <div className="details">
                 <div className="name">{card.name}</div>
                 <div className="status">
                   {card.isDisabled ? '(disabled)' : ''}
                   {card.isExpiredAndReserved ? '(expired)' : ''}
+                  {card.statusText ? card.statusText : ''}
                 </div>
                 <div className="ability">
                   {card.totalStrength && card.passive ? <>

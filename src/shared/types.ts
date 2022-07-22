@@ -64,6 +64,8 @@ export type Card = {
     behaviour: ModifierBehaviour,
     factor: number,
     match: GridMatch,
+    statusIcon: string,
+    statusText: string,
   },
   disableShape?: {
     onMatch: boolean,
@@ -87,6 +89,8 @@ export type RealizedCard = Card & {
   durabilityBonus: number,
   timeLeftMs?: number,
   cardMarks: Record<string, MarkType>,
+  statusIcon: string,
+  statusText: string,
 }
 
 export enum Rarity {

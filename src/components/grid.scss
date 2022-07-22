@@ -75,6 +75,13 @@ $card-height: 100px;
   .details {
     display: none;
   }
+  
+  .status-icon {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    filter: drop-shadow(1px 1px 6px black);
+  }
 
   &:hover .details {
     display: flex;

@@ -19,6 +19,8 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
   // Disable and reset
   iterateGrid(grid, (card, x, y) => {
     card.bonus = 1;
+    card.statusIcon = '';
+    card.statusText = '';
     card.durabilityBonus = 1;
     card.totalStrength = 0;
     card.totalCost = 0;
@@ -89,6 +91,8 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
 
       if (isModified) {
         card.bonus *= mod.factor;
+        card.statusIcon = card.abilityStrengthModifier?.statusIcon ?? '';
+        card.statusText = card.abilityStrengthModifier?.statusText ?? '';
       }
     });
   });
