@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
 import global from "../config/global";
-import { Card, CardId, RealizedCard } from "../shared/types";
+import { Card, CardId, PrestigeEffects, RealizedCard } from "../shared/types";
 import { DiscoveryContext } from "./discovery";
 import { PrestigeContext } from "./prestige";
 
@@ -14,7 +14,7 @@ export type CardsContext = {
   replaceCard: (existingCard: RealizedCard | null) => void,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   drawCards: (cardsToDraw: Card[]) => void,
-  prestigeReset: () => void,
+  prestigeReset: (prestigeEffects: PrestigeEffects) => void,
 };
 
 const defaultContext: CardsContext = {
@@ -26,14 +26,13 @@ const defaultContext: CardsContext = {
   replaceCard: (card) => {},
   updateInventory: (cardsDelta) => {},
   drawCards: (cardsToDraw) => {},
-  prestigeReset: () => {},
+  prestigeReset: (prestigeEffects) => {},
 };
 
 export const CardsContext = createContext(defaultContext);
 
 export function CardsProvider(props: Record<string, any>) {
   const discovery = useContext(DiscoveryContext);
-  const prestige = useContext(PrestigeContext);
   const [cards, setCards] = useState(defaultContext.cards);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
@@ -99,14 +98,14 @@ export function CardsProvider(props: Record<string, any>) {
     setCards(newCards);
   }
 
-  function prestigeReset() {
+  function prestigeReset(prestigeEffects: PrestigeEffects) {
     const newCards: Record<string, number> = {...global.startingCards};
-    Object.entries(prestige.prestigeEffects.extraStartCards)
+    Object.entries(prestigeEffects.extraStartCards)
       .forEach(([c, amount]) => {
         newCards[c] = (newCards[c] ?? 0) + amount;
       });
     setCards(newCards);
-    discovery.prestigeReset(newCards);
+    discovery.prestigeReset(newCards, prestigeEffects);
   }
 
   return (

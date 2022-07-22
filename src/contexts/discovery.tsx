@@ -2,7 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import cardPacks from "../config/card-packs";
 import global from "../config/global";
-import { Card, ResourceType } from "../shared/types";
+import { Card, PrestigeEffects, ResourceType } from "../shared/types";
 import { PrestigeContext } from "./prestige";
 
 export type DiscoveryContext = {
@@ -12,7 +12,7 @@ export type DiscoveryContext = {
   discoveredResources: Partial<Record<ResourceType, boolean>>,
   discoverCards: (cards: Card[]) => void,
   discoverResources: (resources: ResourceType[]) => void,
-  prestigeReset: (startingCards: Record<string, number>) => void,
+  prestigeReset: (startingCards: Record<string, number>, prestigeEffects: PrestigeEffects) => void,
 };
 
 const defaultContext: DiscoveryContext = {
@@ -24,7 +24,7 @@ const defaultContext: DiscoveryContext = {
   },
   discoverCards: (cards) => {},
   discoverResources: (resources) => {},
-  prestigeReset: (startingCards) => {},
+  prestigeReset: (startingCards, prestigeEffects) => {},
 };
 
 function addToDiscoverMap<K extends string | symbol>(map: Record<K, boolean>, keys: K[]) {
@@ -49,7 +49,6 @@ addCardPacks(defaultContext.discoveredCardPacks, global.unlockedPacks);
 export const DiscoveryContext = createContext(defaultContext);
 
 export function DiscoveryProvider(props: Record<string, any>) {
-  const prestige = useContext(PrestigeContext);
   const [discoveredCards, setDiscoveredCards] = useState(defaultContext.discoveredCards);
   const [discoveredCardPacks, setDiscoveredCardPacks] = useState(defaultContext.discoveredCardPacks);
   const [cardsDiscoveredThisPrestige, setCardsDiscoveredThisPrestige] = useState(defaultContext.cardsDiscoveredThisPrestige);
@@ -77,13 +76,13 @@ export function DiscoveryProvider(props: Record<string, any>) {
     setDiscoveredResources(newDiscover);
   }
 
-  function prestigeReset(startingCards: Record<string, number>) {
+  function prestigeReset(startingCards: Record<string, number>, prestigeEffects: PrestigeEffects) {
     const newDiscovered = {};
     addToDiscoverMap(newDiscovered, Object.keys(startingCards));
     setCardsDiscoveredThisPrestige(newDiscovered);
 
     const newDiscoveredPacks = {};
-    addCardPacks(newDiscoveredPacks, prestige.prestigeEffects.unlockedCardPacks);
+    addCardPacks(newDiscoveredPacks, prestigeEffects.unlockedCardPacks);
     setDiscoveredCardPacks(newDiscoveredPacks);
   }
 

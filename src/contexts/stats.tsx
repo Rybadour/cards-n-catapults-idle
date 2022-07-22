@@ -12,7 +12,7 @@ export type StatsContext = {
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null, grid: Grid) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
   useResource: (resource: ResourceType, amount: number) => void,
-  prestigeReset: () => void,
+  prestigeReset: (prestigeEffects: PrestigeEffects) => void,
 };
 
 const defaultContext: StatsContext = {
@@ -21,14 +21,13 @@ const defaultContext: StatsContext = {
   update: (elapsed, newResourcesPerSec, grid) => {},
   updatePerSec: (newPerSec) => {},
   useResource: (resource, amount) => {},
-  prestigeReset: () => {},
+  prestigeReset: (prestigeEffects) => {},
 };
 defaultContext.resources[ResourceType.Gold] = global.startingGold;
 
 export const StatsContext = createContext(defaultContext);
 
 export function StatsProvider(props: Record<string, any>) {
-  const prestige = useContext(PrestigeContext);
   const discovery = useContext(DiscoveryContext);
   const [resources, setResources] = useState(defaultContext.resources);
   const [resourcesPerSec, setResourcesPerSec] = useState(defaultContext.resourcesPerSec);
@@ -47,10 +46,6 @@ export function StatsProvider(props: Record<string, any>) {
       }
     });
     setResources(newResources);
-
-    if (resourcesPerSec.renown > 0) {
-      prestige.update(newResources.renown);
-    }
   }
 
   function updatePerSec(newPerSec: ResourcesMap) {
@@ -68,9 +63,9 @@ export function StatsProvider(props: Record<string, any>) {
     setResources(newResources);
   }
 
-  function prestigeReset() {
+  function prestigeReset(prestigeEffects: PrestigeEffects) {
     const newResources = {...defaultContext.resources};
-    newResources.gold += prestige.prestigeEffects.bonuses.startingGold;
+    newResources.Gold += prestigeEffects.bonuses.startingGold;
     setResources(newResources);
     setResourcesPerSec({...defaultResourcesMap});
   }

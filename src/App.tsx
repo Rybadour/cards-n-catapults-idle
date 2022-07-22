@@ -16,12 +16,12 @@ import ReactTooltip from 'react-tooltip';
 
 function App() {
   return (
-    <PrestigeProvider>
     <DiscoveryProvider>
     <StatsProvider>
     <CardsProvider>
     <CardPacksProvider>
     <GridProvider>
+    <PrestigeProvider>
       <div className="App">
         <Header />
 
@@ -36,12 +36,12 @@ function App() {
           </div>
         </footer>
       </div>
+    </PrestigeProvider>
     </GridProvider>
     </CardPacksProvider>
     </CardsProvider>
     </StatsProvider>
     </DiscoveryProvider>
-    </PrestigeProvider>
   );
 }
 

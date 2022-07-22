@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { shuffle } from "lodash";
 
 import packsConfig from "../config/prestige-packs";
@@ -7,6 +7,10 @@ import { getExponentialValue } from "../shared/utils";
 import { PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import upgradesConfig, { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
 import global from "../config/global";
+import { StatsContext } from "./stats";
+import { GridContext } from "./grid";
+import { CardsContext } from "./cards";
+import { CardPacksContext } from "./card-packs";
 
 const defaultUpgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};
 const realizedPacks: Record<string, RealizedPrestigePack> = {};
@@ -41,7 +45,7 @@ export type PrestigeContext = {
   prestige: () => boolean,
   buyPack: (pack: RealizedPrestigePack) => void,
   refundUpgrade: (upgrade: PrestigeUpgrade) => void,
-  update: (renown: number) => void,
+  update: () => void,
   openMenu: () => void,
   closeMenu: () => void,
 };
@@ -59,6 +63,7 @@ const defaultContext: PrestigeContext = {
     bonuses: {
       foodCapacity: 1,
       startingGold: 0,
+      cardPackCostReduction: 0,
     },
     extraStartCards: {},
     unlockedCardPacks: [],
@@ -66,7 +71,7 @@ const defaultContext: PrestigeContext = {
   prestige: () => false,
   buyPack: (pack) => {},
   refundUpgrade: (upgrade) => {},
-  update: (renown) => {},
+  update: () => {},
   openMenu: () => {},
   closeMenu: () => {},
 };
@@ -74,6 +79,11 @@ const defaultContext: PrestigeContext = {
 export const PrestigeContext = createContext(defaultContext);
 
 export function PrestigeProvider(props: Record<string, any>) {
+  const stats = useContext(StatsContext);
+  const grid = useContext(GridContext);
+  const cards = useContext(CardsContext);
+  const cardPacks = useContext(CardPacksContext);
+
   const [prestigePoints, setPoints] = useState(defaultContext.prestigePoints);
   const [nextPoints, setNextPoints] = useState(defaultContext.nextPoints);
   const [currentRenownCost, setCurrentRenownCost] = useState(defaultContext.currentRenownCost);
@@ -88,6 +98,9 @@ export function PrestigeProvider(props: Record<string, any>) {
     if (nextPoints <= 0) {
       return false;
     }
+
+    cardPacks.prestigeReset();
+    grid.prestigeReset();
 
     setPoints(prestigePoints + nextPoints);
     setNextPoints(0);
@@ -140,6 +153,8 @@ export function PrestigeProvider(props: Record<string, any>) {
     newPrestigePacks[pack.id].cost = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought);
     newPrestigePacks[pack.id].remainingUpgrades = pack.remainingUpgrades;
     setPacks(newPrestigePacks);
+
+    onUpgradesChanged(newEffects);
   }
 
   function refundUpgrade(upgrade: PrestigeUpgrade) {
@@ -193,10 +208,12 @@ export function PrestigeProvider(props: Record<string, any>) {
     newPrestigePacks[pack.id].refund = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought - 1) * PRESTIGE_REFUND_FACTOR;
     newPrestigePacks[pack.id].remainingUpgrades = pack.remainingUpgrades;
     setPacks(newPrestigePacks);
+
+    onUpgradesChanged(newEffects);
   }
 
-  function update(renown: number) {
-    if (currentRenownCost + nextRenownCost <= renown) {
+  function update() {
+    if (currentRenownCost + nextRenownCost <= stats.resources.Renown) {
       setNextPoints(nextPoints + 1);
       const newCost = getExponentialValue(PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, nextPoints + 1);
       setNextRenownCost(newCost);
@@ -204,8 +221,17 @@ export function PrestigeProvider(props: Record<string, any>) {
     }
   }
 
+  function onUpgradesChanged(newEffects: PrestigeEffects) {
+    cardPacks.prestigeUpdate(newEffects);
+  }
+
   const openMenu = () => setIsMenuOpen(true);
   const closeMenu = () => {
+    if (isReseting) {
+      cards.prestigeReset(prestigeEffects);
+      stats.prestigeReset(prestigeEffects);
+    }
+
     setIsMenuOpen(false);
     setIsReseting(false);
   };

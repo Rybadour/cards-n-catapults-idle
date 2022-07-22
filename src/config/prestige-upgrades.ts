@@ -51,6 +51,17 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     description: 'Unlocks the food pack',
     summary: '',
     unlockedCardPack: 'food',
+  },
+  tradeDeal: {
+    id: '',
+    name: 'Trade Deal',
+    icon: 'trade',
+    description: 'Reduces the cost of card packs by ',
+    summary: '-{{bonusAsPercent}} card pack cost',
+    bonus: {
+      amount: 0.1,
+      field: 'cardPackCostReduction',
+    }
   }
 };
 

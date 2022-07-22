@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import cardPacks from "../config/card-packs";
 import global from "../config/global";
 import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
-import { RealizedCardPack, ResourceType } from "../shared/types";
+import { PrestigeEffects, RealizedCardPack, ResourceType } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardsContext } from "./cards";
 import { StatsContext } from "./stats";
@@ -25,14 +25,18 @@ Object.values(cardPacks).forEach(cardPack => {
 
 export type CardPacksContext = {
   cardPacks: Record<string, RealizedCardPack>,
+  prestigeEffects: PrestigeEffects,
   buyPack: (cardPack: RealizedCardPack) => void,
   prestigeReset: () => void,
+  prestigeUpdate: (effects: PrestigeEffects) => void,
 };
 
 const defaultContext: CardPacksContext = {
   cardPacks: cloneDeep(realizedCardPacks),
+  prestigeEffects: {} as PrestigeEffects,
   buyPack: (cardPack) => {},
   prestigeReset: () => {},
+  prestigeUpdate: (effects) => {},
 };
 
 export const CardPacksContext = createContext(defaultContext);
@@ -41,6 +45,7 @@ export function CardPacksProvider(props: Record<string, any>) {
   const stats = useContext(StatsContext);
   const cards = useContext(CardsContext);
   const [cardPacks, setCardPacks] = useState(defaultContext.cardPacks);
+  const [prestigeEffects, setPrestigeEffects] = useState(defaultContext.prestigeEffects);
 
   function buyPack(cardPack: RealizedCardPack) {
     if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
@@ -52,7 +57,7 @@ export function CardPacksProvider(props: Record<string, any>) {
 
     const newCardPacks = {...cardPacks};
     newCardPacks[cardPack.id].numBought += 1;
-    newCardPacks[cardPack.id].cost = getExponentialValue(cardPack.baseCost, cardPack.costGrowth, cardPack.numBought);
+    newCardPacks[cardPack.id].cost = getPackCost(cardPack, prestigeEffects);
     setCardPacks(newCardPacks);
   }
 
@@ -60,13 +65,27 @@ export function CardPacksProvider(props: Record<string, any>) {
     setCardPacks(cloneDeep(realizedCardPacks));
   }
 
+  function prestigeUpdate(effects: PrestigeEffects) {
+    const newCardPacks = {...cardPacks};
+    Object.values(newCardPacks).forEach(pack => {
+      pack.cost = getPackCost(pack, effects);
+    });
+    setCardPacks(newCardPacks);
+
+    setPrestigeEffects(effects);
+  }
+
   return (
     <CardPacksContext.Provider
       value={{
-        cardPacks,
-        buyPack, prestigeReset,
+        cardPacks, prestigeEffects,
+        buyPack, prestigeReset, prestigeUpdate,
       }}
       {...props}
     />
   );
+}
+
+function getPackCost(pack: RealizedCardPack, effects: PrestigeEffects) {
+  return getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought) * (1 - effects.bonuses.cardPackCostReduction)
 }

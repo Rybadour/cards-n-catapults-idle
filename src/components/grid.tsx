@@ -47,6 +47,7 @@ export default function GridMap() {
       const elapsed = Date.now() - lastTime;
       lastTime = Date.now();
       grid.update(elapsed);
+      prestige.update();
     }, 100);
 
     return () => clearInterval(interval);

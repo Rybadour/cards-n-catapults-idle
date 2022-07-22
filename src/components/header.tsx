@@ -19,18 +19,11 @@ const modalStyles = {
 Modal.setAppElement('#root');
 
 function Header() {
-  const stats = useContext(StatsContext);
-  const grid = useContext(GridContext);
-  const cards = useContext(CardsContext);
-  const cardPacks = useContext(CardPacksContext);
   const prestige = useContext(PrestigeContext);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const onPrestige = useCallback(() => {
-    if (prestige.prestige()) {
-      cardPacks.prestigeReset();
-      grid.prestigeReset();
-    }
+    prestige.prestige();
   }, [prestige]);
 
   const onOpenPrestigeMenu = useCallback(() => {
@@ -38,10 +31,6 @@ function Header() {
   }, [prestige]);
 
   const onClosePrestigeMenu = useCallback(() => {
-    if (prestige.isReseting) {
-      cards.prestigeReset();
-      stats.prestigeReset();
-    }
     prestige.closeMenu();
   }, [prestige]);
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
-import { Grid, RealizedCard } from "../shared/types";
+import { Grid, PrestigeEffects, RealizedCard } from "../shared/types";
 import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
@@ -12,6 +12,7 @@ const height = 5;
 
 export type GridContext = {
   gridSpaces: Grid,
+  prestigeEffects: PrestigeEffects,
   replaceCard: (x: number, y: number, newCard: RealizedCard) => (RealizedCard | null),
   returnCard: (x: number, y: number) => void,
   update: (elapsed: number) => void,
@@ -20,6 +21,7 @@ export type GridContext = {
 
 const defaultContext: GridContext = {
   gridSpaces: getEmptyGrid(),
+  prestigeEffects: {} as PrestigeEffects,
   replaceCard: (x, y, newCard) => null,
   returnCard: (x, y) => {},
   update: (elapsed) => {},
@@ -30,13 +32,13 @@ export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
   const discovery = useContext(DiscoveryContext);
-  const prestige = useContext(PrestigeContext);
   const stats = useContext(StatsContext);
   const cards = useContext(CardsContext);
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
+  const [prestigeEffects, setPrestigeEffects] = useState(defaultContext.prestigeEffects);
 
   function update(elapsed: number) {
-    const results = updateGrid(gridSpaces, stats.resources, cards.cards, prestige.prestigeEffects, elapsed);
+    const results = updateGrid(gridSpaces, stats.resources, cards.cards, prestigeEffects, elapsed);
 
     if (results.newCards.length > 0) {
       discovery.discoverCards(results.newCards);
@@ -79,10 +81,15 @@ export function GridProvider(props: Record<string, any>) {
     setGridSpaces(getEmptyGrid());
   }
 
+  function prestigeUpdate(prestigeEffects: PrestigeEffects) {
+    // TODO: More than that...
+    setPrestigeEffects(prestigeEffects);
+  }
+
   return (
     <GridContext.Provider
       value={{
-        gridSpaces,
+        gridSpaces, prestigeEffects,
         replaceCard, returnCard, update, prestigeReset,
       }}
       {...props}
