@@ -63,6 +63,20 @@ const cards: Record<string, Card> = {
       }
     },
   },
+  lumberjack: {
+    id: "",
+    name: "Pauline Bunion",
+    icon: "axe-in-stump",
+    tier: 3,
+    type: CardType.Person,
+    rarity: Rarity.UltraRare,
+    description: "The woman, the myth, the legend. Produces ",
+    foodDrain: 0.1,
+    passive: {
+      strength: 1.1,
+      resource: ResourceType.Gold,
+    },
+  },
   ratSnack: {
     id: "",
     name: "Rat Snack",
