@@ -1,8 +1,8 @@
 const global = {
   startingGold: 200,
-  startingCards: {beggar: 1, forest: 5, lumberjack: 1},
+  startingCards: {beggar: 1, bard: 6},
   unlockedPacks: [],
-  startingPrestige: 0,
+  startingPrestige: 100000,
   produceModifier: 1,
   isDebug: true,
 };

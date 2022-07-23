@@ -30,6 +30,16 @@ const packs: Record<string, PrestigePack> = {
       quantity: 10,
     }],
   },
+  bronzeAge: {
+    id: "",
+    name: "Bronze Age Pack",
+    baseCost: 100,
+    costGrowth: 1.12,
+    upgrades: [{
+      upgrade: upgrades.treasureMap,
+      quantity: 1,
+    }],
+  },
 }
 
 export const totalUpgrades: Record<string, number> = {};

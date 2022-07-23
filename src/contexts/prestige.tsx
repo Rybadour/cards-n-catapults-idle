@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 import { cloneDeep, shuffle } from "lodash";
 
 import packsConfig from "../config/prestige-packs";
-import { getExponentialValue } from "../shared/utils";
+import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
 import { PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import upgradesConfig, { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
 import global from "../config/global";
@@ -11,6 +11,7 @@ import { StatsContext } from "./stats";
 import { GridContext } from "./grid";
 import { CardsContext } from "./cards";
 import { CardPacksContext } from "./card-packs";
+import { DiscoveryContext } from "./discovery";
 
 export const DEFAULT_EFFECTS: PrestigeEffects = {
   bonuses: {
@@ -86,6 +87,7 @@ export function PrestigeProvider(props: Record<string, any>) {
   const grid = useContext(GridContext);
   const cards = useContext(CardsContext);
   const cardPacks = useContext(CardPacksContext);
+  const discovery = useContext(DiscoveryContext);
 
   const [prestigePoints, setPoints] = useState(defaultContext.prestigePoints);
   const [nextPoints, setNextPoints] = useState(defaultContext.nextPoints);
@@ -232,8 +234,25 @@ export function PrestigeProvider(props: Record<string, any>) {
   const openMenu = () => setIsMenuOpen(true);
   const closeMenu = () => {
     if (isReseting) {
-      cards.prestigeReset(prestigeEffects);
-      stats.prestigeReset(prestigeEffects);
+      const effects = cloneDeep(prestigeEffects);
+      Object.values(upgrades).forEach(upgradesInPack => {
+        Object.values(upgradesInPack).forEach(upgrade => {
+          using(upgrade.randomStartingCards, (rsc) => {
+            for (let i = 0; i < rsc.amount; ++i) {
+              const possibleCards = rsc.onlyIfDiscovered ?
+                rsc.possibleCards.filter(c => discovery.discoveredCards[c]) :
+                rsc.possibleCards;
+              if (possibleCards.length > 0) {
+                const card = getRandomFromArray(possibleCards);
+                effects.extraStartCards[card] = (effects.extraStartCards[card] ?? 0) + 1;
+              }
+            }
+          });
+        });
+      });
+      
+      cards.prestigeReset(effects);
+      stats.prestigeReset(effects);
     }
 
     setIsMenuOpen(false);

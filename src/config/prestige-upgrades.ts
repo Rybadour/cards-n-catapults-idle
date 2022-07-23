@@ -73,6 +73,18 @@ const upgrades: Record<string, PrestigeUpgrade> = {
       amount: 0.1,
       field: 'goldGain',
     }
+  },
+  treasureMap: {
+    id: '',
+    name: 'Treasure Map',
+    icon: 'treasure-map',
+    description: 'Gives you one of the ultra rare cards you\'ve discovered on reset',
+    summary: 'Ultra rare card on reset',
+    randomStartingCards: {
+      possibleCards: ['lumberjack', 'schoolHouse', 'ambrosia'],
+      amount: 1,
+      onlyIfDiscovered: true,
+    }
   }
 };
 

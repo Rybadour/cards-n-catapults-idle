@@ -167,6 +167,11 @@ export type PrestigeUpgrade = {
   summary: string,
   extraStartingCards?: Record<string, number>,
   unlockedCardPack?: string,
+  randomStartingCards?: {
+    possibleCards: string[],
+    amount: number,
+    onlyIfDiscovered: boolean,
+  },
   bonus?: {
     amount: number,
     field: keyof(PrestigeBonuses),
