@@ -294,6 +294,10 @@ const cards: Record<string, Card> = {
       shape: MatchingGridShape.Grid,
       cardTypes: [CardType.Person]
     },
+    convertCardEffect: {
+      targetCard: 'beggar',
+      resultingCard: 'peasant',
+    }
   }
 };
 

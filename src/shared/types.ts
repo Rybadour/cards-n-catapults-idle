@@ -33,7 +33,6 @@ export type Card = {
   rarity: Rarity,
   foodDrain?: number,
   maxDurability?: number,
-  cooldownMs?: number,
 
   passive?: {
     strength: number,
@@ -43,6 +42,11 @@ export type Card = {
   bonusToAdjacent?: {
     strength: number,
   } & GridMatch,
+  bonusToFoodCapacity?: {
+    strength: number,
+  } & GridMatch,
+
+  cooldownMs?: number,
   produceCardEffect?: {
     shape: MatchingGridShape,
     possibleCards: string[],
@@ -53,9 +57,10 @@ export type Card = {
   drawCardEffect?: {
     possibleCards: string[],
   },
-  bonusToFoodCapacity?: {
-    strength: number,
-  } & GridMatch,
+  convertCardEffect?: {
+    targetCard: string,
+    resultingCard: string,
+  },
 
   costPerUse?: ResourceCost,
   costPerSec?: ResourceCost,

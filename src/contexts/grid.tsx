@@ -5,7 +5,8 @@ import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelo
 import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
 import { DiscoveryContext } from "./discovery";
-import { PrestigeContext } from "./prestige";
+import { DEFAULT_EFFECTS} from "./prestige";
+import { cloneDeep } from "lodash";
 
 const width = 5;
 const height = 5;
@@ -21,7 +22,7 @@ export type GridContext = {
 
 const defaultContext: GridContext = {
   gridSpaces: getEmptyGrid(),
-  prestigeEffects: {} as PrestigeEffects,
+  prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
   replaceCard: (x, y, newCard) => null,
   returnCard: (x, y) => {},
   update: (elapsed) => {},

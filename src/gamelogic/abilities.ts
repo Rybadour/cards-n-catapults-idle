@@ -266,6 +266,29 @@ function activateCard(
       results.anyChanged = true;
     });
     return found;
+
+  } else if (card.convertCardEffect) {
+    const convert = card.convertCardEffect;
+
+    let found = false;
+    iterateGrid(results.grid, (other, x2, y2) => {
+      if (found || !other || other.isExpiredAndReserved) return;
+
+      if (other.id == convert.targetCard) {
+        results.grid[y2][x2] = createCard(cardsConfig[convert.resultingCard], 1, effects);
+        results.anyChanged = true;
+        found = true;
+      }
+    });
+
+    if (!found && cards[convert.targetCard] > 0) {
+      results.inventoryDelta[convert.targetCard] = (results.inventoryDelta[convert.targetCard] ?? 0) - 1;
+      results.inventoryDelta[convert.resultingCard] = (results.inventoryDelta[convert.resultingCard] ?? 0) + 1;
+      results.anyChanged = true;
+      return true;
+    }
+
+    return found;
   }
 
   return false;
