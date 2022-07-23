@@ -279,6 +279,21 @@ const cards: Record<string, Card> = {
       resource: ResourceType.Wood,
       cost: 0.5,
     },
+  },
+  schoolHouse: {
+    id: "",
+    name: "School House",
+    icon: "family-house",
+    tier: 3,
+    type: CardType.Building,
+    rarity: Rarity.UltraRare,
+    description: "Knowledge is power! Converts a Beggar into a Peasant every {{cooldownSecs}}s and improves all people by {{bonusToAdjacentAmount}}.",
+    cooldownMs: 10000,
+    bonusToAdjacent: {
+      strength: 1,
+      shape: MatchingGridShape.Grid,
+      cardTypes: [CardType.Person]
+    },
   }
 };
 
