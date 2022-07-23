@@ -38,6 +38,7 @@ export type Card = {
     strength: number,
     resource: ResourceType,
     multiplyByAdjacent?: GridMatch,
+    scaledToResource?: ResourceType,
   },
   bonusToAdjacent?: {
     strength: number,

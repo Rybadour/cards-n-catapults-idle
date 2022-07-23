@@ -70,12 +70,18 @@ const cards: Record<string, Card> = {
     tier: 3,
     type: CardType.Person,
     rarity: Rarity.UltraRare,
-    description: "The woman, the myth, the legend. Produces ",
+    description: "The woman, the myth, the legend. Produces Gold based on total Wood and improves nearby Forests by {{bonusToAdjacentAmount}}.",
     foodDrain: 0.1,
     passive: {
-      strength: 1.1,
+      strength: 3,
       resource: ResourceType.Gold,
+      scaledToResource: ResourceType.Wood,
     },
+    bonusToAdjacent: {
+      strength: 1,
+      shape: MatchingGridShape.AllAdjacent,
+      cards: ['forest'],
+    }
   },
   ratSnack: {
     id: "",

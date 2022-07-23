@@ -104,7 +104,9 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
     let numAdjacent = 0;
 
     using(card.passive, (p) => {
-      const strength = p.strength * card.bonus;
+      const strength = p.scaledToResource ?
+        getScaledResourceAsStrength(card, stats.resources[p.scaledToResource]) :
+        p.strength * card.bonus;
       if (p.multiplyByAdjacent) {
         const mba = p.multiplyByAdjacent;
         iterateGridMatch(grid, x, y, mba, (adj, ax, ay) => {
@@ -164,6 +166,13 @@ export function updateGrid(
     });
 
     if (card.isDisabled) return;
+
+    if (card.passive && card.passive.scaledToResource) {
+      const strength = getScaledResourceAsStrength(card, resources[card.passive.scaledToResource]);
+      if (Math.abs(card.totalStrength - strength) > 0.1) {
+        results.anyChanged = true;
+      }
+    }
 
     if (card.foodDrain) {
       const adjacentFood: {
@@ -374,4 +383,12 @@ function iterateGridMatch(
 
 function canAfford(resources: ResourcesMap, cost: ResourceCost) {
   return resources[cost.resource] >= cost.cost;
+}
+
+function getScaledResourceAsStrength(card: RealizedCard, resource: number) {
+  if (card.passive && card.passive.scaledToResource) {
+    return card.passive.strength * card.bonus * (resource > 0 ? Math.log10(resource) : 0);
+  }
+
+  return 0;
 }
