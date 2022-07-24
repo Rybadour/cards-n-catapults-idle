@@ -229,6 +229,7 @@ export function PrestigeProvider(props: Record<string, any>) {
   function onUpgradesChanged(newEffects: PrestigeEffects) {
     cardPacks.prestigeUpdate(newEffects);
     stats.prestigeUpdate(newEffects);
+    grid.prestigeUpdate(newEffects);
   }
 
   const openMenu = () => setIsMenuOpen(true);

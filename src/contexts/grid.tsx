@@ -18,6 +18,7 @@ export type GridContext = {
   returnCard: (x: number, y: number) => void,
   update: (elapsed: number) => void,
   prestigeReset: () => void,
+  prestigeUpdate: (effects: PrestigeEffects) => void,
 };
 
 const defaultContext: GridContext = {
@@ -27,6 +28,7 @@ const defaultContext: GridContext = {
   returnCard: (x, y) => {},
   update: (elapsed) => {},
   prestigeReset: () => {},
+  prestigeUpdate: (effects) => {},
 };
 
 export const GridContext = createContext(defaultContext);
@@ -83,7 +85,6 @@ export function GridProvider(props: Record<string, any>) {
   }
 
   function prestigeUpdate(prestigeEffects: PrestigeEffects) {
-    // TODO: More than that...
     setPrestigeEffects(prestigeEffects);
   }
 
@@ -91,7 +92,7 @@ export function GridProvider(props: Record<string, any>) {
     <GridContext.Provider
       value={{
         gridSpaces, prestigeEffects,
-        replaceCard, returnCard, update, prestigeReset,
+        replaceCard, returnCard, update, prestigeReset, prestigeUpdate,
       }}
       {...props}
     />

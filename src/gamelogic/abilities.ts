@@ -188,7 +188,8 @@ export function updateGrid(
 
       const foodDrain = (elapsed/1000 * card.foodDrain) / adjacentFood.length;
       adjacentFood.forEach(food => {
-        food.card.durability = (food.card.durability ?? 0) - (foodDrain / food.card.durabilityBonus);
+        const foodBonus = food.card.durabilityBonus * effects.bonuses.foodCapacity;
+        food.card.durability = (food.card.durability ?? 0) - (foodDrain / foodBonus);
         if (food.card.durability <= 0) {
           food.card.isExpiredAndReserved = true;
           food.card.durability = 0;
