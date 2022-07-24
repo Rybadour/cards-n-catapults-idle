@@ -191,9 +191,14 @@ export function updateGrid(
         const foodBonus = food.card.durabilityBonus * effects.bonuses.foodCapacity;
         food.card.durability = (food.card.durability ?? 0) - (foodDrain / foodBonus);
         if (food.card.durability <= 0) {
-          food.card.isExpiredAndReserved = true;
-          food.card.durability = 0;
-          results.grid[food.y][food.x] = food.card;
+          if (food.card.shouldBeReserved) {
+            food.card.isExpiredAndReserved = true;
+            food.card.durability = 0;
+            results.grid[food.y][food.x] = food.card;
+          } else {
+            results.grid[food.y][food.x] = null;
+          }
+
           results.anyChanged = true;
         }
       })
@@ -270,7 +275,11 @@ function activateCard(
       if ((cards[otherCard.id] ?? 0) <= 0) return;
 
       found = true;
-      results.grid[y2][x2] = createCard(cardsConfig[otherCard.id], cards[otherCard.id], effects);
+
+      const newCard = createCard(cardsConfig[otherCard.id], cards[otherCard.id], effects);
+      newCard.shouldBeReserved = true;
+      results.grid[y2][x2] = newCard;
+
       const quantityUsed = cards[otherCard.id] > 1 ? 1 : cards[otherCard.id];
       results.inventoryDelta[otherCard.id] = (results.inventoryDelta[otherCard.id] ?? 0) - quantityUsed;
       results.anyChanged = true;

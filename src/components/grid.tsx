@@ -31,7 +31,9 @@ export default function GridMap() {
     }
 
     const quantity = cards.cards[cards.selectedCard.id]; 
-    const oldCard = grid.replaceCard(x, y, createCard(cards.selectedCard, quantity, prestige.prestigeEffects));
+    const newCard = createCard(cards.selectedCard, quantity, prestige.prestigeEffects);
+    newCard.shouldBeReserved = true;
+    const oldCard = grid.replaceCard(x, y, newCard);
     cards.replaceCard(oldCard);
   }, [grid, cards]);
 

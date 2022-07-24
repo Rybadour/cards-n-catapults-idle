@@ -7,6 +7,7 @@ export function createCard(card: Card, quantity: number, prestigeEffects: Presti
     bonus: 1,
     totalStrength: 0,
     totalCost: 0,
+    shouldBeReserved: false,
     isDisabled: false,
     isExpiredAndReserved: false,
     durability: (quantity >= 1 ? 1 : quantity) * (card.maxDurability ?? 0),
