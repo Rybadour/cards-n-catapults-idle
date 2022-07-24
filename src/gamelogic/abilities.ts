@@ -26,6 +26,18 @@ export function updateGridTotals(grid: Grid, stats: StatsContext): UpdateGridTot
     card.totalCost = 0;
     card.cardMarks = {};
 
+    if (card.foodDrain) {
+      iterateGridShape(grid, x, y, MatchingGridShape.OrthoAdjacent, (other, x2, y2) => {
+        card.cardMarks[`${x2}:${y2}`] = MarkType.Associated;
+      });
+    }
+
+    if (card.produceCardEffect) {
+      iterateGridShape(grid, x, y, card.produceCardEffect.shape, (other, x2, y2) => {
+        card.cardMarks[`${x2}:${y2}`] = MarkType.Associated;
+      });
+    }
+
     card.isDisabled = false;
     if (card.costPerSec) {
       if (!canAfford(stats.resources, card.costPerSec)) {

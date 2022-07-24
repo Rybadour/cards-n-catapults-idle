@@ -139,4 +139,9 @@ $card-height: 100px;
     //border: 1px solid rgba(0, 255, 0, 0.5);
     box-shadow: rgba(76, 197, 76, 1) 0px 0px 4px 2px;
   }
+
+  &.marked-associated {
+    //border: 1px solid rgba(0, 255, 0, 0.5);
+    box-shadow: rgb(104, 156, 228) 0px 0px 4px 2px;
+  }
 }

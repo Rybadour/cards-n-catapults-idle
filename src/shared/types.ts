@@ -107,7 +107,8 @@ export enum Rarity {
 
 export enum MarkType {
   Buff,
-  Exclusion
+  Exclusion,
+  Associated,
 }
 
 export type ResourceCost = {

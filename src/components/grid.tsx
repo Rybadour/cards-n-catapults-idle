@@ -90,6 +90,7 @@ export default function GridMap() {
               expired: card?.isExpiredAndReserved || card?.isDisabled,
               'marked-exclusion': marks[`${x}:${y}`] == MarkType.Exclusion,
               'marked-buff': marks[`${x}:${y}`] == MarkType.Buff,
+              'marked-associated': marks[`${x}:${y}`] == MarkType.Associated,
             })}
             onClick={() => addCard(x, y)}
             onContextMenu={(evt) => returnCard(evt, x, y, card)}
