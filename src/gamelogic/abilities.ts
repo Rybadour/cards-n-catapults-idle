@@ -259,7 +259,13 @@ function activateCard(
     const newCard = getRandomFromArray(pc.possibleCards);
     let found = false;
     iterateGridShape(results.grid, x, y, pc.shape, (adjCard, ax, ay) => {
-      if ((adjCard && !adjCard.isExpiredAndReserved) || found) return;
+      if (found) return;
+      if (adjCard) {
+        // Only place cards into slots reserved for the new card
+        if (!adjCard.isExpiredAndReserved || adjCard.id !== newCard) {
+          return;
+        }
+      }
 
       found = true;
       results.grid[ay][ax] = createCard(cardsConfig[newCard], 1, effects);
