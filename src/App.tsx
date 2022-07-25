@@ -13,6 +13,7 @@ import Header from './components/header';
 import { PrestigeContext, PrestigeProvider } from './contexts/prestige';
 import Prestige from './components/prestige';
 import ReactTooltip from 'react-tooltip';
+import { SavingLoadingProvider } from './contexts/saving-loading';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
     <CardPacksProvider>
     <GridProvider>
     <PrestigeProvider>
+    <SavingLoadingProvider>
       <div className="App">
         <Header />
 
@@ -36,6 +38,7 @@ function App() {
           </div>
         </footer>
       </div>
+    </SavingLoadingProvider>
     </PrestigeProvider>
     </GridProvider>
     </CardPacksProvider>

@@ -31,7 +31,7 @@ export default function GridMap() {
     }
 
     const quantity = cards.cards[cards.selectedCard.id]; 
-    const newCard = createCard(cards.selectedCard, quantity, prestige.prestigeEffects);
+    const newCard = createCard(cards.selectedCard, quantity);
     newCard.shouldBeReserved = true;
     const oldCard = grid.replaceCard(x, y, newCard);
     cards.replaceCard(oldCard);
@@ -43,7 +43,7 @@ export default function GridMap() {
       grid.returnCard(x, y);
       cards.returnCard(card);
     }
-  }, [cards]);
+  }, [grid, cards]);
 
   useEffect(() => {
     const interval = setInterval(() => {

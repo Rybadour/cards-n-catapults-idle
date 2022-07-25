@@ -46,7 +46,7 @@ header {
   }
 }
 
-.help-modal-content {
+.header-modal {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -69,7 +69,9 @@ header {
   h2 {
     margin-top: 0;
   }
+}
 
+.help-modal-content {
   .help-body-wrapper {
     display: flex;
     flex-direction: row;
@@ -112,5 +114,15 @@ header {
     .help-screenshot {
       height: 200px;
     }
+  }
+}
+
+.options-modal-content {
+  display: flex;
+  grid-gap: 30px;
+
+  button {
+    width: 100px;
+    height: 40px;
   }
 }

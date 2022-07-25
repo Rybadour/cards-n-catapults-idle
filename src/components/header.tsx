@@ -10,6 +10,7 @@ import { CardsContext } from '../contexts/cards';
 import { CardPacksContext } from '../contexts/card-packs';
 import { DiscoveryContext } from '../contexts/discovery';
 import Icon from '../shared/components/icon';
+import { SavingLoadingContext } from '../contexts/saving-loading';
 
 const modalStyles = {
   overlay: {
@@ -23,6 +24,9 @@ function Header() {
   const prestige = useContext(PrestigeContext);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
+  const savingLoading = useContext(SavingLoadingContext);
+  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
+
   const onPrestige = useCallback(() => {
     prestige.prestige();
   }, [prestige]);
@@ -34,6 +38,13 @@ function Header() {
   const onClosePrestigeMenu = useCallback(() => {
     prestige.closeMenu();
   }, [prestige]);
+
+  const onSave = useCallback(() => {
+    savingLoading.save();
+  }, [savingLoading]);
+  const onLoad = useCallback(() => {
+    savingLoading.load();
+  }, [savingLoading]);
 
   return <header>
     <h1>Cards & Catapults Idle</h1>
@@ -54,7 +65,7 @@ function Header() {
 
     <div className="options">
       <button onClick={() => setIsHelpModalOpen(true)}>Help</button>
-      <button>Options</button>
+      <button onClick={() => setIsOptionsModalOpen(true)}>Options</button>
     </div>
 
     <Modal
@@ -62,9 +73,19 @@ function Header() {
       onRequestClose={() => setIsHelpModalOpen(false)}
       style={modalStyles}
       contentLabel="Help Tips"
-      className="help-modal-content"
+      className="help-modal-content header-modal"
     >
       <HelpModal />
+    </Modal>
+    <Modal
+      isOpen={isOptionsModalOpen}
+      onRequestClose={() => setIsOptionsModalOpen(false)}
+      style={modalStyles}
+      contentLabel="Options"
+      className="options-modal-content header-modal"
+    >
+      <button onClick={() => onSave()}>Save</button>
+      <button onClick={() => onLoad()}>Load</button>
     </Modal>
   </header>;
 }

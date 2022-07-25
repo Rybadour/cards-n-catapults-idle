@@ -4,9 +4,11 @@ import { Grid, PrestigeEffects, RealizedCard } from "../shared/types";
 import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
+import cardsConfig from "../config/cards";
 import { DiscoveryContext } from "./discovery";
 import { DEFAULT_EFFECTS} from "./prestige";
-import { cloneDeep } from "lodash";
+import _, { cloneDeep } from "lodash";
+import { createCard } from "../gamelogic/grid-cards";
 
 const width = 5;
 const height = 5;
@@ -19,6 +21,8 @@ export type GridContext = {
   update: (elapsed: number) => void,
   prestigeReset: () => void,
   prestigeUpdate: (effects: PrestigeEffects) => void,
+  getSaveData: () => any,
+  loadSaveData: (data: any) => any,
 };
 
 const defaultContext: GridContext = {
@@ -29,6 +33,8 @@ const defaultContext: GridContext = {
   update: (elapsed) => {},
   prestigeReset: () => {},
   prestigeUpdate: (effects) => {},
+  getSaveData: () => ({}),
+  loadSaveData: (data) => {},
 };
 
 export const GridContext = createContext(defaultContext);
@@ -56,7 +62,9 @@ export function GridProvider(props: Record<string, any>) {
 
     setGridSpaces(results.grid);
 
-    cards.updateInventory(results.inventoryDelta);
+    if (Object.keys(results.inventoryDelta).length > 0) {
+      cards.updateInventory(results.inventoryDelta);
+    }
   }
 
   function replaceCard(x: number, y: number, newCard: RealizedCard) {
@@ -88,11 +96,44 @@ export function GridProvider(props: Record<string, any>) {
     setPrestigeEffects(prestigeEffects);
   }
 
+  function getSaveData() {
+    const gridData: any[] = [];
+    gridSpaces.forEach((row, y) => {
+      row.forEach((card, x) => {
+        if (card) {
+          gridData.push({
+            x, y,
+            card: _.pick(card, ['id', 'shouldBeReserved', 'isExpiredAndReserved', 'durability', 'timeLeftMs'])
+          });
+        }
+      });
+    })
+    return gridData;
+  }
+
+  function loadSaveData(data: any) {
+    if (!Array.isArray(data)) return false;
+    if (typeof data[0] !== 'object' && data[0].id) return false;
+
+    const newGridSpaces = getEmptyGrid();
+    data.forEach((space) => {
+      newGridSpaces[space.y][space.x] = {
+        ...createCard(cardsConfig[space.card.id], 0),
+        ...space.card
+      };
+    });
+
+    const results = updateGridTotals(newGridSpaces, stats);
+
+    setGridSpaces(results.grid);
+    stats.updatePerSec(results.resourcesPerSec);
+  }
+
   return (
     <GridContext.Provider
       value={{
         gridSpaces, prestigeEffects,
-        replaceCard, returnCard, update, prestigeReset, prestigeUpdate,
+        replaceCard, returnCard, update, prestigeReset, prestigeUpdate, getSaveData, loadSaveData,
       }}
       {...props}
     />

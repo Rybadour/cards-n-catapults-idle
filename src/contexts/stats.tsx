@@ -16,6 +16,8 @@ export type StatsContext = {
   useResource: (resource: ResourceType, amount: number) => void,
   prestigeReset: (effects: PrestigeEffects) => void,
   prestigeUpdate: (effects: PrestigeEffects) => void,
+  getSaveData: () => any,
+  loadSaveData: (data: any) => any,
 };
 
 const defaultContext: StatsContext = {
@@ -27,6 +29,8 @@ const defaultContext: StatsContext = {
   useResource: (resource, amount) => {},
   prestigeReset: (effects) => {},
   prestigeUpdate: (effects) => {},
+  getSaveData: () => ({}),
+  loadSaveData: (data) => {},
 };
 defaultContext.resources[ResourceType.Gold] = global.startingGold;
 
@@ -82,11 +86,21 @@ export function StatsProvider(props: Record<string, any>) {
     setPrestigeEffects(effects);
   }
 
+  function getSaveData() {
+    return {...resources};
+  }
+
+  function loadSaveData(data: any) {
+    if (typeof data !== 'object') return;
+
+    setResources(data);
+  }
+
   return (
     <StatsContext.Provider
       value={{
         resources, resourcesPerSec, prestigeEffects,
-        update, updatePerSec, useResource, prestigeReset, prestigeUpdate,
+        update, updatePerSec, useResource, prestigeReset, prestigeUpdate, getSaveData, loadSaveData,
       }}
       {...props}
     />

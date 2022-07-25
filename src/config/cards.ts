@@ -204,7 +204,7 @@ const cards: Record<string, Card> = {
       shape: MatchingGridShape.OrthoAdjacent,
       possibleCards: ["ratSnack"],
     },
-    cooldownMs: 20000,
+    cooldownMs: 2000,
   },
   campfire: {
     id: "",
