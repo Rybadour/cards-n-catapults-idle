@@ -1,5 +1,5 @@
 {
-  "name": "arm-machine3",
+  "name": "cards-n-catapults-idle",
   "version": "0.1.0",
   "description": "",
   "keywords": [],
@@ -7,14 +7,15 @@
   "license": "MIT",
   "homepage": "",
   "scripts": {
-    "build": "npm run clean-dist && webpack --config=configs/webpack/prod.js",
     "clean-dist": "rimraf dist/*",
-    "lint": "eslint './src/**/*.{js,ts,tsx}' --quiet",
+    "build": "npm run clean-dist && webpack --config=configs/webpack/prod.js",
+    "deploy-prod": "gh-pages -d dist -a",
+    "deploy-dev": "gh-pages -d dist -a -e dev",
+    "deploy-as-version": "gh-pages -d dist -a -e \"0.1.0\"",
+
     "start": "npm run start-dev",
     "start-dev": "webpack serve --config=configs/webpack/dev.js",
-    "start-prod": "npm run build && node express.js",
-    "test": "jest --coverage --watchAll --config=configs/jest.json",
-    "deploy": "gh-pages -d dist"
+    "test": "jest --coverage --watchAll --config=configs/jest.json"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
@@ -44,7 +45,6 @@
     "html-webpack-plugin": "^5.5.0",
     "image-webpack-loader": "^8.1.0",
     "jest": "^27.5.1",
-    "node-sass": "^7.0.1",
     "prettier": "^2.6.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

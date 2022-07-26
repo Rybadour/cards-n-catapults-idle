@@ -5,6 +5,7 @@ const { merge } = require("webpack-merge");
 const { resolve } = require("path");
 
 const commonConfig = require("./common");
+const path = require('path');
 
 module.exports = merge(commonConfig, {
   mode: "production",
@@ -18,7 +19,15 @@ module.exports = merge(commonConfig, {
   plugins: [
     new HtmlWebpackPlugin({ template: "prod-index.html" }),
     new CopyWebpackPlugin({
-      patterns: [{ from: "../public" }],
+      patterns: [
+        {
+          from: "*.png",
+          context: path.resolve(__dirname, "..", "..", "public"),
+          globOptions: {
+            ignore: ["**/sprite-sheet.png"],
+          },
+        },
+      ],
     }),
   ],
 });
