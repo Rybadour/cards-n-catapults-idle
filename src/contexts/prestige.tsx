@@ -12,17 +12,7 @@ import { GridContext } from "./grid";
 import { CardsContext } from "./cards";
 import { CardPacksContext } from "./card-packs";
 import { DiscoveryContext } from "./discovery";
-
-export const DEFAULT_EFFECTS: PrestigeEffects = {
-  bonuses: {
-    foodCapacity: 1,
-    startingGold: 0,
-    goldGain: 1,
-    cardPackCostReduction: 0,
-  },
-  extraStartCards: {},
-  unlockedCardPacks: [],
-};
+import { DEFAULT_EFFECTS } from "../shared/constants";
 
 const defaultUpgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};
 const realizedPacks: Record<string, RealizedPrestigePack> = {};

@@ -2,10 +2,10 @@
 import { cloneDeep } from "lodash";
 import { createContext, useContext, useState } from "react";
 import global from "../config/global";
+import { DEFAULT_EFFECTS } from "../shared/constants";
 import { defaultResourcesMap, Grid, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
 import { enumFromKey } from "../shared/utils";
 import { DiscoveryContext } from "./discovery";
-import { DEFAULT_EFFECTS } from "./prestige";
 
 export type StatsContext = {
   resources: ResourcesMap,

@@ -6,9 +6,9 @@ import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
 import cardsConfig from "../config/cards";
 import { DiscoveryContext } from "./discovery";
-import { DEFAULT_EFFECTS} from "./prestige";
 import _, { cloneDeep } from "lodash";
 import { createCard } from "../gamelogic/grid-cards";
+import { DEFAULT_EFFECTS } from "../shared/constants";
 
 const width = 5;
 const height = 5;

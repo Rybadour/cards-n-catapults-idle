@@ -3,11 +3,11 @@ import { cloneDeep } from "lodash";
 import { createContext, useContext, useState } from "react";
 import cardPacks from "../config/card-packs";
 import global from "../config/global";
+import { DEFAULT_EFFECTS } from "../shared/constants";
 import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
 import { PrestigeEffects, RealizedCardPack, ResourceType } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardsContext } from "./cards";
-import { DEFAULT_EFFECTS } from "./prestige";
 import { StatsContext } from "./stats";
 
 const realizedCardPacks: Record<string, RealizedCardPack> = {};
