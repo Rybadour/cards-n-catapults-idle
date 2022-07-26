@@ -222,11 +222,10 @@ export function PrestigeProvider(props: Record<string, any>) {
   }
 
   function update() {
-    if (currentRenownCost + nextRenownCost <= stats.resources.Renown) {
-      setNextPoints(nextPoints + 1);
-      const newCost = getExponentialValue(PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, nextPoints + 1);
-      setNextRenownCost(newCost);
-      setCurrentRenownCost(currentRenownCost + newCost);
+    const newPoints = Math.floor(1 + 3*Math.log(stats.resources.Renown));
+    if (newPoints > nextPoints) {
+      setNextPoints(newPoints);
+      setNextRenownCost(Math.pow(Math.E, (newPoints / 3)));
     }
   }
 

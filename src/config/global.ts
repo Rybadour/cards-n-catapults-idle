@@ -1,6 +1,6 @@
 const global = {
   startingGold: 200,
-  startingCards: {beggar: 1, ratDen: 1, lumberjack: 1, forest: 1, bard: 10},
+  startingCards: {beggar: 10, bard: 1, carpenter: 4, forest: 10, haunch: 100, campfire: 4},
   unlockedPacks: [],
   startingPrestige: 0,
   produceModifier: 1,
