@@ -15,6 +15,8 @@ export type CardsContext = {
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   drawCards: (cardsToDraw: Card[]) => void,
   prestigeReset: (prestigeEffects: PrestigeEffects) => void,
+  getSaveData: () => any,
+  loadSaveData: (data: any) => boolean,
 };
 
 const defaultContext: CardsContext = {
@@ -27,6 +29,8 @@ const defaultContext: CardsContext = {
   updateInventory: (cardsDelta) => {},
   drawCards: (cardsToDraw) => {},
   prestigeReset: (prestigeEffects) => {},
+  getSaveData: () => ({}),
+  loadSaveData: (data) => false,
 };
 
 export const CardsContext = createContext(defaultContext);
@@ -108,11 +112,22 @@ export function CardsProvider(props: Record<string, any>) {
     discovery.prestigeReset(newCards, prestigeEffects);
   }
 
+  function getSaveData() {
+    return {};
+  }
+
+  function loadSaveData(data: any) {
+    if (typeof data !== 'object') return false;
+
+    return false;
+  }
+
   return (
     <CardsContext.Provider
       value={{
         cards, selectedCard,
         setSelectedCard, hasCard, returnCard, replaceCard, updateInventory, drawCards, prestigeReset,
+        getSaveData, loadSaveData,
       }}
       {...props}
     />

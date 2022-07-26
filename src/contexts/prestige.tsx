@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
-import { cloneDeep, shuffle } from "lodash";
+import _, { cloneDeep, shuffle } from "lodash";
 
 import packsConfig from "../config/prestige-packs";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
@@ -60,6 +60,8 @@ export type PrestigeContext = {
   update: () => void,
   openMenu: () => void,
   closeMenu: () => void,
+  getSaveData: () => any,
+  loadSaveData: (data: any) => boolean,
 };
 
 const defaultContext: PrestigeContext = {
@@ -78,6 +80,8 @@ const defaultContext: PrestigeContext = {
   update: () => {},
   openMenu: () => {},
   closeMenu: () => {},
+  getSaveData: () => ({}),
+  loadSaveData: (data) => false,
 };
 
 export const PrestigeContext = createContext(defaultContext);
@@ -260,12 +264,42 @@ export function PrestigeProvider(props: Record<string, any>) {
     setIsReseting(false);
   };
 
+  function getSaveData() {
+    const upgradesToSave: Record<string, number> = {};
+    Object.values(upgrades).forEach(upgradesMap => {
+      Object.values(upgradesMap).forEach(upgrade => {
+        upgradesToSave[upgrade.id] = upgrade.quantity;
+      });
+    });
+
+    const packsToSave: Record<string, any> = {};
+    Object.values(packs).forEach(pack => {
+      packsToSave[pack.id] = _.omit(pack, ['cost', 'refund', 'numBought', 'remainingUpgrades']);
+    });
+    return {
+      prestigePoints,
+      upgrades: upgradesToSave,
+      packs: packsToSave,
+    };
+  }
+
+  function loadSaveData(data: any) {
+    if (typeof data !== 'object') return false;
+
+    setPoints(data.prestigePoints);
+    setNextPoints(nextPoints + 1);
+    const newCost = getExponentialValue(PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, nextPoints + 1);
+    setNextRenownCost(newCost);
+    setCurrentRenownCost(currentRenownCost + newCost);
+    return true;
+  }
+
   return (
     <PrestigeContext.Provider
       value={{
         prestigePoints, upgrades, packs, nextPoints, nextRenownCost, currentRenownCost, isMenuOpen, isReseting,
         prestigeEffects,
-        prestige, buyPack, refundUpgrade, update, openMenu, closeMenu,
+        prestige, buyPack, refundUpgrade, update, openMenu, closeMenu, getSaveData, loadSaveData,
       }}
       {...props}
     />

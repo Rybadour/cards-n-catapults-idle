@@ -17,7 +17,11 @@ type ISaveLoad = {
 
 type ContextMap = {
   stats: ISaveLoad,
+  prestige: ISaveLoad,
+  discovery: ISaveLoad,
   grid: ISaveLoad,
+  cards: ISaveLoad,
+  cardPacks: ISaveLoad,
 };
 
 export type SavingLoadingContext = {
@@ -42,19 +46,25 @@ export function SavingLoadingProvider(props: Record<string, any>) {
 
   const contextDataMap: ContextMap = {
     stats: useContext(StatsContext),
+    prestige: useContext(PrestigeContext),
+    discovery: useContext(DiscoveryContext),
     grid: useContext(GridContext),
-    //cards: useContext(CardsContext),
-    //cardPacks: useContext(CardPacksContext),
-    //prestige: useContext(PrestigeContext),
-    // discovery: useContext(DiscoveryContext),
+    cards: useContext(CardsContext),
+    cardPacks: useContext(CardPacksContext),
   };
+
+  useEffect(() => {
+    if (dataToLoad) {
+      contextDataMap.prestige.loadSaveData(dataToLoad?.prestige);
+    }
+  }, [contextDataMap.stats])
 
   useEffect(() => {
     if (dataToLoad) {
       contextDataMap.grid.loadSaveData(dataToLoad?.grid);
       setDataToLoad(null);
     }
-  }, [contextDataMap.stats]);
+  }, [contextDataMap.prestige]);
 
   function save() {
     const saveData: Record<string, any> = {};

@@ -30,6 +30,8 @@ export type CardPacksContext = {
   buyPack: (cardPack: RealizedCardPack) => void,
   prestigeReset: () => void,
   prestigeUpdate: (effects: PrestigeEffects) => void,
+  getSaveData: () => any,
+  loadSaveData: (data: any) => boolean,
 };
 
 const defaultContext: CardPacksContext = {
@@ -38,6 +40,8 @@ const defaultContext: CardPacksContext = {
   buyPack: (cardPack) => {},
   prestigeReset: () => {},
   prestigeUpdate: (effects) => {},
+  getSaveData: () => ({}),
+  loadSaveData: (data) => false,
 };
 
 export const CardPacksContext = createContext(defaultContext);
@@ -76,11 +80,21 @@ export function CardPacksProvider(props: Record<string, any>) {
     setPrestigeEffects(effects);
   }
 
+  function getSaveData() {
+    return {};
+  }
+
+  function loadSaveData(data: any) {
+    if (typeof data !== 'object') return false;
+
+    return false;
+  }
+
   return (
     <CardPacksContext.Provider
       value={{
         cardPacks, prestigeEffects,
-        buyPack, prestigeReset, prestigeUpdate,
+        buyPack, prestigeReset, prestigeUpdate, getSaveData, loadSaveData,
       }}
       {...props}
     />

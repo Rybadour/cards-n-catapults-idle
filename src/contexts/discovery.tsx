@@ -13,6 +13,8 @@ export type DiscoveryContext = {
   discoverCards: (cards: Card[]) => void,
   discoverResources: (resources: ResourceType[]) => void,
   prestigeReset: (startingCards: Record<string, number>, prestigeEffects: PrestigeEffects) => void,
+  getSaveData: () => any,
+  loadSaveData: (data: any) => boolean,
 };
 
 const defaultContext: DiscoveryContext = {
@@ -25,6 +27,8 @@ const defaultContext: DiscoveryContext = {
   discoverCards: (cards) => {},
   discoverResources: (resources) => {},
   prestigeReset: (startingCards, prestigeEffects) => {},
+  getSaveData: () => ({}),
+  loadSaveData: (data) => false,
 };
 
 function addToDiscoverMap<K extends string | symbol>(map: Record<K, boolean>, keys: K[]) {
@@ -86,11 +90,21 @@ export function DiscoveryProvider(props: Record<string, any>) {
     setDiscoveredCardPacks(newDiscoveredPacks);
   }
 
+  function getSaveData() {
+    return {};
+  }
+
+  function loadSaveData(data: any) {
+    if (typeof data !== 'object') return false;
+
+    return false;
+  }
+
   return (
     <DiscoveryContext.Provider
       value={{
         discoveredCards, cardsDiscoveredThisPrestige, discoveredCardPacks, discoveredResources,
-        discoverCards, discoverResources, prestigeReset,
+        discoverCards, discoverResources, prestigeReset, getSaveData, loadSaveData,
       }}
       {...props}
     />
