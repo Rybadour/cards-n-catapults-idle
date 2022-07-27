@@ -53,6 +53,11 @@
         border: 1px dashed #333;
       }
 
+      &.rare {
+        border-color: #5db9f0;
+        color: #5db9f0;
+      }
+
       &.ultra-rare {
         border-color: rgb(189, 165, 30);
         color: rgb(189, 165, 30);

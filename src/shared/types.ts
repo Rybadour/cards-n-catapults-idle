@@ -102,6 +102,7 @@ export type RealizedCard = Card & {
 
 export enum Rarity {
   Common = "Common",
+  Rare = "Rare",
   UltraRare = "Ultra Rare",
 }
 

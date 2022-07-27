@@ -103,6 +103,11 @@ const cardPacks: Record<string, CardPack> = {
   },
 }
 
-Object.keys(cardPacks).forEach((id) => cardPacks[id].id = id);
+Object.keys(cardPacks).forEach((id) => {
+  cardPacks[id].id = id;
+  cardPacks[id].possibleThings = cardPacks[id].possibleThings.sort((a, b) => {
+    return a.chance - b.chance;
+  });
+});
 
 export default cardPacks;

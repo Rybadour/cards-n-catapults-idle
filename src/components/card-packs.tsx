@@ -33,6 +33,7 @@ export default function CardPacks() {
             <div
               className={classNames("possible-card", {
                 discovered: discovery.discoveredCards[card.id],
+                'rare': card.rarity == Rarity.Rare,
                 'ultra-rare': card.rarity == Rarity.UltraRare,
               })}
               key={card.id}

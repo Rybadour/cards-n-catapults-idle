@@ -22,7 +22,7 @@ const cards: Record<string, Card> = {
     icon: "farmer",
     tier: 2,
     type: CardType.Person,
-    rarity: Rarity.Common,
+    rarity: Rarity.Rare,
     description: "{{passive}} except when near low tier cards. When not fed it's production is reduced to {{modifiedStrength}}.",
     foodDrain: 0.5,
     passive: {
@@ -198,13 +198,13 @@ const cards: Record<string, Card> = {
     icon: "cave-entrance",
     tier: 1,
     type: CardType.Building,
-    rarity: Rarity.Common,
+    rarity: Rarity.Rare,
     description: "{{produceCard}} every {{cooldownSecs}} seconds.",
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
       possibleCards: ["ratSnack"],
     },
-    cooldownMs: 2000,
+    cooldownMs: 20000,
   },
   campfire: {
     id: "",
@@ -212,7 +212,7 @@ const cards: Record<string, Card> = {
     icon: "campfire",
     tier: 1,
     type: CardType.Building,
-    rarity: Rarity.Common,
+    rarity: Rarity.Rare,
     description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{costPerUse}}.",
     autoReplaceEffect: {
       cardType: CardType.Food,
@@ -248,7 +248,7 @@ const cards: Record<string, Card> = {
     icon: "pig",
     tier: 1,
     type: CardType.Building,
-    rarity: Rarity.Common,
+    rarity: Rarity.Rare,
     description: "{{drawCard}} every {{cooldownSecs}} seconds while consuming food.",
     foodDrain: 2,
     drawCardEffect: {
@@ -267,7 +267,7 @@ const cards: Record<string, Card> = {
     icon: "hammer-nails",
     tier: 2,
     type: CardType.Building,
-    rarity: Rarity.Common,
+    rarity: Rarity.Rare,
     description: "{{bonusToAdjacent}}.",
     bonusToAdjacent: {
       strength: 0.25,
@@ -285,7 +285,7 @@ const cards: Record<string, Card> = {
     icon: "cleaver",
     tier: 2,
     type: CardType.Building,
-    rarity: Rarity.Common,
+    rarity: Rarity.Rare,
     description: "Sells {{costPerSec}} for {{passiveAmount}} for each adjacent forest, in all directions",
     passive: {
       strength: 2,
