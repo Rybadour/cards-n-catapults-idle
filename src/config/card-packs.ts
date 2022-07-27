@@ -10,26 +10,26 @@ const cardPacks: Record<string, CardPack> = {
     quantity: 4,
     unlocked: true,
     possibleThings: [{
-      thing: cards.lumberjack,
+      thing: cards.pauline,
       chance: 0.003,
     }, {
       thing: cards.campfire,
       chance: 0.05,
     }, {
       thing: cards.ratDen,
-      chance: 0.05,
-    }, {
-      thing: cards.peasant,
       chance: 0.025,
+    }, {
+      thing: cards.lumberjack,
+      chance: 0.075,
     }, {
       thing: cards.forest,
       chance: 0.1,
     }, {
       thing: cards.beggar,
-      chance: 0.10,
+      chance: 0.1,
     }, {
       thing: cards.ratSnack,
-      chance: 0.325,
+      chance: 0.3,
     }, {
       thing: cards.berries,
       chance: 0.175,

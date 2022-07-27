@@ -16,6 +16,29 @@ const cards: Record<string, Card> = {
       resource: ResourceType.Gold,
     }
   },
+  lumberjack: {
+    id: "",
+    name: "Lumberjack",
+    icon: "axe-in-stump",
+    tier: 2,
+    type: CardType.Person,
+    rarity: Rarity.Rare,
+    description: "{{passive}} and {{bonusToAdjacent}}",
+    foodDrain: 0.3,
+    passive: {
+      strength: 0.2,
+      resource: ResourceType.Gold,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cards: ['forest'],
+      }
+    },
+    bonusToAdjacent: {
+      strength: 0.2,
+      shape: MatchingGridShape.AllAdjacent,
+      cards: ['forest'],
+    }
+  },
   peasant: {
     id: "",
     name: "Peasant",
@@ -63,10 +86,10 @@ const cards: Record<string, Card> = {
       }
     },
   },
-  lumberjack: {
+  pauline: {
     id: "",
     name: "Pauline Bunion",
-    icon: "axe-in-stump",
+    icon: "magic-axe",
     tier: 3,
     type: CardType.Person,
     rarity: Rarity.UltraRare,
@@ -268,7 +291,7 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Building,
     rarity: Rarity.Rare,
-    description: "{{bonusToAdjacent}}.",
+    description: "{{bonusToAdjacent}}. Uses {{costPerSec}}.",
     bonusToAdjacent: {
       strength: 0.25,
       shape: MatchingGridShape.RowAndColumn,
