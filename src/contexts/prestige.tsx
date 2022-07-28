@@ -212,10 +212,10 @@ export function PrestigeProvider(props: Record<string, any>) {
   }
 
   function update() {
-    const newPoints = Math.floor(1 + 3*Math.log(stats.resources.Renown));
+    const newPoints = Math.floor(Math.pow((stats.resources.Renown-100)*5, 1/3));
     if (newPoints > nextPoints) {
       setNextPoints(newPoints);
-      setNextRenownCost(Math.pow(Math.E, (newPoints / 3)));
+      setNextRenownCost(Math.floor(Math.pow(newPoints + 1, 3)/5 + 100));
     }
   }
 
