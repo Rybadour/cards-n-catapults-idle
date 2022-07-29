@@ -113,6 +113,7 @@ export function GridProvider(props: Record<string, any>) {
 
   function loadSaveData(data: any) {
     if (!Array.isArray(data)) return false;
+    if (data.length == 0) return true;
     if (typeof data[0] !== 'object' && data[0].id) return false;
 
     const newGridSpaces = getEmptyGrid();

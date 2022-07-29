@@ -4,11 +4,6 @@ import { useCallback, useContext, useState } from 'react';
 import classNames from 'classnames';
 import { PrestigeContext } from '../contexts/prestige';
 import { formatNumber } from '../shared/utils';
-import { StatsContext } from '../contexts/stats';
-import { GridContext } from '../contexts/grid';
-import { CardsContext } from '../contexts/cards';
-import { CardPacksContext } from '../contexts/card-packs';
-import { DiscoveryContext } from '../contexts/discovery';
 import Icon from '../shared/components/icon';
 import { SavingLoadingContext } from '../contexts/saving-loading';
 
@@ -59,7 +54,7 @@ function Header() {
           <Icon size="sm" icon="upgrade" />
         </button>
         <button onClick={() => onPrestige()}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
-        <span>Next at {formatNumber(prestige.currentRenownCost + prestige.nextRenownCost, 0, 0)} Renown</span>
+        <span>Next at {formatNumber(prestige.nextRenownCost, 0, 0)} Renown</span>
       </>}
     </div>
 

@@ -37,7 +37,6 @@ Object.values(packsConfig).forEach(pack => {
 export type PrestigeContext = {
   prestigePoints: number,
   nextPoints: number,
-  currentRenownCost: number,
   nextRenownCost: number,
   upgrades: Record<string, Record<string, RealizedPrestigeUpgrade>>,
   packs: Record<string, RealizedPrestigePack>,
@@ -57,10 +56,9 @@ export type PrestigeContext = {
 const defaultContext: PrestigeContext = {
   prestigePoints: global.startingPrestige,
   nextPoints: 0,
-  currentRenownCost: 0,
   nextRenownCost: PRESTIGE_BASE_COST,
   upgrades: defaultUpgrades,
-  packs: realizedPacks,
+  packs: cloneDeep(realizedPacks),
   isMenuOpen: false,
   isReseting: false,
   prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
@@ -74,6 +72,10 @@ const defaultContext: PrestigeContext = {
   loadSaveData: (data) => false,
 };
 
+const BUFFER = 100;
+const FACTOR = 5;
+const EXP = 3;
+
 export const PrestigeContext = createContext(defaultContext);
 
 export function PrestigeProvider(props: Record<string, any>) {
@@ -85,8 +87,7 @@ export function PrestigeProvider(props: Record<string, any>) {
 
   const [prestigePoints, setPoints] = useState(defaultContext.prestigePoints);
   const [nextPoints, setNextPoints] = useState(defaultContext.nextPoints);
-  const [currentRenownCost, setCurrentRenownCost] = useState(defaultContext.currentRenownCost);
-  const [nextRenownCost, setNextRenownCost] = useState(defaultContext.nextRenownCost);
+  const [nextRenownCost, setNextRenownCost] = useState(getRenownFromPrestigePoints(1));
   const [upgrades, setUpgrades] = useState(defaultContext.upgrades);
   const [packs, setPacks] = useState(defaultContext.packs);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -103,7 +104,6 @@ export function PrestigeProvider(props: Record<string, any>) {
 
     setPoints(prestigePoints + nextPoints);
     setNextPoints(0);
-    setCurrentRenownCost(0);
     setNextRenownCost(PRESTIGE_BASE_COST);
     setIsMenuOpen(true);
     setIsReseting(true);
@@ -133,17 +133,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     });
 
     const newEffects = {...prestigeEffects};
-    if (upgrade.extraStartingCards) {
-      Object.entries(upgrade.extraStartingCards).forEach(([c, amount]) => {
-        newEffects.extraStartCards[c] = (newEffects.extraStartCards[c] ?? 0) + amount;
-      })
-    }
-    if (upgrade.unlockedCardPack) {
-      newEffects.unlockedCardPacks.push(upgrade.unlockedCardPack);
-    }
-    if (upgrade.bonus) {
-      newEffects.bonuses[upgrade.bonus.field] = (newEffects.bonuses[upgrade.bonus.field] ?? 0) + upgrade.bonus.amount;
-    }
+    applyUpgrade(newEffects, upgrade, 1);
     setPrestigeEffects(newEffects);
 
     const newPrestigePacks = {...packs};
@@ -212,10 +202,10 @@ export function PrestigeProvider(props: Record<string, any>) {
   }
 
   function update() {
-    const newPoints = Math.floor(Math.pow((stats.resources.Renown-100)*5, 1/3));
+    const newPoints = getPrestigePointsFromRenown(stats.resources.Renown);
     if (newPoints > nextPoints) {
       setNextPoints(newPoints);
-      setNextRenownCost(Math.floor(Math.pow(newPoints + 1, 3)/5 + 100));
+      setNextRenownCost(getRenownFromPrestigePoints(newPoints + 1));
     }
   }
 
@@ -228,25 +218,7 @@ export function PrestigeProvider(props: Record<string, any>) {
   const openMenu = () => setIsMenuOpen(true);
   const closeMenu = () => {
     if (isReseting) {
-      const effects = cloneDeep(prestigeEffects);
-      Object.values(upgrades).forEach(upgradesInPack => {
-        Object.values(upgradesInPack).forEach(upgrade => {
-          using(upgrade.randomStartingCards, (rsc) => {
-            for (let i = 0; i < rsc.amount; ++i) {
-              const possibleCards = rsc.onlyIfDiscovered ?
-                rsc.possibleCards.filter(c => discovery.discoveredCards[c]) :
-                rsc.possibleCards;
-              if (possibleCards.length > 0) {
-                const card = getRandomFromArray(possibleCards);
-                effects.extraStartCards[card] = (effects.extraStartCards[card] ?? 0) + 1;
-              }
-            }
-          });
-        });
-      });
-      
-      cards.prestigeReset(effects);
-      stats.prestigeReset(effects);
+      onReset(prestigeEffects);
     }
 
     setIsMenuOpen(false);
@@ -261,32 +233,104 @@ export function PrestigeProvider(props: Record<string, any>) {
       });
     });
 
-    const packsToSave: Record<string, any> = {};
-    Object.values(packs).forEach(pack => {
-      packsToSave[pack.id] = _.omit(pack, ['cost', 'refund', 'numBought', 'remainingUpgrades']);
-    });
     return {
       prestigePoints,
+      isReseting,
       upgrades: upgradesToSave,
-      packs: packsToSave,
     };
   }
 
   function loadSaveData(data: any) {
     if (typeof data !== 'object') return false;
 
+    setIsReseting(false);
     setPoints(data.prestigePoints);
-    setNextPoints(nextPoints + 1);
-    const newCost = getExponentialValue(PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, nextPoints + 1);
-    setNextRenownCost(newCost);
-    setCurrentRenownCost(currentRenownCost + newCost);
+    setNextPoints(0);
+    setNextRenownCost(getRenownFromPrestigePoints(1));
+
+    const upgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};
+    const newPacks = cloneDeep(realizedPacks);
+    Object.values(newPacks).forEach(pack => {
+      pack.remainingUpgrades = [];
+      upgrades[pack.id] = {};
+      pack.upgrades.forEach(({upgrade, quantity}) => {
+        const savedQuantity = data.upgrades[upgrade.id] || 0;
+        if (savedQuantity > 0) {
+          upgrades[pack.id][upgrade.id] = {
+            ...upgradesConfig[upgrade.id],
+            quantity: savedQuantity,
+          };
+        }
+        for (let i = 0; i < quantity - savedQuantity; ++i) {
+          pack.remainingUpgrades.push(upgrade.id);
+        }
+        pack.numBought += savedQuantity;
+      });
+      pack.cost = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought);
+      pack.refund = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought - 1) * PRESTIGE_REFUND_FACTOR;
+    });
+    setPacks(newPacks);
+    setUpgrades(upgrades);
+
+    const newEffects: PrestigeEffects = cloneDeep(DEFAULT_EFFECTS);
+    Object.entries(data.upgrades as Record<string, number>)
+      .forEach(([up, quantity]) => applyUpgrade(newEffects, upgradesConfig[up], quantity));
+    setPrestigeEffects(newEffects);
+
+    if (data.isReseting) {
+      onReset(newEffects);
+    }
+
     return true;
+  }
+
+  function getPrestigePointsFromRenown(renown: number) {
+    return Math.floor(Math.pow((renown-BUFFER)*FACTOR, 1/EXP));
+  }
+  function getRenownFromPrestigePoints(pp: number) {
+    return Math.floor(Math.pow(pp, EXP)/FACTOR + BUFFER);
+  }
+  
+  function applyUpgrade(effects: PrestigeEffects, upgrade: PrestigeUpgrade, quantity: number) {
+    if (upgrade.extraStartingCards) {
+      Object.entries(upgrade.extraStartingCards).forEach(([c, amount]) => {
+        effects.extraStartCards[c] = (effects.extraStartCards[c] ?? 0) + amount * quantity;
+      })
+    }
+    if (upgrade.unlockedCardPack) {
+      effects.unlockedCardPacks.push(upgrade.unlockedCardPack);
+    }
+    if (upgrade.bonus) {
+      effects.bonuses[upgrade.bonus.field] = (effects.bonuses[upgrade.bonus.field] ?? 0) + upgrade.bonus.amount * quantity;
+    }
+  }
+
+  function onReset(effects: PrestigeEffects) {
+    const newEffects = cloneDeep(effects);
+    Object.values(upgrades).forEach(upgradesInPack => {
+      Object.values(upgradesInPack).forEach(upgrade => {
+        using(upgrade.randomStartingCards, (rsc) => {
+          for (let i = 0; i < rsc.amount; ++i) {
+            const possibleCards = rsc.onlyIfDiscovered ?
+              rsc.possibleCards.filter(c => discovery.discoveredCards[c]) :
+              rsc.possibleCards;
+            if (possibleCards.length > 0) {
+              const card = getRandomFromArray(possibleCards);
+              newEffects.extraStartCards[card] = (newEffects.extraStartCards[card] ?? 0) + 1;
+            }
+          }
+        });
+      });
+    });
+    
+    cards.prestigeReset(newEffects);
+    stats.prestigeReset(newEffects);
   }
 
   return (
     <PrestigeContext.Provider
       value={{
-        prestigePoints, upgrades, packs, nextPoints, nextRenownCost, currentRenownCost, isMenuOpen, isReseting,
+        prestigePoints, upgrades, packs, nextPoints, nextRenownCost, isMenuOpen, isReseting,
         prestigeEffects,
         prestige, buyPack, refundUpgrade, update, openMenu, closeMenu, getSaveData, loadSaveData,
       }}

@@ -53,6 +53,8 @@ export function SavingLoadingProvider(props: Record<string, any>) {
     cardPacks: useContext(CardPacksContext),
   };
 
+  // TODO: Discovery should be before prestige
+  // TODO: Cards should be called before prestige or have a separate prestigeReset
   useEffect(() => {
     if (dataToLoad) {
       contextDataMap.prestige.loadSaveData(dataToLoad?.prestige);
