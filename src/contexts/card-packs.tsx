@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { cloneDeep } from "lodash";
 import { createContext, useContext, useState } from "react";
-import cardPacks from "../config/card-packs";
+import cardPacksConfig from "../config/card-packs";
 import global from "../config/global";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
@@ -11,7 +11,7 @@ import { CardsContext } from "./cards";
 import { StatsContext } from "./stats";
 
 const realizedCardPacks: Record<string, RealizedCardPack> = {};
-Object.values(cardPacks).forEach(cardPack => {
+Object.values(cardPacksConfig).forEach(cardPack => {
   // In debug mode verify that packs have reasonable chances in them (should add up to 100%)
   if (global.isDebug) {
     debugLogPackChance('CardPack', cardPack);
@@ -81,13 +81,28 @@ export function CardPacksProvider(props: Record<string, any>) {
   }
 
   function getSaveData() {
-    return {};
+    const packsToSave: Record<string, number> = {};
+    Object.entries(cardPacks).forEach(([id, pack]) => {
+      packsToSave[id] = pack.numBought;
+    });
+    return packsToSave;
   }
 
   function loadSaveData(data: any) {
     if (typeof data !== 'object') return false;
 
-    return false;
+    const newPacks: Record<string, RealizedCardPack> = {};
+    Object.entries(data as Record<string, number>).forEach(([id, numBought]) => {
+      newPacks[id] = {
+        ...cardPacksConfig[id],
+        cost: 0,
+        numBought,
+      };
+      newPacks[id].cost = getPackCost(newPacks[id], prestigeEffects);
+    });
+    setCardPacks(newPacks);
+
+    return true;
   }
 
   return (

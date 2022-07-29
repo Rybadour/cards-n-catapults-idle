@@ -3,7 +3,6 @@ import { createContext, useContext, useState } from "react";
 import global from "../config/global";
 import { Card, CardId, PrestigeEffects, RealizedCard } from "../shared/types";
 import { DiscoveryContext } from "./discovery";
-import { PrestigeContext } from "./prestige";
 
 export type CardsContext = {
   cards: Record<CardId, number>,
@@ -113,13 +112,17 @@ export function CardsProvider(props: Record<string, any>) {
   }
 
   function getSaveData() {
-    return {};
+    return {
+      cards,
+    };
   }
 
   function loadSaveData(data: any) {
     if (typeof data !== 'object') return false;
 
-    return false;
+    setCards(data.cards);
+
+    return true;
   }
 
   return (

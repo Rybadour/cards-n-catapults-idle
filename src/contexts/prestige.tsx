@@ -279,6 +279,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     setPrestigeEffects(newEffects);
 
     discovery.prestigeUpdate(newEffects);
+    cardPacks.prestigeUpdate(newEffects);
 
     if (data.isReseting) {
       onReset(newEffects);

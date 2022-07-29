@@ -53,7 +53,6 @@ export function SavingLoadingProvider(props: Record<string, any>) {
     cardPacks: useContext(CardPacksContext),
   };
 
-  // TODO: Cards should be called before prestige or have a separate prestigeReset
   useEffect(() => {
     if (dataToLoad) {
       contextDataMap.prestige.loadSaveData(dataToLoad?.prestige);
@@ -62,6 +61,7 @@ export function SavingLoadingProvider(props: Record<string, any>) {
 
   useEffect(() => {
     if (dataToLoad) {
+      contextDataMap.cards.loadSaveData(dataToLoad?.cards);
       contextDataMap.grid.loadSaveData(dataToLoad?.grid);
       setDataToLoad(null);
     }
@@ -90,6 +90,7 @@ export function SavingLoadingProvider(props: Record<string, any>) {
 
     contextDataMap.stats.loadSaveData(saveData.stats);
     contextDataMap.discovery.loadSaveData(saveData.discovery);
+    contextDataMap.cardPacks.loadSaveData(saveData.cardPacks);
     setDataToLoad(saveData);
   }
 
