@@ -13,6 +13,7 @@ export type DiscoveryContext = {
   discoverCards: (cards: Card[]) => void,
   discoverResources: (resources: ResourceType[]) => void,
   prestigeReset: (startingCards: Record<string, number>, prestigeEffects: PrestigeEffects) => void,
+  prestigeUpdate: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
 };
@@ -27,6 +28,7 @@ const defaultContext: DiscoveryContext = {
   discoverCards: (cards) => {},
   discoverResources: (resources) => {},
   prestigeReset: (startingCards, prestigeEffects) => {},
+  prestigeUpdate: (effects) => {},
   getSaveData: () => ({}),
   loadSaveData: (data) => false,
 };
@@ -90,21 +92,37 @@ export function DiscoveryProvider(props: Record<string, any>) {
     setDiscoveredCardPacks(newDiscoveredPacks);
   }
 
+  function prestigeUpdate(effects: PrestigeEffects) {
+    const newDiscoveredPacks = {};
+    addCardPacks(newDiscoveredPacks, effects.unlockedCardPacks);
+    setDiscoveredCardPacks(newDiscoveredPacks);
+  }
+
   function getSaveData() {
-    return {};
+    return {
+      discoveredCards,
+      cardsDiscoveredThisPrestige,
+      discoveredCardPacks,
+      discoveredResources,
+    };
   }
 
   function loadSaveData(data: any) {
     if (typeof data !== 'object') return false;
 
-    return false;
+    setDiscoveredCards(data.discoveredCards);
+    setDiscoveredCardPacks(data.discoveredCardPacks);
+    setCardsDiscoveredThisPrestige(data.cardsDiscoveredThisPrestige);
+    setDiscoveredResources(data.discoveredResources);
+
+    return true;
   }
 
   return (
     <DiscoveryContext.Provider
       value={{
         discoveredCards, cardsDiscoveredThisPrestige, discoveredCardPacks, discoveredResources,
-        discoverCards, discoverResources, prestigeReset, getSaveData, loadSaveData,
+        discoverCards, discoverResources, prestigeReset, prestigeUpdate, getSaveData, loadSaveData,
       }}
       {...props}
     />

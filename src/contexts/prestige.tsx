@@ -213,6 +213,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     cardPacks.prestigeUpdate(newEffects);
     stats.prestigeUpdate(newEffects);
     grid.prestigeUpdate(newEffects);
+    discovery.prestigeUpdate(newEffects);
   }
 
   const openMenu = () => setIsMenuOpen(true);
@@ -276,6 +277,8 @@ export function PrestigeProvider(props: Record<string, any>) {
     Object.entries(data.upgrades as Record<string, number>)
       .forEach(([up, quantity]) => applyUpgrade(newEffects, upgradesConfig[up], quantity));
     setPrestigeEffects(newEffects);
+
+    discovery.prestigeUpdate(newEffects);
 
     if (data.isReseting) {
       onReset(newEffects);
