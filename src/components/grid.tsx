@@ -15,11 +15,13 @@ import { DiscoveryContext } from '../contexts/discovery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PrestigeContext } from '../contexts/prestige';
 import Icon from '../shared/components/icon';
+import { SavingLoadingContext } from '../contexts/saving-loading';
 
 let lastTime = Date.now();
 
 export default function GridMap() {
   const discovery = useContext(DiscoveryContext);
+  const savingLoading = useContext(SavingLoadingContext);
   const prestige = useContext(PrestigeContext);
   const stats = useContext(StatsContext);
   const grid = useContext(GridContext);
@@ -51,6 +53,7 @@ export default function GridMap() {
       lastTime = Date.now();
       grid.update(elapsed);
       prestige.update();
+      savingLoading.update(elapsed);
     }, 100);
 
     return () => clearInterval(interval);

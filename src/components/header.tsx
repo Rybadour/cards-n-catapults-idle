@@ -40,6 +40,9 @@ function Header() {
   const onLoad = useCallback(() => {
     savingLoading.load();
   }, [savingLoading]);
+  const onReset = useCallback(() => {
+    savingLoading.completeReset();
+  }, [savingLoading]);
 
   return <header>
     <h1>Cards & Catapults Idle</h1>
@@ -81,6 +84,7 @@ function Header() {
     >
       <button onClick={() => onSave()}>Save</button>
       <button onClick={() => onLoad()}>Load</button>
+      <button onClick={() => onReset()}>Complete Reset</button>
     </Modal>
   </header>;
 }

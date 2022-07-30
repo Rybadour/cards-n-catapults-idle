@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { grid } from "@mui/system";
+import { cloneDeep } from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
+import Prestige from "../components/prestige";
+import { DEFAULT_EFFECTS } from "../shared/constants";
 import { CardPacksContext } from "./card-packs";
 import { CardsContext } from "./cards";
 import { DiscoveryContext } from "./discovery";
@@ -9,6 +12,7 @@ import { PrestigeContext } from "./prestige";
 import { StatsContext } from "./stats";
 
 const AUTO_SAVE_KEY = 'cnc-auto-save';
+const AUTO_SAVE_TIME = 30000;
 
 type ISaveLoad = {
   getSaveData: () => any,
@@ -25,32 +29,40 @@ type ContextMap = {
 };
 
 export type SavingLoadingContext = {
+  isLoadedFromAutoSave: boolean,
   autoSaveTime: number,
   dataToLoad: Record<string, any> | null,
   save: () => void,
   load: () => void,
+  update: (elapsed: number) => void,
+  completeReset: () => void,
 };
 
 const defaultContext: SavingLoadingContext = {
-  autoSaveTime: 0,
+  isLoadedFromAutoSave: false,
+  autoSaveTime: AUTO_SAVE_TIME,
   dataToLoad: {},
   save: () => {},
   load: () => {},
+  update: (elapsed) => {},
+  completeReset: () => {},
 };
 
 export const SavingLoadingContext = createContext(defaultContext);
 
 export function SavingLoadingProvider(props: Record<string, any>) {
-  const [autoSaveTime, setAutoSaveTime] = useState(0);
+  const [isLoadedFromAutoSave, setIsLoadedFromAutoSave] = useState(defaultContext.isLoadedFromAutoSave);
+  const [autoSaveTime, setAutoSaveTime] = useState(defaultContext.autoSaveTime);
   const [dataToLoad, setDataToLoad] = useState(defaultContext.dataToLoad);
+  const stats = useContext(StatsContext);
+  const prestige = useContext(PrestigeContext);
+  const discovery = useContext(DiscoveryContext);
+  const grid = useContext(GridContext);
+  const cards = useContext(CardsContext);
+  const cardPacks = useContext(CardPacksContext);
 
   const contextDataMap: ContextMap = {
-    stats: useContext(StatsContext),
-    prestige: useContext(PrestigeContext),
-    discovery: useContext(DiscoveryContext),
-    grid: useContext(GridContext),
-    cards: useContext(CardsContext),
-    cardPacks: useContext(CardPacksContext),
+    stats, prestige, discovery, grid, cards, cardPacks,
   };
 
   useEffect(() => {
@@ -94,11 +106,35 @@ export function SavingLoadingProvider(props: Record<string, any>) {
     setDataToLoad(saveData);
   }
 
+  function completeReset() {
+    localStorage.removeItem(AUTO_SAVE_KEY);
+    prestige.completeReset();
+    grid.prestigeReset();
+    cardPacks.prestigeReset();
+    const effects = cloneDeep(DEFAULT_EFFECTS);
+    cards.prestigeReset(effects);
+    stats.prestigeReset(effects);
+  }
+
+  function update(elapsed: number) {
+    if (!isLoadedFromAutoSave) {
+      load();
+      setIsLoadedFromAutoSave(true);
+    }
+
+    let newAutoSave = autoSaveTime - elapsed;
+    if (newAutoSave <= 0) {
+      save();
+      newAutoSave = AUTO_SAVE_TIME;
+    }
+    setAutoSaveTime(newAutoSave);
+  }
+
   return (
     <SavingLoadingContext.Provider
       value={{
-        autoSaveTime, dataToLoad,
-        save, load,
+        isLoadedFromAutoSave, autoSaveTime, dataToLoad,
+        save, load, update, completeReset,
       }}
       {...props}
     />

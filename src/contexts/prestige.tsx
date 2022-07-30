@@ -51,13 +51,14 @@ export type PrestigeContext = {
   closeMenu: () => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
+  completeReset: () => void,
 };
 
 const defaultContext: PrestigeContext = {
   prestigePoints: global.startingPrestige,
   nextPoints: 0,
   nextRenownCost: PRESTIGE_BASE_COST,
-  upgrades: defaultUpgrades,
+  upgrades: cloneDeep(defaultUpgrades),
   packs: cloneDeep(realizedPacks),
   isMenuOpen: false,
   isReseting: false,
@@ -70,6 +71,7 @@ const defaultContext: PrestigeContext = {
   closeMenu: () => {},
   getSaveData: () => ({}),
   loadSaveData: (data) => false,
+  completeReset: () => {},
 };
 
 const BUFFER = 100;
@@ -288,6 +290,18 @@ export function PrestigeProvider(props: Record<string, any>) {
     return true;
   }
 
+  function completeReset() {
+    setIsReseting(false);
+    setPoints(0);
+    setNextPoints(0);
+    setNextRenownCost(getRenownFromPrestigePoints(1));
+
+    setPacks(cloneDeep(realizedPacks));
+    setUpgrades(cloneDeep(defaultUpgrades));
+
+    setPrestigeEffects(cloneDeep(DEFAULT_EFFECTS));
+  }
+
   function getPrestigePointsFromRenown(renown: number) {
     return Math.floor(Math.pow((renown-BUFFER)*FACTOR, 1/EXP));
   }
@@ -336,7 +350,7 @@ export function PrestigeProvider(props: Record<string, any>) {
       value={{
         prestigePoints, upgrades, packs, nextPoints, nextRenownCost, isMenuOpen, isReseting,
         prestigeEffects,
-        prestige, buyPack, refundUpgrade, update, openMenu, closeMenu, getSaveData, loadSaveData,
+        prestige, buyPack, refundUpgrade, update, openMenu, closeMenu, getSaveData, loadSaveData, completeReset,
       }}
       {...props}
     />
