@@ -140,8 +140,8 @@ export function PrestigeProvider(props: Record<string, any>) {
 
     const newPrestigePacks = {...packs};
     newPrestigePacks[pack.id].numBought += 1;
-    newPrestigePacks[pack.id].refund = pack.cost * PRESTIGE_REFUND_FACTOR;
-    newPrestigePacks[pack.id].cost = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought);
+    newPrestigePacks[pack.id].refund = Math.round(pack.cost * PRESTIGE_REFUND_FACTOR);
+    newPrestigePacks[pack.id].cost = Math.round(getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought));
     newPrestigePacks[pack.id].remainingUpgrades = pack.remainingUpgrades;
     setPacks(newPrestigePacks);
 
@@ -195,8 +195,8 @@ export function PrestigeProvider(props: Record<string, any>) {
 
     const newPrestigePacks = {...packs};
     newPrestigePacks[pack.id].numBought -= 1;
-    newPrestigePacks[pack.id].cost = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought);
-    newPrestigePacks[pack.id].refund = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought - 1) * PRESTIGE_REFUND_FACTOR;
+    newPrestigePacks[pack.id].cost = Math.round(getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought));
+    newPrestigePacks[pack.id].refund = Math.round(getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought - 1) * PRESTIGE_REFUND_FACTOR);
     newPrestigePacks[pack.id].remainingUpgrades = pack.remainingUpgrades;
     setPacks(newPrestigePacks);
 
@@ -204,8 +204,8 @@ export function PrestigeProvider(props: Record<string, any>) {
   }
 
   function update() {
-    const newPoints = getPrestigePointsFromRenown(stats.resources.Renown);
-    if (newPoints > nextPoints) {
+    const newPoints = Math.round(getPrestigePointsFromRenown(stats.resources.Renown));
+    if (newPoints >= nextPoints) {
       setNextPoints(newPoints);
       setNextRenownCost(getRenownFromPrestigePoints(newPoints + 1));
     }
@@ -269,8 +269,8 @@ export function PrestigeProvider(props: Record<string, any>) {
         }
         pack.numBought += savedQuantity;
       });
-      pack.cost = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought);
-      pack.refund = getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought - 1) * PRESTIGE_REFUND_FACTOR;
+      pack.cost = Math.round(getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought));
+      pack.refund = Math.round(getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought - 1) * PRESTIGE_REFUND_FACTOR);
     });
     setPacks(newPacks);
     setUpgrades(upgrades);
