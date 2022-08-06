@@ -1,9 +1,10 @@
 const global = {
-  startingGold: 200,
+  startingGold: 312,
   startingCards: {beggar: 1},
   unlockedPacks: [],
   startingPrestige: 0,
   produceModifier: 1,
+  autoSaveEnabled: false,
   isDebug: true,
 };
 

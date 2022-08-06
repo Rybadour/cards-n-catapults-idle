@@ -3,17 +3,23 @@ import classNames from 'classnames';
 import { useCallback, useContext } from 'react';
 import { CardPacksContext } from '../contexts/card-packs';
 import { DiscoveryContext } from '../contexts/discovery';
+import { StatsContext } from '../contexts/stats';
 import Icon from '../shared/components/icon';
 import { Rarity, RealizedCardPack } from '../shared/types';
-import { formatNumber } from '../shared/utils';
+import { formatNumber, getMultipleFromExpValue } from '../shared/utils';
 import './card-packs.scss';
 
 export default function CardPacks() {
   const cardPacks = useContext(CardPacksContext);
+  const stats = useContext(StatsContext);
   const discovery = useContext(DiscoveryContext);
 
   const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
     cardPacks.buyPack(cardPack);
+  }, [cardPacks]);
+
+  const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
+    cardPacks.buyMaxPack(cardPack);
   }, [cardPacks]);
 
   return <div className="card-packs">
@@ -47,6 +53,9 @@ export default function CardPacks() {
           )}
         </div>
 
+        <button className="max-purchase-button on-card-button" onClick={() => onBuyMaxPack(cardPack)}>
+          Buy {getMultipleFromExpValue(cardPack.baseCost, cardPack.costGrowth, cardPack.numBought, stats.resources.Gold)}
+        </button>
         <button className="purchase-button on-card-button" onClick={() => onBuyPack(cardPack)}>
           Purchase {cardPack.quantity} cards for {formatNumber(cardPack.cost, 0, 0)} gold
         </button>

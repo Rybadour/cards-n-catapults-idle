@@ -28,6 +28,7 @@ export type CardPacksContext = {
   cardPacks: Record<string, RealizedCardPack>,
   prestigeEffects: PrestigeEffects,
   buyPack: (cardPack: RealizedCardPack) => void,
+  buyMaxPack: (cardPack: RealizedCardPack) => void,
   prestigeReset: () => void,
   prestigeUpdate: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
@@ -38,6 +39,7 @@ const defaultContext: CardPacksContext = {
   cardPacks: cloneDeep(realizedCardPacks),
   prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
   buyPack: (cardPack) => {},
+  buyMaxPack: (cardPack) => {},
   prestigeReset: () => {},
   prestigeUpdate: (effects) => {},
   getSaveData: () => ({}),
@@ -53,6 +55,20 @@ export function CardPacksProvider(props: Record<string, any>) {
   const [prestigeEffects, setPrestigeEffects] = useState(defaultContext.prestigeEffects);
 
   function buyPack(cardPack: RealizedCardPack) {
+    if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
+
+    stats.useResource(ResourceType.Gold, cardPack.cost);
+
+    const cardsFromPack = generateFromPack(cardPack);
+    cards.drawCards(cardsFromPack);
+
+    const newCardPacks = {...cardPacks};
+    newCardPacks[cardPack.id].numBought += 1;
+    newCardPacks[cardPack.id].cost = getPackCost(cardPack, prestigeEffects);
+    setCardPacks(newCardPacks);
+  }
+
+  function buyMaxPack(cardPack: RealizedCardPack) {
     if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
 
     stats.useResource(ResourceType.Gold, cardPack.cost);
@@ -109,7 +125,7 @@ export function CardPacksProvider(props: Record<string, any>) {
     <CardPacksContext.Provider
       value={{
         cardPacks, prestigeEffects,
-        buyPack, prestigeReset, prestigeUpdate, getSaveData, loadSaveData,
+        buyPack, buyMaxPack, prestigeReset, prestigeUpdate, getSaveData, loadSaveData,
       }}
       {...props}
     />

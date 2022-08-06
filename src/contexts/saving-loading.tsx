@@ -3,6 +3,7 @@ import { grid } from "@mui/system";
 import { cloneDeep } from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
 import Prestige from "../components/prestige";
+import global from "../config/global";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { CardPacksContext } from "./card-packs";
 import { CardsContext } from "./cards";
@@ -117,6 +118,8 @@ export function SavingLoadingProvider(props: Record<string, any>) {
   }
 
   function update(elapsed: number) {
+    if (!global.autoSaveEnabled) return;
+
     if (!isLoadedFromAutoSave) {
       load();
       setIsLoadedFromAutoSave(true);

@@ -19,6 +19,18 @@ export function getExponentialValue(base: number, growth: number, growthCount: n
   return base * Math.pow(growth, growthCount);
 }
 
+// TODO: https://www.youtube.com/watch?v=mglS3_gG-n8
+export function getExpValueMultiple(base: number, growth: number, growthCount: number, numIterations: number) {
+  return getExponentialValue(base, growth, growthCount) *
+    (Math.pow(growth, numIterations) - 1) / (growth - 1);
+}
+
+export function getMultipleFromExpValue(base: number, growth: number, growthCount: number, currentValue: number) {
+  const inner = ((currentValue) * (growth - 1) / (base * Math.pow(growth, growthCount))) + 1;
+  const multiple = Math.log(inner) / Math.log(growth);
+  return Math.round(multiple * 10000) / 10000;
+}
+
 export function using<T>(thing: T | undefined, closure: (thing: T) => void) {
   if (thing) {
     closure(thing);
