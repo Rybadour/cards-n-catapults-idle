@@ -65,7 +65,10 @@
     }
   }
 
-  .purchase-button {
-    float: right;
+  .buy-buttons {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 6px;
+    align-items: flex-end;
   }
 }

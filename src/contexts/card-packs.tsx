@@ -5,8 +5,8 @@ import cardPacksConfig from "../config/card-packs";
 import global from "../config/global";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
-import { PrestigeEffects, RealizedCardPack, ResourceType } from "../shared/types";
-import { getExponentialValue } from "../shared/utils";
+import { Card, CardPack, PrestigeEffects, RealizedCardPack, ResourceType } from "../shared/types";
+import { getExponentialValue, getExpValueMultiple, getMultipleFromExpValue } from "../shared/utils";
 import { CardsContext } from "./cards";
 import { StatsContext } from "./stats";
 
@@ -69,15 +69,22 @@ export function CardPacksProvider(props: Record<string, any>) {
   }
 
   function buyMaxPack(cardPack: RealizedCardPack) {
-    if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
+    const baseCost = getBaseCost(cardPack, prestigeEffects);
+    const numMaxBuy = Math.floor(getMultipleFromExpValue(baseCost, cardPack.costGrowth, cardPack.numBought, stats.resources.Gold));
+    if (numMaxBuy < 1) return;
 
-    stats.useResource(ResourceType.Gold, cardPack.cost);
+    const maxBuyCost = Math.round(getExpValueMultiple(baseCost, cardPack.costGrowth, cardPack.numBought, numMaxBuy));
 
-    const cardsFromPack = generateFromPack(cardPack);
-    cards.drawCards(cardsFromPack);
+    stats.useResource(ResourceType.Gold, maxBuyCost);
+
+    let cardsFromPacks: Card[] = [];
+    for (let i = 0; i < numMaxBuy; ++i) {
+      cardsFromPacks = cardsFromPacks.concat(generateFromPack(cardPack));
+    }
+    cards.drawCards(cardsFromPacks);
 
     const newCardPacks = {...cardPacks};
-    newCardPacks[cardPack.id].numBought += 1;
+    newCardPacks[cardPack.id].numBought += numMaxBuy;
     newCardPacks[cardPack.id].cost = getPackCost(cardPack, prestigeEffects);
     setCardPacks(newCardPacks);
   }
@@ -132,6 +139,10 @@ export function CardPacksProvider(props: Record<string, any>) {
   );
 }
 
+function getBaseCost(pack: CardPack, effects: PrestigeEffects) {
+  return pack.baseCost * (1 - effects.bonuses.cardPackCostReduction);
+}
+
 function getPackCost(pack: RealizedCardPack, effects: PrestigeEffects) {
-  return getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought) * (1 - effects.bonuses.cardPackCostReduction)
+  return getExponentialValue(getBaseCost(pack, effects), pack.costGrowth, pack.numBought);
 }

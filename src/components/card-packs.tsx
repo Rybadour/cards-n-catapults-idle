@@ -6,7 +6,7 @@ import { DiscoveryContext } from '../contexts/discovery';
 import { StatsContext } from '../contexts/stats';
 import Icon from '../shared/components/icon';
 import { Rarity, RealizedCardPack } from '../shared/types';
-import { formatNumber, getMultipleFromExpValue } from '../shared/utils';
+import { formatNumber, getExpValueMultiple, getMultipleFromExpValue } from '../shared/utils';
 import './card-packs.scss';
 
 export default function CardPacks() {
@@ -16,11 +16,11 @@ export default function CardPacks() {
 
   const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
     cardPacks.buyPack(cardPack);
-  }, [cardPacks]);
+  }, [cardPacks, stats]);
 
   const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
     cardPacks.buyMaxPack(cardPack);
-  }, [cardPacks]);
+  }, [cardPacks, stats]);
 
   return <div className="card-packs">
     <h4>Card Packs</h4>
@@ -53,12 +53,14 @@ export default function CardPacks() {
           )}
         </div>
 
-        <button className="max-purchase-button on-card-button" onClick={() => onBuyMaxPack(cardPack)}>
-          Buy {getMultipleFromExpValue(cardPack.baseCost, cardPack.costGrowth, cardPack.numBought, stats.resources.Gold)}
-        </button>
-        <button className="purchase-button on-card-button" onClick={() => onBuyPack(cardPack)}>
-          Purchase {cardPack.quantity} cards for {formatNumber(cardPack.cost, 0, 0)} gold
-        </button>
+        <div className="buy-buttons">
+          <button className="on-card-button" onClick={() => onBuyMaxPack(cardPack)}>
+            Buy Max
+          </button>
+          <button className="on-card-button" onClick={() => onBuyPack(cardPack)}>
+            {cardPack.quantity} cards for {formatNumber(cardPack.cost, 0, 0)} gold
+          </button>
+        </div>
       </div>
     )}
     </div>
