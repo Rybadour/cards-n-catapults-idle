@@ -5,7 +5,7 @@ const global = {
   unlockedPacks: [],
   startingPrestige: 0,
   produceModifier: 1,
-  autoSaveEnabled: true,
+  autoLoadEnabled: true,
   isDebug: true,
 };
 

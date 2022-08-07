@@ -17,12 +17,13 @@ function VerticalTabs(props: {tabs: Tab[]}) {
         <li
           className={classNames({selected: i == selected})}
           onClick={() => setSelected(i)}
+          key={i}
         >{tab.title}</li>
       )}
     </ul>
     <div className="tab-content-wrapper">
       {props.tabs.map((tab, i) => 
-        <div className={classNames('tab-content', {selected: selected == i})}>
+        <div key={i} className={classNames('tab-content', {selected: selected == i})}>
           {tab.content}
         </div>
       )}

@@ -1,4 +1,5 @@
-import { useCallback, useContext } from "react";
+import classNames from "classnames";
+import { useCallback, useContext, useState } from "react";
 
 import { AUTO_SAVE_TIME, SavingLoadingContext } from "../../contexts/saving-loading";
 import VerticalTabs, { Tab } from "../../shared/components/vertical-tabs";
@@ -7,6 +8,26 @@ import './options-modal.scss';
 
 function OptionsModal() {
   const savingLoading = useContext(SavingLoadingContext);
+  const [importData, setImportData] = useState("");
+  const [exportData, setExportData] = useState("");
+
+  const onToggleAutoSave = useCallback(() => {
+    savingLoading.setIsAutoSaveEnabled(!savingLoading.isAutoSaveEnabled);
+  }, [savingLoading]);
+
+  const onImport = useCallback(() => {
+    savingLoading.attemptImportData(importData);
+  }, [savingLoading]);
+  const onExport = useCallback(() => {
+    var saveData = savingLoading.getSaveData();
+    setExportData(saveData);
+    navigator.clipboard.writeText(saveData).then(function() {
+      console.log('Async: Copying to clipboard was successful!');
+    }, function(err) {
+      console.error('Async: Could not copy text: ', err);
+    });
+  }, [savingLoading]);
+
   const onSave = useCallback(() => {
     savingLoading.save();
   }, [savingLoading]);
@@ -15,9 +36,6 @@ function OptionsModal() {
   }, [savingLoading]);
   const onReset = useCallback(() => {
     savingLoading.completeReset();
-  }, [savingLoading]);
-  const onToggleAutoSave = useCallback(() => {
-    savingLoading.setIsAutoSaveEnabled(!savingLoading.isAutoSaveEnabled);
   }, [savingLoading]);
 
   const tabs: Tab[] = [{
@@ -34,6 +52,15 @@ function OptionsModal() {
       }
 
       <h3>Import/Export</h3>
+      <div className="import">
+        <input type="text" value={importData} onChange={(evt) => setImportData(evt.target.value)} />
+        <button onClick={() => onImport()}>Import</button>
+      </div>
+      <div className="export">
+        <input type="text" readOnly value={exportData} />
+        <button onClick={() => onExport()}>Export</button>
+        <span className={classNames("clipboard-badge", {show: exportData !== ''})}>Copied to Clipboard</span>
+      </div>
 
       <h3>Manual controls</h3>
       <div className="save-buttons">

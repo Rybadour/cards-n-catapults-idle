@@ -38,6 +38,8 @@ export type SavingLoadingContext = {
   update: (elapsed: number) => void,
   completeReset: () => void,
   setIsAutoSaveEnabled: (enabled: boolean) => void,
+  attemptImportData: (rawData: string) => void,
+  getSaveData: () => string,
 };
 
 const defaultContext: SavingLoadingContext = {
@@ -50,6 +52,8 @@ const defaultContext: SavingLoadingContext = {
   update: (elapsed) => {},
   completeReset: () => {},
   setIsAutoSaveEnabled: (enabled) => {},
+  attemptImportData: (rawData) => {},
+  getSaveData: () => "",
 };
 
 export const SavingLoadingContext = createContext(defaultContext);
@@ -85,36 +89,14 @@ export function SavingLoadingProvider(props: Record<string, any>) {
   }, [contextDataMap.prestige]);
 
   function save() {
-    const saveData: Record<string, any> = {};
-
-    Object.entries(contextDataMap).forEach(([key, context]) => {
-      saveData[key] = context.getSaveData();
-    });
-
-    saveData.version = global.version;
-    saveData.saveSettings = {
-      isAutoSaveEnabled,
-    };
-    localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(saveData));
+    localStorage.setItem(AUTO_SAVE_KEY, getSaveData());
   }
 
   function load() {
     const rawData: string | null = localStorage.getItem(AUTO_SAVE_KEY);
     if (!rawData) return;
 
-    let saveData: Record<string, any>;
-    try {
-      saveData = JSON.parse(rawData);
-    } catch (err) {
-      return;
-    }
-
-
-    setIsAutoSaveEnabled(saveData?.saveSettings?.isAutoSaveEnabled ?? true);
-    contextDataMap.stats.loadSaveData(saveData.stats);
-    contextDataMap.discovery.loadSaveData(saveData.discovery);
-    contextDataMap.cardPacks.loadSaveData(saveData.cardPacks);
-    setDataToLoad(saveData);
+    attemptImportData(rawData);
   }
 
   function completeReset() {
@@ -128,7 +110,7 @@ export function SavingLoadingProvider(props: Record<string, any>) {
   }
 
   function update(elapsed: number) {
-    if (!global.autoSaveEnabled) return;
+    if (!global.autoLoadEnabled) return;
 
     if (!isLoadedFromAutoSave) {
       load();
@@ -145,11 +127,40 @@ export function SavingLoadingProvider(props: Record<string, any>) {
     setAutoSaveTime(newAutoSave);
   }
 
+  function attemptImportData(rawData: string) {
+    let saveData: Record<string, any>;
+    try {
+      saveData = JSON.parse(rawData);
+    } catch (err) {
+      return;
+    }
+
+    setIsAutoSaveEnabled(saveData?.saveSettings?.isAutoSaveEnabled ?? true);
+    contextDataMap.stats.loadSaveData(saveData.stats);
+    contextDataMap.discovery.loadSaveData(saveData.discovery);
+    contextDataMap.cardPacks.loadSaveData(saveData.cardPacks);
+    setDataToLoad(saveData);
+  }
+
+  function getSaveData() {
+    const saveData: Record<string, any> = {};
+
+    Object.entries(contextDataMap).forEach(([key, context]) => {
+      saveData[key] = context.getSaveData();
+    });
+
+    saveData.version = global.version;
+    saveData.saveSettings = {
+      isAutoSaveEnabled,
+    };
+    return JSON.stringify(saveData);
+  }
+
   return (
     <SavingLoadingContext.Provider
       value={{
         isLoadedFromAutoSave, isAutoSaveEnabled, autoSaveTime, dataToLoad,
-        save, load, update, completeReset, setIsAutoSaveEnabled,
+        save, load, update, completeReset, setIsAutoSaveEnabled, attemptImportData, getSaveData,
       }}
       {...props}
     />
