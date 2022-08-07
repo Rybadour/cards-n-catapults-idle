@@ -1,0 +1,23 @@
+.options-modal {
+  width: 100%;
+
+  h3:not(:first-child) {
+    margin-top: 30px;
+  }
+
+  label {
+    input {
+      margin-left: 10px;
+    }
+  }
+
+  .save-buttons {
+    display: flex;
+    grid-gap: 20px;
+
+    button {
+      width: 100px;
+      height: 40px;
+    }
+  }
+}

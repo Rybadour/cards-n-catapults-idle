@@ -57,7 +57,7 @@ export default function GridMap() {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [grid]);
+  }, [grid, prestige, savingLoading]);
 
 
   const [marks, setMarks] = useState<Record<string, MarkType>>({});

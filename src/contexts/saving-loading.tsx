@@ -2,7 +2,6 @@
 import { grid } from "@mui/system";
 import { cloneDeep } from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
-import Prestige from "../components/prestige";
 import global from "../config/global";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { CardPacksContext } from "./card-packs";
@@ -13,7 +12,7 @@ import { PrestigeContext } from "./prestige";
 import { StatsContext } from "./stats";
 
 const AUTO_SAVE_KEY = 'cnc-auto-save';
-const AUTO_SAVE_TIME = 30000;
+export const AUTO_SAVE_TIME = 30000;
 
 type ISaveLoad = {
   getSaveData: () => any,
@@ -31,28 +30,33 @@ type ContextMap = {
 
 export type SavingLoadingContext = {
   isLoadedFromAutoSave: boolean,
+  isAutoSaveEnabled: boolean,
   autoSaveTime: number,
   dataToLoad: Record<string, any> | null,
   save: () => void,
   load: () => void,
   update: (elapsed: number) => void,
   completeReset: () => void,
+  setIsAutoSaveEnabled: (enabled: boolean) => void,
 };
 
 const defaultContext: SavingLoadingContext = {
   isLoadedFromAutoSave: false,
+  isAutoSaveEnabled: true,
   autoSaveTime: AUTO_SAVE_TIME,
   dataToLoad: {},
   save: () => {},
   load: () => {},
   update: (elapsed) => {},
   completeReset: () => {},
+  setIsAutoSaveEnabled: (enabled) => {},
 };
 
 export const SavingLoadingContext = createContext(defaultContext);
 
 export function SavingLoadingProvider(props: Record<string, any>) {
   const [isLoadedFromAutoSave, setIsLoadedFromAutoSave] = useState(defaultContext.isLoadedFromAutoSave);
+  const [isAutoSaveEnabled, setIsAutoSaveEnabled] = useState(defaultContext.isAutoSaveEnabled);
   const [autoSaveTime, setAutoSaveTime] = useState(defaultContext.autoSaveTime);
   const [dataToLoad, setDataToLoad] = useState(defaultContext.dataToLoad);
   const stats = useContext(StatsContext);
@@ -87,6 +91,10 @@ export function SavingLoadingProvider(props: Record<string, any>) {
       saveData[key] = context.getSaveData();
     });
 
+    saveData.version = global.version;
+    saveData.saveSettings = {
+      isAutoSaveEnabled,
+    };
     localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(saveData));
   }
 
@@ -101,6 +109,8 @@ export function SavingLoadingProvider(props: Record<string, any>) {
       return;
     }
 
+
+    setIsAutoSaveEnabled(saveData?.saveSettings?.isAutoSaveEnabled ?? true);
     contextDataMap.stats.loadSaveData(saveData.stats);
     contextDataMap.discovery.loadSaveData(saveData.discovery);
     contextDataMap.cardPacks.loadSaveData(saveData.cardPacks);
@@ -125,6 +135,8 @@ export function SavingLoadingProvider(props: Record<string, any>) {
       setIsLoadedFromAutoSave(true);
     }
 
+    if (!isAutoSaveEnabled) return;
+
     let newAutoSave = autoSaveTime - elapsed;
     if (newAutoSave <= 0) {
       save();
@@ -136,8 +148,8 @@ export function SavingLoadingProvider(props: Record<string, any>) {
   return (
     <SavingLoadingContext.Provider
       value={{
-        isLoadedFromAutoSave, autoSaveTime, dataToLoad,
-        save, load, update, completeReset,
+        isLoadedFromAutoSave, isAutoSaveEnabled, autoSaveTime, dataToLoad,
+        save, load, update, completeReset, setIsAutoSaveEnabled,
       }}
       {...props}
     />

@@ -9,7 +9,7 @@ import CardPacks from './components/card-packs';
 import { StatsProvider } from './contexts/stats';
 import { DiscoveryProvider } from './contexts/discovery';
 import { CardPacksProvider } from './contexts/card-packs';
-import Header from './components/header';
+import Header from './components/header/header';
 import { PrestigeContext, PrestigeProvider } from './contexts/prestige';
 import Prestige from './components/prestige';
 import ReactTooltip from 'react-tooltip';

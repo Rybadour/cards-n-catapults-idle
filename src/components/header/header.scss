@@ -1,4 +1,4 @@
-@import '../shared/shared.scss';
+@use '../../shared/shared.scss';
 
 header {
   display: flex;
@@ -32,7 +32,7 @@ header {
     .open-menu {
       appearance: none;
       background: none;
-      border: $light-border;
+      border: shared.$light-border;
       border-radius: 5px;
 
       &:hover {
@@ -68,61 +68,5 @@ header {
 
   h2 {
     margin-top: 0;
-  }
-}
-
-.help-modal-content {
-  .help-body-wrapper {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .help-tip-menu {
-    display: flex;
-    flex-direction: column;
-    grid-gap: 6px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    min-width: 120px;
-    border-right: 2px solid #BBB;
-
-    li {
-      padding: 7px 6px 6px;
-      cursor: pointer;
-
-      &:hover, &.selected {
-        font-weight: bold;
-        background-color: #555;
-      }
-    }
-  }
-
-  .help-body {
-    margin-left: 20px;
-    max-height: 500px;
-    overflow-y: auto;
-
-    h3 {
-      margin-top: 0;
-    }
-
-    > :not(.selected) {
-      display: none;
-    }
-
-    .help-screenshot {
-      height: 200px;
-    }
-  }
-}
-
-.options-modal-content {
-  display: flex;
-  grid-gap: 30px;
-
-  button {
-    width: 100px;
-    height: 40px;
   }
 }

@@ -1,10 +1,10 @@
-@import '../shared/shared.scss';
+@use '../shared/shared.scss';
 
 .prestige-page {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: $text-color;
+  color: shared.$text-color;
   width: 100%;
 
   .header {
