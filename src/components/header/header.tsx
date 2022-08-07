@@ -18,8 +18,7 @@ Modal.setAppElement('#root');
 function Header() {
   const prestige = useContext(PrestigeContext);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
-
-  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(true);
+  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
   const onPrestige = useCallback(() => {
     prestige.prestige();
