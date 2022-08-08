@@ -11,7 +11,7 @@ import Icon from '../shared/components/icon';
 import { Card, CardType } from '../shared/types';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
-import { CardMasteryContext } from '../contexts/card-mastery';
+import { CardMasteryContext, getMasteryBonus } from '../contexts/card-mastery';
 
 const modalStyles = {
   overlay: {
@@ -21,10 +21,8 @@ const modalStyles = {
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
-  const cards = useContext(CardsContext);
-  const discovery = useContext(DiscoveryContext);
-
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
+  const discovery = useContext(DiscoveryContext);
 
   const onToggleCategory = useCallback((cardType: CardType) => {
     const newClosedCategories = { ...closedCategories };
@@ -59,55 +57,7 @@ export default function CardList() {
         </div>
         <div className={classNames("card-list", {hidden: closedCategories[cardType!!]})}>
           {cardList.map(card =>
-            <div className="card-container" key={card.id}>
-              <div
-                className={classNames("card", {
-                  selected: card === cards.selectedCard,
-                  empty: (cards.cards[card.id] ?? 0) <= 0,
-                })}
-                onClick={() => cards.setSelectedCard(card)}
-              >
-                <div className="title">
-                  <Icon size="sm" icon={card.icon} />
-                  <span className="name">{card.name}</span>
-                  <span className="amount">{formatNumber(cards.cards[card.id] ?? 0, 0, 1)}</span>
-                </div>
-
-                <div className="description">{card.description}</div>
-
-                <div className="stats">
-                  {card.maxDurability ? 
-                    <div className="stat" data-tip="Food capacity" data-offset="{'bottom': -5}">
-                      <span>{card.maxDurability}</span>
-                      <Icon size="xs" icon="ham-shank" />
-                    </div>:
-                    null
-                  }
-                  {card.foodDrain ? 
-                    <div className="stat" data-tip="Food Drain" data-offset="{'bottom': -5}">
-                      <span>-{card.foodDrain}</span>
-                      <Icon size="xs" icon="ham-shank" />
-                      <span>/s</span>
-                    </div>:
-                    null
-                  }
-                  <div className="tier" data-tip="Tier" data-offset="{'bottom': -5}">
-                    <Icon size="sm" icon="round-star" />
-                    <span className="value">{card.tier}</span>
-                  </div>
-                </div>
-                <CardButtons width={46}>
-                  <CardButton 
-                    label={
-                      <span data-tip="Mastery Bonus" data-place="left" data-offset="{'left': 7}">
-                        <Icon icon="progression" size="xs" />
-                      </span>
-                    }
-                    onClick={() => setCurrentMasteryCard(card)}
-                  />
-                </CardButtons>
-              </div>
-            </div>
+            <CardInInventory card={card} setMasteryCard={setCurrentMasteryCard} />
           )}
         </div>
       </div>
@@ -123,6 +73,81 @@ export default function CardList() {
     >
       <CardMasteryModal card={currentMasteryCard} />
     </Modal>
+  </div>;
+}
+
+function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null) => void}) {
+  const cards = useContext(CardsContext);
+  const cardMastery = useContext(CardMasteryContext);
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, [cardMastery]);
+
+  const masteryBonus = getMasteryBonus(cardMastery.cardMasteries[props.card.id], props.card) - 1;
+
+  return <div className="card-container" key={props.card.id}>
+    <div
+      className={classNames("card", {
+        selected: props.card === cards.selectedCard,
+        empty: (cards.cards[props.card.id] ?? 0) <= 0,
+      })}
+      onClick={() => cards.setSelectedCard(props.card)}
+    >
+      <div className="title">
+        <Icon size="sm" icon={props.card.icon} />
+        <span className="name">{props.card.name}</span>
+        <span className="amount">{formatNumber(cards.cards[props.card.id] ?? 0, 0, 1)}</span>
+      </div>
+
+      <div className="description">{props.card.description}</div>
+
+      <div className="stats">
+        {props.card.maxDurability ?
+          <div className="stat" data-tip="Food capacity" data-offset="{'bottom': -5}">
+            <span>{props.card.maxDurability}</span>
+            <Icon size="xs" icon="ham-shank" />
+          </div> :
+          null
+        }
+        {props.card.foodDrain ?
+          <div className="stat" data-tip="Food Drain" data-offset="{'bottom': -5}">
+            <span>-{props.card.foodDrain}</span>
+            <Icon size="xs" icon="ham-shank" />
+            <span>/s</span>
+          </div> :
+          null
+        }
+        {props.card.cooldownMs ?
+          <div className="stat" data-tip="Cooldown" data-offset="{'bottom': -5}">
+            <span>{formatNumber(props.card.cooldownMs / 1000, 0, 0)}s</span>
+            <Icon size="xs" icon="backward-time" />
+          </div> :
+          null
+        }
+        {masteryBonus > 0 ?
+          <div className="stat" data-tip="Mastery Bonus" data-offset="{'bottom': -5}">
+            <span>{formatNumber(masteryBonus * 100, 0, 0)}%</span>
+            <Icon size="xs" icon="progression" />
+          </div> :
+          null
+        }
+        <div className="tier" data-tip="Tier" data-offset="{'bottom': -5}">
+          <Icon size="sm" icon="round-star" />
+          <span className="value">{props.card.tier}</span>
+        </div>
+      </div>
+      <CardButtons width={46}>
+        <CardButton
+          label={
+            <span data-tip="Mastery Bonus" data-place="left" data-offset="{'left': 7}">
+              <Icon icon="progression" size="xs" />
+            </span>
+          }
+          onClick={() => props.setMasteryCard(props.card)}
+        />
+      </CardButtons>
+    </div>
   </div>;
 }
 
