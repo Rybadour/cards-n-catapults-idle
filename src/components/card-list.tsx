@@ -97,7 +97,14 @@ export default function CardList() {
                   </div>
                 </div>
                 <CardButtons width={46}>
-                  <CardButton label={<Icon icon="progression" size="xs" />} onClick={() => setCurrentMasteryCard(card)} />
+                  <CardButton 
+                    label={
+                      <span data-tip="Mastery Bonus" data-place="left" data-offset="{'left': 7}">
+                        <Icon icon="progression" size="xs" />
+                      </span>
+                    }
+                    onClick={() => setCurrentMasteryCard(card)}
+                  />
                 </CardButtons>
               </div>
             </div>

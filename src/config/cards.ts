@@ -311,9 +311,9 @@ const cards: Record<string, Card> = {
     },
     cooldownMs: 5000,
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   forager: {

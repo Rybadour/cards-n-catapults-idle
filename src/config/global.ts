@@ -4,7 +4,6 @@ const global = {
   startingCards: {beggar: 1},
   unlockedPacks: [],
   startingPrestige: 0,
-  produceModifier: 1,
   autoLoadEnabled: true,
   isDebug: true,
 };

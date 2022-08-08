@@ -10,8 +10,9 @@ export type CardMastery = {
   currentSpent: number,
   cardsSacrificed: number,
 };
+export type CardMasteries = Record<CardId, CardMastery>;
 
-const defaultMasteries: Record<CardId, CardMastery> = {};
+const defaultMasteries: CardMasteries = {};
 Object.entries(cardsConfig).forEach(([id, card]) => {
   defaultMasteries[id] = {
     level: 0,
@@ -22,7 +23,7 @@ Object.entries(cardsConfig).forEach(([id, card]) => {
 });
 
 export type CardMasteryContext = {
-  cardMasteries: Record<CardId, CardMastery>,
+  cardMasteries: CardMasteries,
   sacrificeCard: (card: Card) => void,
 };
 
@@ -67,4 +68,8 @@ export function CardMasteryProvider(props: Record<string, any>) {
 
 function getLevelCost(currentLevel: number, card: Card) {
   return card.mastery.baseCost * Math.pow(card.mastery.growth, currentLevel);
+}
+
+export function getMasteryBonus(mastery: CardMastery, card: Card) {
+  return 1 + (mastery.level * card.mastery.bonusPer);
 }

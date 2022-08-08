@@ -53,7 +53,7 @@ export function StatsProvider(props: Record<string, any>) {
       const resource = enumFromKey(ResourceType, r);
       const prestigeBonus = (resource === ResourceType.Gold ? prestigeEffects.bonuses.goldGain : 1);
       if (resource) {
-        newResources[resource] += elapsedSecs * resourcesPerSec[resource] * global.produceModifier * prestigeBonus;
+        newResources[resource] += elapsedSecs * resourcesPerSec[resource] * prestigeBonus;
       }
     });
     setResources(newResources);

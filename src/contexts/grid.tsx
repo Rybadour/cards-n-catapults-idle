@@ -9,6 +9,7 @@ import { DiscoveryContext } from "./discovery";
 import _, { cloneDeep } from "lodash";
 import { createCard } from "../gamelogic/grid-cards";
 import { DEFAULT_EFFECTS } from "../shared/constants";
+import { CardMasteryContext } from "./card-mastery";
 
 const width = 5;
 const height = 5;
@@ -43,11 +44,12 @@ export function GridProvider(props: Record<string, any>) {
   const discovery = useContext(DiscoveryContext);
   const stats = useContext(StatsContext);
   const cards = useContext(CardsContext);
+  const cardMastery = useContext(CardMasteryContext);
   const [gridSpaces, setGridSpaces] = useState(defaultContext.gridSpaces);
   const [prestigeEffects, setPrestigeEffects] = useState(defaultContext.prestigeEffects);
 
   function update(elapsed: number) {
-    const results = updateGrid(gridSpaces, stats.resources, cards.cards, prestigeEffects, elapsed);
+    const results = updateGrid(gridSpaces, stats.resources, cards.cards, prestigeEffects, cardMastery.cardMasteries, elapsed);
 
     if (results.newCards.length > 0) {
       discovery.discoverCards(results.newCards);
@@ -55,7 +57,7 @@ export function GridProvider(props: Record<string, any>) {
 
     let totalResults: UpdateGridTotalsResults | null = null;
     if (results.anyChanged) {
-      totalResults = updateGridTotals(results.grid, stats);
+      totalResults = updateGridTotals(results.grid, stats, cardMastery.cardMasteries);
       results.grid = totalResults.grid;
     }
     stats.update(elapsed, totalResults?.resourcesPerSec ?? null, results.grid);
@@ -72,7 +74,7 @@ export function GridProvider(props: Record<string, any>) {
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = newCard;
 
-    const results = updateGridTotals(newGridSpaces, stats);
+    const results = updateGridTotals(newGridSpaces, stats, cardMastery.cardMasteries);
     setGridSpaces(results.grid);
     stats.updatePerSec(results.resourcesPerSec);
 
@@ -83,7 +85,7 @@ export function GridProvider(props: Record<string, any>) {
     const newGridSpaces = [ ...gridSpaces ];
     newGridSpaces[y][x] = null;
 
-    const results = updateGridTotals(newGridSpaces, stats);
+    const results = updateGridTotals(newGridSpaces, stats, cardMastery.cardMasteries);
     setGridSpaces(results.grid);
     stats.updatePerSec(results.resourcesPerSec);
   }
@@ -124,7 +126,7 @@ export function GridProvider(props: Record<string, any>) {
       };
     });
 
-    const results = updateGridTotals(newGridSpaces, stats);
+    const results = updateGridTotals(newGridSpaces, stats, cardMastery.cardMasteries);
 
     setGridSpaces(results.grid);
     stats.updatePerSec(results.resourcesPerSec);
