@@ -10,6 +10,7 @@ export type CardsContext = {
   setSelectedCard: (card: Card) => void,
   hasCard: (card: Card) => boolean,
   returnCard: (card: RealizedCard) => void,
+  spendCard: (card: Card) => void,
   replaceCard: (existingCard: RealizedCard | null) => void,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   drawCards: (cardsToDraw: Card[]) => void,
@@ -24,6 +25,7 @@ const defaultContext: CardsContext = {
   setSelectedCard: (card) => {},
   hasCard: (card) => false,
   returnCard: (card) => {},
+  spendCard: (card) => {},
   replaceCard: (card) => {},
   updateInventory: (cardsDelta) => {},
   drawCards: (cardsToDraw) => {},
@@ -55,18 +57,26 @@ export function CardsProvider(props: Record<string, any>) {
       return;
     }
 
-    const newCards = {
-      ...cards,
-      [selectedCard.id]: (cards[selectedCard.id] ?? 0) - 1, 
-    };
-    if (newCards[selectedCard.id] < 0) {
-      newCards[selectedCard.id] = 0;
-    }
-
+    const newCards = removeCard(selectedCard.id);
     if (existingCard != null) {
       addRealizedCard(newCards, existingCard);
     }
     setCards(newCards);
+  }
+
+  function spendCard(card: Card) {
+    setCards(removeCard(card.id));
+  }
+
+  function removeCard(id: string) {
+    const newCards = {
+      ...cards,
+      [id]: (cards[id] ?? 0) - 1, 
+    };
+    if (newCards[id] < 0) {
+      newCards[id] = 0;
+    }
+    return newCards;
   }
 
   function addRealizedCard(cards: Record<string, number>, card: RealizedCard) {
@@ -129,7 +139,7 @@ export function CardsProvider(props: Record<string, any>) {
     <CardsContext.Provider
       value={{
         cards, selectedCard,
-        setSelectedCard, hasCard, returnCard, replaceCard, updateInventory, drawCards, prestigeReset,
+        setSelectedCard, hasCard, returnCard, spendCard, replaceCard, updateInventory, drawCards, prestigeReset,
         getSaveData, loadSaveData,
       }}
       {...props}

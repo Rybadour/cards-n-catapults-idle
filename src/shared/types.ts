@@ -77,6 +77,12 @@ export type Card = {
     onMatch: boolean,
     maxTier?: number,
   } & GridMatch,
+
+  mastery: {
+    baseCost: number,
+    growth: number,
+    bonusPer: number,
+  }
 }
 
 export type GridMatch = {

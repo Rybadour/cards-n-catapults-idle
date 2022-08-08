@@ -14,6 +14,11 @@ const cards: Record<string, Card> = {
     passive: {
       strength: 1,
       resource: ResourceType.Gold,
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   },
   lumberjack: {
@@ -37,6 +42,11 @@ const cards: Record<string, Card> = {
       strength: 0.2,
       shape: MatchingGridShape.AllAdjacent,
       cards: ['forest'],
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   },
   peasant: {
@@ -66,6 +76,11 @@ const cards: Record<string, Card> = {
       onMatch: true,
       shape: MatchingGridShape.OrthoAdjacent,
       maxTier: 1,
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   },
   bard: {
@@ -85,6 +100,11 @@ const cards: Record<string, Card> = {
         cardTypes: [CardType.Person],
       }
     },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   pauline: {
     id: "",
@@ -104,6 +124,11 @@ const cards: Record<string, Card> = {
       strength: 1,
       shape: MatchingGridShape.AllAdjacent,
       cards: ['forest'],
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   },
   ratSnack: {
@@ -123,6 +148,11 @@ const cards: Record<string, Card> = {
         cardTypes: [CardType.Person],
       }
     },
+    mastery: {
+      baseCost: 8,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   berries: {
     id: "",
@@ -138,6 +168,11 @@ const cards: Record<string, Card> = {
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Person],
     },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   mushrooms: {
     id: "",
@@ -156,6 +191,11 @@ const cards: Record<string, Card> = {
         cards: ['mushrooms', 'forest', EMPTY_CARD],
       }
     },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   haunch: {
     id: "",
@@ -171,6 +211,11 @@ const cards: Record<string, Card> = {
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Person],
     },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   bread: {
     id: "",
@@ -181,6 +226,11 @@ const cards: Record<string, Card> = {
     rarity: Rarity.Common,
     description: "Just food, that's it.",
     maxDurability: 40,
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   ambrosia: {
     id: "",
@@ -200,6 +250,11 @@ const cards: Record<string, Card> = {
       strength: 2,
       shape: MatchingGridShape.Grid,
       cardTypes: [CardType.Food],
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   },
   forest: {
@@ -213,6 +268,11 @@ const cards: Record<string, Card> = {
     passive: {
       strength: 1,
       resource: ResourceType.Wood,
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   },
   ratDen: {
@@ -228,6 +288,11 @@ const cards: Record<string, Card> = {
       possibleCards: ["ratSnack"],
     },
     cooldownMs: 20000,
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   campfire: {
     id: "",
@@ -245,6 +310,11 @@ const cards: Record<string, Card> = {
       cost: 1,
     },
     cooldownMs: 5000,
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   forager: {
     id: "",
@@ -263,6 +333,11 @@ const cards: Record<string, Card> = {
       onMatch: false,
       shape: MatchingGridShape.OrthoAdjacent,
       cards: ['forest'],
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   },
   pigPen: {
@@ -283,6 +358,11 @@ const cards: Record<string, Card> = {
       cardTypes: [CardType.Food],
     },
     cooldownMs: 5000,
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   carpenter: {
     id: "",
@@ -301,6 +381,11 @@ const cards: Record<string, Card> = {
       resource: ResourceType.Wood,
       cost: 2,
     },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   lumbermill: {
     id: "",
@@ -322,6 +407,11 @@ const cards: Record<string, Card> = {
       resource: ResourceType.Wood,
       cost: 0.5,
     },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
+    }
   },
   schoolHouse: {
     id: "",
@@ -340,6 +430,11 @@ const cards: Record<string, Card> = {
     convertCardEffect: {
       targetCard: 'beggar',
       resultingCard: 'peasant',
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.05,
     }
   }
 };

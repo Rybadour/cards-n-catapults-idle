@@ -1,19 +1,30 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Modal from 'react-modal';
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
 import { DiscoveryContext } from '../contexts/discovery';
+import { CardButton, CardButtons } from '../shared/components/card-buttons';
 import Icon from '../shared/components/icon';
-import { CardType } from '../shared/types';
+import { Card, CardType } from '../shared/types';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
+import { CardMasteryContext } from '../contexts/card-mastery';
+
+const modalStyles = {
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+};
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const cards = useContext(CardsContext);
   const discovery = useContext(DiscoveryContext);
+
+  const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
 
   const onToggleCategory = useCallback((cardType: CardType) => {
     const newClosedCategories = { ...closedCategories };
@@ -85,6 +96,9 @@ export default function CardList() {
                     <span className="value">{card.tier}</span>
                   </div>
                 </div>
+                <CardButtons width={46}>
+                  <CardButton label={<Icon icon="progression" size="xs" />} onClick={() => setCurrentMasteryCard(card)} />
+                </CardButtons>
               </div>
             </div>
           )}
@@ -92,5 +106,42 @@ export default function CardList() {
       </div>
     )}
     </div>
+
+    <Modal
+      isOpen={!!currentMasteryCard}
+      onRequestClose={() => setCurrentMasteryCard(null)}
+      style={modalStyles}
+      contentLabel="Card Mastery"
+      className="card-mastery-modal center-modal"
+    >
+      <CardMasteryModal card={currentMasteryCard} />
+    </Modal>
   </div>;
+}
+
+function CardMasteryModal(props: {card: Card | null}) {
+  const cards = useContext(CardsContext);
+  const cardMastery = useContext(CardMasteryContext);
+
+  const onSacrifice = useCallback((card: Card) => {
+    cardMastery.sacrificeCard(card);
+  }, [cardMastery, cards]);
+
+  if (!props.card) return null;
+
+  const masteryBonusPer = props.card.mastery.bonusPer * 100;
+  const mastery = cardMastery.cardMasteries[props.card.id];
+  return <>
+    <h3>Card Mastery for {props.card.name}</h3>
+    <Icon icon={props.card.icon} size="lg" />
+    <div className="card-mastery-bonus">+{mastery.level * masteryBonusPer}%</div>
+
+    <div className="card-mastery-progress">
+      <span>{mastery.currentSpent}</span>
+      <span>/</span>
+      <span>{mastery.currentCost}</span>
+    </div>
+    <div>+{masteryBonusPer}%</div>
+    <button onClick={() => onSacrifice(props.card!!)}>Sacrifice Card for Mastery Bonus</button>
+  </>;
 }

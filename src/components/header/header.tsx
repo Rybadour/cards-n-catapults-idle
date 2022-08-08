@@ -59,7 +59,7 @@ function Header() {
       onRequestClose={() => setIsHelpModalOpen(false)}
       style={modalStyles}
       contentLabel="Help Tips"
-      className="help-modal-content header-modal"
+      className="help-modal-content center-modal header-modal"
     >
       <HelpModal />
     </Modal>
@@ -68,7 +68,7 @@ function Header() {
       onRequestClose={() => setIsOptionsModalOpen(false)}
       style={modalStyles}
       contentLabel="Options"
-      className="options-modal-content header-modal"
+      className="options-modal-content center-modal header-modal"
     >
       <OptionsModal />
     </Modal>

@@ -46,7 +46,7 @@ header {
   }
 }
 
-.header-modal {
+.center-modal {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -54,13 +54,16 @@ header {
   bottom: auto;
   margin-right: -50%;
   transform: translate(-50%, -50%);
-  max-width: 800px;
-  width: 80%;
   background-color: #444;
   border-color: #222;
   color: #DDD;
   border-radius: 0;
   padding: 20px;
+}
+
+.header-modal {
+  max-width: 800px;
+  width: 80%;
 
   > div {
     height: 100%;

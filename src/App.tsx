@@ -14,12 +14,14 @@ import { PrestigeContext, PrestigeProvider } from './contexts/prestige';
 import Prestige from './components/prestige';
 import ReactTooltip from 'react-tooltip';
 import { SavingLoadingProvider } from './contexts/saving-loading';
+import { CardMasteryProvider } from './contexts/card-mastery';
 
 function App() {
   return (
     <DiscoveryProvider>
     <StatsProvider>
     <CardsProvider>
+    <CardMasteryProvider>
     <CardPacksProvider>
     <GridProvider>
     <PrestigeProvider>
@@ -42,6 +44,7 @@ function App() {
     </PrestigeProvider>
     </GridProvider>
     </CardPacksProvider>
+    </CardMasteryProvider>
     </CardsProvider>
     </StatsProvider>
     </DiscoveryProvider>
