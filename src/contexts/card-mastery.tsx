@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { omit } from "lodash";
 import { createContext, useContext, useState } from "react";
 import cardsConfig from "../config/cards";
 import { Card, CardId } from "../shared/types";
+import { getExpValueMultiple, getMultipleFromExpValue } from "../shared/utils";
 import { CardsContext } from "./cards";
 
 export type CardMastery = {
@@ -25,11 +27,15 @@ Object.entries(cardsConfig).forEach(([id, card]) => {
 export type CardMasteryContext = {
   cardMasteries: CardMasteries,
   sacrificeCard: (card: Card) => void,
+  getSaveData: () => any,
+  loadSaveData: (data: any) => boolean,
 };
 
 const defaultContext: CardMasteryContext = {
   cardMasteries: defaultMasteries,
   sacrificeCard: (card) => {},
+  getSaveData: () => {},
+  loadSaveData: (data) => false,
 };
 
 export const CardMasteryContext = createContext(defaultContext);
@@ -55,11 +61,41 @@ export function CardMasteryProvider(props: Record<string, any>) {
     cards.spendCard(card);
   }
 
+  function getSaveData() {
+    const cardMasteriesToSave: Record<string, any> = {};
+    Object.entries(cardMasteries).forEach(([id, mastery]) => {
+      cardMasteriesToSave[id] = mastery.cardsSacrificed;
+    });
+    return {
+      cardMasteries: cardMasteriesToSave,
+    };
+  }
+
+  function loadSaveData(data: any) {
+    if (typeof data.cardMasteries !== 'object') return false;
+
+    const newMasteries: CardMasteries = {};
+    Object.entries(data.cardMasteries).forEach(([id, cardsSacrified]) => {
+      const masteryConfig = cardsConfig[id].mastery;
+      const cardsSac = cardsSacrified as number;
+      const level = Math.floor(getMultipleFromExpValue(masteryConfig.baseCost, masteryConfig.growth, 0, cardsSac));
+      newMasteries[id] = {
+        cardsSacrificed: cardsSac,
+        level,
+        currentCost: getLevelCost(level, cardsConfig[id]),
+        currentSpent: cardsSac - getExpValueMultiple(masteryConfig.baseCost, masteryConfig.growth, 0, level),
+      };
+    });
+    setCardMasteries(newMasteries);
+
+    return true;
+  }
+
   return (
     <CardMasteryContext.Provider
       value={{
         cardMasteries,
-        sacrificeCard,
+        sacrificeCard, getSaveData, loadSaveData,
       }}
       {...props}
     />

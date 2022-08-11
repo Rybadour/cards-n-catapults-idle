@@ -4,6 +4,7 @@ import { cloneDeep } from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
 import global from "../config/global";
 import { DEFAULT_EFFECTS } from "../shared/constants";
+import { CardMasteryContext } from "./card-mastery";
 import { CardPacksContext } from "./card-packs";
 import { CardsContext } from "./cards";
 import { DiscoveryContext } from "./discovery";
@@ -26,6 +27,7 @@ type ContextMap = {
   grid: ISaveLoad,
   cards: ISaveLoad,
   cardPacks: ISaveLoad,
+  cardMastery: ISaveLoad,
 };
 
 export type SavingLoadingContext = {
@@ -69,9 +71,10 @@ export function SavingLoadingProvider(props: Record<string, any>) {
   const grid = useContext(GridContext);
   const cards = useContext(CardsContext);
   const cardPacks = useContext(CardPacksContext);
+  const cardMastery = useContext(CardMasteryContext);
 
   const contextDataMap: ContextMap = {
-    stats, prestige, discovery, grid, cards, cardPacks,
+    stats, prestige, discovery, grid, cards, cardPacks, cardMastery,
   };
 
   useEffect(() => {
@@ -139,6 +142,7 @@ export function SavingLoadingProvider(props: Record<string, any>) {
     contextDataMap.stats.loadSaveData(saveData.stats);
     contextDataMap.discovery.loadSaveData(saveData.discovery);
     contextDataMap.cardPacks.loadSaveData(saveData.cardPacks);
+    contextDataMap.cardMastery.loadSaveData(saveData.cardMastery);
     setDataToLoad(saveData);
   }
 
