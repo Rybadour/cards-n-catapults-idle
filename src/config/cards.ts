@@ -18,7 +18,7 @@ const cards: Record<string, Card> = {
     mastery: {
       baseCost: 2,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   lumberjack: {
@@ -46,7 +46,7 @@ const cards: Record<string, Card> = {
     mastery: {
       baseCost: 2,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   peasant: {
@@ -80,7 +80,7 @@ const cards: Record<string, Card> = {
     mastery: {
       baseCost: 2,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   bard: {
@@ -103,7 +103,7 @@ const cards: Record<string, Card> = {
     mastery: {
       baseCost: 2,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   pauline: {
@@ -126,9 +126,9 @@ const cards: Record<string, Card> = {
       cards: ['forest'],
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.2,
     }
   },
   ratSnack: {
@@ -169,7 +169,7 @@ const cards: Record<string, Card> = {
       cardTypes: [CardType.Person],
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 4,
       growth: 2,
       bonusPer: 0.05,
     }
@@ -192,7 +192,7 @@ const cards: Record<string, Card> = {
       }
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 4,
       growth: 2,
       bonusPer: 0.05,
     }
@@ -212,9 +212,9 @@ const cards: Record<string, Card> = {
       cardTypes: [CardType.Person],
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 3,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.075,
     }
   },
   bread: {
@@ -229,7 +229,7 @@ const cards: Record<string, Card> = {
     mastery: {
       baseCost: 2,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.25,
     }
   },
   ambrosia: {
@@ -252,9 +252,9 @@ const cards: Record<string, Card> = {
       cardTypes: [CardType.Food],
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.25,
     }
   },
   forest: {
@@ -272,7 +272,7 @@ const cards: Record<string, Card> = {
     mastery: {
       baseCost: 2,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   ratDen: {
@@ -291,7 +291,7 @@ const cards: Record<string, Card> = {
     mastery: {
       baseCost: 2,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.15,
     }
   },
   campfire: {
@@ -335,9 +335,9 @@ const cards: Record<string, Card> = {
       cards: ['forest'],
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   pigPen: {
@@ -359,9 +359,9 @@ const cards: Record<string, Card> = {
     },
     cooldownMs: 5000,
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   carpenter: {
@@ -382,9 +382,9 @@ const cards: Record<string, Card> = {
       cost: 2,
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   lumbermill: {
@@ -408,9 +408,9 @@ const cards: Record<string, Card> = {
       cost: 0.5,
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.1,
     }
   },
   schoolHouse: {
@@ -432,9 +432,9 @@ const cards: Record<string, Card> = {
       resultingCard: 'peasant',
     },
     mastery: {
-      baseCost: 2,
+      baseCost: 1,
       growth: 2,
-      bonusPer: 0.05,
+      bonusPer: 0.25,
     }
   }
 };
