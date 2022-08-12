@@ -135,7 +135,7 @@ export default function GridMap() {
                 <div className="name">{card.name}</div>
                 <div className="status">
                   {card.isDisabled ? '(disabled)' : ''}
-                  {card.isExpiredAndReserved ? '(expired)' : ''}
+                  {card.isExpiredAndReserved ? '(reserved)' : ''}
                   {card.statusText ? card.statusText : ''}
                 </div>
                 <div className="ability">
