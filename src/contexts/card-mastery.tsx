@@ -72,7 +72,7 @@ export function CardMasteryProvider(props: Record<string, any>) {
   }
 
   function loadSaveData(data: any) {
-    if (typeof data.cardMasteries !== 'object') return false;
+    if (typeof data !== 'object' || typeof data.cardMasteries !== 'object') return false;
 
     const newMasteries: CardMasteries = {};
     Object.entries(data.cardMasteries).forEach(([id, cardsSacrified]) => {
