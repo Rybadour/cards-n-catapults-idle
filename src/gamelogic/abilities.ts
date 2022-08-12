@@ -266,25 +266,27 @@ function activateCard(
 ): boolean {
   if (card.produceCardEffect) {
     const pc = card.produceCardEffect;
-    const newCard = getRandomFromArray(pc.possibleCards);
+    const newCardId = getRandomFromArray(pc.possibleCards);
     let found = false;
     iterateGridShape(results.grid, x, y, pc.shape, (adjCard, ax, ay) => {
       if (found) return;
       if (adjCard) {
         // Only place cards into slots reserved for the new card
-        if (!adjCard.isExpiredAndReserved || adjCard.id !== newCard) {
+        if (!adjCard.isExpiredAndReserved || adjCard.id !== newCardId) {
           return;
         }
       }
 
       found = true;
-      results.grid[ay][ax] = createCard(cardsConfig[newCard], 1);
-      results.newCards.push(cardsConfig[newCard]);
+      const newCard = createCard(cardsConfig[newCardId], 1);
+      newCard.shouldBeReserved = adjCard?.shouldBeReserved ?? false;
+      results.grid[ay][ax] = newCard;
+      results.newCards.push(cardsConfig[newCardId]);
       results.anyChanged = true;
     });
     if (!found) {
-      results.inventoryDelta[newCard] = (results.inventoryDelta[newCard] ?? 0) + 1;
-      results.newCards.push(cardsConfig[newCard]);
+      results.inventoryDelta[newCardId] = (results.inventoryDelta[newCardId] ?? 0) + 1;
+      results.newCards.push(cardsConfig[newCardId]);
     }
     return true;
 
