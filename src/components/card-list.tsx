@@ -12,12 +12,7 @@ import { Card, CardType } from '../shared/types';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
 import { CardMasteryContext, getMasteryBonus } from '../contexts/card-mastery';
-
-const modalStyles = {
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-  },
-};
+import { STANDARD_MODAL_STYLE } from '../shared/constants';
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
@@ -62,7 +57,7 @@ export default function CardList() {
     <Modal
       isOpen={!!currentMasteryCard}
       onRequestClose={() => setCurrentMasteryCard(null)}
-      style={modalStyles}
+      style={STANDARD_MODAL_STYLE}
       contentLabel="Card Mastery"
       className="card-mastery-modal center-modal"
     >

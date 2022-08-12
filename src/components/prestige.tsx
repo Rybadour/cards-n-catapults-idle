@@ -1,15 +1,19 @@
-import { useCallback, useContext, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useContext, useEffect, useState } from "react";
+import ReactModal from "react-modal";
 import ReactTooltip from "react-tooltip";
 import cards from "../config/cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import { PrestigeContext } from "../contexts/prestige";
 import Icon from "../shared/components/icon";
+import { STANDARD_MODAL_STYLE } from "../shared/constants";
 import { RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 import './prestige.scss';
 
 export default function Prestige() {
   const prestige = useContext(PrestigeContext);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
 
   const onBuyPack = useCallback((pack) => {
     if (pack.remainingUpgrades.length > 0) {
@@ -36,7 +40,12 @@ export default function Prestige() {
 
     <div className="packs-and-upgrades">
       <div className="packs">
-        <h3>Packs</h3>
+        <h3>
+          <span>Packs</span>
+          <button className="no-style" onClick={() => setInfoModalOpen(true)}>
+            <FontAwesomeIcon icon={["far", "circle-question"]} size="lg" />
+          </button>
+        </h3>
         <div className="pack-list">
         {Object.values(prestige.packs).map(pack =>
           <div
@@ -93,6 +102,19 @@ export default function Prestige() {
         </div>
       </div>
     </div>
+    <ReactModal
+      isOpen={infoModalOpen}
+      onRequestClose={() => setInfoModalOpen(false)}
+      style={STANDARD_MODAL_STYLE}
+      contentLabel="Prestige Packs"
+      className="prestige-info-modal center-modal"
+    >
+      <h3>Prestige Packs</h3>
+
+      <p>A prestige pack is similar to a regular card pack except that there is a finite number of cards in it. The
+      cards have been shuffled so you will acquire them in a random order. You can also refund cards you find but it
+      puts the card back in the pack and shuffles it again.</p>
+    </ReactModal>
   </div>;
 }
 

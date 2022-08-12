@@ -6,12 +6,7 @@ import { formatNumber } from '../../shared/utils';
 import Icon from '../../shared/components/icon';
 import HelpModal from './help-modal';
 import OptionsModal from './options-modal';
-
-const modalStyles = {
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-  },
-};
+import { STANDARD_MODAL_STYLE } from '../../shared/constants';
 
 Modal.setAppElement('#root');
 
@@ -57,7 +52,7 @@ function Header() {
     <Modal
       isOpen={isHelpModalOpen}
       onRequestClose={() => setIsHelpModalOpen(false)}
-      style={modalStyles}
+      style={STANDARD_MODAL_STYLE}
       contentLabel="Help Tips"
       className="help-modal-content center-modal header-modal"
     >
@@ -66,7 +61,7 @@ function Header() {
     <Modal
       isOpen={isOptionsModalOpen}
       onRequestClose={() => setIsOptionsModalOpen(false)}
-      style={modalStyles}
+      style={STANDARD_MODAL_STYLE}
       contentLabel="Options"
       className="options-modal-content center-modal header-modal"
     >

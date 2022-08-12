@@ -60,3 +60,10 @@ a {
 button {
   cursor: pointer;
 }
+
+button.no-style {
+  appearance: none;
+  border: none;
+  background: none;
+  color: white;
+}
