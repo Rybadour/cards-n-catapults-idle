@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { grid } from "@mui/system";
 import { cloneDeep } from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
 import global from "../config/global";
@@ -79,17 +78,17 @@ export function SavingLoadingProvider(props: Record<string, any>) {
 
   useEffect(() => {
     if (dataToLoad) {
-      contextDataMap.prestige.loadSaveData(dataToLoad?.prestige);
+      prestige.loadSaveData(dataToLoad?.prestige);
     }
-  }, [contextDataMap.stats])
+  }, [stats])
 
   useEffect(() => {
     if (dataToLoad) {
-      contextDataMap.cards.loadSaveData(dataToLoad?.cards);
-      contextDataMap.grid.loadSaveData(dataToLoad?.grid);
+      cards.loadSaveData(dataToLoad?.cards);
+      grid.loadSaveData(dataToLoad?.grid);
       setDataToLoad(null);
     }
-  }, [contextDataMap.prestige]);
+  }, [prestige, cardMastery]);
 
   function save() {
     localStorage.setItem(AUTO_SAVE_KEY, getSaveData());
@@ -113,9 +112,7 @@ export function SavingLoadingProvider(props: Record<string, any>) {
   }
 
   function update(elapsed: number) {
-    if (!global.autoLoadEnabled) return;
-
-    if (!isLoadedFromAutoSave) {
+    if (global.autoLoadEnabled && !isLoadedFromAutoSave) {
       load();
       setIsLoadedFromAutoSave(true);
     }

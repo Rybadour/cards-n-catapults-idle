@@ -23,8 +23,8 @@ function HelpModal() {
     content: <>
       <h3>Food Drain</h3>
 
-      <p>You’ll find that most person cards (Beggars and Peasants) and some special cards will have a food drain stat.
-      This is the rate at which they eat food and it’s always listed as per second. Cards generally eat food that is
+      <p>You&apos;ll find that most person cards (Beggars and Peasants) and some special cards will have a food drain stat.
+      This is the rate at which they eat food and it&apos;s always listed as per second. Cards generally eat food that is
       adjacent to them (orthogonally) and will eat food from all those cards at an equal rate.</p>
 
       <p>Ex. In these screenshots we have a Beggar next to one food card and another Beggar surrounded by food cards.</p>
@@ -32,7 +32,7 @@ function HelpModal() {
       <img height="200" src="food-drain-screenshot1.png" />
 
       <p>A Beggar eats food at 0.2 units per second so in the first screenshot it will eat that food card at 0.2
-      units per second. In the second since it’s surrounded by 4 food cards each will be drained at <b>¼ the speed</b> or
+      units per second. In the second since it&apos;s surrounded by 4 food cards each will be drained at <b>¼ the speed</b> or
       0.05 units per second. This means that each food card will <b>last 4 times as long.</b></p>
     </>
   }, {
@@ -62,9 +62,9 @@ function HelpModal() {
     content: <>
       <h3>Bonuses</h3>
 
-      <p>Some cards mention "improving" other cards. This means to increase their production by that amount or to
+      <p>Some cards mention &quot;improving&quot; other cards. This means to increase their production by that amount or to
       speed up their abilities by that amount. Production bonuses are applied multiplicatively. You can tell if a
-      card is apply a bonus to another card by hovering over the bonus applying card. Cards that it's applying a
+      card is apply a bonus to another card by hovering over the bonus applying card. Cards that it&apos;s applying a
       bonus to will be highlighted green.</p>
     </>
   }, {
@@ -77,7 +77,7 @@ function HelpModal() {
       <p className="flow-around">Once unlocked each card in the standard grid can be upgraded permanently by sacrificing cards. To access
       the card mastery modal click the mastery button to the left of the card while hovering it.</p>
 
-      <p className="flow-around">Each mastery level increases the bonus to all the card’s abilities. This includes speeding up a card’s
+      <p className="flow-around">Each mastery level increases the bonus to all the card&apos;s abilities. This includes speeding up a card&apos;s
       cooldown, resource generation, food capacity and the bonuses it applies. It does not increase the amount
       of cards produced and does not reduce how much food a card consumes.</p>
 

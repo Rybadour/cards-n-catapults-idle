@@ -347,7 +347,7 @@ function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: nu
   for (let y = 0; y < grid.length; y++) {
     for (let x = 0; x < grid[y].length; x++) {
       if (grid[y][x]) {
-        callback(grid[y][x]!!, x, y);
+        callback(grid[y][x]!, x, y);
       }
     }
   }
@@ -401,7 +401,7 @@ function iterateGridShapeCards(
 ) {
   iterateGridShape(grid, x, y, shape, (card, ax, ay) => {
     if (card && !card.isExpiredAndReserved) {
-      callback(card!!, ax, ay);
+      callback(card!, ax, ay);
     }
   });
 }

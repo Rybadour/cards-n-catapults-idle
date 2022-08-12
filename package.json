@@ -12,7 +12,6 @@
     "deploy-prod": "gh-pages -d dist -a",
     "deploy-dev": "gh-pages -d dist -a -e dev",
     "deploy-as-version": "gh-pages -d dist -a -e \"0.1.0\"",
-
     "start": "npm run start-dev",
     "start-dev": "webpack serve --config=configs/webpack/dev.js",
     "test": "jest --coverage --watchAll --config=configs/jest.json"
@@ -39,6 +38,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "express": "^4.17.3",
     "file-loader": "^6.2.0",
     "gh-pages": "^3.2.3",

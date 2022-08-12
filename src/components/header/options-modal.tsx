@@ -17,9 +17,9 @@ function OptionsModal() {
 
   const onImport = useCallback(() => {
     savingLoading.attemptImportData(importData);
-  }, [savingLoading]);
+  }, [savingLoading, importData]);
   const onExport = useCallback(() => {
-    var saveData = savingLoading.getSaveData();
+    const saveData = savingLoading.getSaveData();
     setExportData(saveData);
     navigator.clipboard.writeText(saveData).then(function() {
       console.log('Async: Copying to clipboard was successful!');
@@ -35,7 +35,10 @@ function OptionsModal() {
     savingLoading.load();
   }, [savingLoading]);
   const onReset = useCallback(() => {
-    savingLoading.completeReset();
+    const codeWord = prompt("Are you sure!? Enter the word \"catapults\" to completely reset:");
+    if (codeWord === 'catapults') {
+      savingLoading.completeReset();
+    }
   }, [savingLoading]);
 
   const tabs: Tab[] = [{
@@ -44,7 +47,7 @@ function OptionsModal() {
       <h3>Saving and Loading Settings</h3>
       <label>
         <span>Auto-save every {AUTO_SAVE_TIME/1000} seconds?</span>
-        <input type="checkbox" checked={savingLoading.isAutoSaveEnabled} onChange={() => onToggleAutoSave()} />
+        <input type="checkbox" checked={savingLoading.isAutoSaveEnabled} onChange={onToggleAutoSave} />
       </label>
       {savingLoading.isAutoSaveEnabled ?
         <div>Next save in {formatNumber(savingLoading.autoSaveTime/1000, 0, 0)} seconds.</div> :
@@ -54,19 +57,19 @@ function OptionsModal() {
       <h3>Import/Export</h3>
       <div className="import">
         <input type="text" value={importData} onChange={(evt) => setImportData(evt.target.value)} />
-        <button onClick={() => onImport()}>Import</button>
+        <button onClick={onImport}>Import</button>
       </div>
       <div className="export">
         <input type="text" readOnly value={exportData} />
-        <button onClick={() => onExport()}>Export</button>
+        <button onClick={onExport}>Export</button>
         <span className={classNames("clipboard-badge", {show: exportData !== ''})}>Copied to Clipboard</span>
       </div>
 
       <h3>Manual controls</h3>
       <div className="save-buttons">
-        <button onClick={() => onSave()}>Save</button>
-        <button onClick={() => onLoad()}>Load</button>
-        <button onClick={() => onReset()}>Complete Reset</button>
+        <button onClick={onSave}>Save</button>
+        <button onClick={onLoad}>Load</button>
+        <button onClick={onReset}>Complete Reset</button>
       </div>
     </>
   }];

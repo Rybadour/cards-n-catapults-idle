@@ -110,7 +110,7 @@ function getSummary(upgrade: RealizedPrestigeUpgrade) {
   }
 
   if (upgrade.extraStartingCards) {
-    let extraCardsSummary = Object.entries(upgrade.extraStartingCards)
+    const extraCardsSummary = Object.entries(upgrade.extraStartingCards)
       .map(([c, amount]) => 
         '+' + (amount * upgrade.quantity) + ' ' + cards[c].name
       ).join(', ');

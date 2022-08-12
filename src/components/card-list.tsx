@@ -47,21 +47,16 @@ export default function CardList() {
       }))
       .filter(({cardType, cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>
-      <div className="category" key={cardType}>
-        <div className="header" onClick={() => onToggleCategory(cardType!!)}>
-          {closedCategories[cardType!!] ?
-            <FontAwesomeIcon icon="chevron-up" /> :
-            <FontAwesomeIcon icon="chevron-down" />
-          }
-          <span className="label">{cardType}</span>
-        </div>
-        <div className={classNames("card-list", {hidden: closedCategories[cardType!!]})}>
-          {cardList.map(card =>
-            <CardInInventory card={card} setMasteryCard={setCurrentMasteryCard} />
-          )}
-        </div>
-      </div>
-    )}
+        <CardCategory
+          key={cardType}
+          cardType={cardType!}
+          cardList={cardList}
+          isOpen={closedCategories[cardType!] ?? false}
+          onToggleCategory={onToggleCategory}
+          setCurrentMasteryCard={setCurrentMasteryCard}
+        />
+      )
+    }
     </div>
 
     <Modal
@@ -76,6 +71,34 @@ export default function CardList() {
   </div>;
 }
 
+type CardCategoryProps = {
+  cardType: CardType,
+  cardList: Card[],
+  isOpen: boolean,
+  onToggleCategory: (cardType: CardType) => void
+  setCurrentMasteryCard: (card: Card | null) => void,
+};
+function CardCategory(props: CardCategoryProps) {
+  const toggleCategory = useCallback(() => {
+    props.onToggleCategory(props.cardType);
+  }, [props.onToggleCategory, props.cardType]);
+
+  return <div className="category">
+    <div className="header" onClick={toggleCategory}>
+      {props.isOpen ?
+        <FontAwesomeIcon icon="chevron-up" /> :
+        <FontAwesomeIcon icon="chevron-down" />
+      }
+      <span className="label">{props.cardType}</span>
+    </div>
+    <div className={classNames("card-list", {hidden: props.isOpen})}>
+      {props.cardList.map(card =>
+        <CardInInventory key={card.id} card={card} setMasteryCard={props.setCurrentMasteryCard} />
+      )}
+    </div>
+  </div>
+}
+
 function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null) => void}) {
   const cards = useContext(CardsContext);
   const cardMastery = useContext(CardMasteryContext);
@@ -83,6 +106,10 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
   useEffect(() => {
     ReactTooltip.rebuild();
   }, [cardMastery]);
+
+  const onSetMasteryCard = useCallback(() => {
+    props.setMasteryCard(props.card);
+  }, [props.card, props.setMasteryCard]);
 
   const masteryBonus = getMasteryBonus(cardMastery.cardMasteries[props.card.id], props.card) - 1;
 
@@ -144,7 +171,7 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
               <Icon icon="progression" size="xs" />
             </span>
           }
-          onClick={() => props.setMasteryCard(props.card)}
+          onClick={onSetMasteryCard}
         />
       </CardButtons>
     </div>
@@ -152,12 +179,11 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
 }
 
 function CardMasteryModal(props: {card: Card | null}) {
-  const cards = useContext(CardsContext);
   const cardMastery = useContext(CardMasteryContext);
 
   const onSacrifice = useCallback((card: Card) => {
     cardMastery.sacrificeCard(card);
-  }, [cardMastery, cards]);
+  }, [cardMastery]);
 
   if (!props.card) return null;
 
@@ -174,6 +200,6 @@ function CardMasteryModal(props: {card: Card | null}) {
       <span>{mastery.currentCost}</span>
     </div>
     <div>+{masteryBonusPer}%</div>
-    <button onClick={() => onSacrifice(props.card!!)}>Sacrifice Card for Mastery Bonus</button>
+    <button onClick={() => onSacrifice(props.card!)}>Sacrifice Card for Mastery Bonus</button>
   </>;
 }

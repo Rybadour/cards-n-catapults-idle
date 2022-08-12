@@ -37,14 +37,14 @@ function Header() {
 
     <div className="prestige">
       {prestige.isMenuOpen ? <>
-        <button className="close-menu" onClick={() => onClosePrestigeMenu()}>
+        <button className="close-menu" onClick={onClosePrestigeMenu}>
           {prestige.isReseting ? 'Back to Grid and Reset' : 'Return To Grid'}
         </button>
       </> : <>
-        <button className="open-menu" onClick={() => onOpenPrestigeMenu()} data-tip="View Prestige Upgrades">
+        <button className="open-menu" onClick={onOpenPrestigeMenu} data-tip="View Prestige Upgrades">
           <Icon size="sm" icon="upgrade" />
         </button>
-        <button onClick={() => onPrestige()}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
+        <button onClick={onPrestige}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
         <span>Next at {formatNumber(prestige.nextRenownCost, 0, 0)} Renown</span>
       </>}
     </div>

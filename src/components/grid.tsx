@@ -25,27 +25,6 @@ export default function GridMap() {
   const prestige = useContext(PrestigeContext);
   const stats = useContext(StatsContext);
   const grid = useContext(GridContext);
-  const cards = useContext(CardsContext);
-
-  const addCard = useCallback((x: number, y: number) => {
-    if (cards.selectedCard == null || !cards.hasCard(cards.selectedCard)) {
-      return;
-    }
-
-    const quantity = cards.cards[cards.selectedCard.id]; 
-    const newCard = createCard(cards.selectedCard, quantity);
-    newCard.shouldBeReserved = true;
-    const oldCard = grid.replaceCard(x, y, newCard);
-    cards.replaceCard(oldCard);
-  }, [grid, cards]);
-
-  const returnCard = useCallback((evt, x: number, y: number, card: RealizedCard | null) => {
-    evt.preventDefault();
-    if (card) {
-      grid.returnCard(x, y);
-      cards.returnCard(card);
-    }
-  }, [grid, cards]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,7 +38,6 @@ export default function GridMap() {
     return () => clearInterval(interval);
   }, [grid, prestige, savingLoading]);
 
-
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
   const hoverCard = useCallback((card: RealizedCard | null) => {
@@ -68,16 +46,19 @@ export default function GridMap() {
     }
   }, []);
 
+  const leaveCard = useCallback(() => {
+    setMarks({});
+  }, []);
+
   return <div className='grid'>
     <div className='resources'>
       {Object.keys(stats.resources)
       .map(res => enumFromKey(ResourceType, res))
-      .filter(resource => resource)
-      .filter(resource => discovery.discoveredResources[resource!!])
+      .filter(resource => resource && discovery.discoveredResources[resource])
       .map(resource =>
         <Resource
           key={resource}
-          resource={resource!!}
+          resource={resource!}
           stats={stats}
         />
       )}
@@ -85,78 +66,123 @@ export default function GridMap() {
     <div className='grid-rows'>
     {grid.gridSpaces.map((gridRow, y) => 
       <div key={y} className='grid-row'>
-        {gridRow.map((card, x) => 
-          <div
-            key={x}
-            className={classNames('grid-space', {
-              card: !!card,
-              expired: card?.isExpiredAndReserved || card?.isDisabled,
-              'marked-exclusion': marks[`${x}:${y}`] == MarkType.Exclusion,
-              'marked-buff': marks[`${x}:${y}`] == MarkType.Buff,
-              'marked-associated': marks[`${x}:${y}`] == MarkType.Associated,
-            })}
-            onClick={() => addCard(x, y)}
-            onContextMenu={(evt) => returnCard(evt, x, y, card)}
-            onMouseEnter={() => hoverCard(card)}
-            onMouseLeave={() => setMarks({})}
-          >
-            {card ? <>
-              <div className="main-icon">
-                <Icon size="lg" icon={card?.icon} />
-              </div>
-              {card.isDisabled ? <div className="disabled-slash">
-                <FontAwesomeIcon icon="slash" size='3x' />
-              </div> : null}
-              {card.maxDurability ?
-                <ProgressBar 
-                  progress={(card.durability ?? 0)/card.maxDurability}
-                  noBorder
-                  color="#C22"
-                  height={6}
-                /> :
-                null
-              }
-              {card.cooldownMs ?
-                <ProgressBar
-                  progress={(card.cooldownMs-(card.timeLeftMs ?? 0))/card.cooldownMs}
-                  noBorder
-                  color="#72bcd4"
-                  height={6}
-                /> :
-                null
-              }
-              <div className="status-icon">
-                {card.statusIcon ?
-                  <Icon size="xs" icon={card.statusIcon} /> :
-                  null
-                }
-              </div>
-              <div className="details">
-                <div className="name">{card.name}</div>
-                <div className="status">
-                  {card.isDisabled ? '(disabled)' : ''}
-                  {card.isExpiredAndReserved ? '(reserved)' : ''}
-                  {card.statusText ? card.statusText : ''}
-                </div>
-                <div className="ability">
-                  {card.totalStrength && card.passive ? <>
-                    <Icon size="sm" icon={resourceIconMap[card.passive.resource]} />
-                    {formatNumber(card.totalStrength, 0, 2)}/s
-                  </> : null }
-                </div>
-                <div className="ability-cost">
-                  {card.totalCost && card.costPerSec ? <>
-                    <Icon size="sm" icon={resourceIconMap[card.costPerSec.resource]} />
-                    -{formatNumber(card.totalCost, 0, 1)}/s
-                  </> : null }
-                </div>
-              </div>
-            </> : null}
-          </div>
+        {gridRow.map((card, x) =>
+          <GridTile
+            key={`${x}:${y}`}
+            card={card}
+            x={x} y={y}
+            mark={marks[`${x}:${y}`]}
+            onHoverCard={hoverCard}
+            onLeaveCard={leaveCard}
+          />
         )}
       </div>
     )}
     </div>
+  </div>;
+}
+
+type GridTileProps = {
+  x: number, y: number,
+  card: RealizedCard | null,
+  mark: MarkType,
+  onHoverCard: (card: RealizedCard | null) => void,
+  onLeaveCard: () => void,
+};
+function GridTile(props: GridTileProps) {
+  const grid = useContext(GridContext);
+  const cards = useContext(CardsContext);
+
+  const addCard = useCallback(() => {
+    if (cards.selectedCard == null || !cards.hasCard(cards.selectedCard)) {
+      return;
+    }
+
+    const quantity = cards.cards[cards.selectedCard.id]; 
+    const newCard = createCard(cards.selectedCard, quantity);
+    newCard.shouldBeReserved = true;
+    const oldCard = grid.replaceCard(props.x, props.y, newCard);
+    cards.replaceCard(oldCard);
+  }, [grid, cards, props]);
+
+  const returnCard = useCallback((evt) => {
+    evt.preventDefault();
+    if (props.card) {
+      grid.returnCard(props.x, props.y);
+      cards.returnCard(props.card);
+    }
+  }, [grid, cards, props]);
+  
+  const hoverCard = useCallback(() => { 
+    props.onHoverCard(props.card);
+  }, [props]);
+
+  return <div
+    key={props.x}
+    className={classNames('grid-space', {
+      card: !!props.card,
+      expired: props.card?.isExpiredAndReserved || props.card?.isDisabled,
+      'marked-exclusion': props.mark == MarkType.Exclusion,
+      'marked-buff': props.mark == MarkType.Buff,
+      'marked-associated': props.mark == MarkType.Associated,
+    })}
+    onClick={addCard}
+    onContextMenu={returnCard}
+    onMouseEnter={hoverCard}
+    onMouseLeave={props.onLeaveCard}
+  >
+    {props.card ? <>
+      <div className="main-icon">
+        <Icon size="lg" icon={props.card?.icon} />
+      </div>
+      {props.card.isDisabled ? <div className="disabled-slash">
+        <FontAwesomeIcon icon="slash" size='3x' />
+      </div> : null}
+      {props.card.maxDurability ?
+        <ProgressBar 
+          progress={(props.card.durability ?? 0)/props.card.maxDurability}
+          noBorder
+          color="#C22"
+          height={6}
+        /> :
+        null
+      }
+      {props.card.cooldownMs ?
+        <ProgressBar
+          progress={(props.card.cooldownMs-(props.card.timeLeftMs ?? 0))/props.card.cooldownMs}
+          noBorder
+          color="#72bcd4"
+          height={6}
+        /> :
+        null
+      }
+      <div className="status-icon">
+        {props.card.statusIcon ?
+          <Icon size="xs" icon={props.card.statusIcon} /> :
+          null
+        }
+      </div>
+      <div className="details">
+        <div className="name">{props.card.name}</div>
+        <div className="status">
+          {props.card.isDisabled ? '(disabled)' : ''}
+          {props.card.isExpiredAndReserved ? '(reserved)' : ''}
+          {props.card.statusText ? props.card.statusText : ''}
+        </div>
+        <div className="ability">
+          {props.card.totalStrength && props.card.passive ? <>
+            <Icon size="sm" icon={resourceIconMap[props.card.passive.resource]} />
+            {formatNumber(props.card.totalStrength, 0, 2)}/s
+          </> : null }
+        </div>
+        <div className="ability-cost">
+          {props.card.totalCost && props.card.costPerSec ? <>
+            <Icon size="sm" icon={resourceIconMap[props.card.costPerSec.resource]} />
+            -{formatNumber(props.card.totalCost, 0, 1)}/s
+          </> : null }
+        </div>
+      </div>
+    </> : null}
   </div>;
 }
 
