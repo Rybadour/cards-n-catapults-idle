@@ -178,6 +178,7 @@ export type PrestigeUpgrade = {
   unlockedCardPack?: string,
   randomStartingCards?: {
     possibleCards: string[],
+    possibleCardRarity?: Rarity,
     amount: number,
     onlyIfDiscovered: boolean,
   },

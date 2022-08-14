@@ -1,5 +1,6 @@
-import { PrestigeUpgrade } from "../shared/types";
+import { PrestigeUpgrade, Rarity } from "../shared/types";
 import { formatNumber } from "../shared/utils";
+import cards from "./cards";
 
 export const PRESTIGE_BASE_COST = 100;
 export const PRESTIGE_COST_GROWTH = 1.1;
@@ -81,7 +82,8 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     description: 'Gives you one of the ultra rare cards you\'ve discovered on reset',
     summary: 'Ultra rare card on reset',
     randomStartingCards: {
-      possibleCards: ['lumberjack', 'schoolHouse', 'ambrosia'],
+      possibleCards: [],
+      possibleCardRarity: Rarity.UltraRare,
       amount: 1,
       onlyIfDiscovered: true,
     }
@@ -92,6 +94,12 @@ Object.keys(upgrades)
   .forEach((id) => {
     const upgrade = upgrades[id];
     upgrade.id = id;
+
+    if (upgrade.randomStartingCards && upgrade.randomStartingCards.possibleCardRarity) {
+      upgrade.randomStartingCards.possibleCards = Object.values(cards)
+        .filter(c => c.rarity == upgrade.randomStartingCards?.possibleCardRarity)
+        .map(c => c.id);
+    }
 
     function replaceInDescription(variable: string, value: string) {
       upgrade.description = upgrade.description.replaceAll(`{{${variable}}}`, value);

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
-import _, { cloneDeep, shuffle } from "lodash";
+import { cloneDeep, shuffle } from "lodash";
 
 import packsConfig from "../config/prestige-packs";
+import cardsConfig from "../config/cards";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
 import { PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import upgradesConfig, { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
@@ -158,7 +159,7 @@ export function PrestigeProvider(props: Record<string, any>) {
     const newUpgrades = {...upgrades[pack.id]};
     pack.remainingUpgrades.push(upgrade.id);
 
-    let newUpgrade = newUpgrades[upgrade.id];
+    const newUpgrade = newUpgrades[upgrade.id];
     if (!newUpgrade) {
       return;
     } else {
@@ -329,9 +330,12 @@ export function PrestigeProvider(props: Record<string, any>) {
       Object.values(upgradesInPack).forEach(upgrade => {
         using(upgrade.randomStartingCards, (rsc) => {
           for (let i = 0; i < rsc.amount; ++i) {
-            const possibleCards = rsc.onlyIfDiscovered ?
-              rsc.possibleCards.filter(c => discovery.discoveredCards[c]) :
-              rsc.possibleCards;
+            let possibleCards = rsc.possibleCards;
+
+            if (rsc.onlyIfDiscovered) {
+              possibleCards = possibleCards.filter(c => discovery.discoveredCards[c]);
+            }
+
             if (possibleCards.length > 0) {
               const card = getRandomFromArray(possibleCards);
               newEffects.extraStartCards[card] = (newEffects.extraStartCards[card] ?? 0) + 1;
