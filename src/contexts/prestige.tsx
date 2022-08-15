@@ -3,10 +3,9 @@ import { createContext, useContext, useState } from "react";
 import { cloneDeep, shuffle } from "lodash";
 
 import packsConfig from "../config/prestige-packs";
-import cardsConfig from "../config/cards";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
 import { PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
-import upgradesConfig, { PRESTIGE_BASE_COST, PRESTIGE_COST_GROWTH, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
+import upgradesConfig, { PRESTIGE_COST, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
 import global from "../config/global";
 import { StatsContext } from "./stats";
 import { GridContext } from "./grid";
@@ -58,7 +57,7 @@ export type PrestigeContext = {
 const defaultContext: PrestigeContext = {
   prestigePoints: global.startingPrestige,
   nextPoints: 0,
-  nextRenownCost: PRESTIGE_BASE_COST,
+  nextRenownCost: PRESTIGE_COST.base,
   upgrades: cloneDeep(defaultUpgrades),
   packs: cloneDeep(realizedPacks),
   isMenuOpen: false,
@@ -74,10 +73,6 @@ const defaultContext: PrestigeContext = {
   loadSaveData: (data) => false,
   completeReset: () => {},
 };
-
-const BUFFER = 100;
-const FACTOR = 5;
-const EXP = 3;
 
 export const PrestigeContext = createContext(defaultContext);
 
@@ -107,7 +102,7 @@ export function PrestigeProvider(props: Record<string, any>) {
 
     setPoints(prestigePoints + nextPoints);
     setNextPoints(0);
-    setNextRenownCost(PRESTIGE_BASE_COST);
+    setNextRenownCost(PRESTIGE_COST.base);
     setIsMenuOpen(true);
     setIsReseting(true);
     return true;
@@ -304,10 +299,12 @@ export function PrestigeProvider(props: Record<string, any>) {
   }
 
   function getPrestigePointsFromRenown(renown: number) {
-    return Math.floor(Math.pow((renown-BUFFER)*FACTOR, 1/EXP));
+    const {base, growthFactor, growthExp} = PRESTIGE_COST;
+    return Math.floor(Math.pow((renown-base)*growthFactor, 1/growthExp));
   }
   function getRenownFromPrestigePoints(pp: number) {
-    return Math.floor(Math.pow(pp, EXP)/FACTOR + BUFFER);
+    const {base, growthFactor, growthExp} = PRESTIGE_COST;
+    return Math.floor(Math.pow(pp, growthExp)/growthFactor + base);
   }
   
   function applyUpgrade(effects: PrestigeEffects, upgrade: PrestigeUpgrade, quantity: number) {

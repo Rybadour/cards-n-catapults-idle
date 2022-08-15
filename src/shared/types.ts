@@ -1,5 +1,3 @@
-import cards from "../config/cards";
-
 export enum CardType {
   Building = "Building",
   Food = "Food",

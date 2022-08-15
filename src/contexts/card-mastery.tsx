@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { omit } from "lodash";
 import { createContext, useContext, useState } from "react";
 import cardsConfig from "../config/cards";
 import { Card, CardId } from "../shared/types";
