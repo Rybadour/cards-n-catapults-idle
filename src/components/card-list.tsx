@@ -125,6 +125,10 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
       <div className="description">{props.card.description}</div>
 
       <div className="stats">
+        <div className="tier" data-tip="Tier" data-offset="{'bottom': -5}">
+          <Icon size="sm" icon="round-star" />
+          <span className="value">{props.card.tier}</span>
+        </div>
         {props.card.maxDurability ?
           <div className="stat" data-tip="Food capacity" data-offset="{'bottom': -5}">
             <span>{props.card.maxDurability}</span>
@@ -154,10 +158,6 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
           </div> :
           null
         }
-        <div className="tier" data-tip="Tier" data-offset="{'bottom': -5}">
-          <Icon size="sm" icon="round-star" />
-          <span className="value">{props.card.tier}</span>
-        </div>
       </div>
       <CardButtons width={46}>
         <CardButton

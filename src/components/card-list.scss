@@ -66,7 +66,7 @@ $card-height: 220px;
   top: 0;
   left: 0;
   width: $card-width;
-  height: $card-height;
+  min-height: $card-height;
   color: white;
   background-color: #555;
   padding: 5px;
@@ -74,6 +74,9 @@ $card-height: 220px;
   border-radius: 5px;
   box-sizing: border-box;
   border: 2px solid #555;
+  display: flex;
+  flex-direction: column;
+  grid-gap: 20px;
 
   &:hover {
     background-color: #666;
@@ -98,7 +101,6 @@ $card-height: 220px;
     display: flex;
     grid-gap: 10px;
     align-items: center;
-    margin-bottom: 10px;
     padding-right: 3px;
 
     .name {
@@ -110,38 +112,13 @@ $card-height: 220px;
     }
   }
 
-  .tier {
-    position: relative;
-    width: 26px;
-    height: 26px;
-
-    .icon {
-      width: 100%;
-      filter: brightness(0.8);
-    }
-
-    .value {
-      display: inline-block;
-      width: 100%;
-      position: absolute;
-      top: 8px;
-      left: 0;
-      color: black;
-      font-weight: bold;
-      text-align: center;
-    }
-  }
-
   .description {
-    margin-top: 20px;
     font-size: 16px;
     padding: 0 5px;
   }
 
   .stats {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
+    margin-top: auto;
     display: flex;
     grid-gap: 10px;
     flex-wrap: wrap;
@@ -156,6 +133,28 @@ $card-height: 220px;
 
       .icon {
         margin-left: 6px;
+      }
+    }
+
+    .tier {
+      position: relative;
+      width: 26px;
+      height: 26px;
+
+      .icon {
+        width: 100%;
+        filter: brightness(0.8);
+      }
+
+      .value {
+        display: inline-block;
+        width: 100%;
+        position: absolute;
+        top: 8px;
+        left: 0;
+        color: black;
+        font-weight: bold;
+        text-align: center;
       }
     }
   }
