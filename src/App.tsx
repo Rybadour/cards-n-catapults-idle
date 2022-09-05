@@ -15,9 +15,11 @@ import Prestige from './components/prestige';
 import ReactTooltip from 'react-tooltip';
 import { SavingLoadingProvider } from './contexts/saving-loading';
 import { CardMasteryProvider } from './contexts/card-mastery';
+import { RecoilRoot } from 'recoil';
 
 function App() {
   return (
+    <RecoilRoot>
     <DiscoveryProvider>
     <StatsProvider>
     <CardsProvider>
@@ -48,6 +50,7 @@ function App() {
     </CardsProvider>
     </StatsProvider>
     </DiscoveryProvider>
+    </RecoilRoot>
   );
 }
 

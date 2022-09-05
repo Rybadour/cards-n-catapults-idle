@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import { useCallback, useContext } from 'react';
+import { useRecoilValue } from 'recoil';
+import { discoveredCardsAtom } from '../atoms/discover';
 
 import { CardPacksContext } from '../contexts/card-packs';
 import { DiscoveryContext } from '../contexts/discovery';
@@ -14,6 +16,7 @@ export default function CardPacks() {
   const cardPacks = useContext(CardPacksContext);
   const stats = useContext(StatsContext);
   const discovery = useContext(DiscoveryContext);
+  const discoveredCards = useRecoilValue(discoveredCardsAtom);
 
   const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
     cardPacks.buyPack(cardPack);
@@ -39,14 +42,14 @@ export default function CardPacks() {
           {cardPack.possibleThings.map(({thing: card}) => 
             <div
               className={classNames("possible-card", {
-                discovered: discovery.discoveredCards[card.id],
+                discovered: discoveredCards[card.id],
                 'rare': card.rarity == Rarity.Rare,
                 'ultra-rare': card.rarity == Rarity.UltraRare,
               })}
               key={card.id}
-              data-tip={discovery.discoveredCards[card.id] ? card.name : "Undiscovered " + card.rarity}
+              data-tip={discoveredCards[card.id] ? card.name : "Undiscovered " + card.rarity}
             >
-              {discovery.discoveredCards[card.id] ? 
+              {discoveredCards[card.id] ? 
                 <Icon size="xs" icon={card.icon} /> :
                 <FontAwesomeIcon icon="question" />
               }

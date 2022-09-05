@@ -5,11 +5,12 @@ import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelo
 import { StatsContext } from "./stats";
 import { CardsContext } from "./cards";
 import cardsConfig from "../config/cards";
-import { DiscoveryContext } from "./discovery";
 import _, { cloneDeep } from "lodash";
 import { createCard } from "../gamelogic/grid-cards";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { CardMasteryContext } from "./card-mastery";
+import { useRecoilConduit } from "../shared/recoil-extensions";
+import { discoverCardsAction } from "../atoms/discover";
 
 const width = 5;
 const height = 5;
@@ -41,7 +42,7 @@ const defaultContext: GridContext = {
 export const GridContext = createContext(defaultContext);
 
 export function GridProvider(props: Record<string, any>) {
-  const discovery = useContext(DiscoveryContext);
+  const discoverCards = useRecoilConduit(discoverCardsAction);
   const stats = useContext(StatsContext);
   const cards = useContext(CardsContext);
   const cardMastery = useContext(CardMasteryContext);
@@ -52,7 +53,7 @@ export function GridProvider(props: Record<string, any>) {
     const results = updateGrid(gridSpaces, stats.resources, cards.cards, prestigeEffects, cardMastery.cardMasteries, elapsed);
 
     if (results.newCards.length > 0) {
-      discovery.discoverCards(results.newCards);
+      discoverCards(results.newCards);
     }
 
     let totalResults: UpdateGridTotalsResults | null = null;

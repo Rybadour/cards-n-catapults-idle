@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useContext, useState } from "react";
+import { discoverCardsAction } from "../atoms/discover";
 import global from "../config/global";
+import { useRecoilConduit } from "../shared/recoil-extensions";
 import { Card, CardId, PrestigeEffects, RealizedCard } from "../shared/types";
 import { DiscoveryContext } from "./discovery";
 
@@ -37,6 +39,7 @@ const defaultContext: CardsContext = {
 export const CardsContext = createContext(defaultContext);
 
 export function CardsProvider(props: Record<string, any>) {
+  const discoverCards = useRecoilConduit(discoverCardsAction);
   const discovery = useContext(DiscoveryContext);
   const [cards, setCards] = useState(defaultContext.cards);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
@@ -102,7 +105,7 @@ export function CardsProvider(props: Record<string, any>) {
   }
 
   function drawCards(cardsToDraw: Card[]) {
-    discovery.discoverCards(cardsToDraw);
+    discoverCards(cardsToDraw);
 
     const newCards = { ...cards };
     cardsToDraw.forEach(card => {
