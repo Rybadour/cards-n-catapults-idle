@@ -5,7 +5,6 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import cardsConfig from '../config/cards';
 import { CardsContext } from '../contexts/cards';
-import { DiscoveryContext } from '../contexts/discovery';
 import { CardButton, CardButtons } from '../shared/components/card-buttons';
 import Icon from '../shared/components/icon';
 import { Card, CardType } from '../shared/types';
@@ -13,11 +12,13 @@ import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
 import { CardMasteryContext, getMasteryBonus } from '../contexts/card-mastery';
 import { STANDARD_MODAL_STYLE } from '../shared/constants';
+import { useRecoilValue } from 'recoil';
+import { cardsDiscoveredThisPrestigeAtom } from '../atoms/discover';
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
-  const discovery = useContext(DiscoveryContext);
+  const cardsDiscoveredThisPrestige = useRecoilValue(cardsDiscoveredThisPrestigeAtom);
 
   const onToggleCategory = useCallback((cardType: CardType) => {
     const newClosedCategories = { ...closedCategories };
@@ -27,7 +28,7 @@ export default function CardList() {
 
   useEffect(() => {
     ReactTooltip.rebuild();
-  }, [discovery]);
+  }, [cardsDiscoveredThisPrestige]);
 
   return <div className="card-inventory">
     <div className="title">Your Cards</div>
@@ -38,7 +39,7 @@ export default function CardList() {
       .map(cardType => ({
         cardType,
         cardList: Object.values(cardsConfig)
-          .filter(card => discovery.cardsDiscoveredThisPrestige[card.id] && card.type == cardType)
+          .filter(card => cardsDiscoveredThisPrestige[card.id] && card.type == cardType)
       }))
       .filter(({cardType, cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>
