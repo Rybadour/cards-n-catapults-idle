@@ -333,6 +333,7 @@ function activateCard(
     if (!found && cards[convert.targetCard] > 0) {
       results.inventoryDelta[convert.targetCard] = (results.inventoryDelta[convert.targetCard] ?? 0) - 1;
       results.inventoryDelta[convert.resultingCard] = (results.inventoryDelta[convert.resultingCard] ?? 0) + 1;
+      results.newCards.push(cardsConfig[convert.resultingCard]);
       results.anyChanged = true;
       return true;
     }
