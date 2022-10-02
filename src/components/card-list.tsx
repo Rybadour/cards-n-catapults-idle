@@ -13,11 +13,12 @@ import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
 import { CardMasteryContext, getMasteryBonus } from '../contexts/card-mastery';
 import { STANDARD_MODAL_STYLE } from '../shared/constants';
+import useStore from '../store';
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
-  const discovery = useContext(DiscoveryContext);
+  const cardsDiscovered = useStore(s => s.cardsDiscoveredThisPrestige);
 
   const onToggleCategory = useCallback((cardType: CardType) => {
     const newClosedCategories = { ...closedCategories };
@@ -27,7 +28,7 @@ export default function CardList() {
 
   useEffect(() => {
     ReactTooltip.rebuild();
-  }, [discovery]);
+  }, [cardsDiscovered]);
 
   return <div className="card-inventory">
     <div className="title">Your Cards</div>
@@ -38,7 +39,7 @@ export default function CardList() {
       .map(cardType => ({
         cardType,
         cardList: Object.values(cardsConfig)
-          .filter(card => discovery.cardsDiscoveredThisPrestige[card.id] && card.type == cardType)
+          .filter(card => cardsDiscovered[card.id] && card.type == cardType)
       }))
       .filter(({cardType, cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>
