@@ -1,8 +1,9 @@
-import { StateCreator } from "zustand";
+import { createLens } from "@dhmk/zustand-lens";
 
 import global from "../config/global";
-import { Card, PrestigeEffects, ResourceType } from "../shared/types";
+import { Card, MyCreateLens, PrestigeEffects, ResourceType } from "../shared/types";
 import cardPacks from "../config/card-packs";
+import { FullStore } from ".";
 
 export interface DiscoverySlice {
   discoveredCards: Record<string, boolean>,
@@ -27,39 +28,42 @@ const initialCardPacks: DiscoverySlice['discoveredCardPacks'] = {};
 addToDiscoverMap(initialCardPacks, global.unlockedPacks);
 addToDiscoverMap(initialCardPacks, Object.keys(cardPacks).filter(cp => cardPacks[cp].unlocked));
 
-const createDiscoverySlice: StateCreator<
-  DiscoverySlice,
-  [],
-  [],
-  DiscoverySlice
-> = (set, get) => ({
-  discoveredCards: initialCards,
-  cardsDiscoveredThisPrestige: initialCardsThisPrestige,
-  discoveredCardPacks: initialCardPacks,
-  discoveredResources: {
-    [ResourceType.Gold]: true,
-  },
+const KEY = "discovery";
+const createDiscoveryLens: MyCreateLens<FullStore, DiscoverySlice, []> = (set, get) => {
+  const [_set, _get] = createLens(set, get, KEY);
+  return {
+    key: KEY,
+    slice: {
+      discoveredCards: initialCards,
+      cardsDiscoveredThisPrestige: initialCardsThisPrestige,
+      discoveredCardPacks: initialCardPacks,
+      discoveredResources: {
+        [ResourceType.Gold]: true,
+      },
 
-  discoverCards: (cards) => {
-    if (cards.length <= 0) return;
+      discoverCards: (cards) => {
+        if (cards.length <= 0) return;
 
-    const cardIds = cards.map(c => c.id);
+        const cardIds = cards.map(c => c.id);
 
-    const newDiscovered = {...get().discoverCards};
-    addToDiscoverMap(newDiscovered, cardIds);
-    set(state => ({discoveredCards: newDiscovered}));
+        const newDiscovered = {..._get().discoverCards};
+        addToDiscoverMap(newDiscovered, cardIds);
+        _set(state => ({discoveredCards: newDiscovered}));
 
-    const newDiscoveredThisPrestige = {...get().cardsDiscoveredThisPrestige};
-    addToDiscoverMap(newDiscoveredThisPrestige, cardIds);
-    set(state => ({cardsDiscoveredThisPrestige: newDiscoveredThisPrestige}));
-  },
+        const newDiscoveredThisPrestige = {..._get().cardsDiscoveredThisPrestige};
+        addToDiscoverMap(newDiscoveredThisPrestige, cardIds);
+        _set(state => ({cardsDiscoveredThisPrestige: newDiscoveredThisPrestige}));
+      },
 
-  discoverResources: (resources) => {},
-  prestigeReset: (startingCards, prestigeEffects) => {},
-  prestigeUpdate: (effects) => {},
-  getSaveData: () => ({}),
-  loadSaveData: (data) => false,
-})
+      discoverResources: (resources) => {console.log('fuck')},
+      prestigeReset: (startingCards, prestigeEffects) => {console.log('fuck')},
+      prestigeUpdate: (effects) => {console.log('fuck')},
+      getSaveData: () => ({}),
+      loadSaveData: (data) => false,
+    }
+  };
+};
+    
 
 function addToDiscoverMap<K extends string | symbol>(map: Record<K, boolean>, keys: K[]) {
   keys.forEach(k => {
@@ -67,4 +71,4 @@ function addToDiscoverMap<K extends string | symbol>(map: Record<K, boolean>, ke
   });
 }
 
-export default createDiscoverySlice;
+export default createDiscoveryLens;

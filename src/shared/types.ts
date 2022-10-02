@@ -1,3 +1,5 @@
+import { StoreApi } from "zustand";
+
 export enum CardType {
   Building = "Building",
   Food = "Food",
@@ -220,3 +222,5 @@ export type RealizedPrestigePack = PrestigePack & {
   numBought: number,
   remainingUpgrades: string[],
 };
+
+export type MyCreateLens<G, S extends G[keyof G], A extends any[]> = (set: StoreApi<G>['setState'], get: StoreApi<G>['getState'], ...args: A) => {key: string, slice: S}
