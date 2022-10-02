@@ -26,7 +26,11 @@ export default function GridMap() {
   const discovery = useContext(DiscoveryContext);
   const savingLoading = useContext(SavingLoadingContext);
   const prestige = useContext(PrestigeContext);
-  const stats = useContext(StatsContext);
+  
+  const {resources, useResource} = useStore(s => ({
+    resources: s.stats.resources,
+    useResource: s.stats.useResource,
+  }), shallow);
   
   const gridSpaces = useStore(s => s.grid.gridSpaces);
 
@@ -37,10 +41,12 @@ export default function GridMap() {
       //grid.update(elapsed);
       prestige.update();
       savingLoading.update(elapsed);
+
+      useResource(ResourceType.Gold, -10);
     }, 100);
 
     return () => clearInterval(interval);
-  }, [stats, prestige, savingLoading]);
+  }, [useResource, prestige, savingLoading]);
 
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
@@ -56,14 +62,13 @@ export default function GridMap() {
 
   return <div className='grid'>
     <div className='resources'>
-      {Object.keys(stats.resources)
+      {Object.keys(resources)
       .map(res => enumFromKey(ResourceType, res))
       .filter(resource => resource && discovery.discoveredResources[resource])
       .map(resource =>
         <Resource
           key={resource}
           resource={resource!}
-          stats={stats}
         />
       )}
     </div>
@@ -197,13 +202,19 @@ function GridTile(props: GridTileProps) {
   </div>;
 }
 
-function Resource(props: {resource: ResourceType, stats: StatsContext}) {
-  const prestigeBonus = (props.resource === ResourceType.Gold ? props.stats.prestigeEffects.bonuses.goldGain : 1);
+function Resource(props: {resource: ResourceType}) {
+  const {resources, resourcesPerSec, prestigeEffects} = useStore(s => ({
+    resources: s.stats.resources,
+    resourcesPerSec: s.stats.resourcesPerSec,
+    prestigeEffects: s.stats.prestigeEffects,
+  }), shallow);
+
+  const prestigeBonus = (props.resource === ResourceType.Gold ? prestigeEffects.bonuses.goldGain : 1);
   return <div className="resource" data-tip={props.resource}>
     <Icon size="md" icon={resourceIconMap[props.resource]} />
     <div className="amounts">
-      <div className='total'>{formatNumber(props.stats.resources[props.resource], 0, 0)}</div>
-      <div className='per-sec'>{formatNumber(props.stats.resourcesPerSec[props.resource] * prestigeBonus, 0, 1)}/s</div>
+      <div className='total'>{formatNumber(resources[props.resource], 0, 0)}</div>
+      <div className='per-sec'>{formatNumber(resourcesPerSec[props.resource] * prestigeBonus, 0, 1)}/s</div>
     </div>
   </div>;
 }

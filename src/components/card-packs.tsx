@@ -4,8 +4,6 @@ import { useCallback, useContext } from 'react';
 import shallow from 'zustand/shallow';
 
 import { CardPacksContext } from '../contexts/card-packs';
-import { DiscoveryContext } from '../contexts/discovery';
-import { StatsContext } from '../contexts/stats';
 import Icon from '../shared/components/icon';
 import { Rarity, RealizedCardPack } from '../shared/types';
 import { formatNumber } from '../shared/utils';
@@ -14,20 +12,20 @@ import './card-packs.scss';
 
 export default function CardPacks() {
   const cp = useContext(CardPacksContext);
-  const stats = useContext(StatsContext);
+  //const stats = useContext(StatsContext);
   
-  const cardPacks = useStore(s => s.cardPacks.cardPacks, shallow);
-  const buyPack = useStore(s => s.cardPacks.buyPack, shallow);
-  const discoveredCardPacks = useStore(s => s.discovery.discoveredCardPacks, shallow);
-  const discoveredCards = useStore(s => s.discovery.discoveredCards, shallow);
+  const cardPacks = useStore(s => s.cardPacks.cardPacks);
+  const buyPack = useStore(s => s.cardPacks.buyPack);
+  const discoveredCardPacks = useStore(s => s.discovery.discoveredCardPacks);
+  const discoveredCards = useStore(s => s.discovery.discoveredCards);
 
   const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
     buyPack(cardPack);
-  }, [cardPacks, stats]);
+  }, [cardPacks]);
 
   const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
     cp.buyMaxPack(cardPack);
-  }, [cardPacks, stats]);
+  }, [cardPacks]);
 
   return <div className="card-packs">
     <h4>Card Packs</h4>

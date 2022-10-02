@@ -10,6 +10,7 @@ import { getExponentialValue } from "../shared/utils";
 import { FullStore } from ".";
 import { CardsSlice } from "./cards";
 import { DEFAULT_EFFECTS } from "../shared/constants";
+import { StatsSlice } from "./stats";
 
 export interface CardPacksSlice {
   cardPacks: Record<string, RealizedCardPack>,
@@ -31,16 +32,16 @@ Object.values(cardPacksConfig).forEach(cardPack => {
 });
 
 const KEY = 'cardPacks';
-const createCardPacksLens: MyCreateLens<FullStore, CardPacksSlice, [CardsSlice]> = (set, get, cards) => {
+const createCardPacksLens: MyCreateLens<FullStore, CardPacksSlice, [StatsSlice, CardsSlice]> = (set, get, stats, cards) => {
   const [_set, _get] = createLens(set, get, KEY);
   return {
     key: KEY,
     slice: {
       cardPacks: cloneDeep(realizedCardPacks),
       buyPack: (cardPack) => {
-        //if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
+        if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
 
-        //stats.useResource(ResourceType.Gold, cardPack.cost);
+        stats.useResource(ResourceType.Gold, cardPack.cost);
 
         const cardsFromPack = generateFromPack(cardPack);
         cards.drawCards(cardsFromPack);
