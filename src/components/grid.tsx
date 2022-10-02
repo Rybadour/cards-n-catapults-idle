@@ -16,6 +16,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PrestigeContext } from '../contexts/prestige';
 import Icon from '../shared/components/icon';
 import { SavingLoadingContext } from '../contexts/saving-loading';
+import useStore from '../store';
+import { CardContent } from '@mui/material';
+import shallow from 'zustand/shallow';
 
 let lastTime = Date.now();
 
@@ -24,19 +27,20 @@ export default function GridMap() {
   const savingLoading = useContext(SavingLoadingContext);
   const prestige = useContext(PrestigeContext);
   const stats = useContext(StatsContext);
-  const grid = useContext(GridContext);
+  
+  const gridSpaces = useStore(s => s.grid.gridSpaces);
 
   useEffect(() => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - lastTime;
       lastTime = Date.now();
-      grid.update(elapsed);
+      //grid.update(elapsed);
       prestige.update();
       savingLoading.update(elapsed);
     }, 100);
 
     return () => clearInterval(interval);
-  }, [grid, stats, prestige, savingLoading]);
+  }, [stats, prestige, savingLoading]);
 
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
@@ -64,7 +68,7 @@ export default function GridMap() {
       )}
     </div>
     <div className='grid-rows'>
-    {grid.gridSpaces.map((gridRow, y) => 
+    {gridSpaces.map((gridRow, y) => 
       <div key={y} className='grid-row'>
         {gridRow.map((card, x) =>
           <GridTile
@@ -91,25 +95,32 @@ type GridTileProps = {
 };
 function GridTile(props: GridTileProps) {
   const grid = useContext(GridContext);
-  const cards = useContext(CardsContext);
+  const c = useContext(CardsContext);
+
+  const gridSpaces = useStore(s => s.grid.gridSpaces);
+  const replaceCardAction = useStore(s => s.grid.replaceCard);
+
+  const {cards, selectedCard} = useStore(s => ({
+    cards: s.cards.cards,
+    selectedCard: s.cards.selectedCard
+  }), shallow);
 
   const addCard = useCallback(() => {
-    if (cards.selectedCard == null || !cards.hasCard(cards.selectedCard)) {
+    if (selectedCard == null || (cards[selectedCard.id] ?? 0) <= 0) {
       return;
     }
 
-    const quantity = cards.cards[cards.selectedCard.id]; 
-    const newCard = createCard(cards.selectedCard, quantity);
+    const quantity = cards[selectedCard.id]; 
+    const newCard = createCard(selectedCard, quantity);
     newCard.shouldBeReserved = true;
-    const oldCard = grid.replaceCard(props.x, props.y, newCard);
-    cards.replaceCard(oldCard);
-  }, [grid, cards, props]);
+    replaceCardAction(props.x, props.y, newCard);
+  }, [replaceCardAction, cards, selectedCard, props]);
 
   const returnCard = useCallback((evt) => {
     evt.preventDefault();
     if (props.card) {
       grid.returnCard(props.x, props.y);
-      cards.returnCard(props.card);
+      c.returnCard(props.card);
     }
   }, [grid, cards, props]);
   

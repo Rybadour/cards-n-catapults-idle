@@ -3,9 +3,9 @@ import Modal from 'react-modal';
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
+import shallow from 'zustand/shallow';
+
 import cardsConfig from '../config/cards';
-import { CardsContext } from '../contexts/cards';
-import { DiscoveryContext } from '../contexts/discovery';
 import { CardButton, CardButtons } from '../shared/components/card-buttons';
 import Icon from '../shared/components/icon';
 import { Card, CardType } from '../shared/types';
@@ -18,7 +18,8 @@ import useStore from '../store';
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
-  const cardsDiscovered = useStore(s => s.cardsDiscoveredThisPrestige);
+  const cardsDiscovered = useStore(s => {
+    return s.discovery.cardsDiscoveredThisPrestige}, shallow);
 
   const onToggleCategory = useCallback((cardType: CardType) => {
     const newClosedCategories = { ...closedCategories };
@@ -96,7 +97,9 @@ function CardCategory(props: CardCategoryProps) {
 }
 
 function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null) => void}) {
-  const cards = useContext(CardsContext);
+  const cards = useStore(s => s.cards.cards);
+  const selectedCard = useStore(s => s.cards.selectedCard);
+  const setSelectedCard = useStore(s => s.cards.setSelectedCard);
   const cardMastery = useContext(CardMasteryContext);
 
   useEffect(() => {
@@ -112,15 +115,15 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
   return <div className="card-container" key={props.card.id}>
     <div
       className={classNames("card", {
-        selected: props.card === cards.selectedCard,
-        empty: (cards.cards[props.card.id] ?? 0) <= 0,
+        selected: props.card === selectedCard,
+        empty: (cards[props.card.id] ?? 0) <= 0,
       })}
-      onClick={() => cards.setSelectedCard(props.card)}
+      onClick={() => setSelectedCard(props.card)}
     >
       <div className="title">
         <Icon size="sm" icon={props.card.icon} />
         <span className="name">{props.card.name}</span>
-        <span className="amount">{formatNumber(cards.cards[props.card.id] ?? 0, 0, 1)}</span>
+        <span className="amount">{formatNumber(cards[props.card.id] ?? 0, 0, 1)}</span>
       </div>
 
       <div className="description">{props.card.description}</div>

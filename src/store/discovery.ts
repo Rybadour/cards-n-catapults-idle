@@ -46,13 +46,13 @@ const createDiscoveryLens: MyCreateLens<FullStore, DiscoverySlice, []> = (set, g
 
         const cardIds = cards.map(c => c.id);
 
-        const newDiscovered = {..._get().discoverCards};
+        const newDiscovered = {..._get().discoveredCards};
         addToDiscoverMap(newDiscovered, cardIds);
-        _set(state => ({discoveredCards: newDiscovered}));
+        _set({discoveredCards: newDiscovered});
 
         const newDiscoveredThisPrestige = {..._get().cardsDiscoveredThisPrestige};
         addToDiscoverMap(newDiscoveredThisPrestige, cardIds);
-        _set(state => ({cardsDiscoveredThisPrestige: newDiscoveredThisPrestige}));
+        _set({cardsDiscoveredThisPrestige: newDiscoveredThisPrestige});
       },
 
       discoverResources: (resources) => {console.log('fuck')},

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import { useCallback, useContext } from 'react';
+import shallow from 'zustand/shallow';
 
 import { CardPacksContext } from '../contexts/card-packs';
 import { DiscoveryContext } from '../contexts/discovery';
@@ -8,26 +9,31 @@ import { StatsContext } from '../contexts/stats';
 import Icon from '../shared/components/icon';
 import { Rarity, RealizedCardPack } from '../shared/types';
 import { formatNumber } from '../shared/utils';
+import useStore from '../store';
 import './card-packs.scss';
 
 export default function CardPacks() {
-  const cardPacks = useContext(CardPacksContext);
+  const cp = useContext(CardPacksContext);
   const stats = useContext(StatsContext);
-  const discovery = useContext(DiscoveryContext);
+  
+  const cardPacks = useStore(s => s.cardPacks.cardPacks, shallow);
+  const buyPack = useStore(s => s.cardPacks.buyPack, shallow);
+  const discoveredCardPacks = useStore(s => s.discovery.discoveredCardPacks, shallow);
+  const discoveredCards = useStore(s => s.discovery.discoveredCards, shallow);
 
   const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
-    cardPacks.buyPack(cardPack);
+    buyPack(cardPack);
   }, [cardPacks, stats]);
 
   const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
-    cardPacks.buyMaxPack(cardPack);
+    cp.buyMaxPack(cardPack);
   }, [cardPacks, stats]);
 
   return <div className="card-packs">
     <h4>Card Packs</h4>
     <div className="card-pack-list">
-    {Object.values(cardPacks.cardPacks)
-    .filter(pack => discovery.discoveredCardPacks[pack.id])
+    {Object.values(cardPacks)
+    .filter(pack => discoveredCardPacks[pack.id])
     .map(cardPack =>
       <div
         key={cardPack.id}
@@ -39,14 +45,14 @@ export default function CardPacks() {
           {cardPack.possibleThings.map(({thing: card}) => 
             <div
               className={classNames("possible-card", {
-                discovered: discovery.discoveredCards[card.id],
+                discovered: discoveredCards[card.id],
                 'rare': card.rarity == Rarity.Rare,
                 'ultra-rare': card.rarity == Rarity.UltraRare,
               })}
               key={card.id}
-              data-tip={discovery.discoveredCards[card.id] ? card.name : "Undiscovered " + card.rarity}
+              data-tip={discoveredCards[card.id] ? card.name : "Undiscovered " + card.rarity}
             >
-              {discovery.discoveredCards[card.id] ? 
+              {discoveredCards[card.id] ? 
                 <Icon size="xs" icon={card.icon} /> :
                 <FontAwesomeIcon icon="question" />
               }

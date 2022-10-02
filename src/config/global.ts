@@ -4,7 +4,7 @@ const global = {
   startingCards: {beggar: 1},
   unlockedPacks: [],
   startingPrestige: 0,
-  autoLoadEnabled: true,
+  autoLoadEnabled: false,
   isDebug: true,
 };
 

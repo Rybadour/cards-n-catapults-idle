@@ -8,6 +8,8 @@ import { DiscoverySlice } from "./discovery";
 import { cloneDeep } from "lodash";
 import { getExponentialValue } from "../shared/utils";
 import { FullStore } from ".";
+import { CardsSlice } from "./cards";
+import { DEFAULT_EFFECTS } from "../shared/constants";
 
 export interface CardPacksSlice {
   cardPacks: Record<string, RealizedCardPack>,
@@ -28,8 +30,8 @@ Object.values(cardPacksConfig).forEach(cardPack => {
   };
 });
 
-const KEY = 'card-packs';
-const createCardPacksLens: MyCreateLens<FullStore, CardPacksSlice, []> = (set, get) => {
+const KEY = 'cardPacks';
+const createCardPacksLens: MyCreateLens<FullStore, CardPacksSlice, [CardsSlice]> = (set, get, cards) => {
   const [_set, _get] = createLens(set, get, KEY);
   return {
     key: KEY,
@@ -43,10 +45,10 @@ const createCardPacksLens: MyCreateLens<FullStore, CardPacksSlice, []> = (set, g
         const cardsFromPack = generateFromPack(cardPack);
         cards.drawCards(cardsFromPack);
 
-        const newCardPacks = {...cardPacks};
+        const newCardPacks = {..._get().cardPacks};
         newCardPacks[cardPack.id].numBought += 1;
-        newCardPacks[cardPack.id].cost = getPackCost(cardPack, {});
-        setCardPacks(newCardPacks);
+        newCardPacks[cardPack.id].cost = getPackCost(cardPack, DEFAULT_EFFECTS);
+        _set({cardPacks: newCardPacks});
       },
     }
   }
