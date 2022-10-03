@@ -39,7 +39,7 @@ const createCardPacksLens: MyCreateLens<FullStore, CardPacksSlice, [StatsSlice, 
     slice: {
       cardPacks: cloneDeep(realizedCardPacks),
       buyPack: (cardPack) => {
-        if (stats.resources[ResourceType.Gold] < cardPack.cost) return;
+        if (get().stats.resources[ResourceType.Gold] < cardPack.cost) return;
 
         stats.useResource(ResourceType.Gold, cardPack.cost);
 

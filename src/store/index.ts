@@ -1,12 +1,11 @@
-import { letterSpacing } from "@mui/system";
-import { access } from "fs";
+import { createLens } from "@dhmk/zustand-lens";
 import create from "zustand";
-import createCardPacksLens, { CardPacksSlice } from "./card-packs";
-import createCardsLens, { CardsSlice } from "./cards";
+import { CardPacksSlice } from "./card-packs";
+import createCardsSlice, { CardsSlice } from "./cards";
 
-import createDiscoveryLens, { DiscoverySlice } from "./discovery";
-import createGridLens, { GridSlice } from "./grid";
-import createStatsLens, { StatsSlice } from "./stats";
+import createDiscoverySlice, { DiscoverySlice } from "./discovery";
+import { GridSlice } from "./grid";
+import { StatsSlice } from "./stats";
 
 export type FullStore = {
   discovery: DiscoverySlice,
@@ -17,18 +16,18 @@ export type FullStore = {
 }
 
 const useStore = create<FullStore>((set, get) => {
-  const discovery = createDiscoveryLens(set, get);
-  const stats = createStatsLens(set, get);
-  const cards = createCardsLens(set, get, discovery.slice);
-  const grid = createGridLens(set, get, cards.slice);
-  const cardPacks = createCardPacksLens(set, get, stats.slice, cards.slice);
+  const discovery = createLens(set, get, 'discovery');
+  const stats = createLens(set, get, 'stats');
+  const cards = createLens(set, get, 'cards');
+  const grid = createLens(set, get, 'cards');
+  const cardPacks = createLens(set, get, 'cards');
 
   return {
-    discovery: discovery.slice,
-    stats: stats.slice,
-    cards: cards.slice,
-    grid: grid.slice,
-    cardPacks: cardPacks.slice,
+    discovery: createDiscoverySlice(...discovery),
+    stats: createStatsSlice(...stats),
+    cards: createCardsSlice(...cards, discovery[1]),
+    grid: createGridSlice(...grid, cards[1]),
+    cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1]),
   }
 });
 

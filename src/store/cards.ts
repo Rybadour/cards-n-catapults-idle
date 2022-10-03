@@ -1,9 +1,6 @@
-import { createLens } from "@dhmk/zustand-lens";
-
 import global from "../config/global";
-import { Card, CardId, MyCreateLens, PrestigeEffects, RealizedCard } from "../shared/types";
+import { Card, CardId, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { DiscoverySlice } from "./discovery";
-import { FullStore } from ".";
 
 export interface CardsSlice {
   cards: Record<CardId, number>,
@@ -20,12 +17,9 @@ export interface CardsSlice {
   loadSaveData: (data: any) => boolean,
 }
 
-const KEY = 'cards';
-const createCardsLens: MyCreateLens<FullStore, CardsSlice, [DiscoverySlice]> = (set, get, discovery) => {
-  const [_set, _get] = createLens(set, get, KEY);
-
+const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set, get, discovery) => {
   function removeCard(id: string) {
-    const newCards = { ..._get().cards };
+    const newCards = { ...get().cards };
     newCards[id] = (newCards[id] ?? 0) - 1;
     if (newCards[id] < 0) {
       newCards[id] = 0;
@@ -34,52 +28,49 @@ const createCardsLens: MyCreateLens<FullStore, CardsSlice, [DiscoverySlice]> = (
   }
 
   return {
-    key: KEY,
-    slice: {
-      cards: global.startingCards,
-      selectedCard: null,
+    cards: global.startingCards,
+    selectedCard: null,
 
-      setSelectedCard: (card) => {
-        _set({selectedCard: card});
-      },
+    setSelectedCard: (card) => {
+      set({selectedCard: card});
+    },
 
-      hasCard: (card) => false,
+    hasCard: (card) => false,
 
-      returnCard: (card) => {},
+    returnCard: (card) => {},
 
-      spendCard: (card) => {},
+    spendCard: (card) => {},
 
-      replaceCard: (card) => {
-        const selected = _get().selectedCard;
-        if (selected == null) {
-          return;
-        }
+    replaceCard: (card) => {
+      const selected = get().selectedCard;
+      if (selected == null) {
+        return;
+      }
 
-        const newCards = removeCard(selected.id);
-        if (card != null) {
-          addRealizedCard(newCards, card);
-        }
-        _set({cards: newCards});
-      },
+      const newCards = removeCard(selected.id);
+      if (card != null) {
+        addRealizedCard(newCards, card);
+      }
+      set({cards: newCards});
+    },
 
-      updateInventory: (cardsDelta) => {},
+    updateInventory: (cardsDelta) => {},
 
-      drawCards: (cardsToDraw) => {
-        discovery.discoverCards(cardsToDraw);
+    drawCards: (cardsToDraw) => {
+      discovery().discoverCards(cardsToDraw);
 
-        const newCards = { ..._get().cards };
-        cardsToDraw.forEach(card => {
-          newCards[card.id] = (newCards[card.id] ?? 0) + 1;
-        });
-        _set({cards: newCards});
-      },
+      const newCards = { ...get().cards };
+      cardsToDraw.forEach(card => {
+        newCards[card.id] = (newCards[card.id] ?? 0) + 1;
+      });
+      set({cards: newCards});
+    },
 
-      prestigeReset: (prestigeEffects) => {},
+    prestigeReset: (prestigeEffects) => {},
 
-      getSaveData: () => ({}),
+    getSaveData: () => ({}),
 
-      loadSaveData: (data) => false,
-    }
+    loadSaveData: (data) => false,
   }
 };
 
@@ -94,4 +85,4 @@ function addRealizedCard(cards: Record<string, number>, card: RealizedCard) {
   cards[card.id] = (cards[card.id] ?? 0) + amount;
 }
 
-export default createCardsLens;
+export default createCardsSlice;

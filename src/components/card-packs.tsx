@@ -21,7 +21,7 @@ export default function CardPacks() {
 
   const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
     buyPack(cardPack);
-  }, [cardPacks]);
+  }, [buyPack]);
 
   const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
     cp.buyMaxPack(cardPack);
