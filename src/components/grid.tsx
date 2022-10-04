@@ -1,31 +1,27 @@
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect, useState } from 'react';
+import shallow from 'zustand/shallow';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { CardsContext } from '../contexts/cards';
-import { GridContext } from '../contexts/grid';
 import { createCard } from '../gamelogic/grid-cards';
 import { ProgressBar } from './progress-bar';
 import { MarkType, RealizedCard, ResourceType } from '../shared/types';
-
-import './grid.scss';
-import { StatsContext } from '../contexts/stats';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import resourceIconMap from '../config/resources';
-import { DiscoveryContext } from '../contexts/discovery';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PrestigeContext } from '../contexts/prestige';
 import Icon from '../shared/components/icon';
 import { SavingLoadingContext } from '../contexts/saving-loading';
 import useStore from '../store';
-import { CardContent } from '@mui/material';
-import shallow from 'zustand/shallow';
+
+import './grid.scss';
 
 let lastTime = Date.now();
 
 export default function GridMap() {
-  const discovery = useContext(DiscoveryContext);
   const savingLoading = useContext(SavingLoadingContext);
   const prestige = useContext(PrestigeContext);
+
+  const discoveredResources = useStore(s => s.discovery.discoveredResources);
   
   const {resources, useResource} = useStore(s => ({
     resources: s.stats.resources,
@@ -33,20 +29,19 @@ export default function GridMap() {
   }), shallow);
   
   const gridSpaces = useStore(s => s.grid.gridSpaces);
+  const updateGrid = useStore(s => s.grid.update);
 
   useEffect(() => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - lastTime;
       lastTime = Date.now();
-      //grid.update(elapsed);
+      updateGrid(elapsed);
       prestige.update();
       savingLoading.update(elapsed);
-
-      useResource(ResourceType.Gold, -10);
     }, 100);
 
     return () => clearInterval(interval);
-  }, [useResource, prestige, savingLoading]);
+  }, [updateGrid, prestige, savingLoading]);
 
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
@@ -64,7 +59,7 @@ export default function GridMap() {
     <div className='resources'>
       {Object.keys(resources)
       .map(res => enumFromKey(ResourceType, res))
-      .filter(resource => resource && discovery.discoveredResources[resource])
+      .filter(resource => resource && discoveredResources[resource])
       .map(resource =>
         <Resource
           key={resource}
@@ -99,35 +94,25 @@ type GridTileProps = {
   onLeaveCard: () => void,
 };
 function GridTile(props: GridTileProps) {
-  const grid = useContext(GridContext);
-  const c = useContext(CardsContext);
-
-  const gridSpaces = useStore(s => s.grid.gridSpaces);
+  const returnCardAction = useStore(s => s.grid.returnCard);
   const replaceCardAction = useStore(s => s.grid.replaceCard);
 
-  const {cards, selectedCard} = useStore(s => ({
-    cards: s.cards.cards,
-    selectedCard: s.cards.selectedCard
-  }), shallow);
+  const takeSelectedCard = useStore(s => s.cards.takeSelectedCard);
 
   const addCard = useCallback(() => {
-    if (selectedCard == null || (cards[selectedCard.id] ?? 0) <= 0) {
-      return;
+    const newCard = takeSelectedCard();
+    if (newCard) {
+      newCard.shouldBeReserved = true;
+      replaceCardAction(props.x, props.y, newCard);
     }
-
-    const quantity = cards[selectedCard.id]; 
-    const newCard = createCard(selectedCard, quantity);
-    newCard.shouldBeReserved = true;
-    replaceCardAction(props.x, props.y, newCard);
-  }, [replaceCardAction, cards, selectedCard, props]);
+  }, [replaceCardAction, takeSelectedCard, props]);
 
   const returnCard = useCallback((evt) => {
     evt.preventDefault();
     if (props.card) {
-      grid.returnCard(props.x, props.y);
-      c.returnCard(props.card);
+      returnCardAction(props.x, props.y);
     }
-  }, [grid, cards, props]);
+  }, [returnCardAction, props]);
   
   const hoverCard = useCallback(() => { 
     props.onHoverCard(props.card);

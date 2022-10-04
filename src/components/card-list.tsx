@@ -18,8 +18,7 @@ import useStore from '../store';
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
-  const cardsDiscovered = useStore(s => {
-    return s.discovery.cardsDiscoveredThisPrestige}, shallow);
+  const cardsDiscovered = useStore(s => s.discovery.cardsDiscoveredThisPrestige);
 
   const onToggleCategory = useCallback((cardType: CardType) => {
     const newClosedCategories = { ...closedCategories };

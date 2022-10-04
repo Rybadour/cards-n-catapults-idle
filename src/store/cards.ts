@@ -1,4 +1,5 @@
 import global from "../config/global";
+import { createCard } from "../gamelogic/grid-cards";
 import { Card, CardId, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { DiscoverySlice } from "./discovery";
 
@@ -9,7 +10,7 @@ export interface CardsSlice {
   hasCard: (card: Card) => boolean,
   returnCard: (card: RealizedCard) => void,
   spendCard: (card: Card) => void,
-  replaceCard: (existingCard: RealizedCard | null) => void,
+  takeSelectedCard: () => RealizedCard | null,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   drawCards: (cardsToDraw: Card[]) => void,
   prestigeReset: (prestigeEffects: PrestigeEffects) => void,
@@ -44,17 +45,17 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
       set({cards: newCards});
     },
 
-    replaceCard: (card) => {
+    takeSelectedCard: () => {
       const selected = get().selectedCard;
-      if (selected == null) {
-        return;
+      if (selected == null || (get().cards[selected.id] ?? 0) <= 0) {
+        return null;
       }
 
       const newCards = removeCard(selected.id);
-      if (card != null) {
-        addRealizedCard(newCards, card);
-      }
       set({cards: newCards});
+
+      const newCard = createCard(selected, get().cards[selected.id]);
+      return newCard;
     },
 
     spendCard: (card) => {

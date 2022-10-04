@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep, replace } from "lodash";
 
 import { Grid, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { CardsSlice } from "./cards";
@@ -21,6 +21,21 @@ export interface GridSlice {
 
 const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => StatsSlice, () => CardsSlice]>
  = (set, get, discovery, stats, cards) => {
+
+  function replaceCard(x: number, y: number, newCard: RealizedCard | null) {
+    const newGridSpaces = [ ...get().gridSpaces ];
+    const oldCard = newGridSpaces[y][x];
+    newGridSpaces[y][x] = newCard;
+
+    const results = updateGridTotals(newGridSpaces, stats(), {}); // TODO: card mastery
+    set({gridSpaces: newGridSpaces});
+    stats().updatePerSec(results.resourcesPerSec);
+
+    if (oldCard) {
+      cards().returnCard(oldCard);
+    }
+  }
+
   return {
     gridSpaces: getEmptyGrid(),
     prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
@@ -31,7 +46,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
         stats().resources,
         cards().cards,
         get().prestigeEffects,
-        {}, // card mastery
+        {}, // TODO: card mastery
         elapsed
       );
 
@@ -41,7 +56,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
 
       let totalResults: UpdateGridTotalsResults | null = null;
       if (results.anyChanged) {
-        totalResults = updateGridTotals(results.grid, stats(), {}); // card mastery
+        totalResults = updateGridTotals(results.grid, stats(), {}); // TODO: card mastery
         results.grid = totalResults.grid;
       }
       stats().update(elapsed, totalResults?.resourcesPerSec ?? null, results.grid);
@@ -54,18 +69,13 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
     },
 
     replaceCard: (x, y, newCard) => {
-      const newGridSpaces = [ ...get().gridSpaces ];
-      const oldCard = newGridSpaces[y][x];
-      newGridSpaces[y][x] = newCard;
-
-      //const results = updateGridTotals(newGridSpaces, stats, cardMastery.cardMasteries);
-      set({gridSpaces: newGridSpaces});
-      //stats.updatePerSec(results.resourcesPerSec);
-
-      cards().replaceCard(oldCard);
+      replaceCard(x, y, newCard);
     },
-    returnCard: (x, y) => {},
-    update: (elapsed) => {},
+
+    returnCard: (x, y) => {
+      replaceCard(x, y, null);
+    },
+
     prestigeReset: () => {},
     prestigeUpdate: (effects) => {},
     getSaveData: () => ({}),

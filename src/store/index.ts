@@ -26,7 +26,7 @@ const useStore = create<FullStore>((set, get) => {
     discovery: createDiscoverySlice(...discovery),
     stats: createStatsSlice(...stats, discovery[1]),
     cards: createCardsSlice(...cards, discovery[1]),
-    grid: createGridSlice(...grid, stats[1], cards[1]),
+    grid: createGridSlice(...grid, discovery[1], stats[1], cards[1]),
     cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1]),
   }
 });
