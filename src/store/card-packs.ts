@@ -1,7 +1,7 @@
 import { createLens } from "@dhmk/zustand-lens";
 
 import global from "../config/global";
-import { Card, CardPack, MyCreateLens, PrestigeEffects, RealizedCardPack, ResourceType } from "../shared/types";
+import { Card, CardPack, MyCreateLens, MyCreateSlice, PrestigeEffects, RealizedCardPack, ResourceType } from "../shared/types";
 import cardPacksConfig from "../config/card-packs";
 import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
 import { DiscoverySlice } from "./discovery";
@@ -31,27 +31,23 @@ Object.values(cardPacksConfig).forEach(cardPack => {
   };
 });
 
-const KEY = 'cardPacks';
-const createCardPacksLens: MyCreateLens<FullStore, CardPacksSlice, [StatsSlice, CardsSlice]> = (set, get, stats, cards) => {
-  const [_set, _get] = createLens(set, get, KEY);
+const createCardPacksSlice: MyCreateSlice<CardPacksSlice, [() => StatsSlice, () => CardsSlice]>
+  = (set, get, stats, cards) => {
   return {
-    key: KEY,
-    slice: {
-      cardPacks: cloneDeep(realizedCardPacks),
-      buyPack: (cardPack) => {
-        if (get().stats.resources[ResourceType.Gold] < cardPack.cost) return;
+    cardPacks: cloneDeep(realizedCardPacks),
+    buyPack: (cardPack) => {
+      if (stats().resources[ResourceType.Gold] < cardPack.cost) return;
 
-        stats.useResource(ResourceType.Gold, cardPack.cost);
+      stats().useResource(ResourceType.Gold, cardPack.cost);
 
-        const cardsFromPack = generateFromPack(cardPack);
-        cards.drawCards(cardsFromPack);
+      const cardsFromPack = generateFromPack(cardPack);
+      cards().drawCards(cardsFromPack);
 
-        const newCardPacks = {..._get().cardPacks};
-        newCardPacks[cardPack.id].numBought += 1;
-        newCardPacks[cardPack.id].cost = getPackCost(cardPack, DEFAULT_EFFECTS);
-        _set({cardPacks: newCardPacks});
-      },
-    }
+      const newCardPacks = {...get().cardPacks};
+      newCardPacks[cardPack.id].numBought += 1;
+      newCardPacks[cardPack.id].cost = getPackCost(cardPack, DEFAULT_EFFECTS);
+      set({cardPacks: newCardPacks});
+    },
   }
 };
 
@@ -63,4 +59,4 @@ function getPackCost(pack: RealizedCardPack, effects: PrestigeEffects) {
   return getExponentialValue(getBaseCost(pack, effects), pack.costGrowth, pack.numBought);
 }
 
-export default createCardPacksLens;
+export default createCardPacksSlice;

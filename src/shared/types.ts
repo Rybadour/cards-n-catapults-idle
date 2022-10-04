@@ -225,4 +225,5 @@ export type RealizedPrestigePack = PrestigePack & {
 
 export type MyCreateLens<G, S extends G[keyof G], A extends any[]> = (set: StoreApi<G>['setState'], get: StoreApi<G>['getState'], ...args: A) => {key: string, slice: S}
 
-export type MyCreateSlice<T, A extends any[]> = (set: StoreApi<T>['setState'], get: StoreApi<T>['getState'], ...args: A) => T
+export type MyCreateSlice<T, A extends (() => any)[]> =
+  (set: StoreApi<T>['setState'], get: StoreApi<T>['getState'], ...args: A) => T

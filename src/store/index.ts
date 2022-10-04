@@ -1,6 +1,6 @@
 import { createLens } from "@dhmk/zustand-lens";
 import create from "zustand";
-import { CardPacksSlice } from "./card-packs";
+import createCardPacksSlice, { CardPacksSlice } from "./card-packs";
 import createCardsSlice, { CardsSlice } from "./cards";
 
 import createDiscoverySlice, { DiscoverySlice } from "./discovery";
@@ -19,8 +19,8 @@ const useStore = create<FullStore>((set, get) => {
   const discovery = createLens(set, get, 'discovery');
   const stats = createLens(set, get, 'stats');
   const cards = createLens(set, get, 'cards');
-  const grid = createLens(set, get, 'cards');
-  const cardPacks = createLens(set, get, 'cards');
+  const grid = createLens(set, get, 'grid');
+  const cardPacks = createLens(set, get, 'cardPacks');
 
   return {
     discovery: createDiscoverySlice(...discovery),
