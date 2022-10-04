@@ -4,8 +4,8 @@ import createCardPacksSlice, { CardPacksSlice } from "./card-packs";
 import createCardsSlice, { CardsSlice } from "./cards";
 
 import createDiscoverySlice, { DiscoverySlice } from "./discovery";
-import { GridSlice } from "./grid";
-import { StatsSlice } from "./stats";
+import createGridSlice, { GridSlice } from "./grid";
+import createStatsSlice, { StatsSlice } from "./stats";
 
 export type FullStore = {
   discovery: DiscoverySlice,
@@ -24,9 +24,9 @@ const useStore = create<FullStore>((set, get) => {
 
   return {
     discovery: createDiscoverySlice(...discovery),
-    stats: createStatsSlice(...stats),
+    stats: createStatsSlice(...stats, discovery[1]),
     cards: createCardsSlice(...cards, discovery[1]),
-    grid: createGridSlice(...grid, cards[1]),
+    grid: createGridSlice(...grid, stats[1], cards[1]),
     cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1]),
   }
 });

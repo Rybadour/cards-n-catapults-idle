@@ -1,11 +1,10 @@
-import { createLens } from "@dhmk/zustand-lens";
+import { cloneDeep } from "lodash";
 
 import global from "../config/global";
-import { Card, CardId, defaultResourcesMap, Grid, MyCreateLens, PrestigeEffects, RealizedCard, ResourcesMap, ResourceType } from "../shared/types";
-import { DiscoverySlice } from "./discovery";
-import { FullStore } from ".";
+import { defaultResourcesMap, Grid, MyCreateSlice, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
 import { DEFAULT_EFFECTS } from "../shared/constants";
-import { cloneDeep } from "lodash";
+import { enumFromKey } from "../shared/utils";
+import { DiscoverySlice } from "./discovery";
 
 export interface StatsSlice {
   resources: ResourcesMap,
@@ -20,32 +19,52 @@ export interface StatsSlice {
   loadSaveData: (data: any) => any,
 }
 
-const KEY = 'stats';
-const createStatsLens: MyCreateLens<FullStore, StatsSlice, []> = (set, get) => {
-  const [_set, _get] = createLens(set, get, KEY);
-
+const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set, get, discovery) => {
   return {
-    key: KEY,
-    slice: {
-      resources: {
-        ...defaultResourcesMap,
-        [ResourceType.Gold]: global.startingGold
-      },
-      resourcesPerSec: { ...defaultResourcesMap },
-      prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
-      update: (elapsed, newResourcesPerSec, grid) => {},
-      updatePerSec: (newPerSec) => {},
-      useResource: (resource, amount) => {
-        const newResources = {..._get().resources};
-        newResources[resource] -= amount;
-        _set({resources: newResources});
-      },
-      prestigeReset: (effects) => {},
-      prestigeUpdate: (effects) => {},
-      getSaveData: () => ({}),
-      loadSaveData: (data) => {},
-    }
+    resources: {
+      ...defaultResourcesMap,
+      [ResourceType.Gold]: global.startingGold
+    },
+    resourcesPerSec: { ...defaultResourcesMap },
+    prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
+
+    update: (elapsed: number, newResourcesPerSec: ResourcesMap | null, grid: Grid) => {
+      if (newResourcesPerSec) {
+        set({resourcesPerSec: newResourcesPerSec});
+      }
+
+      const elapsedSecs = (elapsed/1000);
+      const newResources = {...get().resources};
+      Object.keys(get().resourcesPerSec).forEach(r => {
+        const resource = enumFromKey(ResourceType, r);
+        const prestigeBonus = (resource === ResourceType.Gold ? get().prestigeEffects.bonuses.goldGain : 1);
+        if (resource) {
+          newResources[resource] += elapsedSecs * get().resourcesPerSec[resource] * prestigeBonus;
+        }
+      });
+      set({resources: newResources});
+    },
+
+    updatePerSec: (newPerSec) => {
+      discovery().discoverResources(
+        Object.keys(newPerSec)
+          .map(r => enumFromKey(ResourceType, r)!)
+          .filter(r => r && newPerSec[r] > 0)
+      );
+      set({resourcesPerSec: newPerSec});
+    },
+
+    useResource: (resource, amount) => {
+      const newResources = {...get().resources};
+      newResources[resource] -= amount;
+      set({resources: newResources});
+    },
+
+    prestigeReset: (effects) => {},
+    prestigeUpdate: (effects) => {},
+    getSaveData: () => ({}),
+    loadSaveData: (data) => {},
   }
 };
 
-export default createStatsLens;
+export default createStatsSlice;

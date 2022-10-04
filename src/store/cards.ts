@@ -35,11 +35,14 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
       set({selectedCard: card});
     },
 
-    hasCard: (card) => false,
+    hasCard: (card) => (get().cards[card.id] ?? 0) > 0,
 
-    returnCard: (card) => {},
+    returnCard: (card) => {
+      const newCards = {...get().cards};
+      addRealizedCard(newCards, card);
 
-    spendCard: (card) => {},
+      set({cards: newCards});
+    },
 
     replaceCard: (card) => {
       const selected = get().selectedCard;
@@ -54,7 +57,20 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
       set({cards: newCards});
     },
 
-    updateInventory: (cardsDelta) => {},
+    spendCard: (card) => {
+      set({cards: removeCard(card.id)});
+    },
+
+    updateInventory: (cardsDelta) => {
+      if (Object.keys(cardsDelta).length <= 0) return;
+
+      const newCardMap = {...get().cards};
+      Object.entries(cardsDelta)
+        .forEach(([cardId, amount]) => {
+          newCardMap[cardId] = (newCardMap[cardId] ?? 0) + amount
+        });
+      set({cards: newCardMap});
+    },
 
     drawCards: (cardsToDraw) => {
       discovery().discoverCards(cardsToDraw);

@@ -106,5 +106,6 @@ function getLevelCost(currentLevel: number, card: Card) {
 }
 
 export function getMasteryBonus(mastery: CardMastery, card: Card) {
+  return 1;
   return 1 + (mastery.level * card.mastery.bonusPer);
 }
