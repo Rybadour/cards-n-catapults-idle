@@ -11,9 +11,10 @@ import Icon from '../shared/components/icon';
 import { Card, CardType } from '../shared/types';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
-import { CardMasteryContext, getMasteryBonus } from '../contexts/card-mastery';
 import { STANDARD_MODAL_STYLE } from '../shared/constants';
 import useStore from '../store';
+import { getMasteryBonus } from '../store/card-mastery';
+import { pick } from 'lodash';
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
@@ -99,17 +100,17 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
   const cards = useStore(s => s.cards.cards);
   const selectedCard = useStore(s => s.cards.selectedCard);
   const setSelectedCard = useStore(s => s.cards.setSelectedCard);
-  const cardMastery = useContext(CardMasteryContext);
+  const cardMasteries = useStore(s => s.cardMastery.cardMasteries);
 
   useEffect(() => {
     ReactTooltip.rebuild();
-  }, [cardMastery]);
+  }, [cardMasteries]);
 
   const onSetMasteryCard = useCallback(() => {
     props.setMasteryCard(props.card);
   }, [props.card, props.setMasteryCard]);
 
-  const masteryBonus = getMasteryBonus(cardMastery.cardMasteries[props.card.id], props.card) - 1;
+  const masteryBonus = getMasteryBonus(cardMasteries[props.card.id], props.card) - 1;
 
   return <div className="card-container" key={props.card.id}>
     <div
@@ -177,16 +178,16 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
 }
 
 function CardMasteryModal(props: {card: Card | null}) {
-  const cardMastery = useContext(CardMasteryContext);
+  const {cardMasteries, sacrificeCard} = useStore(s => pick(s.cardMastery, ['cardMasteries', 'sacrificeCard']), shallow);
 
   const onSacrifice = useCallback((card: Card) => {
-    cardMastery.sacrificeCard(card);
-  }, [cardMastery]);
+    sacrificeCard(card);
+  }, [sacrificeCard]);
 
   if (!props.card) return null;
 
   const masteryBonusPer = props.card.mastery.bonusPer * 100;
-  const mastery = cardMastery.cardMasteries[props.card.id];
+  const mastery = cardMasteries[props.card.id];
   return <>
     <h3>Card Mastery for {props.card.name}</h3>
     <Icon icon={props.card.icon} size="lg" />

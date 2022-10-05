@@ -1,4 +1,4 @@
-import { cloneDeep, replace } from "lodash";
+import { cloneDeep } from "lodash";
 
 import { Grid, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { CardsSlice } from "./cards";
@@ -6,6 +6,7 @@ import { DEFAULT_EFFECTS } from "../shared/constants";
 import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
+import { CardMasterySlice } from "./card-mastery";
 
 export interface GridSlice {
   gridSpaces: Grid,
@@ -19,15 +20,15 @@ export interface GridSlice {
   loadSaveData: (data: any) => any,
 }
 
-const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => StatsSlice, () => CardsSlice]>
- = (set, get, discovery, stats, cards) => {
+const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => StatsSlice, () => CardsSlice, () => CardMasterySlice]>
+ = (set, get, discovery, stats, cards, cardMastery) => {
 
   function replaceCard(x: number, y: number, newCard: RealizedCard | null) {
     const newGridSpaces = [ ...get().gridSpaces ];
     const oldCard = newGridSpaces[y][x];
     newGridSpaces[y][x] = newCard;
 
-    const results = updateGridTotals(newGridSpaces, stats(), {}); // TODO: card mastery
+    const results = updateGridTotals(newGridSpaces, stats(), cardMastery().cardMasteries);
     set({gridSpaces: newGridSpaces});
     stats().updatePerSec(results.resourcesPerSec);
 
@@ -46,7 +47,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
         stats().resources,
         cards().cards,
         get().prestigeEffects,
-        {}, // TODO: card mastery
+        cardMastery().cardMasteries,
         elapsed
       );
 
@@ -56,7 +57,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
 
       let totalResults: UpdateGridTotalsResults | null = null;
       if (results.anyChanged) {
-        totalResults = updateGridTotals(results.grid, stats(), {}); // TODO: card mastery
+        totalResults = updateGridTotals(results.grid, stats(), cardMastery().cardMasteries);
         results.grid = totalResults.grid;
       }
       stats().update(elapsed, totalResults?.resourcesPerSec ?? null, results.grid);
