@@ -1,17 +1,24 @@
-import './header.scss';
 import Modal from 'react-modal';
-import { useCallback, useContext, useState } from 'react';
-import { PrestigeContext } from '../../contexts/prestige';
+import { useCallback, useState } from 'react';
+import { pick } from 'lodash';
+import shallow from 'zustand/shallow';
+
 import { formatNumber } from '../../shared/utils';
 import Icon from '../../shared/components/icon';
 import HelpModal from './help-modal';
 import OptionsModal from './options-modal';
 import { STANDARD_MODAL_STYLE } from '../../shared/constants';
+import useStore from '../../store';
+
+import './header.scss';
 
 Modal.setAppElement('#root');
 
 function Header() {
-  const prestige = useContext(PrestigeContext);
+  const prestige = useStore(s =>  pick(
+    s.prestige,
+    ['prestige', 'openMenu', 'closeMenu', 'isMenuOpen', 'isReseting', 'nextPoints', 'nextRenownCost']
+  ), shallow);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 

@@ -1,19 +1,26 @@
 import classNames from "classnames";
-import { useCallback, useContext, useState } from "react";
+import { pick } from "lodash";
+import { useCallback, useState } from "react";
 
-import { AUTO_SAVE_TIME, SavingLoadingContext } from "../../contexts/saving-loading";
 import VerticalTabs, { Tab } from "../../shared/components/vertical-tabs";
 import { formatNumber } from "../../shared/utils";
+import useStore from "../../store";
+import { AUTO_SAVE_TIME } from "../../store/saving-loading";
 import './options-modal.scss';
 
 function OptionsModal() {
-  const savingLoading = useContext(SavingLoadingContext);
+  const savingLoading = useStore(s => pick(
+    s.savingLoading, [
+      'isAutoSaveEnabled', 'toggleAutoSave', 'attemptImportData', 'getSaveData', 'autoSaveTime', 'completeReset',
+      'save', 'load',
+    ]
+  ));
   const [importData, setImportData] = useState("");
   const [exportData, setExportData] = useState("");
 
   const onToggleAutoSave = useCallback(() => {
-    savingLoading.setIsAutoSaveEnabled(!savingLoading.isAutoSaveEnabled);
-  }, [savingLoading]);
+    savingLoading.toggleAutoSave();
+  }, [savingLoading.toggleAutoSave]);
 
   const onImport = useCallback(() => {
     savingLoading.attemptImportData(importData);

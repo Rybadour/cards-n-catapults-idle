@@ -1,23 +1,25 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Modal from 'react-modal';
 import classNames from 'classnames';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
+import shallow from 'zustand/shallow';
+
 import cardsConfig from '../config/cards';
-import { CardsContext } from '../contexts/cards';
-import { DiscoveryContext } from '../contexts/discovery';
 import { CardButton, CardButtons } from '../shared/components/card-buttons';
 import Icon from '../shared/components/icon';
 import { Card, CardType } from '../shared/types';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import './card-list.scss';
-import { CardMasteryContext, getMasteryBonus } from '../contexts/card-mastery';
 import { STANDARD_MODAL_STYLE } from '../shared/constants';
+import useStore from '../store';
+import { getMasteryBonus } from '../store/card-mastery';
+import { pick } from 'lodash';
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
-  const discovery = useContext(DiscoveryContext);
+  const cardsDiscovered = useStore(s => s.discovery.cardsDiscoveredThisPrestige);
 
   const onToggleCategory = useCallback((cardType: CardType) => {
     const newClosedCategories = { ...closedCategories };
@@ -27,7 +29,7 @@ export default function CardList() {
 
   useEffect(() => {
     ReactTooltip.rebuild();
-  }, [discovery]);
+  }, [cardsDiscovered]);
 
   return <div className="card-inventory">
     <div className="title">Your Cards</div>
@@ -38,9 +40,9 @@ export default function CardList() {
       .map(cardType => ({
         cardType,
         cardList: Object.values(cardsConfig)
-          .filter(card => discovery.cardsDiscoveredThisPrestige[card.id] && card.type == cardType)
+          .filter(card => cardsDiscovered[card.id] && card.type == cardType)
       }))
-      .filter(({cardType, cardList}) => cardList.length > 0)
+      .filter(({cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>
         <CardCategory
           key={cardType}
@@ -95,31 +97,33 @@ function CardCategory(props: CardCategoryProps) {
 }
 
 function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null) => void}) {
-  const cards = useContext(CardsContext);
-  const cardMastery = useContext(CardMasteryContext);
+  const cards = useStore(s => s.cards.cards);
+  const selectedCard = useStore(s => s.cards.selectedCard);
+  const setSelectedCard = useStore(s => s.cards.setSelectedCard);
+  const cardMasteries = useStore(s => s.cardMastery.cardMasteries);
 
   useEffect(() => {
     ReactTooltip.rebuild();
-  }, [cardMastery]);
+  }, [cardMasteries]);
 
   const onSetMasteryCard = useCallback(() => {
     props.setMasteryCard(props.card);
   }, [props.card, props.setMasteryCard]);
 
-  const masteryBonus = getMasteryBonus(cardMastery.cardMasteries[props.card.id], props.card) - 1;
+  const masteryBonus = getMasteryBonus(cardMasteries[props.card.id], props.card) - 1;
 
   return <div className="card-container" key={props.card.id}>
     <div
       className={classNames("card", {
-        selected: props.card === cards.selectedCard,
-        empty: (cards.cards[props.card.id] ?? 0) <= 0,
+        selected: props.card === selectedCard,
+        empty: (cards[props.card.id] ?? 0) <= 0,
       })}
-      onClick={() => cards.setSelectedCard(props.card)}
+      onClick={() => setSelectedCard(props.card)}
     >
       <div className="title">
         <Icon size="sm" icon={props.card.icon} />
         <span className="name">{props.card.name}</span>
-        <span className="amount">{formatNumber(cards.cards[props.card.id] ?? 0, 0, 1)}</span>
+        <span className="amount">{formatNumber(cards[props.card.id] ?? 0, 0, 1)}</span>
       </div>
 
       <div className="description">{props.card.description}</div>
@@ -174,16 +178,16 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
 }
 
 function CardMasteryModal(props: {card: Card | null}) {
-  const cardMastery = useContext(CardMasteryContext);
+  const {cardMasteries, sacrificeCard} = useStore(s => pick(s.cardMastery, ['cardMasteries', 'sacrificeCard']), shallow);
 
   const onSacrifice = useCallback((card: Card) => {
-    cardMastery.sacrificeCard(card);
-  }, [cardMastery]);
+    sacrificeCard(card);
+  }, [sacrificeCard]);
 
   if (!props.card) return null;
 
   const masteryBonusPer = props.card.mastery.bonusPer * 100;
-  const mastery = cardMastery.cardMasteries[props.card.id];
+  const mastery = cardMasteries[props.card.id];
   return <>
     <h3>Card Mastery for {props.card.name}</h3>
     <Icon icon={props.card.icon} size="lg" />

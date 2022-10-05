@@ -1,42 +1,41 @@
 import classNames from 'classnames';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import shallow from 'zustand/shallow';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { CardsContext } from '../contexts/cards';
-import { GridContext } from '../contexts/grid';
-import { createCard } from '../gamelogic/grid-cards';
 import { ProgressBar } from './progress-bar';
 import { MarkType, RealizedCard, ResourceType } from '../shared/types';
-
-import './grid.scss';
-import { StatsContext } from '../contexts/stats';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import resourceIconMap from '../config/resources';
-import { DiscoveryContext } from '../contexts/discovery';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { PrestigeContext } from '../contexts/prestige';
 import Icon from '../shared/components/icon';
-import { SavingLoadingContext } from '../contexts/saving-loading';
+import useStore from '../store';
+
+import './grid.scss';
 
 let lastTime = Date.now();
 
 export default function GridMap() {
-  const discovery = useContext(DiscoveryContext);
-  const savingLoading = useContext(SavingLoadingContext);
-  const prestige = useContext(PrestigeContext);
-  const stats = useContext(StatsContext);
-  const grid = useContext(GridContext);
+  const updateSaving = useStore(s => s.savingLoading.update);
+  const updatePrestige = useStore(s => s.prestige.update);
+
+  const discoveredResources = useStore(s => s.discovery.discoveredResources);
+  
+  const resources = useStore(s => s.stats.resources);
+  
+  const gridSpaces = useStore(s => s.grid.gridSpaces);
+  const updateGrid = useStore(s => s.grid.update);
 
   useEffect(() => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - lastTime;
       lastTime = Date.now();
-      grid.update(elapsed);
-      prestige.update();
-      savingLoading.update(elapsed);
+      updateGrid(elapsed);
+      updatePrestige();
+      updateSaving(elapsed);
     }, 100);
 
     return () => clearInterval(interval);
-  }, [grid, stats, prestige, savingLoading]);
+  }, [updateGrid, updatePrestige, updateSaving]);
 
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
@@ -52,19 +51,18 @@ export default function GridMap() {
 
   return <div className='grid'>
     <div className='resources'>
-      {Object.keys(stats.resources)
+      {Object.keys(resources)
       .map(res => enumFromKey(ResourceType, res))
-      .filter(resource => resource && discovery.discoveredResources[resource])
+      .filter(resource => resource && discoveredResources[resource])
       .map(resource =>
         <Resource
           key={resource}
           resource={resource!}
-          stats={stats}
         />
       )}
     </div>
     <div className='grid-rows'>
-    {grid.gridSpaces.map((gridRow, y) => 
+    {gridSpaces.map((gridRow, y) => 
       <div key={y} className='grid-row'>
         {gridRow.map((card, x) =>
           <GridTile
@@ -90,28 +88,25 @@ type GridTileProps = {
   onLeaveCard: () => void,
 };
 function GridTile(props: GridTileProps) {
-  const grid = useContext(GridContext);
-  const cards = useContext(CardsContext);
+  const returnCardAction = useStore(s => s.grid.returnCard);
+  const replaceCardAction = useStore(s => s.grid.replaceCard);
+
+  const takeSelectedCard = useStore(s => s.cards.takeSelectedCard);
 
   const addCard = useCallback(() => {
-    if (cards.selectedCard == null || !cards.hasCard(cards.selectedCard)) {
-      return;
+    const newCard = takeSelectedCard();
+    if (newCard) {
+      newCard.shouldBeReserved = true;
+      replaceCardAction(props.x, props.y, newCard);
     }
-
-    const quantity = cards.cards[cards.selectedCard.id]; 
-    const newCard = createCard(cards.selectedCard, quantity);
-    newCard.shouldBeReserved = true;
-    const oldCard = grid.replaceCard(props.x, props.y, newCard);
-    cards.replaceCard(oldCard);
-  }, [grid, cards, props]);
+  }, [replaceCardAction, takeSelectedCard, props]);
 
   const returnCard = useCallback((evt) => {
     evt.preventDefault();
     if (props.card) {
-      grid.returnCard(props.x, props.y);
-      cards.returnCard(props.card);
+      returnCardAction(props.x, props.y);
     }
-  }, [grid, cards, props]);
+  }, [returnCardAction, props]);
   
   const hoverCard = useCallback(() => { 
     props.onHoverCard(props.card);
@@ -186,13 +181,19 @@ function GridTile(props: GridTileProps) {
   </div>;
 }
 
-function Resource(props: {resource: ResourceType, stats: StatsContext}) {
-  const prestigeBonus = (props.resource === ResourceType.Gold ? props.stats.prestigeEffects.bonuses.goldGain : 1);
+function Resource(props: {resource: ResourceType}) {
+  const {resources, resourcesPerSec, prestigeEffects} = useStore(s => ({
+    resources: s.stats.resources,
+    resourcesPerSec: s.stats.resourcesPerSec,
+    prestigeEffects: s.stats.prestigeEffects,
+  }), shallow);
+
+  const prestigeBonus = (props.resource === ResourceType.Gold ? prestigeEffects.bonuses.goldGain : 1);
   return <div className="resource" data-tip={props.resource}>
     <Icon size="md" icon={resourceIconMap[props.resource]} />
     <div className="amounts">
-      <div className='total'>{formatNumber(props.stats.resources[props.resource], 0, 0)}</div>
-      <div className='per-sec'>{formatNumber(props.stats.resourcesPerSec[props.resource] * prestigeBonus, 0, 1)}/s</div>
+      <div className='total'>{formatNumber(resources[props.resource], 0, 0)}</div>
+      <div className='per-sec'>{formatNumber(resourcesPerSec[props.resource] * prestigeBonus, 0, 1)}/s</div>
     </div>
   </div>;
 }
