@@ -1,21 +1,19 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
+import { pick } from 'lodash';
 import { useCallback, useContext } from 'react';
 import shallow from 'zustand/shallow';
 
-import { CardPacksContext } from '../contexts/card-packs';
 import Icon from '../shared/components/icon';
 import { Rarity, RealizedCardPack } from '../shared/types';
 import { formatNumber } from '../shared/utils';
 import useStore from '../store';
+
 import './card-packs.scss';
 
 export default function CardPacks() {
-  const cp = useContext(CardPacksContext);
-  //const stats = useContext(StatsContext);
-  
-  const cardPacks = useStore(s => s.cardPacks.cardPacks);
-  const buyPack = useStore(s => s.cardPacks.buyPack);
+  const {cardPacks, buyPack, buyMaxPack}
+    = useStore(s => pick(s.cardPacks, ['cardPacks', 'buyPack', 'buyMaxPack']), shallow);
   const discoveredCardPacks = useStore(s => s.discovery.discoveredCardPacks);
   const discoveredCards = useStore(s => s.discovery.discoveredCards);
 
@@ -24,8 +22,8 @@ export default function CardPacks() {
   }, [buyPack]);
 
   const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
-    cp.buyMaxPack(cardPack);
-  }, [cardPacks]);
+    buyMaxPack(cardPack);
+  }, [buyMaxPack]);
 
   return <div className="card-packs">
     <h4>Card Packs</h4>

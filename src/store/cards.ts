@@ -51,10 +51,10 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
         return null;
       }
 
-      const newCards = removeCard(selected.id);
-      set({cards: newCards});
-
       const newCard = createCard(selected, get().cards[selected.id]);
+
+      set({cards: removeCard(selected.id)});
+
       return newCard;
     },
 

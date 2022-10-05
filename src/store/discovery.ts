@@ -48,7 +48,14 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
       set({cardsDiscoveredThisPrestige: newDiscoveredThisPrestige});
     },
 
-    discoverResources: (resources) => {console.log('fuck')},
+    discoverResources: (resources) => {
+      const newDiscover = {...get().discoveredResources};
+      resources.forEach(resource => {
+        newDiscover[resource] = true;
+      });
+      set({discoveredResources: newDiscover});
+    },
+
     prestigeReset: (startingCards, prestigeEffects) => {console.log('fuck')},
     prestigeUpdate: (effects) => {console.log('fuck')},
     getSaveData: () => ({}),
