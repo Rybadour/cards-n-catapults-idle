@@ -1,7 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { pick } from "lodash";
 import { useCallback, useContext, useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import ReactTooltip from "react-tooltip";
+import shallow from "zustand/shallow";
 import cards from "../config/cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import { PrestigeContext } from "../contexts/prestige";
@@ -9,17 +11,21 @@ import Icon from "../shared/components/icon";
 import { STANDARD_MODAL_STYLE } from "../shared/constants";
 import { RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
+import useStore from "../store";
 import './prestige.scss';
 
 export default function Prestige() {
-  const prestige = useContext(PrestigeContext);
+  const prestige = useStore(s => pick(
+    s.prestige,
+    ['buyPack', 'refundUpgrade', 'prestigePoints', 'packs', 'upgrades']
+  ), shallow);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
 
   const onBuyPack = useCallback((pack) => {
     if (pack.remainingUpgrades.length > 0) {
       prestige.buyPack(pack);
     }
-  }, [prestige]);
+  }, [prestige.buyPack]);
 
   const onRefund = useCallback((upgrade) => {
     prestige.refundUpgrade(upgrade);

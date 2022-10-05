@@ -6,6 +6,7 @@ import createCardsSlice, { CardsSlice } from "./cards";
 
 import createDiscoverySlice, { DiscoverySlice } from "./discovery";
 import createGridSlice, { GridSlice } from "./grid";
+import createPrestigeSlice, { PrestigeSlice } from "./prestige";
 import createStatsSlice, { StatsSlice } from "./stats";
 
 export type FullStore = {
@@ -15,6 +16,7 @@ export type FullStore = {
   cardMastery: CardMasterySlice,
   grid: GridSlice,
   cardPacks: CardPacksSlice,
+  prestige: PrestigeSlice,
 }
 
 const useStore = create<FullStore>((set, get) => {
@@ -24,6 +26,7 @@ const useStore = create<FullStore>((set, get) => {
   const cardMastery = createLens(set, get, 'cardMastery');
   const grid = createLens(set, get, 'grid');
   const cardPacks = createLens(set, get, 'cardPacks');
+  const prestige = createLens(set, get, 'prestige');
 
   return {
     discovery: createDiscoverySlice(...discovery),
@@ -32,6 +35,7 @@ const useStore = create<FullStore>((set, get) => {
     cardMastery: createCardMasterySlice(...cardMastery, cards[1]),
     grid: createGridSlice(...grid, discovery[1], stats[1], cards[1], cardMastery[1]),
     cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1]),
+    prestige: createPrestigeSlice(...prestige, stats[1], discovery[1], cards[1], grid[1], cardPacks[1]),
   }
 });
 

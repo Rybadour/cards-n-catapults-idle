@@ -19,7 +19,7 @@ let lastTime = Date.now();
 
 export default function GridMap() {
   const savingLoading = useContext(SavingLoadingContext);
-  const prestige = useContext(PrestigeContext);
+  const updatePrestige = useStore(s => s.prestige.update);
 
   const discoveredResources = useStore(s => s.discovery.discoveredResources);
   
@@ -36,12 +36,12 @@ export default function GridMap() {
       const elapsed = Date.now() - lastTime;
       lastTime = Date.now();
       updateGrid(elapsed);
-      prestige.update();
+      updatePrestige();
       savingLoading.update(elapsed);
     }, 100);
 
     return () => clearInterval(interval);
-  }, [updateGrid, prestige, savingLoading]);
+  }, [updateGrid, updatePrestige, savingLoading]);
 
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 

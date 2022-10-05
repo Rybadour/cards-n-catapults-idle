@@ -15,6 +15,7 @@ import Prestige from './components/prestige';
 import ReactTooltip from 'react-tooltip';
 import { SavingLoadingProvider } from './contexts/saving-loading';
 import { CardMasteryProvider } from './contexts/card-mastery';
+import useStore from './store';
 
 function App() {
   return (
@@ -52,10 +53,10 @@ function App() {
 }
 
 function Content() {
-  const prestige = useContext(PrestigeContext);
+  const isPrestigeOpen = useStore(s => s.prestige.isMenuOpen);
 
   return <div className="content">
-    {prestige.isMenuOpen ? 
+    {isPrestigeOpen ? 
       <Prestige /> :
       <>
         <CardPacks />

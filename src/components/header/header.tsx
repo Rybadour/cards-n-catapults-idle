@@ -7,11 +7,17 @@ import Icon from '../../shared/components/icon';
 import HelpModal from './help-modal';
 import OptionsModal from './options-modal';
 import { STANDARD_MODAL_STYLE } from '../../shared/constants';
+import useStore from '../../store';
+import { pick } from 'lodash';
+import shallow from 'zustand/shallow';
 
 Modal.setAppElement('#root');
 
 function Header() {
-  const prestige = useContext(PrestigeContext);
+  const prestige = useStore(s =>  pick(
+    s.prestige,
+    ['prestige', 'openMenu', 'closeMenu', 'isMenuOpen', 'isReseting', 'nextPoints', 'nextRenownCost']
+  ), shallow);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
