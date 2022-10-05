@@ -14,6 +14,7 @@ export interface DiscoverySlice {
   prestigeUpdate: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
+  completeReset: () => void,
 }
 
 const DEFAULT_UNLOCKED_PACKS = [
@@ -52,6 +53,14 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
       set({
         cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys(startingCards)),
         discoveredCardPacks: addToDiscoverMap({}, [...prestigeEffects.unlockedCardPacks, ...DEFAULT_UNLOCKED_PACKS])
+      });
+    },
+
+    completeReset: () => {
+      set({
+        discoveredCards: addToDiscoverMap({}, Object.keys(global.startingCards)),
+        cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys(global.startingCards)),
+        discoveredCardPacks: addToDiscoverMap({}, DEFAULT_UNLOCKED_PACKS)
       });
     },
 

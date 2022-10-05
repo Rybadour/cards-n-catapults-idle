@@ -1,16 +1,13 @@
 import classNames from 'classnames';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import shallow from 'zustand/shallow';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { createCard } from '../gamelogic/grid-cards';
 import { ProgressBar } from './progress-bar';
 import { MarkType, RealizedCard, ResourceType } from '../shared/types';
 import { enumFromKey, formatNumber } from '../shared/utils';
 import resourceIconMap from '../config/resources';
-import { PrestigeContext } from '../contexts/prestige';
 import Icon from '../shared/components/icon';
-import { SavingLoadingContext } from '../contexts/saving-loading';
 import useStore from '../store';
 
 import './grid.scss';
@@ -18,15 +15,12 @@ import './grid.scss';
 let lastTime = Date.now();
 
 export default function GridMap() {
-  const savingLoading = useContext(SavingLoadingContext);
+  const updateSaving = useStore(s => s.savingLoading.update);
   const updatePrestige = useStore(s => s.prestige.update);
 
   const discoveredResources = useStore(s => s.discovery.discoveredResources);
   
-  const {resources, useResource} = useStore(s => ({
-    resources: s.stats.resources,
-    useResource: s.stats.useResource,
-  }), shallow);
+  const resources = useStore(s => s.stats.resources);
   
   const gridSpaces = useStore(s => s.grid.gridSpaces);
   const updateGrid = useStore(s => s.grid.update);
@@ -37,11 +31,11 @@ export default function GridMap() {
       lastTime = Date.now();
       updateGrid(elapsed);
       updatePrestige();
-      savingLoading.update(elapsed);
+      updateSaving(elapsed);
     }, 100);
 
     return () => clearInterval(interval);
-  }, [updateGrid, updatePrestige, savingLoading]);
+  }, [updateGrid, updatePrestige, updateSaving]);
 
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
