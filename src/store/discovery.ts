@@ -1,6 +1,7 @@
 import global from "../config/global";
 import { Card, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
 import cardPacks from "../config/card-packs";
+import { pick } from "lodash";
 
 export interface DiscoverySlice {
   discoveredCards: Record<string, boolean>,
@@ -15,21 +16,16 @@ export interface DiscoverySlice {
   loadSaveData: (data: any) => boolean,
 }
 
-const initialCards: DiscoverySlice['discoveredCards'] = {};
-addToDiscoverMap(initialCards, Object.keys(global.startingCards));
-
-const initialCardsThisPrestige: DiscoverySlice['cardsDiscoveredThisPrestige'] = {};
-addToDiscoverMap(initialCardsThisPrestige, Object.keys(global.startingCards));
-
-const initialCardPacks: DiscoverySlice['discoveredCardPacks'] = {};
-addToDiscoverMap(initialCardPacks, global.unlockedPacks);
-addToDiscoverMap(initialCardPacks, Object.keys(cardPacks).filter(cp => cardPacks[cp].unlocked));
+const DEFAULT_UNLOCKED_PACKS = [
+  ...global.unlockedPacks,
+  ...Object.keys(cardPacks).filter(cp => cardPacks[cp].unlocked)
+];
 
 const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): DiscoverySlice => {
   return {
-    discoveredCards: initialCards,
-    cardsDiscoveredThisPrestige: initialCardsThisPrestige,
-    discoveredCardPacks: initialCardPacks,
+    discoveredCards: addToDiscoverMap({}, Object.keys(global.startingCards)),
+    cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys(global.startingCards)),
+    discoveredCardPacks: addToDiscoverMap({}, DEFAULT_UNLOCKED_PACKS),
     discoveredResources: {
       [ResourceType.Gold]: true,
     },
@@ -38,14 +34,10 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
       if (cards.length <= 0) return;
 
       const cardIds = cards.map(c => c.id);
-
-      const newDiscovered = {...get().discoveredCards};
-      addToDiscoverMap(newDiscovered, cardIds);
-      set({discoveredCards: newDiscovered});
-
-      const newDiscoveredThisPrestige = {...get().cardsDiscoveredThisPrestige};
-      addToDiscoverMap(newDiscoveredThisPrestige, cardIds);
-      set({cardsDiscoveredThisPrestige: newDiscoveredThisPrestige});
+      set({
+        discoveredCards: addToDiscoverMap(get().discoveredCards, cardIds),
+        cardsDiscoveredThisPrestige: addToDiscoverMap(get().cardsDiscoveredThisPrestige, cardIds)
+      });
     },
 
     discoverResources: (resources) => {
@@ -56,17 +48,40 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
       set({discoveredResources: newDiscover});
     },
 
-    prestigeReset: (startingCards, prestigeEffects) => {console.log('fuck')},
-    prestigeUpdate: (effects) => {console.log('fuck')},
-    getSaveData: () => ({}),
-    loadSaveData: (data) => false,
+    prestigeReset: (startingCards, prestigeEffects) => {
+      set({
+        cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys(startingCards)),
+        discoveredCardPacks: addToDiscoverMap({}, [...prestigeEffects.unlockedCardPacks, ...DEFAULT_UNLOCKED_PACKS])
+      });
+    },
+
+    prestigeUpdate: (effects) => {
+      set({discoveredCardPacks: addToDiscoverMap(get().discoveredCardPacks, effects.unlockedCardPacks)});
+    },
+
+    getSaveData: () => pick(get(), [
+      'discoveredCards',
+      'cardsDiscoveredThisPrestige',
+      'discoveredCardPacks',
+      'discoveredResources',
+    ]),
+
+    loadSaveData: (data) => {
+      if (typeof data !== 'object') return false;
+
+      set(data);
+
+      return true;
+    },
   };
 }  
 
 function addToDiscoverMap<K extends string | symbol>(map: Record<K, boolean>, keys: K[]) {
+  const newMap = {...map};
   keys.forEach(k => {
-    map[k] = true;
+    newMap[k] = true;
   });
+  return newMap;
 }
 
 export default createDiscoverySlice;

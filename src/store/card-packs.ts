@@ -76,13 +76,45 @@ const createCardPacksSlice: MyCreateSlice<CardPacksSlice, [() => StatsSlice, () 
       set({cardPacks: newCardPacks});
     },
 
-    prestigeReset: () => {},
+    prestigeReset: () => {
+      set({cardPacks: cloneDeep(realizedCardPacks)});
+    },
 
-    prestigeUpdate: (effects) => {},
+    prestigeUpdate: (effects) => {
+      const newCardPacks = {...get().cardPacks};
+      Object.values(newCardPacks).forEach(pack => {
+        pack.cost = getPackCost(pack, effects);
+      });
+      set({
+        cardPacks: newCardPacks,
+        prestigeEffects: effects,
+      });
+    },
 
-    getSaveData: () => {},
+    getSaveData: () => {
+      const packsToSave: Record<string, number> = {};
+      Object.entries(get().cardPacks).forEach(([id, pack]) => {
+        packsToSave[id] = pack.numBought;
+      });
+      return packsToSave;
+    },
 
-    loadSaveData: (data: any) => {return false;},
+    loadSaveData: (data) => {
+      if (typeof data !== 'object') return false;
+
+      const newPacks: Record<string, RealizedCardPack> = {};
+      Object.entries(data as Record<string, number>).forEach(([id, numBought]) => {
+        newPacks[id] = {
+          ...cardPacksConfig[id],
+          cost: 0,
+          numBought,
+        };
+        newPacks[id].cost = getPackCost(newPacks[id], get().prestigeEffects);
+      });
+      set({cardPacks: newPacks});
+
+      return true;
+    },
   }
 };
 

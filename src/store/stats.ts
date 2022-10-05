@@ -19,12 +19,14 @@ export interface StatsSlice {
   loadSaveData: (data: any) => any,
 }
 
+const DEFAULT_RESOURCES = {
+  ...defaultResourcesMap,
+  [ResourceType.Gold]: global.startingGold
+};
+
 const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set, get, discovery) => {
   return {
-    resources: {
-      ...defaultResourcesMap,
-      [ResourceType.Gold]: global.startingGold
-    },
+    resources: {...DEFAULT_RESOURCES},
     resourcesPerSec: { ...defaultResourcesMap },
     prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
 
@@ -60,10 +62,25 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
       set({resources: newResources});
     },
 
-    prestigeReset: (effects) => {},
-    prestigeUpdate: (effects) => {},
-    getSaveData: () => ({}),
-    loadSaveData: (data) => {},
+    prestigeReset: (effects) => {
+      const newResources = {...DEFAULT_RESOURCES};
+      newResources.Gold += effects.bonuses.startingGold;
+      set({
+        resources: newResources,
+        resourcesPerSec: {...defaultResourcesMap},
+        prestigeEffects: effects,
+      })
+    },
+
+    prestigeUpdate: (effects) => set({prestigeEffects: effects}),
+
+    getSaveData: () => get().resources,
+
+    loadSaveData: (data) => {
+      if (typeof data !== 'object') return;
+
+      set({resources: data});
+    },
   }
 };
 

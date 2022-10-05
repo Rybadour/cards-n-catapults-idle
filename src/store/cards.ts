@@ -83,11 +83,25 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
       set({cards: newCards});
     },
 
-    prestigeReset: (prestigeEffects) => {},
+    prestigeReset: (prestigeEffects) => {
+      const newCards: Record<string, number> = {...global.startingCards};
+      Object.entries(prestigeEffects.extraStartCards)
+        .forEach(([c, amount]) => {
+          newCards[c] = (newCards[c] ?? 0) + amount;
+        });
+      set({cards: newCards});
+      discovery().prestigeReset(newCards, prestigeEffects);
+    },
 
-    getSaveData: () => ({}),
+    getSaveData: () => ({cards: get().cards}),
 
-    loadSaveData: (data) => false,
+    loadSaveData: (data) => {
+      if (typeof data !== 'object') return false;
+
+      set({cards: data.cards});
+
+      return true;
+    },
   }
 };
 

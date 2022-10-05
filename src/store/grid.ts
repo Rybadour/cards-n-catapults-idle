@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep, pick } from "lodash";
 
 import { Grid, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { CardsSlice } from "./cards";
@@ -7,6 +7,8 @@ import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelo
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
 import { CardMasterySlice } from "./card-mastery";
+import { createCard } from "../gamelogic/grid-cards";
+import cardsConfig from "../config/cards";
 
 export interface GridSlice {
   gridSpaces: Grid,
@@ -77,10 +79,47 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
       replaceCard(x, y, null);
     },
 
-    prestigeReset: () => {},
-    prestigeUpdate: (effects) => {},
-    getSaveData: () => ({}),
-    loadSaveData: (data) => {},
+    prestigeReset: () => {
+      set({gridSpaces: getEmptyGrid()});
+    },
+
+    prestigeUpdate: (effects) => {
+      set({prestigeEffects: effects});
+    },
+
+    getSaveData: () => {
+      const gridData: any[] = [];
+      get().gridSpaces.forEach((row, y) => {
+        row.forEach((card, x) => {
+          if (card) {
+            gridData.push({
+              x, y,
+              card: pick(card, ['id', 'shouldBeReserved', 'isExpiredAndReserved', 'durability', 'timeLeftMs'])
+            });
+          }
+        });
+      })
+      return gridData;
+    },
+
+    loadSaveData: (data) => {
+      if (!Array.isArray(data)) return false;
+      if (data.length == 0) return true;
+      if (typeof data[0] !== 'object' && data[0].id) return false;
+
+      const newGridSpaces = getEmptyGrid();
+      data.forEach((space) => {
+        newGridSpaces[space.y][space.x] = {
+          ...createCard(cardsConfig[space.card.id], 0),
+          ...space.card
+        };
+      });
+
+      const results = updateGridTotals(newGridSpaces, stats(), cardMastery().cardMasteries);
+
+      set({gridSpaces: results.grid});
+      stats().updatePerSec(results.resourcesPerSec);
+    },
   }
 };
 

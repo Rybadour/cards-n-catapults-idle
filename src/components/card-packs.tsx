@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import { pick } from 'lodash';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import shallow from 'zustand/shallow';
 
 import Icon from '../shared/components/icon';

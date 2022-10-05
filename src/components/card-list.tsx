@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Modal from 'react-modal';
 import classNames from 'classnames';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import shallow from 'zustand/shallow';
 
@@ -42,7 +42,7 @@ export default function CardList() {
         cardList: Object.values(cardsConfig)
           .filter(card => cardsDiscovered[card.id] && card.type == cardType)
       }))
-      .filter(({cardType, cardList}) => cardList.length > 0)
+      .filter(({cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>
         <CardCategory
           key={cardType}
