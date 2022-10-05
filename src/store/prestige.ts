@@ -287,9 +287,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         prestigeEffects: newEffects,
       });
 
-
-      discovery().prestigeUpdate(newEffects);
-      cardPacks().prestigeUpdate(newEffects);
+      onUpgradesChanged(newEffects);
 
       if (data.isReseting) {
         onReset(newEffects);

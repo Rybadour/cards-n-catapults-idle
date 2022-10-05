@@ -1,6 +1,9 @@
 import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
-import { RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap, MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, PrestigeEffects, GridMatch, ModifierBehaviour } from "../shared/types";
+import {
+  RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap,
+  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, PrestigeEffects, GridMatch, ModifierBehaviour
+} from "../shared/types";
 import { getRandomFromArray, using } from "../shared/utils";
 import { StatsSlice } from "../store/stats";
 import { CardMasteries, getMasteryBonus } from "../store/card-mastery";
@@ -238,7 +241,7 @@ export function updateGrid(
         }
       }
 
-      const didActivate = activateCard(results, cards, effects, masteryBonus, card, x, y);
+      const didActivate = activateCard(results, cards, card, x, y);
 
       if (didActivate) {
         card.timeLeftMs = card.cooldownMs;
@@ -258,8 +261,6 @@ export function updateGrid(
 function activateCard(
   results: UpdateGridResults,
   cards: Record<string, number>,
-  effects: PrestigeEffects,
-  masteryBonus: number,
   card: RealizedCard,
   x: number,
   y: number

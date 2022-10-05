@@ -11,7 +11,7 @@ import { PrestigeSlice } from "./prestige";
 import { StatsSlice } from "./stats";
 
 const AUTO_SAVE_KEY = 'cnc-auto-save';
-export const AUTO_SAVE_TIME = 30000;
+export const AUTO_SAVE_TIME = 5000;
 
 type ISaveLoad = {
   getSaveData: () => any,
@@ -75,9 +75,9 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
     discovery().loadSaveData(saveData.discovery);
     cardPacks().loadSaveData(saveData.cardPacks);
     cardMastery().loadSaveData(saveData.cardMastery);
-    prestige().loadSaveData(saveData.prestige);
     cards().loadSaveData(saveData.cards);
     grid().loadSaveData(saveData.grid);
+    prestige().loadSaveData(saveData.prestige);
     set({ isAutoSaveEnabled: saveData?.saveSettings?.isAutoSaveEnabled ?? true });
   }
 
@@ -97,7 +97,7 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
 
   return {
     isLoadedFromAutoSave: false,
-    isAutoSaveEnabled: true,
+    isAutoSaveEnabled: global.autoLoadEnabled,
     autoSaveTime: AUTO_SAVE_TIME,
 
     save,
