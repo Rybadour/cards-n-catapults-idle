@@ -39,7 +39,10 @@ export type PrestigeSlice = {
   packs: Record<string, RealizedPrestigePack>,
   isMenuOpen: boolean,
   isReseting: boolean,
+  shouldAutoSacrificeAll: boolean,
+  isPromptOpen: boolean,
   prestigeEffects: PrestigeEffects,
+  openPrompt: () => void,
   prestige: () => boolean,
   buyPack: (pack: RealizedPrestigePack) => void,
   refundUpgrade: (upgrade: PrestigeUpgrade) => void,
@@ -94,7 +97,11 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
     packs: cloneDeep(realizedPacks),
     isMenuOpen: false,
     isReseting: false,
+    shouldAutoSacrificeAll: false,
+    isPromptOpen: false,
     prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
+
+    openPrompt: () => set({isPromptOpen: true}),
 
     prestige: () => {
       if (get().nextPoints <= 0) {
