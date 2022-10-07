@@ -178,16 +178,26 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
 }
 
 function CardMasteryModal(props: {card: Card | null}) {
-  const {cardMasteries, sacrificeCard} = useStore(s => pick(s.cardMastery, ['cardMasteries', 'sacrificeCard']), shallow);
+  const cardMastery = useStore(s => pick(s.cardMastery, [
+    'cardMasteries', 'sacrificeCard', 'sacrificeMax', 'sacrificeUpToLevel'
+  ]), shallow);
 
-  const onSacrifice = useCallback((card: Card) => {
-    sacrificeCard(card);
-  }, [sacrificeCard]);
+  const onSacrificeCard = useCallback((card: Card) => {
+    cardMastery.sacrificeCard(card);
+  }, [cardMastery.sacrificeCard]);
+
+  const onSacrificeUpToLevel = useCallback((card: Card) => {
+    cardMastery.sacrificeUpToLevel(card);
+  }, [cardMastery.sacrificeUpToLevel]);
+
+  const onSacrificeMax = useCallback((card: Card) => {
+    cardMastery.sacrificeMax(card);
+  }, [cardMastery.sacrificeMax]);
 
   if (!props.card) return null;
 
   const masteryBonusPer = props.card.mastery.bonusPer * 100;
-  const mastery = cardMasteries[props.card.id];
+  const mastery = cardMastery.cardMasteries[props.card.id];
   return <>
     <h3>Card Mastery for {props.card.name}</h3>
     <Icon icon={props.card.icon} size="lg" />
@@ -199,6 +209,14 @@ function CardMasteryModal(props: {card: Card | null}) {
       <span>{mastery.currentCost}</span>
     </div>
     <div>+{masteryBonusPer}%</div>
-    <button onClick={() => onSacrifice(props.card!)}>Sacrifice Card for Mastery Bonus</button>
+
+    <div>
+      <p>Sacrifice Cards for Mastery Bonus</p>
+      <div className='card-mastery-sacrifice-buttons'>
+        <button onClick={() => onSacrificeCard(props.card!)}>One</button>
+        <button onClick={() => onSacrificeUpToLevel(props.card!)}>To Level</button>
+        <button onClick={() => onSacrificeMax(props.card!)}>Max</button>
+      </div>
+    </div>
   </>;
 }

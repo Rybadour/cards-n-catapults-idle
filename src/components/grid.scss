@@ -1,5 +1,5 @@
 .grid {
-  margin: 30px;
+  margin: 30px 50px;
 }
 
 .resources {
@@ -9,6 +9,7 @@
   align-items: center;
   grid-gap: 30px;
   color: white;
+  margin-bottom: 20px;
 
   .resource {
     display: flex;
@@ -29,11 +30,18 @@
   }
 }
 
+$grid-margin: 10px;
+.grid-controls {
+  display: flex;
+  flex-direction: row-reverse;
+  margin: 0 $grid-margin;
+}
+
 .grid-rows {
   display: flex;
   flex-direction: column;
   grid-gap: 10px;
-  margin: 30px;
+  margin: $grid-margin;
 }
 
 $card-width: 100px;

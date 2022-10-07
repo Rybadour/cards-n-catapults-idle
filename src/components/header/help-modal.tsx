@@ -82,6 +82,9 @@ function HelpModal() {
       of cards produced and does not reduce how much food a card consumes.</p>
 
       <p>Mastery levels are permanent, they persist through prestiges.</p>
+
+      <p>When you prestige you will be given an option to automatically sacrifice all cards for a mastery bonus so don&apos;t worry about doing that
+      yourself before you prestige!</p>
     </>
   }];
 

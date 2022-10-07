@@ -24,6 +24,7 @@ export default function GridMap() {
   
   const gridSpaces = useStore(s => s.grid.gridSpaces);
   const updateGrid = useStore(s => s.grid.update);
+  const clearGrid = useStore(s => s.grid.clearGrid);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,6 +61,13 @@ export default function GridMap() {
           resource={resource!}
         />
       )}
+    </div>
+    <div className='grid-controls'>
+      <button
+        className='secondary-button'
+        data-tip="Returns all cards to your inventory."
+        onClick={clearGrid}
+      >Clear Grid</button>
     </div>
     <div className='grid-rows'>
     {gridSpaces.map((gridRow, y) => 

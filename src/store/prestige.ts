@@ -1,3 +1,4 @@
+import { shouldForwardProp } from "@mui/styled-engine";
 import { cloneDeep, pick, shuffle } from "lodash";
 import global from "../config/global";
 import packsConfig from "../config/prestige-packs";
@@ -5,6 +6,7 @@ import upgradesConfig, { PRESTIGE_COST, PRESTIGE_REFUND_FACTOR } from "../config
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { MyCreateSlice, PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
+import { CardMasterySlice } from "./card-mastery";
 import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
@@ -43,7 +45,10 @@ export type PrestigeSlice = {
   isPromptOpen: boolean,
   prestigeEffects: PrestigeEffects,
   openPrompt: () => void,
+  closePrompt: () => void,
+  toggleShouldAutoSacrifice: () => void,
   prestige: () => boolean,
+  prestigeAndSacrificeAll: () => boolean,
   buyPack: (pack: RealizedPrestigePack) => void,
   refundUpgrade: (upgrade: PrestigeUpgrade) => void,
   update: () => void,
@@ -55,8 +60,8 @@ export type PrestigeSlice = {
 };
 
 const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
-  () => StatsSlice, () => DiscoverySlice, () => CardsSlice, () => GridSlice, () => CardPacksSlice
-]> = (set, get, stats, discovery, cards, grid, cardPacks) => {
+  () => StatsSlice, () => DiscoverySlice, () => CardsSlice, () => GridSlice, () => CardPacksSlice, () => CardMasterySlice
+]> = (set, get, stats, discovery, cards, grid, cardPacks, cardMastery) => {
   function onUpgradesChanged(newEffects: PrestigeEffects) {
     cardPacks().prestigeUpdate(newEffects);
     stats().prestigeUpdate(newEffects);
@@ -89,6 +94,21 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
     stats().prestigeReset(newEffects);
   }
 
+  function prestige() {
+    cardPacks().prestigeReset();
+    grid().prestigeReset();
+
+    set({
+      prestigePoints: get().prestigePoints + get().nextPoints,
+      nextPoints: 0,
+      nextRenownCost: PRESTIGE_COST.base,
+      isMenuOpen: true,
+      isReseting: true,
+      isPromptOpen: false,
+    });
+    return true;
+  }
+
   return {
     prestigePoints: global.startingPrestige,
     nextPoints: 0,
@@ -102,22 +122,27 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
     prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
 
     openPrompt: () => set({isPromptOpen: true}),
+    closePrompt: () => set({isPromptOpen: false}),
+    toggleShouldAutoSacrifice: () => set({shouldAutoSacrificeAll: !get().shouldAutoSacrificeAll}),
 
     prestige: () => {
       if (get().nextPoints <= 0) {
         return false;
       }
 
-      cardPacks().prestigeReset();
-      grid().prestigeReset();
+      prestige();
+      return true;
+    },
 
-      set({
-        prestigePoints: get().prestigePoints + get().nextPoints,
-        nextPoints: 0,
-        nextRenownCost: PRESTIGE_COST.base,
-        isMenuOpen: true,
-        isReseting: true,
-      });
+    prestigeAndSacrificeAll: () => {
+      if (get().nextPoints <= 0) {
+        return false;
+      }
+
+      grid().clearGrid();
+      cardMastery().sacrificeAll();
+
+      prestige();
       return true;
     },
 
@@ -250,7 +275,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
       });
 
       return {
-        ...pick(get(), ['prestigePoints', 'isReseting']),
+        ...pick(get(), ['prestigePoints', 'isReseting', 'shouldAutoSacrificeAll']),
         upgrades: upgradesToSave,
       };
     },
@@ -286,6 +311,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
 
       set({
         isReseting: false,
+        shouldAutoSacrificeAll: data.shouldAutoSacrificeAll,
         prestigePoints: data.prestigePoints,
         nextPoints: 0,
         nextRenownCost: getRenownFromPrestigePoints(1),
@@ -306,6 +332,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
     completeReset: () => {
       set({
         isReseting: false,
+        shouldAutoSacrificeAll: false,
         prestigePoints: 0,
         nextPoints: 0,
         nextRenownCost: getRenownFromPrestigePoints(1),

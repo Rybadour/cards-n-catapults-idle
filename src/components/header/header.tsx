@@ -18,7 +18,7 @@ Modal.setAppElement('#root');
 function Header() {
   const prestige = useStore(s => pick(
     s.prestige, [
-      'prestige', 'openMenu', 'closeMenu', 'isMenuOpen', 'isReseting', 'nextPoints', 'nextRenownCost',
+      'prestigeAndSacrificeAll', 'openMenu', 'closeMenu', 'isMenuOpen', 'isReseting', 'nextPoints', 'nextRenownCost',
       'shouldAutoSacrificeAll', 'isPromptOpen', 'openPrompt'
     ]
   ), shallow);
@@ -26,12 +26,14 @@ function Header() {
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
   const onPrestige = useCallback(() => {
+    if (prestige.nextPoints <= 0) return;
+
     if (prestige.shouldAutoSacrificeAll) {
-      prestige.prestige();
+      prestige.prestigeAndSacrificeAll();
     } else {
       prestige.openPrompt();
     }
-  }, [prestige.prestige, prestige.shouldAutoSacrificeAll, prestige.openPrompt]);
+  }, [prestige.nextPoints, prestige.prestigeAndSacrificeAll, prestige.shouldAutoSacrificeAll, prestige.openPrompt]);
 
   const onOpenPrestigeMenu = useCallback(() => {
     prestige.openMenu();

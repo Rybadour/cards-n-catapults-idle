@@ -9,6 +9,7 @@ import { DiscoverySlice } from "./discovery";
 import { CardMasterySlice } from "./card-mastery";
 import { createCard } from "../gamelogic/grid-cards";
 import cardsConfig from "../config/cards";
+import { grid } from "@mui/system";
 
 export interface GridSlice {
   gridSpaces: Grid,
@@ -16,6 +17,7 @@ export interface GridSlice {
   replaceCard: (x: number, y: number, newCard: RealizedCard) => void,
   returnCard: (x: number, y: number) => void,
   update: (elapsed: number) => void,
+  clearGrid: () => void,
   prestigeReset: () => void,
   prestigeUpdate: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
@@ -77,6 +79,20 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
 
     returnCard: (x, y) => {
       replaceCard(x, y, null);
+    },
+
+    clearGrid: () => {
+      const returnedCards: Record<string, number> = {};
+      get().gridSpaces.forEach((row, y) => {
+        row.forEach((card, x) => {
+          if (card) {
+            returnedCards[card.id] = (returnedCards[card.id] ?? 0) + 1;
+          }
+        })
+      });
+
+      cards().updateInventory(returnedCards);
+      set({gridSpaces: getEmptyGrid()});
     },
 
     prestigeReset: () => {

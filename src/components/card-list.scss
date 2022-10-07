@@ -184,4 +184,10 @@ $card-height: 220px;
     display: flex;
     grid-gap: 10px;
   }
+
+  .card-mastery-sacrifice-buttons {
+    display: flex;
+    grid-gap: 10px;
+    justify-content: center;
+  }
 }

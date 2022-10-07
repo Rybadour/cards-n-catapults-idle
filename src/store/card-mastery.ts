@@ -2,6 +2,7 @@ import { Card, CardId, MyCreateSlice } from "../shared/types";
 import cardsConfig from "../config/cards";
 import { CardsSlice } from "./cards";
 import { getExpValueMultiple, getMultipleFromExpValue } from "../shared/utils";
+import { cloneDeep } from "lodash";
 
 export type CardMastery = {
   level: number,
@@ -24,30 +25,70 @@ Object.entries(cardsConfig).forEach(([id, card]) => {
 export interface CardMasterySlice {
   cardMasteries: CardMasteries,
   sacrificeCard: (card: Card) => void,
+  sacrificeUpToLevel: (card: Card) => void,
+  sacrificeMax: (card: Card) => void,
+  sacrificeAll: () => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
+  completeReset: () => void,
 }
 
 const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice]> = (set, get, cards) => {
+
   return {
-    cardMasteries: defaultMasteries,
+    cardMasteries: cloneDeep(defaultMasteries),
     selectedCard: null,
 
     sacrificeCard: (card) => {
       if (cards().cards[card.id] < 1) return;
 
       const newCardMasteries = {...get().cardMasteries};
-      const mastery = newCardMasteries[card.id];
-      mastery.cardsSacrificed++;
-      mastery.currentSpent++;
-      if (mastery.currentCost == mastery.currentSpent) {
-        mastery.level++;
-        mastery.currentCost = getLevelCost(mastery.level, card);
-        mastery.currentSpent = 0;
-      }
+      incrementMastery(newCardMasteries, card, 1);
       set({cardMasteries: newCardMasteries});
 
-      cards().spendCard(card);
+      cards().spendCards(card, 1);
+    },
+
+    sacrificeUpToLevel: (card) => {
+      const numCards = Math.floor(cards().cards[card.id]);
+      if (numCards < 1) return;
+
+      const newCardMasteries = {...get().cardMasteries};
+      const numToSacrifice = Math.min(
+        newCardMasteries[card.id].currentCost - newCardMasteries[card.id].currentSpent,
+        numCards
+      );
+      incrementMastery(newCardMasteries, card, numToSacrifice);
+      set({cardMasteries: newCardMasteries});
+
+      cards().spendCards(card, numToSacrifice);
+    },
+
+    sacrificeMax: (card) => {
+      const numCards = Math.floor(cards().cards[card.id]);
+      if (numCards < 1) return;
+
+      const newCardMasteries = {...get().cardMasteries};
+      incrementMastery(newCardMasteries, card, numCards);
+      set({cardMasteries: newCardMasteries});
+
+      cards().spendCards(card, numCards);
+    },
+
+    sacrificeAll: () => {
+      const newCardMasteries = {...get().cardMasteries};
+      const inventoryDelta: Record<string, number> = {};
+
+      Object.entries(cards().cards).forEach(([id, num]) => {
+        const numCards = Math.floor(num);
+        if (numCards <= 0) return;
+
+        incrementMastery(newCardMasteries, cardsConfig[id], numCards);
+        inventoryDelta[id] = -numCards;
+      });
+
+      set({cardMasteries: newCardMasteries});
+      cards().updateInventory(inventoryDelta);
     },
 
     getSaveData: () => {
@@ -78,12 +119,29 @@ const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice]
       set({cardMasteries: newMasteries});
 
       return true;
-    }
+    },
+    
+    completeReset: () => {
+      set({cardMasteries: cloneDeep(defaultMasteries)});
+    },
   }
 };
 
 function getLevelCost(currentLevel: number, card: Card) {
   return card.mastery.baseCost * Math.pow(card.mastery.growth, currentLevel);
+}
+
+function incrementMastery(masteries: CardMasteries, card: Card, num: number) {
+  const mastery = masteries[card.id];
+  mastery.cardsSacrificed += num;
+
+  let remainder = mastery.currentSpent + num;
+  while(remainder >= mastery.currentCost) {
+    remainder -= mastery.currentCost;
+    mastery.level++;
+    mastery.currentCost = getLevelCost(mastery.level, card);
+  }
+  mastery.currentSpent = remainder;
 }
 
 export function getMasteryBonus(mastery: CardMastery, card: Card) {
