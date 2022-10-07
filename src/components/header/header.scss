@@ -46,19 +46,27 @@ header {
   }
 }
 
-.center-modal {
+.center-modal, .top-center-modal {
   position: absolute;
-  top: 50%;
   left: 50%;
   right: auto;
   bottom: auto;
   margin-right: -50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   background-color: #444;
   border-color: #222;
-  color: #DDD;
+  color: #EEE;
   border-radius: 0;
   padding: 20px;
+}
+
+.center-modal {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.top-center-modal {
+  top: 40px;
 }
 
 .header-modal {

@@ -9,7 +9,7 @@ export interface CardsSlice {
   setSelectedCard: (card: Card) => void,
   hasCard: (card: Card) => boolean,
   returnCard: (card: RealizedCard) => void,
-  spendCard: (card: Card) => void,
+  spendCards: (card: Card, num: number) => void,
   takeSelectedCard: () => RealizedCard | null,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   drawCards: (cardsToDraw: Card[]) => void,
@@ -19,9 +19,9 @@ export interface CardsSlice {
 }
 
 const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set, get, discovery) => {
-  function removeCard(id: string) {
+  function removeCard(id: string, num = 1) {
     const newCards = { ...get().cards };
-    newCards[id] = (newCards[id] ?? 0) - 1;
+    newCards[id] = (newCards[id] ?? 0) - num;
     if (newCards[id] < 0) {
       newCards[id] = 0;
     }
@@ -58,8 +58,8 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
       return newCard;
     },
 
-    spendCard: (card) => {
-      set({cards: removeCard(card.id)});
+    spendCards: (card, num) => {
+      set({cards: removeCard(card.id, num)});
     },
 
     updateInventory: (cardsDelta) => {

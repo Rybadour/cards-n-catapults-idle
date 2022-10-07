@@ -111,6 +111,7 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
       localStorage.removeItem(AUTO_SAVE_KEY);
       discovery().completeReset();
       prestige().completeReset();
+      cardMastery().completeReset();
       grid().prestigeReset();
       cardPacks().prestigeReset();
       const effects = cloneDeep(DEFAULT_EFFECTS);

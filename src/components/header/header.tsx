@@ -11,28 +11,37 @@ import { STANDARD_MODAL_STYLE } from '../../shared/constants';
 import useStore from '../../store';
 
 import './header.scss';
+import PrestigePromptModal from './prestige-prompt-modal';
 
 Modal.setAppElement('#root');
 
 function Header() {
-  const prestige = useStore(s =>  pick(
-    s.prestige,
-    ['prestige', 'openMenu', 'closeMenu', 'isMenuOpen', 'isReseting', 'nextPoints', 'nextRenownCost']
+  const prestige = useStore(s => pick(
+    s.prestige, [
+      'prestigeAndSacrificeAll', 'openMenu', 'closeMenu', 'isMenuOpen', 'isReseting', 'nextPoints', 'nextRenownCost',
+      'shouldAutoSacrificeAll', 'isPromptOpen', 'openPrompt'
+    ]
   ), shallow);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
   const onPrestige = useCallback(() => {
-    prestige.prestige();
-  }, [prestige]);
+    if (prestige.nextPoints <= 0) return;
+
+    if (prestige.shouldAutoSacrificeAll) {
+      prestige.prestigeAndSacrificeAll();
+    } else {
+      prestige.openPrompt();
+    }
+  }, [prestige.nextPoints, prestige.prestigeAndSacrificeAll, prestige.shouldAutoSacrificeAll, prestige.openPrompt]);
 
   const onOpenPrestigeMenu = useCallback(() => {
     prestige.openMenu();
-  }, [prestige]);
+  }, [prestige.openMenu]);
 
   const onClosePrestigeMenu = useCallback(() => {
     prestige.closeMenu();
-  }, [prestige]);
+  }, [prestige.closeMenu]);
 
   return <header>
     <h1>Cards & Catapults Idle</h1>
@@ -74,6 +83,7 @@ function Header() {
     >
       <OptionsModal />
     </Modal>
+    <PrestigePromptModal />
   </header>;
 }
 

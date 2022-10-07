@@ -13,5 +13,18 @@ $light-border: 1px solid #333;
 
   &:hover {
     background-color: #AAA;
+  }
+}
+
+.secondary-button {
+  background-color: #AAA;
+  border: 1px solid #777;
+  box-shadow: #222 0px 0px 3px 1px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #BBB;
   }   
 }
