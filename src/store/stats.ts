@@ -1,7 +1,7 @@
 import { cloneDeep } from "lodash";
 
 import global from "../config/global";
-import { defaultResourcesMap, Grid, MyCreateSlice, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
+import { defaultResourcesMap, MyCreateSlice, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { enumFromKey } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
@@ -10,7 +10,7 @@ export interface StatsSlice {
   resources: ResourcesMap,
   resourcesPerSec: ResourcesMap,
   prestigeEffects: PrestigeEffects,
-  update: (elapsed: number, newResourcesPerSec: ResourcesMap | null, grid: Grid) => void,
+  update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
   useResource: (resource: ResourceType, amount: number) => void,
   prestigeReset: (effects: PrestigeEffects) => void,
@@ -30,7 +30,7 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
     resourcesPerSec: { ...defaultResourcesMap },
     prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
 
-    update: (elapsed: number, newResourcesPerSec: ResourcesMap | null, grid: Grid) => {
+    update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => {
       if (newResourcesPerSec) {
         set({resourcesPerSec: newResourcesPerSec});
       }

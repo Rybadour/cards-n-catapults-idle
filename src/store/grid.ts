@@ -1,6 +1,6 @@
 import { cloneDeep, pick } from "lodash";
 
-import { Grid, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
+import { defaultResourcesMap, Grid, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { CardsSlice } from "./cards";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
@@ -64,7 +64,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
         totalResults = updateGridTotals(results.grid, stats(), cardMastery().cardMasteries);
         results.grid = totalResults.grid;
       }
-      stats().update(elapsed, totalResults?.resourcesPerSec ?? null, results.grid);
+      stats().update(elapsed, totalResults?.resourcesPerSec ?? null);
 
       set({gridSpaces: results.grid});
 
@@ -93,6 +93,8 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
 
       cards().updateInventory(returnedCards);
       set({gridSpaces: getEmptyGrid()});
+
+      stats().update(0, defaultResourcesMap);
     },
 
     prestigeReset: () => {
