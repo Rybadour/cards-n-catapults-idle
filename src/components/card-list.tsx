@@ -135,30 +135,29 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
         </div>
         {props.card.maxDurability ?
           <div className="stat" data-tip="Food capacity" data-offset="{'bottom': -5}">
-            <span>{props.card.maxDurability}</span>
             <Icon size="xs" icon="ham-shank" />
+            <span>{props.card.maxDurability}</span>
           </div> :
           null
         }
         {props.card.foodDrain ?
           <div className="stat" data-tip="Food Drain" data-offset="{'bottom': -5}">
-            <span>-{props.card.foodDrain}</span>
             <Icon size="xs" icon="ham-shank" />
-            <span>/s</span>
+            <span>-{props.card.foodDrain}/s</span>
           </div> :
           null
         }
         {props.card.cooldownMs ?
           <div className="stat" data-tip="Cooldown" data-offset="{'bottom': -5}">
-            <span>{formatNumber(props.card.cooldownMs / 1000, 0, 0)}s</span>
             <Icon size="xs" icon="backward-time" />
+            <span>{formatNumber(props.card.cooldownMs / 1000, 0, 0)}s</span>
           </div> :
           null
         }
         {masteryBonus > 0 ?
           <div className="stat" data-tip="Mastery Bonus" data-offset="{'bottom': -5}">
-            <span>{formatNumber(masteryBonus * 100, 0, 0)}%</span>
             <Icon size="xs" icon="progression" />
+            <span>{formatNumber(masteryBonus * 100, 0, 0)}%</span>
           </div> :
           null
         }

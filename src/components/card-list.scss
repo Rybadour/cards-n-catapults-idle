@@ -1,8 +1,13 @@
+$card-width: 164px;
+$card-height: 220px;
+$cards-gap: 10px;
+$card-list-padding: 10px;
+
 .card-inventory {
   box-sizing: border-box;
   margin: 50px 0;
   width: 100%;
-  max-width: 350px;
+  max-width: $card-width * 2 + $cards-gap + $card-list-padding * 2;
   max-height: 600px;
   
   > .cards {
@@ -38,8 +43,8 @@
   flex-wrap: wrap;
 
   width: 100%;
-  grid-gap: 10px;
-  padding: 10px;
+  grid-gap: $cards-gap;
+  padding: $card-list-padding;
   margin-bottom: 20px;
 
   &.hidden {
@@ -47,8 +52,6 @@
   }
 }
 
-$card-width: 160px;
-$card-height: 220px;
 .card-list .card-container {
   position: relative;
   width: $card-width;
@@ -120,19 +123,26 @@ $card-height: 220px;
   .stats {
     margin-top: auto;
     display: flex;
-    grid-gap: 10px;
-    flex-wrap: wrap;
+    grid-gap: 8px;
+    font-size: 15px;
+    flex-wrap: wrap-reverse;
 
     .stat {
-      border: 2px solid #333;
       border-radius: 3px;
-      padding: 5px;
+      background-color: #555;
+      padding: 3px 5px;
+      height: 26px;
+
       display: flex;
       justify-content: center;
       align-items: center;
 
+      span {
+        padding-top: 2px;
+      }
+
       .icon {
-        margin-left: 6px;
+        margin-right: 4px;
       }
     }
 
