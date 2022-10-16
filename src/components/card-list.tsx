@@ -98,6 +98,7 @@ function CardCategory(props: CardCategoryProps) {
 
 function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null) => void}) {
   const cards = useStore(s => s.cards.cards);
+  const cardDef = useStore(s => s.cardDefs.defs[props.card.id]);
   const selectedCard = useStore(s => s.cards.selectedCard);
   const setSelectedCard = useStore(s => s.cards.setSelectedCard);
   const cardMasteries = useStore(s => s.cardMastery.cardMasteries);
@@ -121,36 +122,36 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
       onClick={() => setSelectedCard(props.card)}
     >
       <div className="title">
-        <Icon size="sm" icon={props.card.icon} />
-        <span className="name">{props.card.name}</span>
+        <Icon size="sm" icon={cardDef.icon} />
+        <span className="name">{cardDef.name}</span>
         <span className="amount">{formatNumber(cards[props.card.id] ?? 0, 0, 1)}</span>
       </div>
 
-      <div className="description">{props.card.description}</div>
+      <div className="description">{cardDef.description}</div>
 
       <div className="stats">
         <div className="tier" data-tip="Tier" data-offset="{'bottom': -5}">
           <Icon size="sm" icon="round-star" />
-          <span className="value">{props.card.tier}</span>
+          <span className="value">{cardDef.tier}</span>
         </div>
-        {props.card.maxDurability ?
+        {cardDef.maxDurability ?
           <div className="stat" data-tip="Food capacity" data-offset="{'bottom': -5}">
             <Icon size="xs" icon="ham-shank" />
-            <span>{props.card.maxDurability}</span>
+            <span>{formatNumber(cardDef.maxDurability, 0, 0)}</span>
           </div> :
           null
         }
-        {props.card.foodDrain ?
+        {cardDef.foodDrain ?
           <div className="stat" data-tip="Food Drain" data-offset="{'bottom': -5}">
             <Icon size="xs" icon="ham-shank" />
-            <span>-{props.card.foodDrain}/s</span>
+            <span>-{cardDef.foodDrain}/s</span>
           </div> :
           null
         }
-        {props.card.cooldownMs ?
+        {cardDef.cooldownMs ?
           <div className="stat" data-tip="Cooldown" data-offset="{'bottom': -5}">
             <Icon size="xs" icon="backward-time" />
-            <span>{formatNumber(props.card.cooldownMs / 1000, 0, 0)}s</span>
+            <span>{formatNumber(cardDef.cooldownMs / 1000, 0, 0)}s</span>
           </div> :
           null
         }

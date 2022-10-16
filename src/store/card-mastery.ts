@@ -3,6 +3,7 @@ import cardsConfig from "../config/cards";
 import { CardsSlice } from "./cards";
 import { getExpValueMultiple, getMultipleFromExpValue } from "../shared/utils";
 import { cloneDeep } from "lodash";
+import { CardDefsSlice } from "./card-definitions";
 
 export type CardMastery = {
   level: number,
@@ -33,7 +34,8 @@ export interface CardMasterySlice {
   completeReset: () => void,
 }
 
-const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice]> = (set, get, cards) => {
+const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice, () => CardDefsSlice]>
+= (set, get, cards, cardDefs) => {
 
   return {
     cardMasteries: cloneDeep(defaultMasteries),
@@ -47,6 +49,7 @@ const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice]
       set({cardMasteries: newCardMasteries});
 
       cards().spendCards(card, 1);
+      cardDefs().cardMasteryUpdate(newCardMasteries);
     },
 
     sacrificeUpToLevel: (card) => {
@@ -62,6 +65,7 @@ const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice]
       set({cardMasteries: newCardMasteries});
 
       cards().spendCards(card, numToSacrifice);
+      cardDefs().cardMasteryUpdate(newCardMasteries);
     },
 
     sacrificeMax: (card) => {
@@ -73,6 +77,7 @@ const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice]
       set({cardMasteries: newCardMasteries});
 
       cards().spendCards(card, numCards);
+      cardDefs().cardMasteryUpdate(newCardMasteries);
     },
 
     sacrificeAll: () => {
@@ -89,6 +94,7 @@ const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice]
 
       set({cardMasteries: newCardMasteries});
       cards().updateInventory(inventoryDelta);
+      cardDefs().cardMasteryUpdate(newCardMasteries);
     },
 
     getSaveData: () => {
