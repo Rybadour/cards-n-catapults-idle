@@ -4,6 +4,15 @@ export function formatNumber(n: number, minimumFractionDigits: number, maximumFr
   return n.toLocaleString(undefined, {minimumFractionDigits, maximumFractionDigits});
 }
 
+export function autoFormatNumber(n: number): string {
+  const min = (n >= 1 ? 0 : 1);
+  const max = (n > 100 ?
+    0 :
+    (n > 1 ? 1 : 2)
+  );
+  return formatNumber(n, min, max);
+}
+
 export function enumFromKey<T> (enm: { [s: string]: T}, value: string): T | undefined {
   return (Object.values(enm) as unknown as string[]).includes(value)
     ? value as unknown as T

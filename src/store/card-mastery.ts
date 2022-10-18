@@ -123,12 +123,14 @@ const createCardMasterySlice: MyCreateSlice<CardMasterySlice, [() => CardsSlice,
         };
       });
       set({cardMasteries: newMasteries});
+      cardDefs().cardMasteryUpdate(newMasteries);
 
       return true;
     },
     
     completeReset: () => {
       set({cardMasteries: cloneDeep(defaultMasteries)});
+      cardDefs().cardMasteryUpdate(get().cardMasteries);
     },
   }
 };

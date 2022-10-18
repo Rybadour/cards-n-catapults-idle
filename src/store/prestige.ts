@@ -6,6 +6,7 @@ import upgradesConfig, { PRESTIGE_COST, PRESTIGE_REFUND_FACTOR } from "../config
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { MyCreateSlice, PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
+import { CardDefsSlice } from "./card-definitions";
 import { CardMasterySlice } from "./card-mastery";
 import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
@@ -60,9 +61,11 @@ export type PrestigeSlice = {
 };
 
 const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
-  () => StatsSlice, () => DiscoverySlice, () => CardsSlice, () => GridSlice, () => CardPacksSlice, () => CardMasterySlice
-]> = (set, get, stats, discovery, cards, grid, cardPacks, cardMastery) => {
+  () => StatsSlice, () => DiscoverySlice, () => CardDefsSlice, () => CardsSlice,
+  () => GridSlice, () => CardPacksSlice, () => CardMasterySlice
+]> = (set, get, stats, discovery, cardDefs, cards, grid, cardPacks, cardMastery) => {
   function onUpgradesChanged(newEffects: PrestigeEffects) {
+    cardDefs().prestigeUpdate(newEffects);
     cardPacks().prestigeUpdate(newEffects);
     stats().prestigeUpdate(newEffects);
     grid().prestigeUpdate(newEffects);

@@ -9,7 +9,7 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Person,
     rarity: Rarity.Common,
-    description: "{{passive}}.",
+    description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
     passive: {
       strength: 1,
@@ -28,7 +28,7 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Person,
     rarity: Rarity.Rare,
-    description: "{{passive}} and {{bonusToAdjacent}}",
+    description: "Produce {{passiveAmount}} and {{bonusToAdjacent}}",
     foodDrain: 0.3,
     passive: {
       strength: 0.2,
@@ -56,7 +56,7 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Person,
     rarity: Rarity.Rare,
-    description: "{{passive}} except when near low tier cards. When not fed it's production is reduced to {{modifiedStrength}}.",
+    description: "Produces {{passiveAmount}} except when near low tier cards. When not fed it's production is reduced to {{modifiedStrength}}.",
     foodDrain: 0.5,
     passive: {
       strength: 3,
@@ -90,7 +90,7 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Person,
     rarity: Rarity.Common,
-    description: "{{passive}}",
+    description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
     passive: {
       strength: 2,
@@ -138,7 +138,7 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Food,
     rarity: Rarity.Common,
-    description: "{{passive}}",
+    description: "Produces {{passiveAmount}} {{passiveAdjacent}}",
     maxDurability: 12,
     passive: {
       strength: 0.25,
@@ -181,7 +181,7 @@ const cards: Record<string, Card> = {
     tier: 1,
     type: CardType.Food,
     rarity: Rarity.Common,
-    description: "{{passive}}",
+    description: "Produces {{passiveAmount}} {{passiveAdjacent}}.",
     maxDurability: 10,
     passive: {
       strength: 0.1,
@@ -264,7 +264,7 @@ const cards: Record<string, Card> = {
     tier: 2,
     type: CardType.Resource,
     rarity: Rarity.Common,
-    description: "{{passive}}",
+    description: "Produces {{passiveAmount}}.",
     passive: {
       strength: 1,
       resource: ResourceType.Wood,
@@ -463,15 +463,8 @@ Object.keys(cards)
         const shape = 'nearby' + (mba.shape == MatchingGridShape.AllAdjacent ? ', in all directions' : '');
         multiplyText = ` for each ${matchingText} ${shape}`;
       });
-      const amount = `${p.strength} ${p.resource}/s`;
-      replaceInDescription('passive', `Produces ${amount}${multiplyText}`);
-
-      replaceInDescription('passiveAmount', amount);
+      replaceInDescription('passiveAdjacent', multiplyText);
     });
-
-    if (card.cooldownMs) {
-      replaceInDescription('cooldownSecs', formatNumber(card.cooldownMs / 1000, 0, 1));
-    }
 
     using(card.abilityStrengthModifier, (mod) => {
       if (card.passive) { 
@@ -494,26 +487,18 @@ Object.keys(cards)
 
       replaceInDescription(
         'bonusToAdjacent',
-        `${prefix} by ${formatNumber(bta.strength * 100, 0, 0)}%.`
+        `${prefix} by {{bonusToAdjacentAmount}}.`
       );
-      replaceInDescription(
-        'bonusToAdjacentAmount',
-        formatNumber(bta.strength * 100, 0, 0) + '%'
-      );
-    });
-
-    using(card.bonusToFoodCapacity, (btfc) => {
-      replaceInDescription('bonusToFoodAmount', formatNumber(btfc.strength * 100, 0, 0) + '%');
     });
 
     using(card.produceCardEffect, (prod) => {
       const possibleCards = prod.possibleCards.map(c => cards[c].name).join(' or ');
-      replaceInDescription('produceCard', `Generates ${possibleCards} cards nearby`);
+      replaceInDescription('produceCard', `Generates a ${possibleCards} card nearby`);
     });
 
     using(card.drawCardEffect, (draw) => {
       const possibleCards = draw.possibleCards.map(c => cards[c].name).join(' or ');
-      replaceInDescription('drawCard', `Generates ${possibleCards} cards `);
+      replaceInDescription('drawCard', `Generates a ${possibleCards} card `);
     });
 
     using(card.costPerSec, (cps) => {

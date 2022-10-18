@@ -1,9 +1,9 @@
 import { cloneDeep } from "lodash";
 
 import baseCardsConfig from "../config/cards";
-import global from "../config/global";
 import { DEFAULT_EFFECTS } from "../shared/constants";
-import { Card, CardId, MyCreateSlice, PrestigeEffects } from "../shared/types";
+import { Card, CardId, EMPTY_CARD, MatchingGridShape, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
+import { autoFormatNumber, formatNumber, using } from "../shared/utils";
 import { CardMasteries, getMasteryBonus } from "./card-mastery";
 
 export interface CardDefsSlice {
@@ -15,41 +15,64 @@ export interface CardDefsSlice {
 }
 
 const createCardDefsSlice: MyCreateSlice<CardDefsSlice, []> = (set, get) => {
-  function updateCardDefs() {
+  function getUpdatedCardDefs(effects: PrestigeEffects, cardMasteries: CardMasteries) {
     const newDefs: Record<CardId, Card> = {};
-    const state = get();
     Object.values(baseCardsConfig).forEach(card => {
       const def = cloneDeep(card);
-      const bonus = state.cardMasteries[card.id] ? getMasteryBonus(state.cardMasteries[card.id], card) : 1;
+      const bonus = cardMasteries[card.id] ? getMasteryBonus(cardMasteries[card.id], card) : 1;
 
-      if (def.abilityStrengthModifier) {
-        def.abilityStrengthModifier.factor *= bonus;
+      function replaceInDescription(variable: string, value: string) {
+        def.description = def.description.replaceAll(`{{${variable}}}`, value);
+      }
+
+      if (def.passive) {
+        if (def.passive.resource === ResourceType.Gold) {
+          def.passive.strength *= effects.bonuses.goldGain;
+        }
+        def.passive.strength *= bonus;
+        replaceInDescription('passiveAmount', `${autoFormatNumber(def.passive.strength)} ${def.passive.resource}/s`)
+      }
+      if (def.cooldownMs) {
+        def.cooldownMs /= bonus;
+        replaceInDescription('cooldownSecs', formatNumber(def.cooldownMs / 1000, 0, 1));
       }
       if (def.bonusToAdjacent) {
         def.bonusToAdjacent.strength *= bonus;
+        replaceInDescription('bonusToAdjacentAmount', formatNumber(def.bonusToAdjacent.strength * 100, 0, 0) + '%')
       }
+      using(def.bonusToFoodCapacity, (btfc) => {
+        btfc.strength *= bonus;
+        replaceInDescription('bonusToFoodAmount', formatNumber(btfc.strength * 100, 0, 0) + '%');
+      });
       if (def.maxDurability) {
-        def.maxDurability *= bonus;
+        def.maxDurability *= bonus * effects.bonuses.foodCapacity;
       }
+
       newDefs[def.id] = def;
     });
-
-    set({defs: newDefs});
+    return newDefs;
   }
 
+  const initialEffects = cloneDeep(DEFAULT_EFFECTS);
+  const initialCardMasteries = {};
+
   return {
-    defs: cloneDeep(baseCardsConfig),
-    effects: cloneDeep(DEFAULT_EFFECTS),
-    cardMasteries: {},
+    defs: getUpdatedCardDefs(initialEffects, initialCardMasteries),
+    effects: initialEffects,
+    cardMasteries: initialCardMasteries,
 
     prestigeUpdate: (effects) => {
-      set({effects});
-      updateCardDefs();
+      set({
+        effects,
+        defs: getUpdatedCardDefs(effects, get().cardMasteries)
+      });
     },
 
     cardMasteryUpdate: (cardMasteries) => {
-      set({cardMasteries});
-      updateCardDefs();
+      set({
+        cardMasteries,
+        defs: getUpdatedCardDefs(get().effects, cardMasteries)
+      });
     }
   }
 };
