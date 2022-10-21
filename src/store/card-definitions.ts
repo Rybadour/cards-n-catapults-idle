@@ -5,6 +5,7 @@ import { DEFAULT_EFFECTS } from "../shared/constants";
 import { Card, CardId, EMPTY_CARD, MatchingGridShape, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
 import { autoFormatNumber, formatNumber, using } from "../shared/utils";
 import { CardMasteries, getMasteryBonus } from "./card-mastery";
+import { GridSlice } from "./grid";
 
 export interface CardDefsSlice {
   defs: Record<CardId, Card>,
@@ -14,7 +15,7 @@ export interface CardDefsSlice {
   cardMasteryUpdate: (cardMasteries: CardMasteries) => void,
 }
 
-const createCardDefsSlice: MyCreateSlice<CardDefsSlice, []> = (set, get) => {
+const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => GridSlice]> = (set, get, grid) => {
   function getUpdatedCardDefs(effects: PrestigeEffects, cardMasteries: CardMasteries) {
     const newDefs: Record<CardId, Card> = {};
     Object.values(baseCardsConfig).forEach(card => {
@@ -66,6 +67,7 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, []> = (set, get) => {
         effects,
         defs: getUpdatedCardDefs(effects, get().cardMasteries)
       });
+      grid().cardDefsChanged();
     },
 
     cardMasteryUpdate: (cardMasteries) => {
@@ -73,6 +75,7 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, []> = (set, get) => {
         cardMasteries,
         defs: getUpdatedCardDefs(get().effects, cardMasteries)
       });
+      grid().cardDefsChanged();
     }
   }
 };

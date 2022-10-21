@@ -14,6 +14,7 @@ export interface GridSlice {
   replaceCard: (x: number, y: number, newCard: RealizedCard) => void,
   returnCard: (x: number, y: number) => void,
   update: (elapsed: number) => void,
+  cardDefsChanged: () => void,
   clearGrid: () => void,
   prestigeReset: () => void,
   getSaveData: () => any,
@@ -66,6 +67,13 @@ const createGridSlice: MyCreateSlice<GridSlice, [
       if (Object.keys(results.inventoryDelta).length > 0) {
         cards().updateInventory(results.inventoryDelta);
       }
+    },
+
+    cardDefsChanged: () => {
+      const totalResults = updateGridTotals(get().gridSpaces, cardDefs().defs, stats());
+
+      stats().update(0, totalResults?.resourcesPerSec ?? null);
+      set({gridSpaces: totalResults.grid});
     },
 
     replaceCard: (x, y, newCard) => {

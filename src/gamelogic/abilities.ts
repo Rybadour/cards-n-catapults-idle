@@ -122,7 +122,7 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
     let numAdjacent = 0;
 
     using(cardDef.passive, (p) => {
-      let strength = p.scaledToResource ?
+      const strength = p.scaledToResource ?
         getScaledResourceAsStrength(card, cardDef, stats.resources[p.scaledToResource]) :
         p.strength * card.bonus;
       if (p.multiplyByAdjacent) {
