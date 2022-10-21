@@ -67,8 +67,6 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
   function onUpgradesChanged(newEffects: PrestigeEffects) {
     cardDefs().prestigeUpdate(newEffects);
     cardPacks().prestigeUpdate(newEffects);
-    stats().prestigeUpdate(newEffects);
-    grid().prestigeUpdate(newEffects);
     discovery().prestigeUpdate(newEffects);
   }
 

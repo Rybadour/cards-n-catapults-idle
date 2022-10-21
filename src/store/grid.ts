@@ -1,38 +1,35 @@
-import { cloneDeep, pick } from "lodash";
+import { pick } from "lodash";
 
 import { defaultResourcesMap, Grid, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { CardsSlice } from "./cards";
-import { DEFAULT_EFFECTS } from "../shared/constants";
 import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
-import { CardMasterySlice } from "./card-mastery";
 import { createCard } from "../gamelogic/grid-cards";
 import cardsConfig from "../config/cards";
-import { grid } from "@mui/system";
+import { CardDefsSlice } from "./card-definitions";
 
 export interface GridSlice {
   gridSpaces: Grid,
-  prestigeEffects: PrestigeEffects,
   replaceCard: (x: number, y: number, newCard: RealizedCard) => void,
   returnCard: (x: number, y: number) => void,
   update: (elapsed: number) => void,
   clearGrid: () => void,
   prestigeReset: () => void,
-  prestigeUpdate: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
 }
 
-const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => StatsSlice, () => CardsSlice, () => CardMasterySlice]>
- = (set, get, discovery, stats, cards, cardMastery) => {
+const createGridSlice: MyCreateSlice<GridSlice, [
+  () => DiscoverySlice, () => CardDefsSlice, () => StatsSlice, () => CardsSlice
+]> = (set, get, discovery, cardDefs, stats, cards) => {
 
   function replaceCard(x: number, y: number, newCard: RealizedCard | null) {
     const newGridSpaces = [ ...get().gridSpaces ];
     const oldCard = newGridSpaces[y][x];
     newGridSpaces[y][x] = newCard;
 
-    const results = updateGridTotals(newGridSpaces, stats(), cardMastery().cardMasteries);
+    const results = updateGridTotals(newGridSpaces, cardDefs().defs, stats());
     set({gridSpaces: newGridSpaces});
     stats().updatePerSec(results.resourcesPerSec);
 
@@ -43,15 +40,13 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
 
   return {
     gridSpaces: getEmptyGrid(),
-    prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
 
     update: (elapsed) => {
       const results = updateGrid(
         get().gridSpaces,
         stats().resources,
+        cardDefs().defs,
         cards().cards,
-        get().prestigeEffects,
-        cardMastery().cardMasteries,
         elapsed
       );
 
@@ -61,7 +56,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
 
       let totalResults: UpdateGridTotalsResults | null = null;
       if (results.anyChanged) {
-        totalResults = updateGridTotals(results.grid, stats(), cardMastery().cardMasteries);
+        totalResults = updateGridTotals(results.grid, cardDefs().defs, stats());
         results.grid = totalResults.grid;
       }
       stats().update(elapsed, totalResults?.resourcesPerSec ?? null);
@@ -86,7 +81,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
       get().gridSpaces.forEach((row, y) => {
         row.forEach((card, x) => {
           if (card) {
-            returnedCards[card.id] = (returnedCards[card.id] ?? 0) + 1;
+            returnedCards[card.cardId] = (returnedCards[card.cardId] ?? 0) + 1;
           }
         })
       });
@@ -101,10 +96,6 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
       set({gridSpaces: getEmptyGrid()});
     },
 
-    prestigeUpdate: (effects) => {
-      set({prestigeEffects: effects});
-    },
-
     getSaveData: () => {
       const gridData: any[] = [];
       get().gridSpaces.forEach((row, y) => {
@@ -112,7 +103,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
           if (card) {
             gridData.push({
               x, y,
-              card: pick(card, ['id', 'shouldBeReserved', 'isExpiredAndReserved', 'durability', 'timeLeftMs'])
+              card: pick(card, ['cardId', 'shouldBeReserved', 'isExpiredAndReserved', 'durability', 'timeLeftMs'])
             });
           }
         });
@@ -123,17 +114,17 @@ const createGridSlice: MyCreateSlice<GridSlice, [() => DiscoverySlice, () => Sta
     loadSaveData: (data) => {
       if (!Array.isArray(data)) return false;
       if (data.length == 0) return true;
-      if (typeof data[0] !== 'object' && data[0].id) return false;
+      if (typeof data[0] !== 'object' && data[0].card) return false;
 
       const newGridSpaces = getEmptyGrid();
       data.forEach((space) => {
         newGridSpaces[space.y][space.x] = {
-          ...createCard(cardsConfig[space.card.id], 0),
+          ...createCard(cardsConfig[space.card.cardId], 0),
           ...space.card
         };
       });
 
-      const results = updateGridTotals(newGridSpaces, stats(), cardMastery().cardMasteries);
+      const results = updateGridTotals(newGridSpaces, cardDefs().defs, stats());
 
       set({gridSpaces: results.grid});
       stats().updatePerSec(results.resourcesPerSec);

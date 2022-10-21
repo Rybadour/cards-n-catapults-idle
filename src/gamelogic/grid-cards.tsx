@@ -1,9 +1,8 @@
-import { Card, PrestigeEffects, RealizedCard } from "../shared/types";
+import { Card, RealizedCard } from "../shared/types";
 
 export function createCard(card: Card, quantity: number): RealizedCard {
   return {
-    ...card,
-    maxDurability: card.maxDurability,
+    cardId: card.id,
     bonus: 1,
     totalStrength: 0,
     totalCost: 0,

@@ -1,20 +1,15 @@
-import { cloneDeep } from "lodash";
-
 import global from "../config/global";
 import { defaultResourcesMap, MyCreateSlice, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
-import { DEFAULT_EFFECTS } from "../shared/constants";
 import { enumFromKey } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 
 export interface StatsSlice {
   resources: ResourcesMap,
   resourcesPerSec: ResourcesMap,
-  prestigeEffects: PrestigeEffects,
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
   useResource: (resource: ResourceType, amount: number) => void,
   prestigeReset: (effects: PrestigeEffects) => void,
-  prestigeUpdate: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
 }
@@ -28,7 +23,6 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
   return {
     resources: {...DEFAULT_RESOURCES},
     resourcesPerSec: { ...defaultResourcesMap },
-    prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
 
     update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => {
       if (newResourcesPerSec) {
@@ -39,9 +33,8 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
       const newResources = {...get().resources};
       Object.keys(get().resourcesPerSec).forEach(r => {
         const resource = enumFromKey(ResourceType, r);
-        const prestigeBonus = (resource === ResourceType.Gold ? get().prestigeEffects.bonuses.goldGain : 1);
         if (resource) {
-          newResources[resource] += elapsedSecs * get().resourcesPerSec[resource] * prestigeBonus;
+          newResources[resource] += elapsedSecs * get().resourcesPerSec[resource];
         }
       });
       set({resources: newResources});
@@ -68,11 +61,8 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
       set({
         resources: newResources,
         resourcesPerSec: {...defaultResourcesMap},
-        prestigeEffects: effects,
       })
     },
-
-    prestigeUpdate: (effects) => set({prestigeEffects: effects}),
 
     getSaveData: () => get().resources,
 

@@ -116,10 +116,10 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
   return <div className="card-container" key={props.card.id}>
     <div
       className={classNames("card", {
-        selected: props.card === selectedCard,
+        selected: props.card.id === selectedCard,
         empty: (cards[props.card.id] ?? 0) <= 0,
       })}
-      onClick={() => setSelectedCard(props.card)}
+      onClick={() => setSelectedCard(props.card.id)}
     >
       <div className="title">
         <Icon size="sm" icon={cardDef.icon} />

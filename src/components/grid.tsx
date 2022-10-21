@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { ProgressBar } from './progress-bar';
 import { MarkType, RealizedCard, ResourceType } from '../shared/types';
-import { enumFromKey, formatNumber } from '../shared/utils';
+import { autoFormatNumber, enumFromKey, formatNumber } from '../shared/utils';
 import resourceIconMap from '../config/resources';
 import Icon from '../shared/components/icon';
 import useStore from '../store';
@@ -96,10 +96,12 @@ type GridTileProps = {
   onLeaveCard: () => void,
 };
 function GridTile(props: GridTileProps) {
+  const cardDefs = useStore(s => s.cardDefs.defs)
   const returnCardAction = useStore(s => s.grid.returnCard);
   const replaceCardAction = useStore(s => s.grid.replaceCard);
-
   const takeSelectedCard = useStore(s => s.cards.takeSelectedCard);
+
+  const cardDef = props.card ? cardDefs[props.card.cardId] : null;
 
   const addCard = useCallback(() => {
     const newCard = takeSelectedCard();
@@ -134,25 +136,25 @@ function GridTile(props: GridTileProps) {
     onMouseEnter={hoverCard}
     onMouseLeave={props.onLeaveCard}
   >
-    {props.card ? <>
+    {props.card && cardDef ? <>
       <div className="main-icon">
-        <Icon size="lg" icon={props.card?.icon} />
+        <Icon size="lg" icon={cardDef.icon} />
       </div>
       {props.card.isDisabled ? <div className="disabled-slash">
         <FontAwesomeIcon icon="slash" size='3x' />
       </div> : null}
-      {props.card.maxDurability ?
+      {cardDef.maxDurability ?
         <ProgressBar 
-          progress={(props.card.durability ?? 0)/props.card.maxDurability}
+          progress={(props.card.durability ?? 0)/cardDef.maxDurability}
           noBorder
           color="#C22"
           height={6}
         /> :
         null
       }
-      {props.card.cooldownMs ?
+      {cardDef.cooldownMs ?
         <ProgressBar
-          progress={(props.card.cooldownMs-(props.card.timeLeftMs ?? 0))/props.card.cooldownMs}
+          progress={(cardDef.cooldownMs-(props.card.timeLeftMs ?? 0))/cardDef.cooldownMs}
           noBorder
           color="#72bcd4"
           height={6}
@@ -166,21 +168,21 @@ function GridTile(props: GridTileProps) {
         }
       </div>
       <div className="details">
-        <div className="name">{props.card.name}</div>
+        <div className="name">{cardDef.name}</div>
         <div className="status">
           {props.card.isDisabled ? '(disabled)' : ''}
           {props.card.isExpiredAndReserved ? '(reserved)' : ''}
           {props.card.statusText ? props.card.statusText : ''}
         </div>
         <div className="ability">
-          {props.card.totalStrength && props.card.passive ? <>
-            <Icon size="sm" icon={resourceIconMap[props.card.passive.resource]} />
-            {formatNumber(props.card.totalStrength, 0, 2)}/s
+          {props.card.totalStrength && cardDef.passive ? <>
+            <Icon size="sm" icon={resourceIconMap[cardDef.passive.resource]} />
+            {autoFormatNumber(props.card.totalStrength)}/s
           </> : null }
         </div>
         <div className="ability-cost">
-          {props.card.totalCost && props.card.costPerSec ? <>
-            <Icon size="sm" icon={resourceIconMap[props.card.costPerSec.resource]} />
+          {props.card.totalCost && cardDef.costPerSec ? <>
+            <Icon size="sm" icon={resourceIconMap[cardDef.costPerSec.resource]} />
             -{formatNumber(props.card.totalCost, 0, 1)}/s
           </> : null }
         </div>
@@ -190,18 +192,16 @@ function GridTile(props: GridTileProps) {
 }
 
 function Resource(props: {resource: ResourceType}) {
-  const {resources, resourcesPerSec, prestigeEffects} = useStore(s => ({
+  const {resources, resourcesPerSec} = useStore(s => ({
     resources: s.stats.resources,
     resourcesPerSec: s.stats.resourcesPerSec,
-    prestigeEffects: s.stats.prestigeEffects,
   }), shallow);
 
-  const prestigeBonus = (props.resource === ResourceType.Gold ? prestigeEffects.bonuses.goldGain : 1);
   return <div className="resource" data-tip={props.resource}>
     <Icon size="md" icon={resourceIconMap[props.resource]} />
     <div className="amounts">
       <div className='total'>{formatNumber(resources[props.resource], 0, 0)}</div>
-      <div className='per-sec'>{formatNumber(resourcesPerSec[props.resource] * prestigeBonus, 0, 1)}/s</div>
+      <div className='per-sec'>{formatNumber(resourcesPerSec[props.resource], 0, 1)}/s</div>
     </div>
   </div>;
 }

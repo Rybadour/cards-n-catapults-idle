@@ -91,7 +91,8 @@ export type GridMatch = {
   cardTypes?: CardType[],
 }
 
-export type RealizedCard = Card & {
+export type RealizedCard = {
+  cardId: CardId,
   bonus: number,
   totalStrength: number,
   totalCost: number,

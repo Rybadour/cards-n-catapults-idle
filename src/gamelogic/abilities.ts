@@ -2,18 +2,17 @@ import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
 import {
   RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap,
-  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, PrestigeEffects, GridMatch, ModifierBehaviour
+  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour
 } from "../shared/types";
 import { getRandomFromArray, using } from "../shared/utils";
 import { StatsSlice } from "../store/stats";
-import { CardMasteries, getMasteryBonus } from "../store/card-mastery";
 
 export type UpdateGridTotalsResults = {
   resourcesPerSec: Record<ResourceType, number>;
   grid: Grid;
 };
 
-export function updateGridTotals(grid: Grid, stats: StatsSlice, cardMasteries: CardMasteries): UpdateGridTotalsResults {
+export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, stats: StatsSlice): UpdateGridTotalsResults {
   const results = {
     grid: [...grid],
     resourcesPerSec: { ...defaultResourcesMap },
@@ -28,40 +27,42 @@ export function updateGridTotals(grid: Grid, stats: StatsSlice, cardMasteries: C
     card.totalStrength = 0;
     card.totalCost = 0;
     card.cardMarks = {};
+    const cardDef = cardDefs[card.cardId];
 
-    if (card.foodDrain) {
+    if (cardDef.foodDrain) {
       iterateGridShape(grid, x, y, MatchingGridShape.OrthoAdjacent, (other, x2, y2) => {
         card.cardMarks[`${x2}:${y2}`] = MarkType.Associated;
       });
     }
 
-    if (card.produceCardEffect) {
-      iterateGridShape(grid, x, y, card.produceCardEffect.shape, (other, x2, y2) => {
+    if (cardDef.produceCardEffect) {
+      iterateGridShape(grid, x, y, cardDef.produceCardEffect.shape, (other, x2, y2) => {
         card.cardMarks[`${x2}:${y2}`] = MarkType.Associated;
       });
     }
 
     card.isDisabled = false;
-    if (card.costPerSec) {
-      if (!canAfford(stats.resources, card.costPerSec)) {
+    if (cardDef.costPerSec) {
+      if (!canAfford(stats.resources, cardDef.costPerSec)) {
         card.isDisabled = true;
       }
     }
 
     // Should only change disabled state if the above logic didn't disable the card already
-    if (card.disableShape && !card.isDisabled) {
-      const isDisabling = card.disableShape.onMatch;
-      const disable = card.disableShape;
+    if (cardDef.disableShape && !card.isDisabled) {
+      const isDisabling = cardDef.disableShape.onMatch;
+      const disable = cardDef.disableShape;
       card.isDisabled = !isDisabling;
-      iterateGridShapeCards(grid, x, y, card.disableShape.shape, (adj, x2, y2) => {
+      iterateGridShapeCards(grid, x, y, cardDef.disableShape.shape, (adj, x2, y2) => {
+        const adjDef = cardDefs[adj.cardId];
         let setDisabled = false;
-        if (disable.maxTier && adj.tier <= disable.maxTier) {
+        if (disable.maxTier && adjDef.tier <= disable.maxTier) {
           setDisabled = true;
         }
-        if (disable.cardTypes?.includes(adj.type)) {
+        if (disable.cardTypes?.includes(adjDef.type)) {
           setDisabled = true;
         }
-        if (disable.cards && disable.cards.includes(adj.id)) {
+        if (disable.cards && disable.cards.includes(adj.cardId)) {
           setDisabled = true;
         }
 
@@ -78,38 +79,37 @@ export function updateGridTotals(grid: Grid, stats: StatsSlice, cardMasteries: C
   // Apply bonuses
   iterateGrid(grid, (card, x, y) => {
     if (card.isDisabled || card.isExpiredAndReserved) return;
+    const cardDef = cardDefs[card.cardId];
 
-    const masteryBonus = getMasteryBonus(cardMasteries[card.id], card);
-
-    using(card.bonusToAdjacent, (bta) => {
-      iterateGridMatch(grid, x, y, bta, (adj, x2, y2) => {
+    using(cardDef.bonusToAdjacent, (bta) => {
+      iterateGridMatch(grid, cardDefs, x, y, bta, (adj, x2, y2) => {
         if (!adj) return;
-        adj.bonus *= 1 + bta.strength * masteryBonus;
+        adj.bonus *= 1 + bta.strength;
         card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
       });
     });
 
-    using(card.bonusToFoodCapacity, (btfc) => {
-      iterateGridMatch(grid, x, y, btfc, (adj, x2, y2) => {
+    using(cardDef.bonusToFoodCapacity, (btfc) => {
+      iterateGridMatch(grid, cardDefs, x, y, btfc, (adj, x2, y2) => {
         if (!adj) return;
-        adj.durabilityBonus *= btfc.strength * masteryBonus;
+        adj.durabilityBonus *= btfc.strength;
         card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
       });
     });
     
-    using(card.abilityStrengthModifier, (mod) => {
+    using(cardDef.abilityStrengthModifier, (mod) => {
       const shouldModify = mod.behaviour == ModifierBehaviour.WhenMatching;
       let isModified = !shouldModify;
-      iterateGridMatch(grid, x, y, mod.match, (adj) => {
+      iterateGridMatch(grid, cardDefs, x, y, mod.match, (adj) => {
         if (!adj || adj.isExpiredAndReserved) return;
 
         isModified = shouldModify;
       });
 
       if (isModified) {
-        card.bonus *= mod.factor * masteryBonus;
-        card.statusIcon = card.abilityStrengthModifier?.statusIcon ?? '';
-        card.statusText = card.abilityStrengthModifier?.statusText ?? '';
+        card.bonus *= mod.factor;
+        card.statusIcon = cardDef.abilityStrengthModifier?.statusIcon ?? '';
+        card.statusText = cardDef.abilityStrengthModifier?.statusText ?? '';
       }
     });
   });
@@ -117,19 +117,17 @@ export function updateGridTotals(grid: Grid, stats: StatsSlice, cardMasteries: C
   // Calculate per second abilities
   iterateGrid(grid, (card, x, y) => {
     if (card.isDisabled || card.isExpiredAndReserved) return;
-
-    const masteryBonus = getMasteryBonus(cardMasteries[card.id], card);
+    const cardDef = cardDefs[card.cardId];
 
     let numAdjacent = 0;
 
-    using(card.passive, (p) => {
+    using(cardDef.passive, (p) => {
       let strength = p.scaledToResource ?
-        getScaledResourceAsStrength(card, stats.resources[p.scaledToResource]) :
+        getScaledResourceAsStrength(card, cardDef, stats.resources[p.scaledToResource]) :
         p.strength * card.bonus;
-      strength *= masteryBonus;
       if (p.multiplyByAdjacent) {
         const mba = p.multiplyByAdjacent;
-        iterateGridMatch(grid, x, y, mba, (adj, ax, ay) => {
+        iterateGridMatch(grid, cardDefs, x, y, mba, (adj, ax, ay) => {
           if (adj?.isDisabled) return;
 
           card.totalStrength += strength;
@@ -142,7 +140,7 @@ export function updateGridTotals(grid: Grid, stats: StatsSlice, cardMasteries: C
       results.resourcesPerSec[p.resource] += card.totalStrength;
     });
 
-    using(card.costPerSec, (cps) => {
+    using(cardDef.costPerSec, (cps) => {
       const cost = cps.cost * (numAdjacent > 0 ? numAdjacent : 1);
       results.resourcesPerSec[cps.resource] -= cost;
       card.totalCost += cost;
@@ -163,9 +161,8 @@ export type UpdateGridResults = {
 export function updateGrid(
   grid: Grid,
   resources: Record<ResourceType, number>,
+  cardDefs: Record<CardId, Card>,
   cards: Record<string, number>,
-  effects: PrestigeEffects,
-  masteries: CardMasteries,
   elapsed: number
 ): UpdateGridResults {
   const results = {
@@ -177,9 +174,8 @@ export function updateGrid(
   } as UpdateGridResults;
 
   iterateGrid(grid, (card, x, y) => {
-    const masteryBonus = getMasteryBonus(masteries[card.id], card);
-
-    using(card.costPerSec, (cps) => {
+    const cardDef = cardDefs[card.cardId];
+    using(cardDef.costPerSec, (cps) => {
       if (card.isDisabled && canAfford(resources, cps)) {
         results.anyChanged = true;
       } else if (!card.isDisabled && resources[cps.resource] <= 0) {
@@ -190,29 +186,29 @@ export function updateGrid(
 
     if (card.isDisabled) return;
 
-    if (card.passive && card.passive.scaledToResource) {
-      const strength = getScaledResourceAsStrength(card, resources[card.passive.scaledToResource]) * masteryBonus;
+    if (cardDef.passive && cardDef.passive.scaledToResource) {
+      const strength = getScaledResourceAsStrength(card, cardDef, resources[cardDef.passive.scaledToResource]);
       if (Math.abs(card.totalStrength - strength) > 0.1) {
         results.anyChanged = true;
       }
     }
 
-    if (card.foodDrain) {
+    if (cardDef.foodDrain) {
       const adjacentFood: {
         card: RealizedCard,
         x: number,
         y: number,
       }[] = [];
       iterateGridShapeCards(grid, x, y, MatchingGridShape.OrthoAdjacent, (adjCard, ax, ay) => {
-        if (adjCard.type == CardType.Food && adjCard.maxDurability && !adjCard.isDisabled) {
+        const adjDef = cardDefs[adjCard.cardId];
+        if (adjDef.type == CardType.Food && adjDef.maxDurability && !adjCard.isDisabled) {
           adjacentFood.push({card: adjCard, x: ax, y: ay});
         } 
       }); 
 
-      const foodDrain = (elapsed/1000 * card.foodDrain) / adjacentFood.length;
+      const foodDrain = (elapsed/1000 * cardDef.foodDrain) / adjacentFood.length;
       adjacentFood.forEach(food => {
-        const foodMasteryBonus = getMasteryBonus(masteries[food.card.id], food.card);
-        const foodBonus = food.card.durabilityBonus * effects.bonuses.foodCapacity * foodMasteryBonus;
+        const foodBonus = food.card.durabilityBonus;
         food.card.durability = (food.card.durability ?? 0) - (foodDrain / foodBonus);
         if (food.card.durability <= 0) {
           if (food.card.shouldBeReserved) {
@@ -228,25 +224,25 @@ export function updateGrid(
       })
     }
 
-    if (card.cooldownMs) {
+    if (cardDef.cooldownMs) {
       if ((card.timeLeftMs ?? 0) > 0) {
-        card.timeLeftMs = (card.timeLeftMs ?? 0) - (elapsed * card.bonus * masteryBonus);
+        card.timeLeftMs = (card.timeLeftMs ?? 0) - (elapsed * card.bonus);
         if (card.timeLeftMs > 0) return;
       }
 
       // Don't activate or reset cooldown if not enough resources
-      if (card.costPerUse) {
-        if (!canAfford(resources, card.costPerUse)) {
+      if (cardDef.costPerUse) {
+        if (!canAfford(resources, cardDef.costPerUse)) {
           return;
         }
       }
 
-      const didActivate = activateCard(results, cards, card, x, y);
+      const didActivate = activateCard(results, cardDefs, cards, cardDef, x, y);
 
       if (didActivate) {
-        card.timeLeftMs = card.cooldownMs;
+        card.timeLeftMs = cardDef.cooldownMs;
 
-        using(card.costPerUse, (cpu) => {
+        using(cardDef.costPerUse, (cpu) => {
           results.resourcesSpent[cpu.resource] += cpu.cost;
           resources[cpu.resource] -= cpu.cost;
         });
@@ -260,20 +256,21 @@ export function updateGrid(
 
 function activateCard(
   results: UpdateGridResults,
+  cardDefs: Record<CardId, Card>,
   cards: Record<string, number>,
-  card: RealizedCard,
+  cardDef: Card,
   x: number,
   y: number
 ): boolean {
-  if (card.produceCardEffect) {
-    const pc = card.produceCardEffect;
+  if (cardDef.produceCardEffect) {
+    const pc = cardDef.produceCardEffect;
     const newCardId = getRandomFromArray(pc.possibleCards);
     let found = false;
     iterateGridShape(results.grid, x, y, pc.shape, (adjCard, ax, ay) => {
       if (found) return;
       if (adjCard) {
         // Only place cards into slots reserved for the new card
-        if (!adjCard.isExpiredAndReserved || adjCard.id !== newCardId) {
+        if (!adjCard.isExpiredAndReserved || adjCard.cardId !== newCardId) {
           return;
         }
       }
@@ -291,40 +288,41 @@ function activateCard(
     }
     return true;
 
-  } else if (card.drawCardEffect) {
-    const newCard = getRandomFromArray(card.drawCardEffect.possibleCards);
+  } else if (cardDef.drawCardEffect) {
+    const newCard = getRandomFromArray(cardDef.drawCardEffect.possibleCards);
     results.inventoryDelta[newCard] = (results.inventoryDelta[newCard] ?? 0) + 1;
     results.newCards.push(cardsConfig[newCard]);
     return true;
 
-  } else if (card.autoReplaceEffect) {
+  } else if (cardDef.autoReplaceEffect) {
     let found = false;
     iterateGrid(results.grid, (otherCard, x2, y2) => {
+      const otherDef = cardDefs[otherCard.cardId];
       if (x == x2 && y == y2) return;
       if (!otherCard || !otherCard.isExpiredAndReserved || found) return;
-      if (card.autoReplaceEffect?.cardType !== otherCard.type) return;
-      if ((cards[otherCard.id] ?? 0) <= 0) return;
+      if (cardDef.autoReplaceEffect?.cardType !== otherDef.type) return;
+      if ((cards[otherCard.cardId] ?? 0) <= 0) return;
 
       found = true;
 
-      const newCard = createCard(cardsConfig[otherCard.id], cards[otherCard.id]);
+      const newCard = createCard(cardsConfig[otherCard.cardId], cards[otherCard.cardId]);
       newCard.shouldBeReserved = true;
       results.grid[y2][x2] = newCard;
 
-      const quantityUsed = cards[otherCard.id] > 1 ? 1 : cards[otherCard.id];
-      results.inventoryDelta[otherCard.id] = (results.inventoryDelta[otherCard.id] ?? 0) - quantityUsed;
+      const quantityUsed = cards[otherCard.cardId] > 1 ? 1 : cards[otherCard.cardId];
+      results.inventoryDelta[otherCard.cardId] = (results.inventoryDelta[otherCard.cardId] ?? 0) - quantityUsed;
       results.anyChanged = true;
     });
     return found;
 
-  } else if (card.convertCardEffect) {
-    const convert = card.convertCardEffect;
+  } else if (cardDef.convertCardEffect) {
+    const convert = cardDef.convertCardEffect;
 
     let found = false;
     iterateGrid(results.grid, (other, x2, y2) => {
       if (found || !other || other.isExpiredAndReserved) return;
 
-      if (other.id == convert.targetCard) {
+      if (other.cardId == convert.targetCard) {
         results.grid[y2][x2] = createCard(cardsConfig[convert.resultingCard], 1);
         results.anyChanged = true;
         found = true;
@@ -409,15 +407,15 @@ function iterateGridShapeCards(
 }
 
 function iterateGridMatch(
-  grid: Grid, x: number, y: number, match: GridMatch,
+  grid: Grid, cardDefs: Record<CardId, Card>, x: number, y: number, match: GridMatch,
   callback: (card: RealizedCard | null, x: number, y: number) => void
 ) {
   iterateGridShape(grid, x, y, match.shape, (card, ax, ay) => {
-    const cardId = (card && !card.isExpiredAndReserved) ? card.id : EMPTY_CARD;
+    const cardId = (card && !card.isExpiredAndReserved) ? card.cardId : EMPTY_CARD;
     if (match.cards?.includes(cardId)) {
       callback(card, ax, ay);
     }
-    if (card && match.cardTypes?.includes(card.type)) {
+    if (card && match.cardTypes?.includes(cardDefs[card.cardId].type)) {
       callback(card, ax, ay);
     }
   });
@@ -427,9 +425,9 @@ function canAfford(resources: ResourcesMap, cost: ResourceCost) {
   return resources[cost.resource] >= cost.cost;
 }
 
-function getScaledResourceAsStrength(card: RealizedCard, resource: number) {
-  if (card.passive && card.passive.scaledToResource) {
-    return card.passive.strength * card.bonus * (resource > 0 ? Math.log10(resource) : 0);
+function getScaledResourceAsStrength(card: RealizedCard, cardDef: Card, resource: number) {
+  if (cardDef.passive && cardDef.passive.scaledToResource) {
+    return cardDef.passive.strength * card.bonus * (resource > 0 ? Math.log10(resource) : 0);
   }
 
   return 0;

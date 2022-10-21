@@ -1,12 +1,13 @@
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
 import { Card, CardId, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
+import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
 
 export interface CardsSlice {
   cards: Record<CardId, number>,
-  selectedCard: Card | null,
-  setSelectedCard: (card: Card) => void,
+  selectedCard: CardId | null,
+  setSelectedCard: (card: CardId) => void,
   hasCard: (card: Card) => boolean,
   returnCard: (card: RealizedCard) => void,
   spendCards: (card: Card, num: number) => void,
@@ -18,7 +19,8 @@ export interface CardsSlice {
   loadSaveData: (data: any) => boolean,
 }
 
-const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set, get, discovery) => {
+const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => CardDefsSlice]>
+= (set, get, discovery, cardDefs) => {
   function removeCard(id: string, num = 1) {
     const newCards = { ...get().cards };
     newCards[id] = (newCards[id] ?? 0) - num;
@@ -28,32 +30,36 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
     return newCards;
   }
 
+  function getCardDef(card: RealizedCard) {
+    return cardDefs().defs[card.cardId];
+  }
+
   return {
     cards: global.startingCards,
     selectedCard: null,
 
-    setSelectedCard: (card) => {
-      set({selectedCard: card});
+    setSelectedCard: (cardId) => {
+      set({selectedCard: cardId});
     },
 
     hasCard: (card) => (get().cards[card.id] ?? 0) > 0,
 
     returnCard: (card) => {
       const newCards = {...get().cards};
-      addRealizedCard(newCards, card);
+      addRealizedCard(newCards, card, getCardDef(card));
 
       set({cards: newCards});
     },
 
     takeSelectedCard: () => {
       const selected = get().selectedCard;
-      if (selected == null || (get().cards[selected.id] ?? 0) <= 0) {
+      if (selected == null || (get().cards[selected] ?? 0) <= 0) {
         return null;
       }
 
-      const newCard = createCard(selected, get().cards[selected.id]);
+      const newCard = createCard(cardDefs().defs[selected], get().cards[selected]);
 
-      set({cards: removeCard(selected.id)});
+      set({cards: removeCard(selected)});
 
       return newCard;
     },
@@ -105,15 +111,15 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice]> = (set
   }
 };
 
-function addRealizedCard(cards: Record<string, number>, card: RealizedCard) {
+function addRealizedCard(cards: Record<string, number>, card: RealizedCard, cardDef: Card) {
   let amount = 1;
-  if (card.durability !== undefined && card.maxDurability) {
-    amount = card.durability / card.maxDurability;
+  if (card.durability !== undefined && cardDef.maxDurability) {
+    amount = card.durability / cardDef.maxDurability;
     if (amount > 0.95) {
       amount = 1;
     }
   }
-  cards[card.id] = (cards[card.id] ?? 0) + amount;
+  cards[card.cardId] = (cards[card.cardId] ?? 0) + amount;
 }
 
 export default createCardsSlice;
