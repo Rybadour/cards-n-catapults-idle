@@ -2,7 +2,7 @@ import { pick } from "lodash";
 
 import { defaultResourcesMap, Grid, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
 import { CardsSlice } from "./cards";
-import { updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
+import { iterateGrid, updateGrid, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
 import { createCard } from "../gamelogic/grid-cards";
@@ -70,7 +70,17 @@ const createGridSlice: MyCreateSlice<GridSlice, [
     },
 
     cardDefsChanged: () => {
-      const totalResults = updateGridTotals(get().gridSpaces, cardDefs().defs, stats());
+      const gridSpaces = get().gridSpaces;
+      const defs = cardDefs().defs;
+      iterateGrid(gridSpaces, (card) => {
+        const cardDef = defs[card.cardId];
+        if (cardDef.maxDurability && card.durability) {
+          if (card.maxDurability > 0) {
+            card.durability *= cardDef.maxDurability/card.maxDurability;
+          }
+        }
+      });
+      const totalResults = updateGridTotals(gridSpaces, defs, stats());
 
       stats().update(0, totalResults?.resourcesPerSec ?? null);
       set({gridSpaces: totalResults.grid});

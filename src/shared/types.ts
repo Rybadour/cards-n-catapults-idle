@@ -99,6 +99,7 @@ export type RealizedCard = {
   shouldBeReserved: boolean,
   isExpiredAndReserved: boolean,
   isDisabled: boolean,
+  maxDurability: number,
   durability?: number,
   durabilityBonus: number,
   timeLeftMs?: number,

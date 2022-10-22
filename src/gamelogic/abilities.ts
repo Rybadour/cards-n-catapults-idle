@@ -343,7 +343,7 @@ function activateCard(
   return false;
 }
 
-function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: number) => void) {
+export function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number, y: number) => void) {
   for (let y = 0; y < grid.length; y++) {
     for (let x = 0; x < grid[y].length; x++) {
       if (grid[y][x]) {

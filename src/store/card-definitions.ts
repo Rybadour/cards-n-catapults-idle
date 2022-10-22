@@ -2,7 +2,7 @@ import { cloneDeep } from "lodash";
 
 import baseCardsConfig from "../config/cards";
 import { DEFAULT_EFFECTS } from "../shared/constants";
-import { Card, CardId, EMPTY_CARD, MatchingGridShape, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
+import { Card, CardId, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
 import { autoFormatNumber, formatNumber, using } from "../shared/utils";
 import { CardMasteries, getMasteryBonus } from "./card-mastery";
 import { GridSlice } from "./grid";
