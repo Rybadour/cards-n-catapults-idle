@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import shallow from 'zustand/shallow';
+import { pick } from 'lodash';
 
 import cardsConfig from '../config/cards';
 import { CardButton, CardButtons } from '../shared/components/card-buttons';
@@ -14,7 +15,6 @@ import './card-list.scss';
 import { STANDARD_MODAL_STYLE } from '../shared/constants';
 import useStore from '../store';
 import { getMasteryBonus } from '../store/card-mastery';
-import { pick } from 'lodash';
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
