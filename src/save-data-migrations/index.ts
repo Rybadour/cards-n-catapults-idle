@@ -1,6 +1,5 @@
 import global from "../config/global";
-
-type SaveData = Record<string, any>;
+import { LoadDataError, SaveData } from "../store/saving-loading";
 
 export function isMajorAndMinorVersionEqual(v1: string, v2: string) {
   const [major1, minor1] = v1.split('.');
@@ -9,20 +8,33 @@ export function isMajorAndMinorVersionEqual(v1: string, v2: string) {
   return major1 === major2 && minor1 === minor2; 
 }
 
-export function migrateSaveData(saveData: SaveData) {
+export function migrateSaveData(saveData: SaveData): SaveData | LoadDataError {
   const version = saveData.version as string;
 
   let [saveMajor, saveMinor] = version.split('.').map(s => parseInt(s, 10));
   saveMajor = saveMajor;
-  const [major, minor] = version.split('.').map(s => parseInt(s, 10));
+  const [major, minor] = global.version.split('.').map(s => parseInt(s, 10));
 
-  // TODO: Improve when major can be larger numbers
+  // TODO: Improve when major version starts being used
+
   while(saveMinor < minor) {
     ++saveMinor;
-    if (migrations[saveMajor] && migrations[saveMajor][saveMinor]) {
-      saveData = migrations[saveMajor][saveMinor](saveData);
+    if (migrations[saveMajor] && migrations[saveMajor][saveMinor]) { 
+      const migrationVersion = `${saveMajor}.${saveMinor}.0`;
+      try {
+        saveData = migrations[saveMajor][saveMinor](saveData);
+        saveData.version = migrationVersion;
+      } catch (ex) {
+        return {
+          saveVersion: saveData.version,
+          failedMigrationVersion: migrationVersion,
+          exception: ex,
+        };
+      }
     }
   }
+
+  saveData.version = global.version;
 
   return saveData;
 }

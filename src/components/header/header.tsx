@@ -12,6 +12,7 @@ import useStore from '../../store';
 
 import './header.scss';
 import PrestigePromptModal from './prestige-prompt-modal';
+import { AutoLoadToasts } from './auto-load-toasts';
 
 Modal.setAppElement('#root');
 
@@ -84,6 +85,8 @@ function Header() {
       <OptionsModal />
     </Modal>
     <PrestigePromptModal />
+
+    <AutoLoadToasts />
   </header>;
 }
 

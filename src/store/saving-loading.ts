@@ -34,6 +34,8 @@ export type SavingLoadingSlice = {
   isLoadedFromAutoSave: boolean,
   isAutoSaveEnabled: boolean,
   autoSaveTime: number,
+  oldSaveData: string,
+  loadDataError: LoadDataError | null,
   save: () => void,
   load: () => void,
   update: (elapsed: number) => void,
@@ -61,10 +63,10 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
     const rawData: string | null = localStorage.getItem(AUTO_SAVE_KEY);
     if (!rawData) return;
 
-    attemptImportData(rawData);
+    attemptImportData(rawData, true);
   }
 
-  function attemptImportData(rawData: string) {
+  function attemptImportData(rawData: string, attemptMigration = false) {
     let saveData: Record<string, any>;
     try {
       saveData = JSON.parse(rawData);
@@ -72,9 +74,15 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
       return;
     }
 
-    if (!isMajorAndMinorVersionEqual(saveData.version, global.version)) {
+    if (attemptMigration && !isMajorAndMinorVersionEqual(saveData.version, global.version)) {
       localStorage.setItem(MIGRATION_BACKUP_KEY + '_' + saveData.version, rawData);
-      saveData = migrateSaveData(saveData);
+      const result = migrateSaveData(saveData);
+      if (isLoadDataError(result)) {
+        set({oldSaveData: rawData, loadDataError: result});
+        return;
+      } else {
+        localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(result));
+      }
     }
 
     // Order matters here since things lower in the list have dependencies on those higher
@@ -85,7 +93,10 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
     cards().loadSaveData(saveData.cards);
     grid().loadSaveData(saveData.grid);
     prestige().loadSaveData(saveData.prestige);
-    set({ isAutoSaveEnabled: saveData?.saveSettings?.isAutoSaveEnabled ?? true });
+    set({
+      isAutoSaveEnabled: saveData?.saveSettings?.isAutoSaveEnabled ?? true,
+      loadDataError: null,
+    });
   }
 
   function getSaveData() {
@@ -106,6 +117,8 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
     isLoadedFromAutoSave: false,
     isAutoSaveEnabled: global.autoLoadEnabled,
     autoSaveTime: AUTO_SAVE_TIME,
+    oldSaveData: '',
+    loadDataError: null,
 
     save,
     load,
@@ -145,3 +158,15 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
 }
 
 export default createSavingLoadingSlice;
+
+export type LoadDataError = {
+  saveVersion: string,
+  failedMigrationVersion: string,
+  exception: unknown,
+}
+
+export type SaveData = Record<string, any>;
+
+function isLoadDataError(errorOrNot: SaveData | LoadDataError): errorOrNot is LoadDataError {
+  return (errorOrNot as LoadDataError).exception !== undefined;
+}
