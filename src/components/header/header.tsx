@@ -14,6 +14,7 @@ import './header.scss';
 import PrestigePromptModal from './prestige-prompt-modal';
 import { AutoLoadToasts } from './auto-load-toasts';
 import { Scene } from '../../store/scenes';
+import classNames from 'classnames';
 
 Modal.setAppElement('#root');
 
@@ -40,13 +41,9 @@ function Header() {
   const scenes = useStore(s => pick(
     s.scenes, [ 'currentScene', 'switchScene' ]
   ), shallow);
-
-  const onOpenPrestige = useCallback(() => {
-    scenes.switchScene(Scene.Prestige);
-  }, [scenes.switchScene]);
-
-  const onClosePrestige = useCallback(() => {
-    scenes.switchScene(Scene.Economy);
+  
+  const onSwitchScene = useCallback((scene) => {
+    scenes.switchScene(scene);
   }, [scenes.switchScene]);
 
   const sceneList = [Scene.Economy, Scene.Prestige, Scene.Combat];
@@ -56,10 +53,10 @@ function Header() {
       <h1>Cards & Catapults Idle</h1>
 
       <div className="options">
-        <button className="no-style" onClick={() => setIsHelpModalOpen(true)}>
+        <button className="no-style" onClick={() => setIsHelpModalOpen(true)} data-tip="Help">
           <Icon size="sm" icon="help" />
         </button>
-        <button className="no-style" onClick={() => setIsOptionsModalOpen(true)}>
+        <button className="no-style" onClick={() => setIsOptionsModalOpen(true)} data-tip="Options">
           <Icon size="sm" icon="settings-knobs" />
         </button>
       </div>
@@ -87,7 +84,13 @@ function Header() {
       <AutoLoadToasts />
     </header>
     <div className="scene-tabs">
-      {sceneList.map(s => <button>{s}</button>)}
+      {sceneList.map(s =>
+        <button
+          key={s}
+          className={classNames({current: s === scenes.currentScene})}
+          onClick={() => onSwitchScene(s)}
+        >{s}</button>
+      )}
     </div>
   </>;
 }

@@ -12,6 +12,7 @@ import useStore from './store';
 import './App.scss';
 import { Scene } from './store/scenes';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { Combat } from './components/combat';
 
 function App() {
   return (
@@ -42,7 +43,7 @@ function Content() {
       <CardList />
     </>,
     [Scene.Prestige]: <Prestige />,
-    [Scene.Combat]: <Prestige />,
+    [Scene.Combat]: <Combat />,
   }
 
   return <div className="content">
