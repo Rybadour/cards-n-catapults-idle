@@ -13,6 +13,7 @@ import useStore from '../../store';
 import './header.scss';
 import PrestigePromptModal from './prestige-prompt-modal';
 import { AutoLoadToasts } from './auto-load-toasts';
+import { Scene } from '../../store/scenes';
 
 Modal.setAppElement('#root');
 
@@ -36,58 +37,59 @@ function Header() {
     }
   }, [prestige.nextPoints, prestige.prestigeAndSacrificeAll, prestige.shouldAutoSacrificeAll, prestige.openPrompt]);
 
-  const onOpenPrestigeMenu = useCallback(() => {
-    prestige.openMenu();
-  }, [prestige.openMenu]);
+  const scenes = useStore(s => pick(
+    s.scenes, [ 'currentScene', 'switchScene' ]
+  ), shallow);
 
-  const onClosePrestigeMenu = useCallback(() => {
-    prestige.closeMenu();
-  }, [prestige.closeMenu]);
+  const onOpenPrestige = useCallback(() => {
+    scenes.switchScene(Scene.Prestige);
+  }, [scenes.switchScene]);
 
-  return <header>
-    <h1>Cards & Catapults Idle</h1>
+  const onClosePrestige = useCallback(() => {
+    scenes.switchScene(Scene.Economy);
+  }, [scenes.switchScene]);
 
-    <div className="prestige">
-      {prestige.isMenuOpen ? <>
-        <button className="close-menu" onClick={onClosePrestigeMenu}>
-          {prestige.isReseting ? 'Back to Grid and Reset' : 'Return To Grid'}
+  const sceneList = [Scene.Economy, Scene.Prestige, Scene.Combat];
+
+  return <>
+    <header>
+      <h1>Cards & Catapults Idle</h1>
+
+      <div className="options">
+        <button className="no-style" onClick={() => setIsHelpModalOpen(true)}>
+          <Icon size="sm" icon="help" />
         </button>
-      </> : <>
-        <button className="open-menu" onClick={onOpenPrestigeMenu} data-tip="View Prestige Upgrades">
-          <Icon size="sm" icon="upgrade" />
+        <button className="no-style" onClick={() => setIsOptionsModalOpen(true)}>
+          <Icon size="sm" icon="settings-knobs" />
         </button>
-        <button onClick={onPrestige}>Prestige to get {formatNumber(prestige.nextPoints, 0, 0)} points</button>
-        <span>Next at {formatNumber(prestige.nextRenownCost, 0, 0)} Renown</span>
-      </>}
+      </div>
+
+      <Modal
+        isOpen={isHelpModalOpen}
+        onRequestClose={() => setIsHelpModalOpen(false)}
+        style={STANDARD_MODAL_STYLE}
+        contentLabel="Help Tips"
+        className="help-modal-content center-modal header-modal"
+      >
+        <HelpModal />
+      </Modal>
+      <Modal
+        isOpen={isOptionsModalOpen}
+        onRequestClose={() => setIsOptionsModalOpen(false)}
+        style={STANDARD_MODAL_STYLE}
+        contentLabel="Options"
+        className="options-modal-content center-modal header-modal"
+      >
+        <OptionsModal />
+      </Modal>
+      <PrestigePromptModal />
+
+      <AutoLoadToasts />
+    </header>
+    <div className="scene-tabs">
+      {sceneList.map(s => <button>{s}</button>)}
     </div>
-
-    <div className="options">
-      <button onClick={() => setIsHelpModalOpen(true)}>Help</button>
-      <button onClick={() => setIsOptionsModalOpen(true)}>Options</button>
-    </div>
-
-    <Modal
-      isOpen={isHelpModalOpen}
-      onRequestClose={() => setIsHelpModalOpen(false)}
-      style={STANDARD_MODAL_STYLE}
-      contentLabel="Help Tips"
-      className="help-modal-content center-modal header-modal"
-    >
-      <HelpModal />
-    </Modal>
-    <Modal
-      isOpen={isOptionsModalOpen}
-      onRequestClose={() => setIsOptionsModalOpen(false)}
-      style={STANDARD_MODAL_STYLE}
-      contentLabel="Options"
-      className="options-modal-content center-modal header-modal"
-    >
-      <OptionsModal />
-    </Modal>
-    <PrestigePromptModal />
-
-    <AutoLoadToasts />
-  </header>;
+  </>;
 }
 
 export default Header;

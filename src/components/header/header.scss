@@ -4,8 +4,10 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   color: white;
-  padding: 8px 8px;
+  padding: 4px 8px;
+  background-color: #4D4D4D;
 
   h1 {
     display: inline-block;
@@ -16,33 +18,37 @@ header {
   .options {
     display: flex;
     flex-direction: row;
-    grid-gap: 10px;
+    grid-gap: 8px;
 
     button {
-      height: 26px;
-      padding: 4px;
-    }
-  }
-
-  .prestige {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .open-menu {
-      appearance: none;
-      background: none;
-      border: shared.$light-border;
-      border-radius: 5px;
-
+      padding: 0;
+      filter: brightness(0.75);
       &:hover {
-        border-color: #999;
+        filter: none;
       }
     }
+  }
+}
 
-    button {
-      margin-right: 6px;
-    }
+.scene-tabs {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  button {
+    z-index: -1;
+    font-size: 1rem;
+    background-color: #4D4D4D;
+    color: #AAA;
+    padding: 6px 8px;
+    box-shadow: #222 0px 0px 3px 1px;
+    appearance: none;
+    outline: none;
+    border: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 }
 

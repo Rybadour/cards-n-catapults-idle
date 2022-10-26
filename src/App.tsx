@@ -10,6 +10,8 @@ import ReactTooltip from 'react-tooltip';
 import useStore from './store';
 
 import './App.scss';
+import { Scene } from './store/scenes';
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 
 function App() {
   return (
@@ -31,17 +33,20 @@ function App() {
 }
 
 function Content() {
-  const isPrestigeOpen = useStore(s => s.prestige.isMenuOpen);
+  const scene = useStore(s => s.scenes.currentScene);
+
+  const sceneMap: Record<Scene, ReactJSXElement> = {
+    [Scene.Economy]: <>
+      <CardPacks />
+      <Grid />
+      <CardList />
+    </>,
+    [Scene.Prestige]: <Prestige />,
+    [Scene.Combat]: <Prestige />,
+  }
 
   return <div className="content">
-    {isPrestigeOpen ? 
-      <Prestige /> :
-      <>
-        <CardPacks />
-        <Grid />
-        <CardList />
-      </>
-    }
+    {sceneMap[scene]}
   </div>;
 }
 
