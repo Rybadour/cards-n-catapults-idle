@@ -5,6 +5,7 @@ import createCardDefsSlice, { CardDefsSlice } from "./card-definitions";
 import createCardMasterySlice, { CardMasterySlice } from "./card-mastery";
 import createCardPacksSlice, { CardPacksSlice } from "./card-packs";
 import createCardsSlice, { CardsSlice } from "./cards";
+import createCombatSlice, { CombatSlice } from "./combat";
 import createDiscoverySlice, { DiscoverySlice } from "./discovery";
 import createGridSlice, { GridSlice } from "./grid";
 import createPrestigeSlice, { PrestigeSlice } from "./prestige";
@@ -22,6 +23,7 @@ export type FullStore = {
   cardPacks: CardPacksSlice,
   prestige: PrestigeSlice,
   savingLoading: SavingLoadingSlice,
+  combat: CombatSlice,
   scenes: ScenesSlice,
 }
 
@@ -35,6 +37,7 @@ const useStore = create<FullStore>((set, get) => {
   const cardPacks = createLens(set, get, 'cardPacks');
   const prestige = createLens(set, get, 'prestige');
   const savingLoading = createLens(set, get, 'savingLoading');
+  const combat = createLens(set, get, 'combat');
   const scenes = createLens(set, get, 'scenes');
 
   return {
@@ -51,6 +54,7 @@ const useStore = create<FullStore>((set, get) => {
     savingLoading: createSavingLoadingSlice(
       ...savingLoading, stats[1], prestige[1], discovery[1], grid[1], cards[1], cardPacks[1], cardMastery[1]
     ),
+    combat: createCombatSlice(...combat),
     scenes: createScenesSlice(...scenes),
   }
 });

@@ -225,6 +225,23 @@ export type RealizedPrestigePack = PrestigePack & {
   remainingUpgrades: string[],
 };
 
+export type Enemy = {
+  id: string,
+  name: string,
+  health: number,
+  damage: number,
+  attackSpeed: number,
+};
+
+export type CombatEncounter = {
+  id: string,
+  name: string,
+  description: string,
+  grid: CombatGrid,
+};
+
+export type CombatGrid = (string | null)[][];
+
 export type Lens<T> = [set: StoreApi<T>['setState'], get: StoreApi<T>['getState']];
 
 export type MyCreateSlice<T, A extends (() => any)[]> =
