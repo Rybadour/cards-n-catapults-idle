@@ -12,7 +12,7 @@ import useStore from './store';
 import './App.scss';
 import { Scene } from './store/scenes';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { CombatScene } from './components/combat';
+import { CombatScene } from './components/combat/combat-scene';
 
 function App() {
   return (

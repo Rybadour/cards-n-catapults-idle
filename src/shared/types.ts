@@ -225,7 +225,7 @@ export type RealizedPrestigePack = PrestigePack & {
   remainingUpgrades: string[],
 };
 
-export type Enemy = {
+export type Combatant = {
   id: string,
   name: string,
   health: number,
@@ -237,8 +237,11 @@ export type CombatEncounter = {
   id: string,
   name: string,
   description: string,
+  travelTime: number,
   grid: CombatGrid,
 };
+
+export type ArmyPack = Pack<Combatant>;
 
 export type CombatGrid = (string | null)[][];
 
