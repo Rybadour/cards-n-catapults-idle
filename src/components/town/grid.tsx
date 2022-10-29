@@ -3,12 +3,12 @@ import { useCallback, useEffect, useState } from 'react';
 import shallow from 'zustand/shallow';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { ProgressBar } from './progress-bar';
-import { MarkType, RealizedCard, ResourceType } from '../shared/types';
-import { autoFormatNumber, enumFromKey, formatNumber } from '../shared/utils';
-import resourceIconMap from '../config/resources';
-import Icon from '../shared/components/icon';
-import useStore from '../store';
+import { ProgressBar } from '../shared/progress-bar';
+import { MarkType, RealizedCard, ResourceType } from '../../shared/types';
+import { autoFormatNumber, enumFromKey, formatNumber } from '../../shared/utils';
+import resourceIconMap from '../../config/resources';
+import Icon from '../../shared/components/icon';
+import useStore from '../../store';
 
 import './grid.scss';
 

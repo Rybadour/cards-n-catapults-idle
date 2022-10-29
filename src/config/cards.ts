@@ -1,4 +1,4 @@
-import { Card, CardType, EMPTY_CARD, MatchingGridShape, ModifierBehaviour, Rarity, ResourceType } from "../shared/types";
+import { Card, CardType, EMPTY_CARD, MatchingGridShape, ModifierBehaviour, ResourceType } from "../shared/types";
 import { formatNumber, using } from "../shared/utils";
 
 const cards: Record<string, Card> = {
@@ -8,7 +8,6 @@ const cards: Record<string, Card> = {
     icon: "bindle",
     tier: 1,
     type: CardType.Person,
-    rarity: Rarity.Common,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
     passive: {
@@ -27,7 +26,6 @@ const cards: Record<string, Card> = {
     icon: "axe-in-stump",
     tier: 2,
     type: CardType.Person,
-    rarity: Rarity.Rare,
     description: "Produce {{passiveAmount}} and {{bonusToAdjacent}}",
     foodDrain: 0.3,
     passive: {
@@ -55,7 +53,6 @@ const cards: Record<string, Card> = {
     icon: "farmer",
     tier: 2,
     type: CardType.Person,
-    rarity: Rarity.Rare,
     description: "Produces {{passiveAmount}} except when near low tier cards. When not fed it's production is reduced to {{modifiedStrength}}.",
     foodDrain: 0.5,
     passive: {
@@ -89,7 +86,6 @@ const cards: Record<string, Card> = {
     icon: "lyre",
     tier: 2,
     type: CardType.Person,
-    rarity: Rarity.Common,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
     passive: {
@@ -112,7 +108,6 @@ const cards: Record<string, Card> = {
     icon: "magic-axe",
     tier: 3,
     type: CardType.Person,
-    rarity: Rarity.UltraRare,
     description: "The woman, the myth, the legend. Produces Gold based on total Wood and improves nearby Forests by {{bonusToAdjacentAmount}}.",
     foodDrain: 0.1,
     passive: {
@@ -137,7 +132,6 @@ const cards: Record<string, Card> = {
     icon: "rat",
     tier: 1,
     type: CardType.Food,
-    rarity: Rarity.Common,
     description: "Produces {{passiveAmount}} {{passiveAdjacent}}",
     maxDurability: 12,
     passive: {
@@ -160,7 +154,6 @@ const cards: Record<string, Card> = {
     icon: "berries-bowl",
     tier: 2,
     type: CardType.Food,
-    rarity: Rarity.Common,
     description: "{{bonusToAdjacent}}",
     maxDurability: 8,
     bonusToAdjacent: {
@@ -180,7 +173,6 @@ const cards: Record<string, Card> = {
     icon: "mushrooms",
     tier: 1,
     type: CardType.Food,
-    rarity: Rarity.Common,
     description: "Produces {{passiveAmount}} {{passiveAdjacent}}.",
     maxDurability: 10,
     passive: {
@@ -203,7 +195,6 @@ const cards: Record<string, Card> = {
     icon: "ham-shank",
     tier: 2,
     type: CardType.Food,
-    rarity: Rarity.Common,
     description: "{{bonusToAdjacent}}",
     maxDurability: 5,
     bonusToAdjacent: {
@@ -223,7 +214,6 @@ const cards: Record<string, Card> = {
     icon: "sliced-bread",
     tier: 2,
     type: CardType.Food,
-    rarity: Rarity.Common,
     description: "Just food, that's it.",
     maxDurability: 40,
     mastery: {
@@ -238,7 +228,6 @@ const cards: Record<string, Card> = {
     icon: "cool-spices",
     tier: 4,
     type: CardType.Food,
-    rarity: Rarity.UltraRare,
     description: "Food of the gods. {{bonusToAdjacentAmount}} bonus to any nearby Person and {{bonusToFoodAmount}} to all food capacity.",
     maxDurability: 1000,
     bonusToAdjacent: {
@@ -263,7 +252,6 @@ const cards: Record<string, Card> = {
     icon: "birch-trees",
     tier: 2,
     type: CardType.Resource,
-    rarity: Rarity.Common,
     description: "Produces {{passiveAmount}}.",
     passive: {
       strength: 1,
@@ -281,7 +269,6 @@ const cards: Record<string, Card> = {
     icon: "cave-entrance",
     tier: 1,
     type: CardType.Building,
-    rarity: Rarity.Rare,
     description: "{{produceCard}} every {{cooldownSecs}} seconds.",
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
@@ -300,7 +287,6 @@ const cards: Record<string, Card> = {
     icon: "campfire",
     tier: 1,
     type: CardType.Building,
-    rarity: Rarity.Rare,
     description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{costPerUse}}.",
     autoReplaceEffect: {
       cardType: CardType.Food,
@@ -322,7 +308,6 @@ const cards: Record<string, Card> = {
     icon: "granary",
     tier: 2,
     type: CardType.Building,
-    rarity: Rarity.Common,
     description: "{{produceCard}} when next to a forest every {{cooldownSecs}} seconds.",
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
@@ -346,7 +331,6 @@ const cards: Record<string, Card> = {
     icon: "pig",
     tier: 1,
     type: CardType.Building,
-    rarity: Rarity.Rare,
     description: "{{drawCard}} every {{cooldownSecs}} seconds while consuming food.",
     foodDrain: 2,
     drawCardEffect: {
@@ -370,7 +354,6 @@ const cards: Record<string, Card> = {
     icon: "hammer-nails",
     tier: 2,
     type: CardType.Building,
-    rarity: Rarity.Rare,
     description: "{{bonusToAdjacent}}. Uses {{costPerSec}}.",
     bonusToAdjacent: {
       strength: 0.25,
@@ -393,7 +376,6 @@ const cards: Record<string, Card> = {
     icon: "cleaver",
     tier: 2,
     type: CardType.Building,
-    rarity: Rarity.Rare,
     description: "Sells {{costPerSec}} for {{passiveAmount}} for each adjacent forest, in all directions",
     passive: {
       strength: 2,
@@ -419,7 +401,6 @@ const cards: Record<string, Card> = {
     icon: "family-house",
     tier: 3,
     type: CardType.Building,
-    rarity: Rarity.UltraRare,
     description: "Knowledge is power! Converts a Beggar into a Peasant every {{cooldownSecs}}s and improves all people by {{bonusToAdjacentAmount}}.",
     cooldownMs: 10000,
     bonusToAdjacent: {

@@ -6,15 +6,16 @@ import ReactTooltip from 'react-tooltip';
 import shallow from 'zustand/shallow';
 import { pick } from 'lodash';
 
-import cardsConfig from '../config/cards';
-import { CardButton, CardButtons } from '../shared/components/card-buttons';
-import Icon from '../shared/components/icon';
-import { Card, CardType } from '../shared/types';
-import { enumFromKey, formatNumber } from '../shared/utils';
+import cardsConfig from '../../config/cards';
+import { CardButton, CardButtons } from '../../shared/components/card-buttons';
+import Icon from '../../shared/components/icon';
+import { Card, CardType } from '../../shared/types';
+import { enumFromKey, formatNumber } from '../../shared/utils';
 import './card-list.scss';
-import { STANDARD_MODAL_STYLE } from '../shared/constants';
-import useStore from '../store';
-import { getMasteryBonus } from '../store/card-mastery';
+import { STANDARD_MODAL_STYLE } from '../../shared/constants';
+import useStore from '../../store';
+import { getMasteryBonus } from '../../store/card-mastery';
+import { SectionHeader } from '../shared/common-styles';
 
 export default function CardList() {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
@@ -32,7 +33,7 @@ export default function CardList() {
   }, [cardsDiscovered]);
 
   return <div className="card-inventory">
-    <div className="title">Your Cards</div>
+    <SectionHeader>Your Cards</SectionHeader>
     <div className="cards">
     {Object.keys(CardType)
       .map(c => enumFromKey(CardType, c))

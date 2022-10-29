@@ -1,6 +1,6 @@
-import { Pack } from "./types";
+import { Pack, PackItem } from "./types";
 
-export function generateFromPack<T>(pack: Pack<T>): T[] {
+export function generateFromPack<T extends PackItem>(pack: Pack<T>): T[] {
   const things: T[] = [];
 
   for (let i = 0; i < pack.quantity; ++i) {
@@ -24,7 +24,7 @@ export function generateFromPack<T>(pack: Pack<T>): T[] {
   return things;
 }
 
-export function debugLogPackChance<T>(packTypeName: string, pack: Pack<T>) {
+export function debugLogPackChance<T extends PackItem>(packTypeName: string, pack: Pack<T>) {
   let totalChance = 0;
   pack.possibleThings.forEach(upgrade => {
     totalChance += upgrade.chance;

@@ -30,7 +30,6 @@ export type Card = {
   tier: number,
   type: CardType,
   description: string,
-  rarity: Rarity,
   foodDrain?: number,
   maxDurability?: number,
 
@@ -145,7 +144,13 @@ export enum ModifierBehaviour {
 
 export type Grid = (RealizedCard | null)[][];
 
-export type Pack<T> = {
+export type PackItem = {
+  id: string;
+  name: string;
+  icon: string;
+};
+
+export type Pack<T extends PackItem> = {
   id: string,
   name: string,
   baseCost: number,
@@ -158,7 +163,7 @@ export type Pack<T> = {
   }[]
 };
 
-export type RealizedPack<T> = Pack<T> & {
+export type RealizedPack<T extends PackItem> = Pack<T> & {
   cost: number,
   numBought: number,
 };
@@ -228,6 +233,7 @@ export type RealizedPrestigePack = PrestigePack & {
 export type Combatant = {
   id: string,
   name: string,
+  icon: string,
   health: number,
   damage: number,
   attackSpeed: number,
