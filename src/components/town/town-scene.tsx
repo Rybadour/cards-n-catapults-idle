@@ -9,8 +9,8 @@ import shallow from "zustand/shallow";
 import styled from "styled-components";
 
 export default function TownScene() {
-  const {cardPacks, buyPack, buyMaxPack}
-    = useStore(s => pick(s.cardPacks, ['cardPacks', 'buyPack', 'buyMaxPack']), shallow);
+  const {packs, buyPack, buyMaxPack}
+    = useStore(s => pick(s.cardPacks, ['packs', 'buyPack', 'buyMaxPack']), shallow);
   const discoveredCardPacks = useStore(s => s.discovery.discoveredCardPacks);
   const discoveredCards = useStore(s => s.discovery.discoveredCards);
 
@@ -25,7 +25,7 @@ export default function TownScene() {
   return <>
     <SideSection>
       <PackList
-        packs={Object.values(cardPacks)}
+        packs={Object.values(packs)}
         itemDescriptor='Card'
         discoveredPacks={discoveredCardPacks}
         discoveredPackItems={discoveredCards}
