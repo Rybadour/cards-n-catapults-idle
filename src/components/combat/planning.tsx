@@ -4,36 +4,36 @@ import { pick } from "lodash";
 import useStore from "../../store";
 import ArmyGrid from './army-grid';
 import PackList from '../shared/pack-list';
-import armyPacks from '../../config/army-packs';
-import { ArmyPack, Combatant, RealizedPack } from '../../shared/types';
 import shallow from 'zustand/shallow';
 import { SectionHeader } from '../shared/common-styles';
-
-const realArmyPacks: RealizedPack<Combatant>[] = 
-  Object.values(armyPacks).map(ap => ({
-    ...ap,
-    cost: 100000,
-    numBought: 0,
-  }));
+import { useCallback } from 'react';
+import { Combatant, RealizedPack } from '../../shared/types';
 
 export function PlanningScene() {
-  const combat = useStore(s => pick(
-    s.combat, ['playerGrid']
+  const army = useStore(s => pick(
+    s.army, ['reserves', 'deck', 'packs', 'buyPack', 'buyMaxPack']
   ), shallow);
+
+  const onBuyPack = useCallback((cardPack: RealizedPack<Combatant>) => {
+    army.buyPack(cardPack);
+  }, [army.buyPack]);
+
+  const onBuyMaxPack = useCallback((cardPack: RealizedPack<Combatant>) => {
+    army.buyMaxPack(cardPack);
+  }, [army.buyMaxPack]);
+
 
   return <Scene>
     <PackList
-      packs={realArmyPacks}
+      packs={Object.values(army.packs)}
       itemDescriptor='Army'
       discoveredPacks={{soldier: true}}
       discoveredPackItems={{rat: false}}
-      buyPack={(pack) => {console.log('yup');}}
-      buyMaxPack={(pack) => {console.log('yup');}}
+      buyPack={onBuyPack}
+      buyMaxPack={onBuyMaxPack}
     />
     <Army>
       <SectionHeader>Your Army</SectionHeader>
-
-      <ArmyGrid grid={combat.playerGrid} />
 
       <button>Find an encounter</button>
     </Army>

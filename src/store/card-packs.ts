@@ -1,6 +1,3 @@
-import { cloneDeep } from "lodash";
-
-import global from "../config/global";
 import { Card, MyCreateSlice} from "../shared/types";
 import cardPacksConfig from "../config/card-packs";
 import { CardsSlice } from "./cards";
