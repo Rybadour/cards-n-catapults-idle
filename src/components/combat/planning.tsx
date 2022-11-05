@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 import { pick } from "lodash";
+import shallow from 'zustand/shallow';
+import { useCallback } from 'react';
 
 import useStore from "../../store";
-import ArmyGrid from './army-grid';
 import PackList from '../shared/pack-list';
-import shallow from 'zustand/shallow';
 import { SectionHeader } from '../shared/common-styles';
-import { useCallback } from 'react';
 import { Combatant, RealizedPack } from '../../shared/types';
 import CombatantList from './combatant-list';
 import { getTotalUnits, MAX_DECK_SIZE } from '../../store/army';
