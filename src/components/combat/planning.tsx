@@ -1,8 +1,8 @@
 import styled from 'styled-components';
+import { useCallback } from 'react';
 
 import PackList from '../shared/pack-list';
 import { SectionHeader } from '../shared/common-styles';
-import { useCallback } from 'react';
 import { Combatant, RealizedPack } from '../../shared/types';
 
 export function PlanningScene() {
