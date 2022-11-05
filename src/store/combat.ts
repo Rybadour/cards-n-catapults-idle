@@ -1,12 +1,4 @@
-import combatants from "../config/combatants";
-import { CombatEncounter, MyCreateSlice } from "../shared/types";
-
-export type ActiveCombatant = {
-  id: string,
-  health: number,
-  damage: number,
-  attackSpeed: number,
-}
+import { ActiveCombatant, CombatEncounter, MyCreateSlice } from "../shared/types";
 
 export type ActiveCombatGrid = (ActiveCombatant | null)[][];
 
@@ -25,18 +17,9 @@ const createCombatSlice: MyCreateSlice<CombatSlice, []> = (set, get) => {
     playerGrid: getEmptyGrid(),
 
     chooseEncounter: (encounter) => {
-      const activeGrid: ActiveCombatGrid = [];
-      encounter.grid.forEach(row => {
-        const activeRow: (ActiveCombatant | null)[] = [];
-        row.forEach(enemyId => {
-          activeRow.push(enemyId ? combatants[enemyId] : null);
-        });
-        activeGrid.push(activeRow);
-      });
-
       set({
         selectedEncounter: encounter,
-        enemyGrid: activeGrid,
+        enemyGrid: getEmptyGrid(),
         playerGrid: getEmptyGrid(),
       });
     }

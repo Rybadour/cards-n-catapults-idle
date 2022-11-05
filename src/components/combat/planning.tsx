@@ -8,6 +8,7 @@ import shallow from 'zustand/shallow';
 import { SectionHeader } from '../shared/common-styles';
 import { useCallback } from 'react';
 import { Combatant, RealizedPack } from '../../shared/types';
+import CombatantList from './combatant-list';
 
 export function PlanningScene() {
   const army = useStore(s => pick(
@@ -32,31 +33,38 @@ export function PlanningScene() {
       buyPack={onBuyPack}
       buyMaxPack={onBuyMaxPack}
     />
-    <Army>
-      <SectionHeader>Your Army</SectionHeader>
-
-      <button>Find an encounter</button>
-    </Army>
     <ArmySelection>
-      <SectionHeader>Available Units</SectionHeader>
+      <Reserves>
+        <SectionHeader>Reserves</SectionHeader>
+        <CombatantList units={army.reserves} />
+      </Reserves>
+      <ArmyDeck>
+        <SectionHeader>Army</SectionHeader>
+        <CombatantList units={army.deck} />
+      </ArmyDeck>
     </ArmySelection>
   </Scene>;
 }
 
 const Scene = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  gap: 50px;
   margin: 30px auto 0;
   max-width: 1200px;
   width: 100%;
 `;
 
-const Army = styled.div`
-`;
-
-const Packs = styled.div`
-`;
-
 const ArmySelection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  width: 50%;
+  height: 100%;
+  align-items: space-between;
+`;
+
+const Reserves = styled.div`
+`;
+
+const ArmyDeck = styled.div`
 `;

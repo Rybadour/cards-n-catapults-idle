@@ -234,10 +234,14 @@ export type Combatant = {
   id: string,
   name: string,
   icon: string,
+  description: string,
   health: number,
   damage: number,
-  attackSpeed: number,
 };
+
+export type ActiveCombatant = {
+  maxHealth: number,
+} & Combatant;
 
 export type CombatEncounter = {
   id: string,

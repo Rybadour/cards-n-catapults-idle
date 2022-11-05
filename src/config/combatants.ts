@@ -5,10 +5,27 @@ const combatants: Record<string, Combatant> = {
     id: '',
     name: 'Rat',
     icon: 'rat',
+    description: 'Just a cute little rodent with a few sharp teeth!',
     health: 5,
     damage: 1,
-    attackSpeed: 0.5,
-  }
+  },
+
+  'pikeman': {
+    id: '',
+    name: 'Pikeman',
+    icon: 'pikeman',
+    description: 'He has a big pointy stick.',
+    health: 10,
+    damage: 3,
+  },
+  'archer': {
+    id: '',
+    name: 'Archer',
+    icon: 'bowman',
+    description: 'Archer that shoots arrows or something and ... ya.',
+    health: 4,
+    damage: 5,
+  },
 };
 
 Object.keys(combatants)

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { ActiveCombatant } from '../../shared/types';
 
-import { ActiveCombatant, ActiveCombatGrid } from '../../store/combat';
+import { ActiveCombatGrid } from '../../store/combat';
 
 export default function ArmyGrid(props: {grid: ActiveCombatGrid}) {
   return <GridRows>

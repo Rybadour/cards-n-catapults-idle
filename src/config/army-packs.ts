@@ -5,13 +5,16 @@ const armyPacks: Record<string, ArmyPack> = {
   'soldier': {
     id: '',
     name: 'Soldiers',
-    baseCost: 1000,
+    baseCost: 1,
     costGrowth: 1.1,
     quantity: 1,
     unlocked: true,
     possibleThings: [{
-      thing: combatants.rat,
-      chance: 0.2,
+      thing: combatants.archer,
+      chance: 0.3,
+    }, {
+      thing: combatants.pikeman,
+      chance: 0.3,
     }]
   }
 };
