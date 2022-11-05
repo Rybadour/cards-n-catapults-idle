@@ -11,39 +11,43 @@ export type ArmySlice = {
   returnToReserves: (unit: Combatant) => void,
 } & PacksSlice<Combatant>;
 
+export const MAX_DECK_SIZE = 24;
+
 const createArmySlice: MyCreateSlice<ArmySlice, [() => StatsSlice]> = (set, get, stats) => {
   return {
     reserves: {},
     deck: {},
 
     addToDeck: (unit) => {
-      const newReserves = get().reserves;
+      const newReserves = {...get().reserves};
+      const newDeck = {...get().deck};
+
       const units = newReserves[unit.id] ?? 0;
-      if (units <= 0) {
+      if (units <= 0 || getTotalUnits(newDeck) >= MAX_DECK_SIZE) {
         return;
       }
 
       newReserves[unit.id] = units - 1;
-      set({reserves: newReserves});
-
-      const newDeck = get().deck;
       newDeck[unit.id] = (newDeck[unit.id] ?? 0) + 1;
-      set({deck: newDeck})
+
+      set({deck: newDeck, reserves: newReserves})
     },
 
     returnToReserves: (unit) => {
-      const newDeck = get().deck;
+      const newDeck = {...get().deck};
       const units = newDeck[unit.id] ?? 0;
       if (units <= 0) {
         return;
       }
       newDeck[unit.id] = units - 1;
+      if (newDeck[unit.id] <= 0) {
+        delete newDeck[unit.id];
+      }
       set({deck: newDeck})
 
-      const newReserves = get().reserves;
+      const newReserves = {...get().reserves};
       newReserves[unit.id] = (newReserves[unit.id] ?? 0) + 1;
       set({reserves: newReserves});
-
     },
 
     ...getPackSliceCreator(
@@ -61,3 +65,7 @@ const createArmySlice: MyCreateSlice<ArmySlice, [() => StatsSlice]> = (set, get,
 };
 
 export default createArmySlice;
+
+export function getTotalUnits(units: Record<string, number>) {
+  return Object.values(units).reduce((sum, numUnits) => sum + numUnits, 0);
+}

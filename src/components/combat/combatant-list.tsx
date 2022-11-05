@@ -6,6 +6,7 @@ import { Combatant } from '../../shared/types';
 
 interface CombatantListProps {
   units: Record<string, number>,
+  onClickUnit: (unit: Combatant) => void,
 }
 
 export default function CombatantList(props: CombatantListProps) {
@@ -15,6 +16,7 @@ export default function CombatantList(props: CombatantListProps) {
         key={id}
         combatant={combatants[id]}
         quantity={quantity}
+        onClick={() => props.onClickUnit(combatants[id])}
       />
     )}
   </List>;
@@ -26,9 +28,9 @@ const List = styled.div`
   gap: 10px;
 `;
 
-function CombatantCard(props: {combatant: Combatant, quantity: number}) {
+function CombatantCard(props: {combatant: Combatant, quantity: number, onClick: () => void}) {
   return <CardContainer>
-    <Card>
+    <Card onClick={props.onClick}>
       <CardHeader>
         <Icon icon={props.combatant.icon} size="xs" />
         <Name>{props.combatant.name}</Name>
