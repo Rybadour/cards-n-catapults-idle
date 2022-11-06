@@ -1,44 +1,22 @@
-import { ActiveCombatant, CombatEncounter, MyCreateSlice } from "../shared/types";
-
-export type ActiveCombatGrid = (ActiveCombatant | null)[][];
+import { CombatEncounter, Grid, MyCreateSlice } from "../shared/types";
+import { getEmptyGrid } from "./grid";
 
 export interface CombatSlice {
-  selectedEncounter: CombatEncounter | null,
-  enemyGrid: ActiveCombatGrid,
-  playerGrid: ActiveCombatGrid,
+  encounter: CombatEncounter | null,
+  armyGrid: Grid,
 
   chooseEncounter: (encounter: CombatEncounter) => void,
 }
 
 const createCombatSlice: MyCreateSlice<CombatSlice, []> = (set, get) => {
   return {
-    selectedEncounter: null,
-    enemyGrid: getEmptyGrid(),
-    playerGrid: getEmptyGrid(),
+    encounter: null,
+    armyGrid: getEmptyGrid(),
 
     chooseEncounter: (encounter) => {
-      set({
-        selectedEncounter: encounter,
-        enemyGrid: getEmptyGrid(),
-        playerGrid: getEmptyGrid(),
-      });
+      set({ encounter: encounter });
     }
   }
 };
-
-const GRID_WIDTH = 5;
-const GRID_HEIGHT = 3;
-
-function getEmptyGrid() {
-  const activeGrid: ActiveCombatGrid = [];
-  for (let y = 0; y < GRID_HEIGHT; ++y) {
-    const row = [];
-    for (let x = 0; x < GRID_WIDTH; ++x) {
-      row.push(null);
-    }
-    activeGrid.push(row);
-  }
-  return activeGrid;
-}
 
 export default createCombatSlice;

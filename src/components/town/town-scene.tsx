@@ -1,41 +1,18 @@
+import styled from "styled-components";
+
 import PackList from "../shared/pack-list";
 import Grid from './grid';
 import CardList from './card-list';
-import useStore from "../../store";
-import { pick } from "lodash";
-import { useCallback } from "react";
-import { RealizedCardPack } from "../../shared/types";
-import shallow from "zustand/shallow";
-import styled from "styled-components";
+import { CardType, GameFeature } from "../../shared/types";
 
 export default function TownScene() {
-  const {packs, buyPack, buyMaxPack}
-    = useStore(s => pick(s.cardPacks, ['packs', 'buyPack', 'buyMaxPack']), shallow);
-  const discoveredCardPacks = useStore(s => s.discovery.discoveredCardPacks);
-  const discoveredCards = useStore(s => s.discovery.discoveredCards);
-
-  const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
-    buyPack(cardPack);
-  }, [buyPack]);
-
-  const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
-    buyMaxPack(cardPack);
-  }, [buyMaxPack]);
-
   return <>
     <SideSection>
-      <PackList
-        packs={Object.values(packs)}
-        itemDescriptor='Card'
-        discoveredPacks={discoveredCardPacks}
-        discoveredPackItems={discoveredCards}
-        buyPack={onBuyPack}
-        buyMaxPack={onBuyMaxPack}
-      />
+      <PackList feature={GameFeature.Economy} />
     </SideSection>
     <Grid />
     <SideSection>
-      <CardList />
+      <CardList cardTypes={[CardType.Building, CardType.Food, CardType.Person, CardType.Resource, CardType.Treasure]} />
     </SideSection>
   </>;
 }

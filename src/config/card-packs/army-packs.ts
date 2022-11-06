@@ -1,10 +1,11 @@
-import { CardPack } from "../../shared/types";
+import { CardPack, GameFeature } from "../../shared/types";
 import armyCardsConfig from "../cards/army-cards";
 
 const armyPacks: Record<string, CardPack> = {
   'soldier': {
     id: '',
     name: 'Soldiers',
+    feature: GameFeature.Combat,
     baseCost: 100,
     costGrowth: 1.1,
     quantity: 1,

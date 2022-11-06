@@ -153,7 +153,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [
 const WIDTH = 5;
 const HEIGHT = 5;
 
-function getEmptyGrid() {
+export function getEmptyGrid() {
   const gridSpaces = [];
   for (let i = 0; i < HEIGHT; ++i) {
     const row: (RealizedCard | null)[] = [];

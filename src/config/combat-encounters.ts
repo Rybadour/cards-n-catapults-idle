@@ -5,11 +5,7 @@ const combatEncounters: Record<string, CombatEncounter> = {
     id: '',
     name: 'Rat Den',
     description: 'These ones went rogue, show them who\'s the protagonist in this story!',
-    travelTime: 5,
-    grid: [
-      [null, 'rat', null, 'rat', null],
-      [null, null, 'rat', null, null]
-    ]
+    militaryStrength: 1000,
   }
 }
 

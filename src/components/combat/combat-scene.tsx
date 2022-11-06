@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { PlanningScene } from './planning';
+import ActiveEncounter from './active-encounter';
 
 export function CombatScene() {
   return <Scene>
-    <PlanningScene />
+    <ActiveEncounter />
   </Scene>
 }
 

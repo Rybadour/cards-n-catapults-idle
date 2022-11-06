@@ -1,4 +1,4 @@
-import { Rarity } from "../shared/types";
+import { GameFeature, PackItem, Rarity, RealizedPack } from "../shared/types";
 
 export function getItemRarity(chance: number) {
   if (chance < 0.01) {

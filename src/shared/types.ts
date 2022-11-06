@@ -155,6 +155,7 @@ export type PackItem = {
 export type Pack<T extends PackItem> = {
   id: string,
   name: string,
+  feature: GameFeature,
   baseCost: number,
   costGrowth: number,
   quantity: number,
@@ -232,30 +233,17 @@ export type RealizedPrestigePack = PrestigePack & {
   remainingUpgrades: string[],
 };
 
-export type Combatant = {
-  id: string,
-  name: string,
-  icon: string,
-  description: string,
-  health: number,
-  damage: number,
-};
-
-export type ActiveCombatant = {
-  maxHealth: number,
-} & Combatant;
-
 export type CombatEncounter = {
   id: string,
   name: string,
   description: string,
-  travelTime: number,
-  grid: CombatGrid,
+  militaryStrength: number,
 };
 
-export type ArmyPack = Pack<Combatant>;
-
-export type CombatGrid = (string | null)[][];
+export enum GameFeature {
+  Economy,
+  Combat,
+}
 
 export type Lens<T> = [set: StoreApi<T>['setState'], get: StoreApi<T>['getState']];
 

@@ -1,28 +1,39 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { pick } from 'lodash';
 import { useCallback } from 'react';
 import styled, { css } from 'styled-components';
+import shallow from 'zustand/shallow';
 import { getItemRarity } from '../../gamelogic/card-packs';
 
 import Icon from '../../shared/components/icon';
-import { Rarity, Pack, PackItem, RealizedPack } from '../../shared/types';
+import { Rarity, Pack, GameFeature, RealizedCardPack } from '../../shared/types';
 import { formatNumber } from '../../shared/utils';
+import useStore from '../../store';
 import { SectionHeader } from './common-styles';
 
-interface PackListProps<T extends PackItem> {
-  itemDescriptor: string;
-  packs: RealizedPack<T>[],
-  discoveredPacks: Record<string, boolean>,
-  discoveredPackItems: Record<string, boolean>,
-  buyPack: (pack: RealizedPack<T>) => void,
-  buyMaxPack: (pack: RealizedPack<T>) => void,
+interface PackListProps {
+  feature: GameFeature,
 }
 
-export default function PackList<T extends PackItem>(props: PackListProps<T>) {
+export default function PackList(props: PackListProps) {
+  const {packs, buyPack, buyMaxPack}
+    = useStore(s => pick(s.cardPacks, ['packs', 'buyPack', 'buyMaxPack']), shallow);
+  const discoveredPacks = useStore(s => s.discovery.discoveredCardPacks);
+  const discoveredCards = useStore(s => s.discovery.discoveredCards);
+
+  const onBuyPack = useCallback((cardPack: RealizedCardPack) => {
+    buyPack(cardPack);
+  }, [buyPack]);
+
+  const onBuyMaxPack = useCallback((cardPack: RealizedCardPack) => {
+    buyMaxPack(cardPack);
+  }, [buyMaxPack]);
+
   return <Section>
-    <SectionHeader>{props.itemDescriptor} Packs</SectionHeader>
+    <SectionHeader>Card Packs</SectionHeader>
     <List>
-    {Object.values(props.packs)
-    .filter(pack => props.discoveredPacks[pack.id])
+    {Object.values(packs)
+    .filter(pack => discoveredPacks[pack.id] && pack.feature === props.feature)
     .map(pack =>
       <Pack key={pack.id}>
         <PackName>{pack.name}</PackName>
@@ -31,12 +42,12 @@ export default function PackList<T extends PackItem>(props: PackListProps<T>) {
           {pack.possibleThings.map(({thing, chance}) => {
             const rarity = getItemRarity(chance);
             return <ItemInPack
-              discovered={props.discoveredPackItems[thing.id]}
+              discovered={discoveredCards[thing.id]}
               rarity={rarity}
               key={thing.id}
-              data-tip={props.discoveredPackItems[thing.id] ? thing.name : "Undiscovered " + rarity}
+              data-tip={discoveredCards[thing.id] ? thing.name : "Undiscovered " + rarity}
             >
-              {props.discoveredPackItems[thing.id] ? 
+              {discoveredCards[thing.id] ? 
                 <Icon size="xs" icon={thing.icon} /> :
                 <FontAwesomeIcon icon="question" />
               }
@@ -45,10 +56,10 @@ export default function PackList<T extends PackItem>(props: PackListProps<T>) {
         </PossibleThings>
 
         <BuyButtons>
-          <button className="on-card-button" onClick={() => props.buyMaxPack(pack)}>
+          <button className="on-card-button" onClick={() => onBuyMaxPack(pack)}>
             Buy Max
           </button>
-          <button className="on-card-button" onClick={() => props.buyPack(pack)}>
+          <button className="on-card-button" onClick={() => onBuyPack(pack)}>
             {pack.quantity} cards for {formatNumber(pack.cost, 0, 0)} gold
           </button>
         </BuyButtons>

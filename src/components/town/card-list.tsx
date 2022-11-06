@@ -6,18 +6,19 @@ import ReactTooltip from 'react-tooltip';
 import shallow from 'zustand/shallow';
 import { pick } from 'lodash';
 
-import cardsConfig from '../../config/cards/town-cards';
+import cardsConfig from '../../config/cards';
 import { CardButton, CardButtons } from '../../shared/components/card-buttons';
 import Icon from '../../shared/components/icon';
 import { Card, CardType } from '../../shared/types';
 import { enumFromKey, formatNumber } from '../../shared/utils';
-import './card-list.scss';
 import { STANDARD_MODAL_STYLE } from '../../shared/constants';
 import useStore from '../../store';
 import { getMasteryBonus } from '../../store/card-mastery';
 import { SectionHeader } from '../shared/common-styles';
 
-export default function CardList() {
+import './card-list.scss';
+
+export default function CardList(props: {cardTypes: CardType[]}) {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
   const cardsDiscovered = useStore(s => s.discovery.cardsDiscoveredThisPrestige);
@@ -37,7 +38,7 @@ export default function CardList() {
     <div className="cards">
     {Object.keys(CardType)
       .map(c => enumFromKey(CardType, c))
-      .filter(cardType => cardType)
+      .filter(cardType => !!cardType && props.cardTypes.includes(cardType))
       .map(cardType => ({
         cardType,
         cardList: Object.values(cardsConfig)

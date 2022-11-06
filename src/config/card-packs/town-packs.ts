@@ -1,10 +1,11 @@
-import { CardPack } from "../../shared/types";
+import { CardPack, GameFeature } from "../../shared/types";
 import cards from "../cards/town-cards";
 
 export default {
   dirt: {
     id: "",
     name: "Dirt Pack",
+    feature: GameFeature.Economy,
     baseCost: 150,
     costGrowth: 1.08,
     quantity: 4,
@@ -41,6 +42,7 @@ export default {
   stone: {
     id: "",
     name: "Stone Pack",
+    feature: GameFeature.Economy,
     baseCost: 1200,
     costGrowth: 1.1,
     quantity: 4,
@@ -77,6 +79,7 @@ export default {
   food: {
     id: "",
     name: "Food Pack",
+    feature: GameFeature.Economy,
     baseCost: 100,
     costGrowth: 1.1,
     quantity: 4,
