@@ -1,20 +1,23 @@
-import { ArmyPack, ResourceType } from "../shared/types";
-import combatants from "./combatants";
+import { CardPack } from "../../shared/types";
+import armyCardsConfig from "../cards/army-cards";
 
-const armyPacks: Record<string, ArmyPack> = {
+const armyPacks: Record<string, CardPack> = {
   'soldier': {
     id: '',
     name: 'Soldiers',
-    baseCost: 1,
+    baseCost: 100,
     costGrowth: 1.1,
     quantity: 1,
     unlocked: true,
     possibleThings: [{
-      thing: combatants.archer,
+      thing: armyCardsConfig.pikeman,
       chance: 0.3,
     }, {
-      thing: combatants.pikeman,
+      thing: armyCardsConfig.archer,
       chance: 0.3,
+    }, {
+      thing: armyCardsConfig.cavalry,
+      chance: 0.1,
     }]
   }
 };

@@ -5,7 +5,7 @@ import ReactModal from "react-modal";
 import ReactTooltip from "react-tooltip";
 import shallow from "zustand/shallow";
 
-import cards from "../config/cards";
+import cards from "../config/cards/town-cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import Icon from "../shared/components/icon";
 import { STANDARD_MODAL_STYLE } from "../shared/constants";

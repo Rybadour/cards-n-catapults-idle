@@ -1,7 +1,7 @@
-import { CardPack } from "../shared/types";
-import cards from "./cards";
+import { CardPack } from "../../shared/types";
+import cards from "../cards/town-cards";
 
-const cardPacks: Record<string, CardPack> = {
+export default {
   dirt: {
     id: "",
     name: "Dirt Pack",
@@ -101,13 +101,4 @@ const cardPacks: Record<string, CardPack> = {
       chance: 0.3,
     }]
   },
-}
-
-Object.keys(cardPacks).forEach((id) => {
-  cardPacks[id].id = id;
-  cardPacks[id].possibleThings = cardPacks[id].possibleThings.sort((a, b) => {
-    return a.chance - b.chance;
-  });
-});
-
-export default cardPacks;
+} as Record<string, CardPack>;

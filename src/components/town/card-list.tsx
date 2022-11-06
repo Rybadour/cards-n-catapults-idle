@@ -6,7 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import shallow from 'zustand/shallow';
 import { pick } from 'lodash';
 
-import cardsConfig from '../../config/cards';
+import cardsConfig from '../../config/cards/town-cards';
 import { CardButton, CardButtons } from '../../shared/components/card-buttons';
 import Icon from '../../shared/components/icon';
 import { Card, CardType } from '../../shared/types';

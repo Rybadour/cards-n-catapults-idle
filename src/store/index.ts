@@ -1,6 +1,5 @@
 import { createLens } from "@dhmk/zustand-lens";
 import create from "zustand";
-import createArmySlice, { ArmySlice } from "./army";
 
 import createCardDefsSlice, { CardDefsSlice } from "./card-definitions";
 import createCardMasterySlice, { CardMasterySlice } from "./card-mastery";
@@ -21,7 +20,6 @@ export type FullStore = {
   grid: GridSlice,
   cardPacks: CardPacksSlice,
 
-  army: ArmySlice,
   combat: CombatSlice,
 
   stats: StatsSlice,
@@ -38,7 +36,6 @@ const useStore = create<FullStore>((set, get) => {
   const grid = createLens(set, get, 'grid');
   const cardPacks = createLens(set, get, 'cardPacks');
 
-  const army = createLens(set, get, 'army');
   const combat = createLens(set, get, 'combat');
 
   const stats = createLens(set, get, 'stats');
@@ -61,7 +58,6 @@ const useStore = create<FullStore>((set, get) => {
     savingLoading: createSavingLoadingSlice(
       ...savingLoading, stats[1], prestige[1], discovery[1], grid[1], cards[1], cardPacks[1], cardMastery[1]
     ),
-    army: createArmySlice(...army, stats[1]),
     combat: createCombatSlice(...combat),
     scenes: createScenesSlice(...scenes),
   }

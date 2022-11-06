@@ -14,6 +14,7 @@ export enum ResourceType {
   Gold = "Gold",
   Wood = "Wood",
   Renown = "Renown",
+  MilitaryPower = "Power",
 }
 
 export type ResourcesMap = Record<ResourceType, number>;
@@ -21,6 +22,7 @@ export const defaultResourcesMap: ResourcesMap = {
   [ResourceType.Gold]: 0,
   [ResourceType.Wood]: 0,
   [ResourceType.Renown]: 0,
+  [ResourceType.MilitaryPower]: 0,
 };
 
 export type Card = {

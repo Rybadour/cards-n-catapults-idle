@@ -3,7 +3,6 @@ import { getItemRarity } from "../gamelogic/card-packs";
 import { PrestigeUpgrade, Rarity } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 import cardPacks from "./card-packs";
-import cards from "./cards";
 
 export const PRESTIGE_COST = {
   base: 100,
