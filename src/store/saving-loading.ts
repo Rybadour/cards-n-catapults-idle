@@ -7,7 +7,7 @@ import { CardMasterySlice } from "./card-mastery";
 import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
-import { GridSlice } from "./grid";
+import { GridSlice } from "./generic-grid";
 import { PrestigeSlice } from "./prestige";
 import { StatsSlice } from "./stats";
 

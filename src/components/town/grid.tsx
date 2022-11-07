@@ -22,9 +22,9 @@ export default function GridMap() {
   
   const resources = useStore(s => s.stats.resources);
   
-  const gridSpaces = useStore(s => s.grid.gridSpaces);
-  const updateGrid = useStore(s => s.grid.update);
-  const clearGrid = useStore(s => s.grid.clearGrid);
+  const gridSpaces = useStore(s => s.townGrid.gridSpaces);
+  const updateGrid = useStore(s => s.townGrid.update);
+  const clearGrid = useStore(s => s.townGrid.clearGrid);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,8 +97,8 @@ type GridTileProps = {
 };
 function GridTile(props: GridTileProps) {
   const cardDefs = useStore(s => s.cardDefs.defs)
-  const returnCardAction = useStore(s => s.grid.returnCard);
-  const replaceCardAction = useStore(s => s.grid.replaceCard);
+  const returnCardAction = useStore(s => s.townGrid.returnCard);
+  const replaceCardAction = useStore(s => s.townGrid.replaceCard);
   const takeSelectedCard = useStore(s => s.cards.takeSelectedCard);
 
   const cardDef = props.card ? cardDefs[props.card.cardId] : null;

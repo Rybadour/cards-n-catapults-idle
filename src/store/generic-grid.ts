@@ -8,6 +8,7 @@ import { DiscoverySlice } from "./discovery";
 import { createCard } from "../gamelogic/grid-cards";
 import cardsConfig from "../config/cards";
 import { CardDefsSlice } from "./card-definitions";
+import { StoreApi } from "zustand";
 
 export interface GridSlice {
   gridSpaces: Grid,
@@ -21,9 +22,14 @@ export interface GridSlice {
   loadSaveData: (data: any) => any,
 }
 
-const createGridSlice: MyCreateSlice<GridSlice, [
-  () => DiscoverySlice, () => CardDefsSlice, () => StatsSlice, () => CardsSlice
-]> = (set, get, discovery, cardDefs, stats, cards) => {
+export default function getGridSliceCreator(
+  set: StoreApi<GridSlice>['setState'],
+  get: StoreApi<GridSlice>['getState'],
+  discovery: () => DiscoverySlice,
+  cardDefs: () => CardDefsSlice,
+  stats: () => StatsSlice,
+  cards: () => CardsSlice,
+): GridSlice {
 
   function replaceCard(x: number, y: number, newCard: RealizedCard | null) {
     const newGridSpaces = [ ...get().gridSpaces ];
@@ -148,7 +154,7 @@ const createGridSlice: MyCreateSlice<GridSlice, [
       stats().updatePerSec(results.resourcesPerSec);
     },
   }
-};
+}
 
 const WIDTH = 5;
 const HEIGHT = 5;
@@ -164,5 +170,3 @@ export function getEmptyGrid() {
   }
   return gridSpaces;
 }
-
-export default createGridSlice;
