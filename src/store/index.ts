@@ -7,7 +7,7 @@ import createCardPacksSlice, { CardPacksSlice } from "./card-packs";
 import createCardsSlice, { CardsSlice } from "./cards";
 import createCombatSlice, { CombatSlice } from "./combat";
 import createDiscoverySlice, { DiscoverySlice } from "./discovery";
-import createGridSlice, { GridSlice } from "./generic-grid";
+import createGridSlice, { CardGridsSlice } from "./card-grids";
 import createPrestigeSlice, { PrestigeSlice } from "./prestige";
 import createSavingLoadingSlice, { SavingLoadingSlice } from "./saving-loading";
 import createScenesSlice, { ScenesSlice } from "./scenes";
@@ -17,11 +17,10 @@ export type FullStore = {
   cardDefs: CardDefsSlice,
   cards: CardsSlice,
   cardMastery: CardMasterySlice,
-  townGrid: GridSlice,
+  cardGrids: CardGridsSlice,
   cardPacks: CardPacksSlice,
 
   combat: CombatSlice,
-  combatGrid: GridSlice,
 
   stats: StatsSlice,
   discovery: DiscoverySlice,
@@ -34,11 +33,10 @@ const useStore = create<FullStore>((set, get) => {
   const cardDefs = createLens(set, get, 'cardDefs');
   const cards = createLens(set, get, 'cards');
   const cardMastery = createLens(set, get, 'cardMastery');
-  const townGrid = createLens(set, get, 'townGrid');
+  const cardGrids = createLens(set, get, 'cardGrids');
   const cardPacks = createLens(set, get, 'cardPacks');
 
   const combat = createLens(set, get, 'combat');
-  const combatGrid = createLens(set, get, 'combatGrid');
 
   const stats = createLens(set, get, 'stats');
   const discovery = createLens(set, get, 'discovery');
@@ -52,7 +50,7 @@ const useStore = create<FullStore>((set, get) => {
     cardDefs: createCardDefsSlice(...cardDefs, townGrid[1], combatGrid[1]),
     cards: createCardsSlice(...cards, discovery[1], cardDefs[1]),
     cardMastery: createCardMasterySlice(...cardMastery, cards[1], cardDefs[1]),
-    townGrid: createGridSlice(...townGrid, discovery[1], cardDefs[1], stats[1], cards[1]),
+    cardGrids: createGridSlice(...cardGrids, discovery[1], cardDefs[1], stats[1], cards[1]),
     cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1]),
     prestige: createPrestigeSlice(
       ...prestige, stats[1], discovery[1], cardDefs[1], cards[1], townGrid[1], cardPacks[1], cardMastery[1]
@@ -61,7 +59,6 @@ const useStore = create<FullStore>((set, get) => {
       ...savingLoading, stats[1], prestige[1], discovery[1], townGrid[1], cards[1], cardPacks[1], cardMastery[1]
     ),
     combat: createCombatSlice(...combat),
-    combatGrid: createGridSlice(...combatGrid, discovery[1], cardDefs[1], stats[1], cards[1]),
     scenes: createScenesSlice(...scenes),
   }
 });

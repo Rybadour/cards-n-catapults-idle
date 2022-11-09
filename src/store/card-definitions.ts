@@ -5,7 +5,7 @@ import { DEFAULT_EFFECTS } from "../shared/constants";
 import { Card, CardId, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
 import { autoFormatNumber, formatNumber, using } from "../shared/utils";
 import { CardMasteries, getMasteryBonus } from "./card-mastery";
-import { GridSlice } from "./generic-grid";
+import { GridSlice } from "./card-grids";
 
 export interface CardDefsSlice {
   defs: Record<CardId, Card>,

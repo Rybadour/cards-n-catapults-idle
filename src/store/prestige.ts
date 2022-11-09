@@ -11,7 +11,7 @@ import { CardMasterySlice } from "./card-mastery";
 import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
-import { GridSlice } from "./generic-grid";
+import { GridSlice } from "./card-grids";
 import { StatsSlice } from "./stats";
 
 const defaultUpgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};

@@ -12,9 +12,6 @@ export default function ActiveEncounter() {
   const combat = useStore(s => pick(
     s.combat, ['encounter', 'armyGrid', 'chooseEncounter']
   ), shallow);
-  const combatGrid = useStore(s => pick(
-    s.combatGrid, ['gridSpaces', 'clearGrid', 'returnCard', 'replaceCard']
-  ), shallow);
 
   return <Page>
     <PackList feature={GameFeature.Combat} />
@@ -22,12 +19,7 @@ export default function ActiveEncounter() {
     <div>
       <h2>Fighting {combat.encounter?.name}</h2>
 
-      <CardGrid
-        grid={combatGrid.gridSpaces}
-        onClearGrid={combatGrid.clearGrid}
-        onReturnCard={combatGrid.returnCard}
-        onReplaceCard={combatGrid.replaceCard}
-      />
+      <CardGrid gridId='combat' />
     </div>
 
     <CardList cardTypes={[CardType.Soldier, CardType.Food, CardType.Treasure]} />

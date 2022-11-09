@@ -1,6 +1,7 @@
+import { mapValues } from "lodash";
 import global from "../config/global";
 import { defaultResourcesMap, MyCreateSlice, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
-import { enumFromKey } from "../shared/utils";
+import { enumFromKey, mergeSum } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 
 export interface StatsSlice {
@@ -9,6 +10,7 @@ export interface StatsSlice {
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
   useResource: (resource: ResourceType, amount: number) => void,
+  useResources: (resources: ResourcesMap) => void,
   prestigeReset: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
@@ -53,6 +55,10 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
       const newResources = {...get().resources};
       newResources[resource] -= amount;
       set({resources: newResources});
+    },
+
+    useResources: (resources) => {
+      set({resources: mergeSum(get().resources, mapValues(resources, r => -r))});
     },
 
     prestigeReset: (effects) => {

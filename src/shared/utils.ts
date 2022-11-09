@@ -1,3 +1,5 @@
+import { mergeWith } from "lodash";
+
 export function formatNumber(n: number, minimumFractionDigits: number, maximumFractionDigits: number): string {
   if (isNaN(n)) return '';
 
@@ -44,4 +46,8 @@ export function using<T>(thing: T | undefined, closure: (thing: T) => void) {
   if (thing) {
     closure(thing);
   }
+}
+
+export function mergeSum<T extends {[s: string]: number}>(a: T, b: T): T {
+  return mergeWith(a, b, (aVal, bVal) => aVal + bVal);
 }

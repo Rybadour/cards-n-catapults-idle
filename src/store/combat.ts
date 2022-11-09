@@ -1,5 +1,5 @@
 import { CombatEncounter, Grid, MyCreateSlice } from "../shared/types";
-import { getEmptyGrid } from "./generic-grid";
+import { getEmptyGrid } from "./card-grids";
 
 export interface CombatSlice {
   encounter: CombatEncounter | null,
