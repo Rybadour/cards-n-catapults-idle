@@ -1,21 +1,23 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { pick } from 'lodash';
 import { useCallback, useState } from 'react';
 import styled, { css } from 'styled-components';
+import shallow from 'zustand/shallow';
 
 import resourceIconMap from '../../config/resources';
 import Icon from '../../shared/components/icon';
-import { Grid, MarkType, RealizedCard } from '../../shared/types';
+import { MarkType, RealizedCard } from '../../shared/types';
 import { autoFormatNumber, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { ProgressBar } from './progress-bar';
 
 interface CardGridProps {
-  grid: Grid,
-  onClearGrid: () => void,
-  onReplaceCard: (x: number, y: number, card: RealizedCard) => void,
-  onReturnCard: (x: number, y: number) => void,
+  gridId: string,
 }
 export default function CardGrid(props: CardGridProps) {
+  const cardGrids = useStore(s => pick(s.cardGrids, [
+    'grids', 'clearGrid', 'returnCard', 'replaceCard'
+  ]), shallow);
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
   const hoverCard = useCallback((card: RealizedCard | null) => {
@@ -28,8 +30,16 @@ export default function CardGrid(props: CardGridProps) {
     setMarks({});
   }, []);
 
+  const onReplaceCard = useCallback((x: number, y: number, card: RealizedCard) => {
+    cardGrids.replaceCard(props.gridId, x, y, card);
+  }, [cardGrids.replaceCard, props.gridId]);
+
+  const onReturnCard = useCallback((x: number, y: number) => {
+    cardGrids.returnCard(props.gridId, x, y);
+  }, [cardGrids.returnCard, props.gridId]);
+
   return <GridRows>
-    {props.grid.map((gridRow, y) => 
+    {cardGrids.grids[props.gridId].map((gridRow, y) => 
       <GridRow key={y}>
         {gridRow.map((card, x) => {
           const key = `${x}:${y}`;
@@ -39,8 +49,8 @@ export default function CardGrid(props: CardGridProps) {
             mark={marks[key]}
             onHoverCard={hoverCard}
             onLeaveCard={leaveCard}
-            onReplaceCard={props.onReplaceCard}
-            onReturnCard={props.onReturnCard}
+            onReplaceCard={onReplaceCard}
+            onReturnCard={onReturnCard}
             x={x} y={y}
           />
         })}

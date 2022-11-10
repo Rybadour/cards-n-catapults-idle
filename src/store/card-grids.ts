@@ -1,4 +1,4 @@
-import { merge, mergeWith, pick } from "lodash";
+import { mapValues, merge, mergeWith, pick } from "lodash";
 
 import { defaultResourcesMap, Grid, MyCreateSlice, PrestigeEffects, RealizedCard, ResourcesMap } from "../shared/types";
 import { CardsSlice } from "./cards";
@@ -27,6 +27,8 @@ type UpdateResults =
   Omit<Omit<UpdateGridResults, 'grid'>, 'anyChanged'> &
   Omit<UpdateGridTotalsResults, 'grid'>;
 
+type UpdateDefsResults = Omit<UpdateGridTotalsResults, 'grid'>;
+
 const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () => CardDefsSlice, () => StatsSlice, () => CardsSlice]>
 = (set, get, discovery, cardDefs, stats, cards) => {
 
@@ -40,11 +42,20 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
     const results = updateGridTotals(newGridSpaces, cardDefs().defs, stats());
     set({grids: {...get().grids, [gridId]: newGridSpaces}});
-    stats().updatePerSec(results.resourcesPerSec);
+    updateResourcesOfGrid(gridId, results.resourcesPerSec);
 
     if (oldCard) {
       cards().returnCard(oldCard);
     }
+  }
+
+  function updateResourcesOfGrid(gridId: string, resourcesPerSec: ResourcesMap) {
+    const gridsResourcesPerSec = {...get().gridsResourcesPerSec};
+    gridsResourcesPerSec[gridId] = resourcesPerSec;
+    const sumOfResources = Object.values(gridsResourcesPerSec)
+      .reduce((sum, resPerSec) => mergeSum(sum, resPerSec), {...defaultResourcesMap});
+
+    stats().update(0, sumOfResources);
   }
 
   return {
@@ -102,20 +113,33 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     },
 
     cardDefsChanged: () => {
-      const gridSpaces = get().gridSpaces;
+      const newGrids: Record<string, Grid> = {};
       const defs = cardDefs().defs;
-      iterateGrid(gridSpaces, (card) => {
-        const cardDef = defs[card.cardId];
-        if (cardDef.maxDurability && card.durability) {
-          if (card.maxDurability > 0) {
-            card.durability *= cardDef.maxDurability/card.maxDurability;
+      const gridsResourcesPerSec = get().gridsResourcesPerSec;
+      const results: UpdateDefsResults = Object.entries(get().grids).map(([id, grid]) => {
+        iterateGrid(grid, (card) => {
+          const cardDef = defs[card.cardId];
+          if (cardDef.maxDurability && card.durability) {
+            if (card.maxDurability > 0) {
+              card.durability *= cardDef.maxDurability/card.maxDurability;
+            }
           }
-        }
-      });
-      const totalResults = updateGridTotals(gridSpaces, defs, stats());
+        });
+        const totalResults = updateGridTotals(grid, defs, stats());
+        newGrids[id] = totalResults.grid;
 
-      stats().update(0, totalResults?.resourcesPerSec ?? null);
-      set({gridSpaces: totalResults.grid});
+        return {
+          gridId: id,
+          ...totalResults,
+        };
+      }).reduce<UpdateDefsResults>((mergedResults, results) => {
+        return {
+          resourcesPerSec: mergeSum(mergedResults.resourcesPerSec, results.resourcesPerSec ?? gridsResourcesPerSec[results.gridId])
+        };
+      }, {resourcesPerSec: {...defaultResourcesMap}});
+
+      stats().update(0, results.resourcesPerSec);
+      set({grids: newGrids});
     },
 
     replaceCard: (gridId, x, y, newCard) => {
@@ -138,16 +162,18 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
       cards().updateInventory(returnedCards);
       set({grids: {...get().grids, [gridId]: getEmptyGrid()}});
-
-      // TODO: Merge new resources
-      // stats().update(0, defaultResourcesMap);
+      updateResourcesOfGrid(gridId, {...defaultResourcesMap});
     },
 
     prestigeReset: () => {
-      set({gridSpaces: getEmptyGrid()});
+      set({
+        grids: mapValues(get().grids, (g) => getEmptyGrid()),
+        gridsResourcesPerSec: mapValues(get().grids, (g) => ({...defaultResourcesMap})),
+      });
     },
 
     getSaveData: () => {
+      /* *
       const gridData: any[] = [];
       get().gridSpaces.forEach((row, y) => {
         row.forEach((card, x) => {
@@ -160,9 +186,11 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         });
       })
       return gridData;
+      /* */
     },
 
     loadSaveData: (data) => {
+      /* *
       if (!Array.isArray(data)) return false;
       if (data.length == 0) return true;
       if (typeof data[0] !== 'object' && data[0].card) return false;
@@ -179,6 +207,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
       set({gridSpaces: results.grid});
       stats().updatePerSec(results.resourcesPerSec);
+      /* */
     },
   }
 }

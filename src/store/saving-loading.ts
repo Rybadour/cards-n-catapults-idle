@@ -7,7 +7,7 @@ import { CardMasterySlice } from "./card-mastery";
 import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
-import { GridSlice } from "./card-grids";
+import { CardGridsSlice } from "./card-grids";
 import { PrestigeSlice } from "./prestige";
 import { StatsSlice } from "./stats";
 
@@ -46,7 +46,7 @@ export type SavingLoadingSlice = {
 };
 
 const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
-  () => StatsSlice, () => PrestigeSlice, () => DiscoverySlice, () => GridSlice, () => CardsSlice,
+  () => StatsSlice, () => PrestigeSlice, () => DiscoverySlice, () => CardGridsSlice, () => CardsSlice,
   () => CardPacksSlice, () => CardMasterySlice
 ]> = 
 (set, get, stats, prestige, discovery, grid, cards, cardPacks, cardMastery) => {

@@ -11,7 +11,7 @@ import { CardMasterySlice } from "./card-mastery";
 import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
-import { GridSlice } from "./card-grids";
+import { CardGridsSlice } from "./card-grids";
 import { StatsSlice } from "./stats";
 
 const defaultUpgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};
@@ -62,7 +62,7 @@ export type PrestigeSlice = {
 
 const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
   () => StatsSlice, () => DiscoverySlice, () => CardDefsSlice, () => CardsSlice,
-  () => GridSlice, () => CardPacksSlice, () => CardMasterySlice
+  () => CardGridsSlice, () => CardPacksSlice, () => CardMasterySlice
 ]> = (set, get, stats, discovery, cardDefs, cards, grid, cardPacks, cardMastery) => {
   function onUpgradesChanged(newEffects: PrestigeEffects) {
     cardDefs().prestigeUpdate(newEffects);
@@ -140,6 +140,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         return false;
       }
 
+      // TODO: Clear all?
       grid().clearGrid();
       cardMastery().sacrificeAll();
 
