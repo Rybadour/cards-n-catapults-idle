@@ -18,6 +18,7 @@ export interface CardGridsSlice {
   replaceCard: (gridId: string, x: number, y: number, newCard: RealizedCard) => void,
   returnCard: (gridId: string, x: number, y: number) => void,
   clearGrid: (gridId: string) => void,
+  clearAllGrids: () => void,
   prestigeReset: () => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
@@ -56,6 +57,18 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       .reduce((sum, resPerSec) => mergeSum(sum, resPerSec), {...defaultResourcesMap});
 
     stats().update(0, sumOfResources);
+  }
+
+  function getCardsFromGrid(gridId: string) {
+    const returnedCards: Record<string, number> = {};
+    get().grids[gridId].forEach((row, y) => {
+      row.forEach((card, x) => {
+        if (card) {
+          returnedCards[card.cardId] = (returnedCards[card.cardId] ?? 0) + 1;
+        }
+      })
+    });
+    return returnedCards;
   }
 
   return {
@@ -151,18 +164,23 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     },
 
     clearGrid: (gridId) => {
-      const returnedCards: Record<string, number> = {};
-      get().grids[gridId].forEach((row, y) => {
-        row.forEach((card, x) => {
-          if (card) {
-            returnedCards[card.cardId] = (returnedCards[card.cardId] ?? 0) + 1;
-          }
-        })
+      cards().updateInventory(getCardsFromGrid(gridId));
+      set({grids: {...get().grids, [gridId]: getEmptyGrid()}});
+      updateResourcesOfGrid(gridId, {...defaultResourcesMap});
+    },
+
+    clearAllGrids: () => {
+      const grids = get().grids;
+      let returnedCards: Record<string, number> = {};
+      Object.keys(grids).forEach((gridId) => {
+        returnedCards = mergeSum(returnedCards, getCardsFromGrid(gridId));
       });
 
       cards().updateInventory(returnedCards);
-      set({grids: {...get().grids, [gridId]: getEmptyGrid()}});
-      updateResourcesOfGrid(gridId, {...defaultResourcesMap});
+      set({
+        grids: mapValues(grids, (grid) => getEmptyGrid()),
+        gridsResourcesPerSec: mapValues(grids, (grid) => ({...defaultResourcesMap})),
+      })
     },
 
     prestigeReset: () => {

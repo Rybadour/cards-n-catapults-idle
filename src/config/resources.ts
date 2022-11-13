@@ -1,3 +1,4 @@
+import { EnumBody } from "@babel/types";
 import { ResourceType } from "../shared/types"
 
 const resourceIconMap: Record<ResourceType, string> = {
@@ -6,5 +7,6 @@ const resourceIconMap: Record<ResourceType, string> = {
   [ResourceType.Renown]: 'laurel-crown',
   [ResourceType.MilitaryPower]: 'crossed-swords',
 };
+
 
 export default resourceIconMap;

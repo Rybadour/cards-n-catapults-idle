@@ -63,7 +63,7 @@ export type PrestigeSlice = {
 const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
   () => StatsSlice, () => DiscoverySlice, () => CardDefsSlice, () => CardsSlice,
   () => CardGridsSlice, () => CardPacksSlice, () => CardMasterySlice
-]> = (set, get, stats, discovery, cardDefs, cards, grid, cardPacks, cardMastery) => {
+]> = (set, get, stats, discovery, cardDefs, cards, cardGrids, cardPacks, cardMastery) => {
   function onUpgradesChanged(newEffects: PrestigeEffects) {
     cardDefs().prestigeUpdate(newEffects);
     cardPacks().prestigeUpdate(newEffects);
@@ -97,7 +97,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
 
   function prestige() {
     cardPacks().prestigeReset();
-    grid().prestigeReset();
+    cardGrids().prestigeReset();
 
     set({
       prestigePoints: get().prestigePoints + get().nextPoints,
@@ -140,8 +140,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         return false;
       }
 
-      // TODO: Clear all?
-      grid().clearGrid();
+      cardGrids().clearAllGrids();
       cardMastery().sacrificeAll();
 
       prestige();

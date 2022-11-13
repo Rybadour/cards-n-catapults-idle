@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from "react-dom";
 
 import Header from './components/header/header';
@@ -31,8 +31,25 @@ function App() {
   );
 }
 
+let lastTime: number;
 function Content() {
   const scene = useStore(s => s.scenes.currentScene);
+
+  const updateSaving = useStore(s => s.savingLoading.update);
+  const updatePrestige = useStore(s => s.prestige.update);
+  const updateGrid = useStore(s => s.cardGrids.updateAll);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - lastTime;
+      lastTime = Date.now();
+      updateGrid(elapsed);
+      updatePrestige();
+      updateSaving(elapsed);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [updateGrid, updatePrestige, updateSaving]);
 
   const sceneMap: Record<Scene, ReactJSXElement> = {
     [Scene.Economy]: <TownScene />,

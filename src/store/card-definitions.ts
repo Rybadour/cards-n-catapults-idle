@@ -5,7 +5,7 @@ import { DEFAULT_EFFECTS } from "../shared/constants";
 import { Card, CardId, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
 import { autoFormatNumber, formatNumber, using } from "../shared/utils";
 import { CardMasteries, getMasteryBonus } from "./card-mastery";
-import { GridSlice } from "./card-grids";
+import { CardGridsSlice } from "./card-grids";
 
 export interface CardDefsSlice {
   defs: Record<CardId, Card>,
@@ -15,7 +15,7 @@ export interface CardDefsSlice {
   cardMasteryUpdate: (cardMasteries: CardMasteries) => void,
 }
 
-const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => GridSlice, () => GridSlice]> = (set, get, townGrid, combatGrid) => {
+const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> = (set, get, cardGrids) => {
   function getUpdatedCardDefs(effects: PrestigeEffects, cardMasteries: CardMasteries) {
     const newDefs: Record<CardId, Card> = {};
     Object.values(baseCardsConfig).forEach(card => {
@@ -67,8 +67,7 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => GridSlice, () => 
         effects,
         defs: getUpdatedCardDefs(effects, get().cardMasteries)
       });
-      townGrid().cardDefsChanged();
-      combatGrid().cardDefsChanged();
+      cardGrids().cardDefsChanged();
     },
 
     cardMasteryUpdate: (cardMasteries) => {
@@ -76,8 +75,7 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => GridSlice, () => 
         cardMasteries,
         defs: getUpdatedCardDefs(get().effects, cardMasteries)
       });
-      townGrid().cardDefsChanged();
-      combatGrid().cardDefsChanged();
+      cardGrids().cardDefsChanged();
     }
   }
 };
