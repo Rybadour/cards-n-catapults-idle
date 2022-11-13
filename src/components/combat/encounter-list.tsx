@@ -14,21 +14,34 @@ export default function EncounterList() {
     combat.chooseEncounter(encounter);
   }, [combat.chooseEncounter]);
 
-  return <List>
-    <h2>Encounters</h2>
-    <p>Choose an encounter to test your mettle!</p>
+  return <Page>
+    <List>
+      <h2>Encounters</h2>
+      <p>Choose an encounter to test your mettle!</p>
 
-    {Object.values(combatEncounters).map(ce =>
-      <EncounterButton key={ce.id} className="encounter" onClick={() => chooseEncounter(ce)}>
-        <strong className="name">{ce.name}</strong>
-        <Description>{ce.description}</Description>
-      </EncounterButton>
-    )}
-  </List>;
+      {Object.values(combatEncounters).map(ce =>
+        <EncounterButton key={ce.id} className="encounter" onClick={() => chooseEncounter(ce)}>
+          <strong className="name">{ce.name}</strong>
+          <Description>{ce.description}</Description>
+          <Stats>
+            <span>{ce.militaryStrength} Power required to defeat</span>
+          </Stats>
+        </EncounterButton>
+      )}
+    </List>
+  </Page>;
 }
 
+export const Page = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
 export const List = styled.div`
-  width: 200px;
+  width: 500px;
+  margin-top: 30px;
 `;
 
 export const EncounterButton = styled.button`
@@ -47,4 +60,8 @@ export const EncounterButton = styled.button`
 
 export const Description = styled.p`
   color: #CCC;
+`;
+
+export const Stats = styled.div`
+  
 `;
