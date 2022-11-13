@@ -1,3 +1,4 @@
+import combatEncounters from "../config/combat-encounters";
 import { CombatEncounter, Grid, MyCreateSlice } from "../shared/types";
 import { getEmptyGrid } from "./card-grids";
 
@@ -10,7 +11,7 @@ export interface CombatSlice {
 
 const createCombatSlice: MyCreateSlice<CombatSlice, []> = (set, get) => {
   return {
-    encounter: null,
+    encounter: combatEncounters.ratden,
     armyGrid: getEmptyGrid(),
 
     chooseEncounter: (encounter) => {

@@ -6,6 +6,7 @@ import shallow from 'zustand/shallow';
 
 import resourceIconMap from '../../config/resources';
 import Icon from '../../shared/components/icon';
+import { BUILDING_BLUE, FOOD_RED } from '../../shared/constants';
 import { MarkType, RealizedCard } from '../../shared/types';
 import { autoFormatNumber, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
@@ -38,25 +39,38 @@ export default function CardGrid(props: CardGridProps) {
     cardGrids.returnCard(props.gridId, x, y);
   }, [cardGrids.returnCard, props.gridId]);
 
-  return <GridRows>
-    {cardGrids.grids[props.gridId].map((gridRow, y) => 
-      <GridRow key={y}>
-        {gridRow.map((card, x) => {
-          const key = `${x}:${y}`;
-          return <GridTile
-            key={key}
-            card={card}
-            mark={marks[key]}
-            onHoverCard={hoverCard}
-            onLeaveCard={leaveCard}
-            onReplaceCard={onReplaceCard}
-            onReturnCard={onReturnCard}
-            x={x} y={y}
-          />
-        })}
-      </GridRow>
-    )}
-  </GridRows>;
+  const onClearGrid = useCallback(() => {
+    cardGrids.clearGrid(props.gridId);
+  }, [cardGrids.clearGrid, props.gridId]);
+
+  return <div>
+    <GridControls>
+      <button
+        className='secondary-button'
+        data-tip="Returns all cards to your inventory."
+        onClick={onClearGrid}
+      >Clear Grid</button>
+    </GridControls>
+    <GridRows>
+      {cardGrids.grids[props.gridId].map((gridRow, y) => 
+        <GridRow key={y}>
+          {gridRow.map((card, x) => {
+            const key = `${x}:${y}`;
+            return <GridTile
+              key={key}
+              card={card}
+              mark={marks[key]}
+              onHoverCard={hoverCard}
+              onLeaveCard={leaveCard}
+              onReplaceCard={onReplaceCard}
+              onReturnCard={onReturnCard}
+              x={x} y={y}
+            />
+          })}
+        </GridRow>
+      )}
+    </GridRows>
+  </div>;
 }
 
 type GridTileProps = {
@@ -114,7 +128,7 @@ function GridTile(props: GridTileProps) {
         <ProgressBar 
           progress={(props.card.durability ?? 0)/cardDef.maxDurability}
           noBorder
-          color="#C22"
+          color={FOOD_RED}
           height={6}
         /> :
         null
@@ -123,7 +137,7 @@ function GridTile(props: GridTileProps) {
         <ProgressBar
           progress={(cardDef.cooldownMs-(props.card.timeLeftMs ?? 0))/cardDef.cooldownMs}
           noBorder
-          color="#72bcd4"
+          color={BUILDING_BLUE}
           height={6}
         /> :
         null
@@ -158,12 +172,16 @@ function GridTile(props: GridTileProps) {
   </GridSpace>;
 }
 
-const gridMargin = '10px';
+const GridControls = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  margin-bottom: 10px;
+`;
+
 const GridRows = styled.div`
   display: flex;
   flex-direction: column;
   grid-gap: 10px;
-  margin: ${gridMargin};
 `;
 
 const cardWidth = '100px';

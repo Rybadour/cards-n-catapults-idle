@@ -58,7 +58,6 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     gridsResourcesPerSec[gridId] = resourcesPerSec;
     const sumOfResources = Object.values(gridsResourcesPerSec)
       .reduce((sum, resPerSec) => mergeSum(sum, resPerSec), {...defaultResourcesMap});
-
     stats().updatePerSec(sumOfResources);
   }
 
