@@ -6,6 +6,7 @@ import { CardType, GameFeature } from '../../shared/types';
 import useStore from '../../store';
 import CardGrid from '../shared/card-grid';
 import PackList from '../shared/pack-list';
+import { Resources } from '../shared/resources';
 import CardList from '../town/card-list';
 
 export default function ActiveEncounter() {
@@ -19,6 +20,7 @@ export default function ActiveEncounter() {
     <div>
       <h2>Fighting {combat.encounter?.name}</h2>
 
+      <Resources />
       <CardGrid gridId='combat' />
     </div>
 

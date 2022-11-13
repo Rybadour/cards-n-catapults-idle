@@ -42,7 +42,10 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     newGridSpaces[y][x] = newCard;
 
     const results = updateGridTotals(newGridSpaces, cardDefs().defs, stats());
-    set({grids: {...get().grids, [gridId]: newGridSpaces}});
+    set({
+      grids: {...get().grids, [gridId]: newGridSpaces},
+      gridsResourcesPerSec: {...get().gridsResourcesPerSec, [gridId]: results.resourcesPerSec},
+    });
     updateResourcesOfGrid(gridId, results.resourcesPerSec);
 
     if (oldCard) {
@@ -56,7 +59,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     const sumOfResources = Object.values(gridsResourcesPerSec)
       .reduce((sum, resPerSec) => mergeSum(sum, resPerSec), {...defaultResourcesMap});
 
-    stats().update(0, sumOfResources);
+    stats().updatePerSec(sumOfResources);
   }
 
   function getCardsFromGrid(gridId: string) {
@@ -84,7 +87,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     updateAll: (elapsed) => {
       const resources = {...stats().resources};
       const inventory = {...cards().cards};
-      const gridsResourcesPerSec = get().gridsResourcesPerSec;
+      const gridsResourcesPerSec = {...get().gridsResourcesPerSec};
       const newGrids: Record<string, Grid> = {};
       const results: UpdateResults = Object.entries(get().grids).map(([id, grid]) => {
         const gridResults = updateGrid(grid, resources, cardDefs().defs, inventory, elapsed);
@@ -92,6 +95,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         let totalResults: UpdateGridTotalsResults | null = null;
         if (gridResults.anyChanged) {
           totalResults = updateGridTotals(gridResults.grid, cardDefs().defs, stats());
+          gridsResourcesPerSec[id] = totalResults.resourcesPerSec;
           gridResults.grid = totalResults.grid;
         }
 
@@ -100,14 +104,13 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         return {
           gridId: id,
           ...gridResults,
-          ...totalResults,
         };
       }).reduce<UpdateResults>((mergedResults, results) => {
         return {
           newCards: [...mergedResults.newCards, ...results.newCards],
           inventoryDelta: mergeSum(mergedResults.inventoryDelta, results.inventoryDelta),
           resourcesSpent: mergeSum(mergedResults.resourcesSpent, results.resourcesSpent),
-          resourcesPerSec: mergeSum(mergedResults.resourcesPerSec, results.resourcesPerSec ?? gridsResourcesPerSec[results.gridId])
+          resourcesPerSec: mergeSum(mergedResults.resourcesPerSec, gridsResourcesPerSec[results.gridId])
         };
       }, {newCards: [], inventoryDelta: {}, resourcesSpent: {...defaultResourcesMap}, resourcesPerSec: {...defaultResourcesMap}});
 
@@ -122,7 +125,10 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         cards().updateInventory(results.inventoryDelta);
       }
 
-      set({grids: newGrids});
+      set({
+        grids: newGrids,
+        gridsResourcesPerSec: gridsResourcesPerSec,
+      });
     },
 
     cardDefsChanged: () => {

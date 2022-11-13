@@ -31,7 +31,7 @@ function App() {
   );
 }
 
-let lastTime: number;
+let lastTime: number = Date.now();
 function Content() {
   const scene = useStore(s => s.scenes.currentScene);
 

@@ -18,7 +18,7 @@ export function Resources() {
       .map(res => enumFromKey(ResourceType, res))
       .filter(resource => resource && discoveredResources[resource])
       .map(resource =>
-        <Resource data-tip={resource}>
+        <Resource data-tip={resource} key={resource}>
           <Icon size="md" icon={resourceIconMap[resource!]} />
           <Amounts>
             <Total>{formatNumber(stats.resources[resource!], 0, 0)}</Total>
