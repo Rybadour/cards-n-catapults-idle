@@ -123,9 +123,9 @@ function GridTile(props: GridTileProps) {
       <CardIcon isExpired={isExpired}>
         <Icon size="lg" icon={cardDef.icon} />
       </CardIcon>
-      {props.card.isDisabled ? <div className="disabled-slash">
+      {props.card.isDisabled ? <DisabledSlash>
         <FontAwesomeIcon icon="slash" size='3x' />
-      </div> : null}
+      </DisabledSlash> : null}
       {cardDef.maxDurability ?
         <ProgressBar 
           progress={(props.card.durability ?? 0)/cardDef.maxDurability}
@@ -255,6 +255,18 @@ const CardIcon = styled.div<{isExpired: boolean}>`
   ${props => props.isExpired && css`
     filter: opacity(0.5);
   `}
+`;
+
+const DisabledSlash = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgba(200, 0, 0, 0.75);
 `;
 
 const StatusIcon = styled.div`
