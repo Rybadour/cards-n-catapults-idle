@@ -1,5 +1,11 @@
 
-import { Card, CardType, ResourceType } from "../../shared/types";
+import { Card, CardType, MatchingGridShape, ResourceType } from "../../shared/types";
+
+const hungryDisable = {
+  onMatch: false,
+  shape: MatchingGridShape.OrthoAdjacent,
+  cardTypes: [CardType.Food],
+};
 
 export default {
   pikeman: {
@@ -18,6 +24,7 @@ export default {
       cost: 1,
       resource: ResourceType.Gold,
     },
+    disableShape: hungryDisable,
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -40,6 +47,7 @@ export default {
       cost: 3,
       resource: ResourceType.Gold,
     },
+    disableShape: hungryDisable,
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -62,6 +70,7 @@ export default {
       cost: 2,
       resource: ResourceType.Gold,
     },
+    disableShape: hungryDisable,
     mastery: {
       baseCost: 2,
       growth: 2,

@@ -89,19 +89,21 @@ function GridTile(props: GridTileProps) {
   const cardDef = props.card ? cardDefs[props.card.cardId] : null;
 
   const addCard = useCallback(() => {
+    if (props.card?.isStatic) return;
+
     const newCard = takeSelectedCard();
     if (newCard) {
       newCard.shouldBeReserved = true;
       props.onReplaceCard(props.x, props.y, newCard);
     }
-  }, [props.onReplaceCard, takeSelectedCard, props]);
+  }, [props.onReplaceCard, takeSelectedCard, props.card, props.x, props.y]);
 
   const returnCard = useCallback((evt) => {
     evt.preventDefault();
-    if (props.card) {
+    if (props.card && !props.card.isStatic) {
       props.onReturnCard(props.x, props.y);
     }
-  }, [props.onReturnCard, props]);
+  }, [props.onReturnCard, props.card, props.x, props.y]);
   
   const hoverCard = useCallback(() => { 
     props.onHoverCard(props.card);

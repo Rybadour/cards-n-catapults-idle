@@ -1,14 +1,14 @@
-import { mapValues, merge, mergeWith, pick } from "lodash";
+import { mapValues } from "lodash";
 
-import { defaultResourcesMap, Grid, MyCreateSlice, PrestigeEffects, RealizedCard, ResourcesMap } from "../shared/types";
+import { defaultResourcesMap, Grid, MyCreateSlice, RealizedCard, ResourcesMap, StaticGrid } from "../shared/types";
 import { CardsSlice } from "./cards";
 import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
-import { createCard } from "../gamelogic/grid-cards";
-import cardsConfig from "../config/cards";
 import { CardDefsSlice } from "./card-definitions";
 import { mergeSum } from "../shared/utils";
+import { createCard } from "../gamelogic/grid-cards";
+import allCardsConfig from "../config/cards";
 
 export interface CardGridsSlice {
   grids: Record<string, Grid>,
@@ -19,6 +19,7 @@ export interface CardGridsSlice {
   returnCard: (gridId: string, x: number, y: number) => void,
   clearGrid: (gridId: string) => void,
   clearAllGrids: () => void,
+  initializeGrid: (gridId: string, staticCards: StaticGrid) => void,
   prestigeReset: () => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
@@ -186,6 +187,23 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         grids: mapValues(grids, (grid) => getEmptyGrid()),
         gridsResourcesPerSec: mapValues(grids, (grid) => ({...defaultResourcesMap})),
       })
+    },
+
+    initializeGrid: (gridId, staticCards) => {
+      const newGrid = getEmptyGrid();
+
+      for (let y = 0; y < staticCards.length; y++) {
+        for (let x = 0; x < staticCards[y].length; x++) {
+          const cardId = staticCards[y][x];
+          if (cardId) {
+            const newCard = createCard(allCardsConfig[cardId], 1);
+            newCard.isStatic = true;
+            newGrid[y][x] = newCard;
+          }
+        }
+      }
+
+      set({grids: {...get().grids, [gridId]: newGrid}});
     },
 
     prestigeReset: () => {

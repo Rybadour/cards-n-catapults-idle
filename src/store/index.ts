@@ -58,7 +58,7 @@ const useStore = create<FullStore>((set, get) => {
     savingLoading: createSavingLoadingSlice(
       ...savingLoading, stats[1], prestige[1], discovery[1], cardGrids[1], cards[1], cardPacks[1], cardMastery[1]
     ),
-    combat: createCombatSlice(...combat),
+    combat: createCombatSlice(...combat, cardGrids[1]),
     scenes: createScenesSlice(...scenes),
   }
 });

@@ -3,7 +3,7 @@ import { StoreApi } from "zustand";
 export enum CardType {
   Building = "Building",
   Food = "Food",
-  Monster = "Monster",
+  Enemy = "Enemy",
   Person = "Person",
   Resource = "Resource",
   Soldier = "Soldier",
@@ -100,6 +100,7 @@ export type RealizedCard = {
   shouldBeReserved: boolean,
   isExpiredAndReserved: boolean,
   isDisabled: boolean,
+  isStatic: boolean,
   maxDurability: number,
   durability?: number,
   durabilityBonus: number,
@@ -233,11 +234,14 @@ export type RealizedPrestigePack = PrestigePack & {
   remainingUpgrades: string[],
 };
 
+export type StaticGrid = CardId[][];
+
 export type CombatEncounter = {
   id: string,
   name: string,
   description: string,
   militaryStrength: number,
+  staticCards: StaticGrid,
 };
 
 export enum GameFeature {

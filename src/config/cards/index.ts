@@ -2,10 +2,12 @@ import { EMPTY_CARD, MatchingGridShape } from "../../shared/types";
 import { formatNumber, using } from "../../shared/utils";
 import armyCardsConfig from "./army-cards";
 import townCardsConfig from "./town-cards";
+import enemyCardsConfig from "./enemies";
 
 const allCardsConfig = {
   ...armyCardsConfig,
   ...townCardsConfig,
+  ...enemyCardsConfig,
 };
 
 Object.keys(allCardsConfig)

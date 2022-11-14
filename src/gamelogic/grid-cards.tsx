@@ -9,6 +9,7 @@ export function createCard(card: Card, quantity: number): RealizedCard {
     shouldBeReserved: false,
     isDisabled: false,
     isExpiredAndReserved: false,
+    isStatic: false,
     maxDurability: (card.maxDurability ?? 0),
     durability: (quantity >= 1 ? 1 : quantity) * (card.maxDurability ?? 0),
     durabilityBonus: 1,
