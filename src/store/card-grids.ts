@@ -66,12 +66,23 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     const returnedCards: Record<string, number> = {};
     get().grids[gridId].forEach((row, y) => {
       row.forEach((card, x) => {
-        if (card) {
+        if (card && !card.isStatic) {
           returnedCards[card.cardId] = (returnedCards[card.cardId] ?? 0) + 1;
         }
       })
     });
     return returnedCards;
+  }
+
+  function getEmptyGridWithStatics(gridId: string) {
+    const grid = get().grids[gridId];
+    const newGrid = getEmptyGrid();
+    iterateGrid(grid, (card, x, y) => {
+      if (card.isStatic) {
+        newGrid[y][x] = card;
+      }
+    });
+    return newGrid;
   }
 
   return {
@@ -171,7 +182,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
     clearGrid: (gridId) => {
       cards().updateInventory(getCardsFromGrid(gridId));
-      set({grids: {...get().grids, [gridId]: getEmptyGrid()}});
+      set({grids: {...get().grids, [gridId]: getEmptyGridWithStatics(gridId)}});
       updateResourcesOfGrid(gridId, {...defaultResourcesMap});
     },
 
@@ -184,7 +195,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
       cards().updateInventory(returnedCards);
       set({
-        grids: mapValues(grids, (grid) => getEmptyGrid()),
+        grids: mapValues(grids, (grid, gridId) => getEmptyGridWithStatics(gridId)),
         gridsResourcesPerSec: mapValues(grids, (grid) => ({...defaultResourcesMap})),
       })
     },
