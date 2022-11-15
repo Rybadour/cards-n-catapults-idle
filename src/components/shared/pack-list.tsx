@@ -6,7 +6,7 @@ import shallow from 'zustand/shallow';
 import { getItemRarity } from '../../gamelogic/card-packs';
 
 import Icon from '../../shared/components/icon';
-import { Rarity, Pack, GameFeature, RealizedCardPack } from '../../shared/types';
+import { Rarity, Pack, GameFeature, RealizedCardPack, ResourcesMap } from '../../shared/types';
 import { formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { SectionHeader } from './common-styles';
@@ -60,13 +60,19 @@ export default function PackList(props: PackListProps) {
             Buy Max
           </button>
           <button className="on-card-button" onClick={() => onBuyPack(pack)}>
-            {pack.quantity} cards for {formatNumber(pack.cost, 0, 0)} gold
+            {pack.quantity} cards for {getCostText(pack.cost)}
           </button>
         </BuyButtons>
       </Pack>
     )}
     </List>
   </Section>;
+}
+
+function getCostText(cost: Partial<ResourcesMap>) {
+  return Object.entries(cost)
+    .map(([resource, cost]) => formatNumber(cost, 0, 0) + ' ' + resource)
+    .join(' and ');
 }
 
 const Section = styled.div`

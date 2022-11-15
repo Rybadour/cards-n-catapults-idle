@@ -1,9 +1,9 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep, mapValues } from "lodash";
 
 import global from "../config/global";
-import { MyCreateSlice, Pack, PackItem, PrestigeEffects, RealizedPack, ResourceType } from "../shared/types";
+import { Pack, PackItem, PrestigeEffects, RealizedPack, ResourceType } from "../shared/types";
 import { debugLogPackChance, generateFromPack } from "../shared/pack-generation";
-import { getExponentialValue, getExpValueMultiple, getMultipleFromExpValue } from "../shared/utils";
+import { enumFromKey, getExponentialValue, getExpValueMultiple, getMultipleFromExpValue } from "../shared/utils";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { StatsSlice } from "./stats";
 import { StoreApi } from "zustand";
@@ -46,9 +46,9 @@ export default function getPackSliceCreator<T extends PackItem>(
     prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
 
     buyPack: (pack) => {
-      if (stats().resources[ResourceType.Gold] < pack.cost) return;
+      if (!stats().canAfford(pack.cost)) return;
 
-      stats().useResource(ResourceType.Gold, pack.cost);
+      stats().useResources(pack.cost);
 
       const itemsFromPack = generateFromPack<T>(pack);
       earnItems(itemsFromPack);
@@ -60,13 +60,22 @@ export default function getPackSliceCreator<T extends PackItem>(
     },
 
     buyMaxPack: (pack) => {
-      const baseCost = getBaseCost(pack, get().prestigeEffects);
-      const numMaxBuy = Math.floor(getMultipleFromExpValue(baseCost, pack.costGrowth, pack.numBought, stats().resources.Gold));
+      const numMaxBuy = Object.entries(pack.baseCost)
+        .reduce((minCanAfford, [resource, baseCost]) => {
+          const maxForThisResource = Math.floor(getMultipleFromExpValue(
+            getBaseCost(baseCost, get().prestigeEffects),
+            pack.costGrowth,
+            pack.numBought,
+            stats().resources[enumFromKey(ResourceType, resource)!]
+          ));
+          return (minCanAfford === -1 ? maxForThisResource : Math.min(minCanAfford, maxForThisResource));
+        }, -1);
       if (numMaxBuy < 1) return;
 
-      const maxBuyCost = Math.round(getExpValueMultiple(baseCost, pack.costGrowth, pack.numBought, numMaxBuy));
-
-      stats().useResource(ResourceType.Gold, maxBuyCost);
+      const maxBuyCost = mapValues(pack.baseCost, (baseCost) => 
+        Math.round(getExpValueMultiple(baseCost ?? 0, pack.costGrowth, pack.numBought, numMaxBuy))
+      );
+      stats().useResources(maxBuyCost);
 
       let itemsFromPacks: T[] = [];
       for (let i = 0; i < numMaxBuy; ++i) {
@@ -110,7 +119,7 @@ export default function getPackSliceCreator<T extends PackItem>(
       Object.entries(data as Record<string, number>).forEach(([id, numBought]) => {
         newPacks[id] = {
           ...initialPackConfig[id],
-          cost: 0,
+          cost: {},
           numBought,
         };
         newPacks[id].cost = getPackCost(newPacks[id], get().prestigeEffects);
@@ -122,10 +131,12 @@ export default function getPackSliceCreator<T extends PackItem>(
   }
 }
 
-function getBaseCost<T extends PackItem>(pack: Pack<T>, effects: PrestigeEffects) {
-  return pack.baseCost * (1 - effects.bonuses.cardPackCostReduction);
+function getBaseCost<T extends PackItem>(cost: number, effects: PrestigeEffects) {
+  return cost * (1 - effects.bonuses.cardPackCostReduction);
 }
 
 function getPackCost<T extends PackItem>(pack: RealizedPack<T>, effects: PrestigeEffects) {
-  return getExponentialValue(getBaseCost(pack, effects), pack.costGrowth, pack.numBought);
+  return mapValues(pack.baseCost, (cost) =>
+    getExponentialValue(getBaseCost(cost ?? 0, effects), pack.costGrowth, pack.numBought)
+  );
 }

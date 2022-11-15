@@ -1,4 +1,4 @@
-import { CardPack, GameFeature } from "../../shared/types";
+import { CardPack, GameFeature, ResourceType } from "../../shared/types";
 import cards from "../cards/town-cards";
 
 export default {
@@ -6,7 +6,9 @@ export default {
     id: "",
     name: "Dirt Pack",
     feature: GameFeature.Economy,
-    baseCost: 150,
+    baseCost: {
+      [ResourceType.Gold]: 150,
+    },
     costGrowth: 1.08,
     quantity: 4,
     unlocked: true,
@@ -43,7 +45,10 @@ export default {
     id: "",
     name: "Stone Pack",
     feature: GameFeature.Economy,
-    baseCost: 1200,
+    baseCost: {
+      [ResourceType.Gold]: 1200,
+      [ResourceType.Wood]: 100,
+    },
     costGrowth: 1.1,
     quantity: 4,
     unlocked: true,
@@ -80,7 +85,9 @@ export default {
     id: "",
     name: "Food Pack",
     feature: GameFeature.Economy,
-    baseCost: 100,
+    baseCost: {
+      [ResourceType.Gold]: 100,
+    },
     costGrowth: 1.1,
     quantity: 4,
     unlocked: false,

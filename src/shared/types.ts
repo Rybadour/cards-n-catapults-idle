@@ -157,7 +157,7 @@ export type Pack<T extends PackItem> = {
   id: string,
   name: string,
   feature: GameFeature,
-  baseCost: number,
+  baseCost: Partial<ResourcesMap>,
   costGrowth: number,
   quantity: number,
   unlocked: boolean,
@@ -168,7 +168,7 @@ export type Pack<T extends PackItem> = {
 };
 
 export type RealizedPack<T extends PackItem> = Pack<T> & {
-  cost: number,
+  cost: Partial<ResourcesMap>,
   numBought: number,
 };
 

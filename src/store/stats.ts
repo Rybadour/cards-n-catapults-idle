@@ -1,7 +1,7 @@
 import { mapValues } from "lodash";
 import global from "../config/global";
 import { defaultResourcesMap, MyCreateSlice, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
-import { enumFromKey, mergeSum } from "../shared/utils";
+import { enumFromKey, mergeSum, mergeSumPartial } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 
 export interface StatsSlice {
@@ -9,8 +9,9 @@ export interface StatsSlice {
   resourcesPerSec: ResourcesMap,
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
+  canAfford: (resources: Partial<ResourcesMap>) => boolean,
   useResource: (resource: ResourceType, amount: number) => void,
-  useResources: (resources: ResourcesMap) => void,
+  useResources: (resources: Partial<ResourcesMap>) => void,
   prestigeReset: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
@@ -51,6 +52,12 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
       set({resourcesPerSec: newPerSec});
     },
 
+    canAfford: (cost) => {
+      const resources = get().resources;
+      return Object.entries(cost)
+        .every(([resource, amount]) => resources[enumFromKey(ResourceType, resource)!] >= amount);
+    },
+
     useResource: (resource, amount) => {
       const newResources = {...get().resources};
       newResources[resource] -= amount;
@@ -58,7 +65,7 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
     },
 
     useResources: (resources) => {
-      set({resources: mergeSum(get().resources, mapValues(resources, r => -r))});
+      set({resources: mergeSumPartial(get().resources, mapValues(resources, r => -(r ?? 0)))});
     },
 
     prestigeReset: (effects) => {

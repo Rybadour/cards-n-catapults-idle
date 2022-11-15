@@ -51,3 +51,7 @@ export function using<T>(thing: T | undefined, closure: (thing: T) => void) {
 export function mergeSum<T extends {[s: string]: number}>(a: T, b: T): T {
   return mergeWith(a, b, (aVal, bVal) => (aVal ?? 0) + (bVal ?? 0));
 }
+
+export function mergeSumPartial<T extends {[s: string]: number}>(a: T, b: Partial<T>): T {
+  return mergeWith(a, b, (aVal, bVal) => (aVal ?? 0) + (bVal ?? 0));
+}

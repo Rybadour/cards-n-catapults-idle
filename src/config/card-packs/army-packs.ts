@@ -1,4 +1,4 @@
-import { CardPack, GameFeature } from "../../shared/types";
+import { CardPack, GameFeature, ResourceType } from "../../shared/types";
 import armyCardsConfig from "../cards/army-cards";
 
 const armyPacks: Record<string, CardPack> = {
@@ -6,7 +6,10 @@ const armyPacks: Record<string, CardPack> = {
     id: '',
     name: 'Soldiers',
     feature: GameFeature.Combat,
-    baseCost: 100,
+    baseCost: {
+      [ResourceType.Gold]: 1000,
+      [ResourceType.Renown]: 1000,
+    },
     costGrowth: 1.1,
     quantity: 1,
     unlocked: true,
