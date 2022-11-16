@@ -12,6 +12,7 @@ export interface StatsSlice {
   canAfford: (resources: Partial<ResourcesMap>) => boolean,
   useResource: (resource: ResourceType, amount: number) => void,
   useResources: (resources: Partial<ResourcesMap>) => void,
+  resetResource: (resource: ResourceType) => void,
   prestigeReset: (effects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
@@ -38,6 +39,7 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
         const resource = enumFromKey(ResourceType, r);
         if (resource) {
           newResources[resource] += elapsedSecs * get().resourcesPerSec[resource];
+          newResources[resource] = Math.max(0, newResources[resource]);
         }
       });
       set({resources: newResources});
@@ -66,6 +68,12 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
 
     useResources: (resources) => {
       set({resources: mergeSumPartial(get().resources, mapValues(resources, r => -(r ?? 0)))});
+    },
+
+    resetResource: (res) => {
+      set({
+        resources: {...get().resources, [res]: 0},
+      });
     },
 
     prestigeReset: (effects) => {

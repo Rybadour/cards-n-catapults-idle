@@ -242,6 +242,7 @@ export type CombatEncounter = {
   description: string,
   militaryStrength: number,
   staticCards: StaticGrid,
+  unlockedBy: string,
 };
 
 export enum GameFeature {

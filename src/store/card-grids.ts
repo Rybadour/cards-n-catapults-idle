@@ -45,7 +45,6 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     const results = updateGridTotals(newGridSpaces, cardDefs().defs, stats());
     set({
       grids: {...get().grids, [gridId]: newGridSpaces},
-      gridsResourcesPerSec: {...get().gridsResourcesPerSec, [gridId]: results.resourcesPerSec},
     });
     updateResourcesOfGrid(gridId, results.resourcesPerSec);
 
@@ -60,6 +59,8 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     const sumOfResources = Object.values(gridsResourcesPerSec)
       .reduce((sum, resPerSec) => mergeSum(sum, resPerSec), {...defaultResourcesMap});
     stats().updatePerSec(sumOfResources);
+
+    set({gridsResourcesPerSec: gridsResourcesPerSec});
   }
 
   function getCardsFromGrid(gridId: string) {

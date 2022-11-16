@@ -4,7 +4,7 @@
 const global = {
   version: "0.2.0",
   startingGold: 20000,
-  startingCards: {beggar: 1},
+  startingCards: {beggar: 1, bard: 2},
   unlockedPacks: [],
   startingPrestige: 0,
   autoLoadEnabled: false,

@@ -37,6 +37,7 @@ function Content() {
 
   const updateSaving = useStore(s => s.savingLoading.update);
   const updatePrestige = useStore(s => s.prestige.update);
+  const updateCombat = useStore(s => s.combat.update);
   const updateGrid = useStore(s => s.cardGrids.updateAll);
 
   useEffect(() => {
@@ -45,6 +46,7 @@ function Content() {
       lastTime = Date.now();
       updateGrid(elapsed);
       updatePrestige();
+      updateCombat(elapsed);
       updateSaving(elapsed);
     }, 100);
 
