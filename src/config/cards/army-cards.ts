@@ -1,5 +1,5 @@
 
-import { Card, CardType, MatchingGridShape, ResourceType } from "../../shared/types";
+import { Card, CardType, MatchingGridShape, ModifierBehaviour, ResourceType } from "../../shared/types";
 
 const hungryDisable = {
   onMatch: false,
@@ -16,9 +16,10 @@ export default {
     type: CardType.Soldier,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
-    passive: {
-      strength: 1,
-      resource: ResourceType.MilitaryPower,
+    bonusToAdjacent: {
+      shape: MatchingGridShape.OrthoAdjacent,
+      cardTypes: [CardType.Enemy],
+      strength: -1,
     },
     costPerSec: {
       cost: 1,
@@ -40,7 +41,7 @@ export default {
     description: "Produces {{passiveAmount}}.",
     foodDrain: 1,
     passive: {
-      strength: 10,
+      strength: 4,
       resource: ResourceType.MilitaryPower,
     },
     costPerSec: {
@@ -63,14 +64,28 @@ export default {
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
     passive: {
-      strength: 5,
+      strength: 3,
       resource: ResourceType.MilitaryPower,
+    },
+    abilityStrengthModifier: {
+      behaviour: ModifierBehaviour.WhenMatching,
+      factor: 1.5,
+      match: {
+        shape: MatchingGridShape.OrthoAdjacent,
+        cards: ['archer'],
+      },
+      statusIcon: 'crossed-swords',
+      statusText: 'Supported'
     },
     costPerSec: {
       cost: 2,
       resource: ResourceType.Gold,
     },
-    disableShape: hungryDisable,
+    disableShape: {
+      onMatch: true,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cardTypes: [CardType.Enemy],
+    },
     mastery: {
       baseCost: 2,
       growth: 2,

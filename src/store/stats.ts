@@ -30,7 +30,7 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
 
     update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => {
       if (newResourcesPerSec) {
-        set({resourcesPerSec: newResourcesPerSec});
+        get().updatePerSec(newResourcesPerSec);
       }
 
       const elapsedSecs = (elapsed/1000);
@@ -49,7 +49,7 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
       discovery().discoverResources(
         Object.keys(newPerSec)
           .map(r => enumFromKey(ResourceType, r)!)
-          .filter(r => r && newPerSec[r] > 0)
+          .filter(r => r && newPerSec[r])
       );
       set({resourcesPerSec: newPerSec});
     },

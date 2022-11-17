@@ -10,7 +10,7 @@ export default {
     description: "Eats your food and nibbles at your ankles!",
     foodDrain: 0.2,
     passive: {
-      strength: -1,
+      strength: -0.25,
       resource: ResourceType.MilitaryPower,
     },
     mastery: {

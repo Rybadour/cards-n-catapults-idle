@@ -234,14 +234,14 @@ export type RealizedPrestigePack = PrestigePack & {
   remainingUpgrades: string[],
 };
 
-export type StaticGrid = CardId[][];
+export type GridTemplate = CardId[][];
 
 export type CombatEncounter = {
   id: string,
   name: string,
   description: string,
   militaryStrength: number,
-  staticCards: StaticGrid,
+  staticCards: GridTemplate,
   unlockedBy: string,
 };
 

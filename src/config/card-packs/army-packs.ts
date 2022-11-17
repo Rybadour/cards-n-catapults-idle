@@ -7,8 +7,8 @@ const armyPacks: Record<string, CardPack> = {
     name: 'Soldiers',
     feature: GameFeature.Combat,
     baseCost: {
-      [ResourceType.Gold]: 100,
-      [ResourceType.Renown]: 100,
+      [ResourceType.Gold]: 2000,
+      [ResourceType.Renown]: 1000,
     },
     costGrowth: 1.1,
     quantity: 1,

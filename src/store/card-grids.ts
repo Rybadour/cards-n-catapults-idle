@@ -1,6 +1,6 @@
 import { mapValues } from "lodash";
 
-import { defaultResourcesMap, Grid, MyCreateSlice, RealizedCard, ResourcesMap, StaticGrid } from "../shared/types";
+import { defaultResourcesMap, Grid, GridTemplate, MyCreateSlice, RealizedCard, ResourcesMap } from "../shared/types";
 import { CardsSlice } from "./cards";
 import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
 import { StatsSlice } from "./stats";
@@ -9,8 +9,10 @@ import { CardDefsSlice } from "./card-definitions";
 import { mergeSum } from "../shared/utils";
 import { createCard } from "../gamelogic/grid-cards";
 import allCardsConfig from "../config/cards";
+import global from "../config/global";
 
 export interface CardGridsSlice {
+  initialized: boolean,
   grids: Record<string, Grid>,
   gridsResourcesPerSec: Record<string, ResourcesMap>,
   updateAll: (elapsed: number) => void,
@@ -19,7 +21,7 @@ export interface CardGridsSlice {
   returnCard: (gridId: string, x: number, y: number) => void,
   clearGrid: (gridId: string) => void,
   clearAllGrids: () => void,
-  initializeGrid: (gridId: string, staticCards: StaticGrid) => void,
+  initializeGrid: (gridId: string, staticCards: GridTemplate) => void,
   prestigeReset: () => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
@@ -87,8 +89,9 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
   }
 
   return {
+    initialized: false,
     grids: {
-      town: getEmptyGrid(),
+      town: getInitializedGrid(global.startingTown, false),
       combat: getEmptyGrid(),
     },
     gridsResourcesPerSec: {
@@ -105,7 +108,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         const gridResults = updateGrid(grid, resources, cardDefs().defs, inventory, elapsed);
 
         let totalResults: UpdateGridTotalsResults | null = null;
-        if (gridResults.anyChanged) {
+        if (gridResults.anyChanged || !get().initialized) {
           totalResults = updateGridTotals(gridResults.grid, cardDefs().defs, stats());
           gridsResourcesPerSec[id] = totalResults.resourcesPerSec;
           gridResults.grid = totalResults.grid;
@@ -140,6 +143,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       set({
         grids: newGrids,
         gridsResourcesPerSec: gridsResourcesPerSec,
+        initialized: true,
       });
     },
 
@@ -202,20 +206,12 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     },
 
     initializeGrid: (gridId, staticCards) => {
-      const newGrid = getEmptyGrid();
-
-      for (let y = 0; y < staticCards.length; y++) {
-        for (let x = 0; x < staticCards[y].length; x++) {
-          const cardId = staticCards[y][x];
-          if (cardId) {
-            const newCard = createCard(allCardsConfig[cardId], 1);
-            newCard.isStatic = true;
-            newGrid[y][x] = newCard;
-          }
-        }
-      }
-
-      set({grids: {...get().grids, [gridId]: newGrid}});
+      const newGridSpaces = getInitializedGrid(staticCards, true);
+      const results = updateGridTotals(newGridSpaces, cardDefs().defs, stats());
+      set({
+        grids: {...get().grids, [gridId]: newGridSpaces},
+      });
+      updateResourcesOfGrid(gridId, results.resourcesPerSec);
     },
 
     prestigeReset: () => {
@@ -278,6 +274,23 @@ export function getEmptyGrid() {
     gridSpaces.push(row);
   }
   return gridSpaces;
+}
+
+function getInitializedGrid(template: GridTemplate, isStatic = false) {
+  const newGrid = getEmptyGrid();
+
+  for (let y = 0; y < template.length; y++) {
+    for (let x = 0; x < template[y].length; x++) {
+      const cardId = template[y][x];
+      if (cardId) {
+        const newCard = createCard(allCardsConfig[cardId], 1);
+        newCard.isStatic = isStatic;
+        newGrid[y][x] = newCard;
+      }
+    }
+  }
+
+  return newGrid;
 }
 
 export default createGridsSlice;
