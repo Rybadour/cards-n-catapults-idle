@@ -69,11 +69,11 @@ export default {
         cardTypes: [CardType.Food],
       }
     },
-    disableShape: {
+    disableRules: [{
       onMatch: true,
       shape: MatchingGridShape.OrthoAdjacent,
       maxTier: 1,
-    },
+    }],
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -314,11 +314,11 @@ export default {
       possibleCards: ['mushrooms', 'berries'],
     },
     cooldownMs: 10000,
-    disableShape: {
+    disableRules: [{
       onMatch: false,
       shape: MatchingGridShape.OrthoAdjacent,
       cards: ['forest'],
-    },
+    }],
     mastery: {
       baseCost: 1,
       growth: 2,
@@ -336,11 +336,11 @@ export default {
     drawCardEffect: {
       possibleCards: ['haunch'],
     },
-    disableShape: {
+    disableRules: [{
       onMatch: false,
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Food],
-    },
+    }],
     cooldownMs: 5000,
     mastery: {
       baseCost: 1,

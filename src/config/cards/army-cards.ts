@@ -25,7 +25,7 @@ export default {
       cost: 1,
       resource: ResourceType.Gold,
     },
-    disableShape: hungryDisable,
+    disableRules: [hungryDisable],
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -48,7 +48,7 @@ export default {
       cost: 3,
       resource: ResourceType.Gold,
     },
-    disableShape: hungryDisable,
+    disableRules: [hungryDisable],
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -81,11 +81,11 @@ export default {
       cost: 2,
       resource: ResourceType.Gold,
     },
-    disableShape: {
+    disableRules: [{
       onMatch: true,
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Enemy],
-    },
+    }, hungryDisable],
     mastery: {
       baseCost: 2,
       growth: 2,

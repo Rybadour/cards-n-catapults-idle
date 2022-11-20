@@ -74,10 +74,10 @@ export type Card = {
     statusIcon: string,
     statusText: string,
   },
-  disableShape?: {
+  disableRules?: ({
     onMatch: boolean,
     maxTier?: number,
-  } & GridMatch,
+  } & GridMatch)[],
 
   mastery: {
     baseCost: number,

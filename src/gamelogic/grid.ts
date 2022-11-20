@@ -49,27 +49,29 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
     }
 
     // Should only change disabled state if the above logic didn't disable the card already
-    if (cardDef.disableShape && !card.isDisabled) {
-      const isDisabling = cardDef.disableShape.onMatch;
-      const disable = cardDef.disableShape;
-      card.isDisabled = !isDisabling;
-      iterateGridShapeCards(grid, x, y, cardDef.disableShape.shape, (adj, x2, y2) => {
-        const adjDef = cardDefs[adj.cardId];
-        let setDisabled = false;
-        if (disable.maxTier && adjDef.tier <= disable.maxTier) {
-          setDisabled = true;
-        }
-        if (disable.cardTypes?.includes(adjDef.type)) {
-          setDisabled = true;
-        }
-        if (disable.cards && disable.cards.includes(adj.cardId)) {
-          setDisabled = true;
-        }
+    if (cardDef.disableRules && !card.isDisabled) {
+      card.isDisabled = cardDef.disableRules.some((dr) => {
+        const isDisabling = dr.onMatch;
+        let isDisabled = !isDisabling;
+        iterateGridShapeCards(grid, x, y, dr.shape, (adj, x2, y2) => {
+          const adjDef = cardDefs[adj.cardId];
+          let setDisabled = false;
+          if (dr.maxTier && adjDef.tier <= dr.maxTier) {
+            setDisabled = true;
+          }
+          if (dr.cardTypes?.includes(adjDef.type)) {
+            setDisabled = true;
+          }
+          if (dr.cards && dr.cards.includes(adj.cardId)) {
+            setDisabled = true;
+          }
 
-        if (setDisabled) {
-          card.isDisabled = isDisabling;
-          card.cardMarks[`${x2}:${y2}`] = isDisabling ? MarkType.Exclusion : MarkType.Buff;
-        }
+          if (setDisabled) {
+            isDisabled = isDisabling;
+            card.cardMarks[`${x2}:${y2}`] = isDisabling ? MarkType.Exclusion : MarkType.Buff;
+          }
+        });
+        return isDisabled;
       });
     }
 
