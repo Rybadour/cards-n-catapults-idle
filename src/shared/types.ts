@@ -132,6 +132,11 @@ export enum MatchingGridShape {
   DiagAdjacent = "diagAdjacent",
   AllAdjacent = "allAdjacent",
   RowAndColumn = "rowAndColumn",
+  NorthAdjacent = "northAdjacent",
+  EastAdjacent = "eastAdjacent",
+  SouthAdjacent = "southAdjacent",
+  WestAdjacent = "westAdjacent",
+  SideAdjacent = "sideAdjacent",
   Grid = "Grid",
 }
 

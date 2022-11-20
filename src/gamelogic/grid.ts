@@ -358,8 +358,26 @@ export function iterateGrid(grid: Grid, callback: (card: RealizedCard, x: number
   }
 }
 
-const orthoAdjacent = [{x: 0, y: 1}, {x: 0, y: -1}, {x: 1, y: 0}, {x: -1, y: 0}];
+interface GridPos {
+  x: number;
+  y: number;
+}
+const north = {x: 0, y: -1};
+const east = {x: 1, y: 0};
+const south = {x: 0, y: 1}; 
+const west = {x: -1, y: 0};
+const orthoAdjacent = [north, east, south, west];
 const diagAdjacent = [{x: 1, y: 1}, {x: 1, y: -1}, {x: -1, y: -1}, {x: -1, y: 1}];
+const shapeMap: Partial<Record<MatchingGridShape, GridPos[]>> = {
+  [MatchingGridShape.NorthAdjacent]: [north],
+  [MatchingGridShape.EastAdjacent]: [east],
+  [MatchingGridShape.SouthAdjacent]: [south],
+  [MatchingGridShape.WestAdjacent]: [west],
+  [MatchingGridShape.SideAdjacent]: [east, west],
+  [MatchingGridShape.OrthoAdjacent]: orthoAdjacent,
+  [MatchingGridShape.DiagAdjacent]: diagAdjacent,
+  [MatchingGridShape.AllAdjacent]: [...orthoAdjacent, ...diagAdjacent],
+};
 function iterateGridShape(
   grid: Grid, x: number, y: number, shape: MatchingGridShape,
   callback: (card: RealizedCard | null, x: number, y: number) => void
@@ -381,13 +399,8 @@ function iterateGridShape(
       callback(grid[y2][x], x, y2);
     }
   } else {
-    let adjacent: {x: number, y: number}[] = [];
-    if (shape === MatchingGridShape.OrthoAdjacent || shape === MatchingGridShape.AllAdjacent) {
-      adjacent = adjacent.concat(orthoAdjacent);
-    }
-    if (shape === MatchingGridShape.DiagAdjacent || shape === MatchingGridShape.AllAdjacent) {
-      adjacent = adjacent.concat(diagAdjacent);
-    }
+    let adjacent = shapeMap[shape];
+    if (!adjacent) return;
 
     adjacent.forEach(adj => {
       const ax = x + adj.x, ay = y + adj.y;

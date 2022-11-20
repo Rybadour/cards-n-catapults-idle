@@ -48,7 +48,19 @@ export default {
       cost: 3,
       resource: ResourceType.Gold,
     },
-    disableRules: [hungryDisable],
+    disableRules: [
+      hungryDisable,
+      {
+        onMatch: false,
+        shape: MatchingGridShape.NorthAdjacent,
+        cardTypes: [CardType.Enemy],
+      },
+      {
+        onMatch: true,
+        shape: MatchingGridShape.SideAdjacent,
+        cardTypes: [CardType.Enemy],
+      },
+    ],
     mastery: {
       baseCost: 2,
       growth: 2,
