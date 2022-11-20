@@ -38,7 +38,7 @@ const combatEncounters: Record<string, CombatEncounter> = {
     staticCards: [
       ['', '', '', '', ''],
       ['rat', '', '', '', 'rat'],
-      ['ratDen', 'rat', '', 'rat', 'ratDen'],
+      ['ratDenEnemy', 'rat', '', 'rat', 'ratDenEnemy'],
       ['rat', '', '', '', 'rat'],
       ['', '', '', '', ''],
     ]

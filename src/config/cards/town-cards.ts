@@ -129,7 +129,7 @@ export default {
   ratSnack: {
     id: "",
     name: "Rat Snack",
-    icon: "rat",
+    icon: "rat-red",
     tier: 1,
     type: CardType.Food,
     description: "Produces {{passiveAmount}} {{passiveAdjacent}}",
@@ -266,7 +266,7 @@ export default {
   ratDen: {
     id: "",
     name: "Rat Den",
-    icon: "cave-entrance",
+    icon: "cave-entrance-blue",
     tier: 1,
     type: CardType.Building,
     description: "{{produceCard}} every {{cooldownSecs}} seconds.",

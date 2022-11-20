@@ -7,7 +7,7 @@ import shallow from 'zustand/shallow';
 import resourceIconMap from '../../config/resources';
 import Icon from '../../shared/components/icon';
 import { BUILDING_BLUE, FOOD_RED } from '../../shared/constants';
-import { MarkType, RealizedCard } from '../../shared/types';
+import { CardType, MarkType, RealizedCard } from '../../shared/types';
 import { autoFormatNumber, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { ProgressBar } from './progress-bar';
@@ -113,6 +113,7 @@ function GridTile(props: GridTileProps) {
   return <GridSpace
     isFilled={!!props.card}
     isExpired={isExpired}
+    isStatic={props.card?.isStatic ?? false}
     mark={props.mark}
     onClick={addCard}
     onContextMenu={returnCard}
@@ -120,7 +121,7 @@ function GridTile(props: GridTileProps) {
     onMouseLeave={props.onLeaveCard}
   >
     {props.card && cardDef ? <>
-      <CardIcon isExpired={isExpired}>
+      <CardIcon isExpired={isExpired} isStatic={props.card?.isStatic ?? false}>
         <Icon size="lg" icon={cardDef.icon} />
       </CardIcon>
       {props.card.isDisabled ? <DisabledSlash>
@@ -217,6 +218,7 @@ const Details = styled.div`
 interface GridSpaceProps {
   isFilled: boolean,
   isExpired: boolean,
+  isStatic: boolean,
   mark?: MarkType,
 }
 const GridSpace = styled.div<GridSpaceProps>`
@@ -244,13 +246,17 @@ const GridSpace = styled.div<GridSpaceProps>`
     background-color: #666;
   `}
 
+  ${props => props.isStatic && css`
+    background: none;
+  `}
+
   &:hover ${Details} {
     display: flex;
   }
 `;
 
-const CardIcon = styled.div<{isExpired: boolean}>`
-  filter: drop-shadow(1px 1px 6px black);
+const CardIcon = styled.div<{isExpired: boolean, isStatic: boolean}>`
+  filter: drop-shadow(1px 1px 6px ${props => props.isStatic ? "grey" : "black"});
 
   ${props => props.isExpired && css`
     filter: opacity(0.5);
