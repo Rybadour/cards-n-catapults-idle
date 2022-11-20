@@ -17,7 +17,10 @@ module.exports = merge(commonConfig, {
   },
   devtool: "source-map",
   plugins: [
-    new HtmlWebpackPlugin({ template: "prod-index.html" }),
+    new HtmlWebpackPlugin({
+      favicon: "../public/favicon.ico",
+      template: "prod-index.html",
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {

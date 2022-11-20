@@ -16,6 +16,9 @@ module.exports = merge(commonConfig, {
   },
   devtool: "cheap-module-source-map",
   plugins: [
-    new HtmlWebpackPlugin({ template: "dev-index.html" }),
+    new HtmlWebpackPlugin({
+      favicon: "../public/favicon.ico",
+      template: "dev-index.html",
+    }),
   ],
 });
