@@ -46,7 +46,15 @@ export default function ActiveEncounter() {
       <CardGrid gridId='combat' />
     </div>
 
-    <CardList cardTypes={[CardType.Soldier, CardType.Food, CardType.Treasure]} />
+    <CardList allowedCards={{
+      [CardType.Soldier]: true,
+      [CardType.Building]: ['campfire'],
+      [CardType.Food]: true,
+      [CardType.Person]: false,
+      [CardType.Resource]: false, 
+      [CardType.Treasure]: false,
+      [CardType.Enemy]: false,
+    }} />
   </Page>;
 }
 

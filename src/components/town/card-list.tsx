@@ -18,7 +18,11 @@ import { SectionHeader } from '../shared/common-styles';
 
 import './card-list.scss';
 
-export default function CardList(props: {cardTypes: CardType[]}) {
+export interface CardListProps {
+  allowedCards: Record<CardType, boolean | string[]>,
+}
+
+export default function CardList(props: CardListProps) {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
   const cardsDiscovered = useStore(s => s.discovery.cardsDiscoveredThisPrestige);
@@ -33,16 +37,24 @@ export default function CardList(props: {cardTypes: CardType[]}) {
     ReactTooltip.rebuild();
   }, [cardsDiscovered]);
 
+  function isCardAllowed(card: Card) {
+    const allowed = props.allowedCards[card.type];
+    return typeof allowed === "boolean" ? allowed : allowed.includes(card.id);
+  }
+
   return <div className="card-inventory">
     <SectionHeader>Your Cards</SectionHeader>
     <div className="cards">
     {Object.keys(CardType)
       .map(c => enumFromKey(CardType, c))
-      .filter(cardType => !!cardType && props.cardTypes.includes(cardType))
+      .filter(cardType => !!cardType && props.allowedCards[cardType])
       .map(cardType => ({
         cardType,
-        cardList: Object.values(cardsConfig)
-          .filter(card => cardsDiscovered[card.id] && card.type == cardType)
+        cardList: Object.values(cardsConfig).filter(card => 
+          cardsDiscovered[card.id] &&
+          card.type == cardType &&
+          isCardAllowed(card)
+        )
       }))
       .filter(({cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>

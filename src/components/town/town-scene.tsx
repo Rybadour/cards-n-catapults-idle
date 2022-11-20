@@ -16,7 +16,15 @@ export default function TownScene() {
       <CardGrid gridId="town" />
     </MiddleSection>
     <SideSection>
-      <CardList cardTypes={[CardType.Building, CardType.Food, CardType.Person, CardType.Resource, CardType.Treasure]} />
+      <CardList allowedCards={{
+        [CardType.Building]: true,
+        [CardType.Food]: true,
+        [CardType.Person]: true,
+        [CardType.Resource]: true, 
+        [CardType.Treasure]: true,
+        [CardType.Enemy]: false,
+        [CardType.Soldier]: false,
+      }} />
     </SideSection>
   </>;
 }
