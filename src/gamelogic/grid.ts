@@ -85,7 +85,7 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
       iterateGridMatch(grid, cardDefs, x, y, bta, (adj, x2, y2) => {
         if (!adj) return;
         adj.bonus *= 1 + bta.strength;
-        card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
+        card.cardMarks[`${x2}:${y2}`] = (bta.strength > 0 ? MarkType.Buff : MarkType.Exclusion);
       });
     });
 
@@ -100,16 +100,19 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
     using(cardDef.abilityStrengthModifier, (mod) => {
       const shouldModify = mod.behaviour == ModifierBehaviour.WhenMatching;
       let isModified = !shouldModify;
-      iterateGridMatch(grid, cardDefs, x, y, mod.match, (adj) => {
+      iterateGridMatch(grid, cardDefs, x, y, mod.match, (adj, x2, y2) => {
         if (!adj || adj.isExpiredAndReserved) return;
 
         isModified = shouldModify;
+        if (mod.behaviour == ModifierBehaviour.WhenMatching) {
+          card.cardMarks[`${x2}:${y2}`] = (mod.factor > 0 ? MarkType.Buff : MarkType.Exclusion);
+        }
       });
 
       if (isModified) {
         card.bonus *= mod.factor;
-        card.statusIcon = cardDef.abilityStrengthModifier?.statusIcon ?? '';
-        card.statusText = cardDef.abilityStrengthModifier?.statusText ?? '';
+        card.statusIcon = mod.statusIcon ?? '';
+        card.statusText = mod.statusText ?? '';
       }
     });
   });

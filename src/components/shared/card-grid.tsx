@@ -159,13 +159,13 @@ function GridTile(props: GridTileProps) {
           {props.card.statusText ? props.card.statusText : ''}
         </div>
         <AbilityStat>
-          {props.card.totalStrength && cardDef.passive ? <>
+          {typeof props.card.totalStrength === "number" && cardDef.passive ? <>
             <Icon size="sm" icon={resourceIconMap[cardDef.passive.resource]} />
             {autoFormatNumber(props.card.totalStrength)}/s
           </> : null }
         </AbilityStat>
         <AbilityStat>
-          {props.card.totalCost && cardDef.costPerSec ? <>
+          {typeof props.card.totalCost === "number" && cardDef.costPerSec ? <>
             <Icon size="sm" icon={resourceIconMap[cardDef.costPerSec.resource]} />
             -{formatNumber(props.card.totalCost, 0, 1)}/s
           </> : null }
@@ -249,6 +249,18 @@ const GridSpace = styled.div<GridSpaceProps>`
   ${props => props.isStatic && css`
     background: none;
   `}
+
+  ${props => props.mark == MarkType.Associated && css`
+    box-shadow: rgb(104, 156, 228) 0px 0px 4px 2px;
+  `};
+
+  ${props => props.mark == MarkType.Buff && css`
+    box-shadow: rgba(76, 197, 76, 1) 0px 0px 4px 2px;
+  `};
+
+  ${props => props.mark == MarkType.Exclusion && css`
+    box-shadow: rgba(255, 0, 0, 1) 0px 0px 4px 2px;
+  `};
 
   &:hover ${Details} {
     display: flex;

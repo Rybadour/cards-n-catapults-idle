@@ -2,7 +2,7 @@ import { mapValues } from "lodash";
 
 import { defaultResourcesMap, Grid, GridTemplate, MyCreateSlice, RealizedCard, ResourcesMap } from "../shared/types";
 import { CardsSlice } from "./cards";
-import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/abilities";
+import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/grid";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
 import { CardDefsSlice } from "./card-definitions";
