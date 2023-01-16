@@ -1,6 +1,6 @@
-import { Pack, PackItem } from "./types";
+import { CardId, Pack, PackItem } from "./types";
 
-export function generateFromPack<T extends PackItem>(pack: Pack<T>): T[] {
+export function generateFromPack<T extends PackItem>(pack: Pack<T>, unlocked: Record<CardId, boolean>): T[] {
   const things: T[] = [];
 
   for (let i = 0; i < pack.quantity; ++i) {
@@ -8,6 +8,8 @@ export function generateFromPack<T extends PackItem>(pack: Pack<T>): T[] {
     let lastChance = 0;
     for (let i = 0; i < pack.possibleThings.length; ++i) {
       const choice = pack.possibleThings[i];
+      if (choice.locked && !unlocked[choice.thing.id]) continue;
+
       if (lastChance < r && r < (lastChance + choice.chance)) {
         things.push(choice.thing);
         break;

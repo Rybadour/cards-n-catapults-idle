@@ -21,6 +21,7 @@ export default {
     }, {
       thing: cards.ratDen,
       chance: 0.025,
+      locked: true,
     }, {
       thing: cards.lumberjack,
       chance: 0.075,

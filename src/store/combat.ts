@@ -1,5 +1,8 @@
+import combatEncounters from "../config/combat-encounters";
 import { CombatEncounter, MyCreateSlice, ResourceType } from "../shared/types";
 import { CardGridsSlice, getEmptyGrid } from "./card-grids";
+import { CardsSlice } from "./cards";
+import { DiscoverySlice } from "./discovery";
 import { StatsSlice } from "./stats";
 
 export interface CombatSlice {
@@ -12,7 +15,9 @@ export interface CombatSlice {
   claimRewards: () => void,
 }
 
-const createCombatSlice: MyCreateSlice<CombatSlice, [() => CardGridsSlice, () => StatsSlice]> = (set, get, cardGrids, stats) => {
+const createCombatSlice: MyCreateSlice<CombatSlice, [
+  () => CardGridsSlice, () => StatsSlice, () => CardsSlice, () => DiscoverySlice,
+]> = (set, get, cardGrids, stats, cards, discovery) => {
   return {
     encounter: null,
     completedEncounters: [],
@@ -38,6 +43,14 @@ const createCombatSlice: MyCreateSlice<CombatSlice, [() => CardGridsSlice, () =>
     },
 
     claimRewards: () => {
+      const rewards = get().encounter?.rewards;
+      if (rewards?.cards) {
+        cards().drawCardsFromMap(rewards.cards);
+      }
+      if (rewards?.unlockedCards) {
+        discovery().unlockCards(rewards.unlockedCards);       
+      }
+
       set({
         showRewardPage: false,
         encounter: null,

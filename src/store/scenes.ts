@@ -1,3 +1,4 @@
+import global from "../config/global";
 import { MyCreateSlice } from "../shared/types";
 
 export enum Scene {
@@ -13,7 +14,7 @@ export interface ScenesSlice {
 
 const createScenesSlice: MyCreateSlice<ScenesSlice, []> = (set, get) => {
   return {
-    currentScene: Scene.Economy,
+    currentScene: global.startingScene,
 
     switchScene: (newScene) => {
       set({currentScene: newScene});

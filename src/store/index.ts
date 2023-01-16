@@ -51,14 +51,14 @@ const useStore = create<FullStore>((set, get) => {
     cards: createCardsSlice(...cards, discovery[1], cardDefs[1]),
     cardMastery: createCardMasterySlice(...cardMastery, cards[1], cardDefs[1]),
     cardGrids: createGridSlice(...cardGrids, discovery[1], cardDefs[1], stats[1], cards[1]),
-    cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1]),
+    cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1], discovery[1]),
     prestige: createPrestigeSlice(
       ...prestige, stats[1], discovery[1], cardDefs[1], cards[1], cardGrids[1], cardPacks[1], cardMastery[1]
     ),
     savingLoading: createSavingLoadingSlice(
       ...savingLoading, stats[1], prestige[1], discovery[1], cardGrids[1], cards[1], cardPacks[1], cardMastery[1]
     ),
-    combat: createCombatSlice(...combat, cardGrids[1], stats[1]),
+    combat: createCombatSlice(...combat, cardGrids[1], stats[1], cards[1], discovery[1]),
     scenes: createScenesSlice(...scenes),
   }
 });

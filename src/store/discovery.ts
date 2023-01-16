@@ -1,14 +1,16 @@
 import global from "../config/global";
-import { Card, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
+import { Card, CardId, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
 import cardPacks from "../config/card-packs";
 import { pick } from "lodash";
 
 export interface DiscoverySlice {
   discoveredCards: Record<string, boolean>,
+  unlockedCards: Record<CardId, boolean>,
   cardsDiscoveredThisPrestige: Record<string, boolean>,
   discoveredCardPacks: Record<string, boolean>,
   discoveredResources: Partial<Record<ResourceType, boolean>>,
   discoverCards: (cards: Card[]) => void,
+  unlockCards: (card: CardId[]) => void,
   discoverResources: (resources: ResourceType[]) => void,
   prestigeReset: (startingCards: Record<string, number>, prestigeEffects: PrestigeEffects) => void,
   prestigeUpdate: (effects: PrestigeEffects) => void,
@@ -25,6 +27,7 @@ const DEFAULT_UNLOCKED_PACKS = [
 const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): DiscoverySlice => {
   return {
     discoveredCards: addToDiscoverMap({}, Object.keys(global.startingCards)),
+    unlockedCards: {},
     cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys(global.startingCards)),
     discoveredCardPacks: addToDiscoverMap({}, DEFAULT_UNLOCKED_PACKS),
     discoveredResources: {
@@ -39,6 +42,12 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
         discoveredCards: addToDiscoverMap(get().discoveredCards, cardIds),
         cardsDiscoveredThisPrestige: addToDiscoverMap(get().cardsDiscoveredThisPrestige, cardIds)
       });
+    },
+
+    unlockCards: (cards) => {
+      set({
+        unlockedCards: addToDiscoverMap(get().unlockedCards, cards),
+      })
     },
 
     discoverResources: (resources) => {

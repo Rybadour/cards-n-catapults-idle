@@ -1,6 +1,7 @@
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
 import { Card, CardId, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
+import { mergeSumPartial } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
 
@@ -14,6 +15,7 @@ export interface CardsSlice {
   takeSelectedCard: () => RealizedCard | null,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   drawCards: (cardsToDraw: Card[]) => void,
+  drawCardsFromMap: (cardsToDraw: Record<CardId, number>) => void,
   prestigeReset: (prestigeEffects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
@@ -87,6 +89,10 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => C
         newCards[card.id] = (newCards[card.id] ?? 0) + 1;
       });
       set({cards: newCards});
+    },
+
+    drawCardsFromMap: (cardMap) => {
+      set({cards: mergeSumPartial(get().cards, cardMap)});
     },
 
     prestigeReset: (prestigeEffects) => {

@@ -170,6 +170,7 @@ export type Pack<T extends PackItem> = {
   possibleThings: {
     thing: T,
     chance: number,
+    locked?: boolean,
   }[]
 };
 
@@ -249,6 +250,10 @@ export type CombatEncounter = {
   militaryStrength: number,
   staticCards: GridTemplate,
   unlockedBy: string,
+  rewards: {
+    cards?: Record<CardId, number>,
+    unlockedCards?: CardId[],
+  }
 };
 
 export enum GameFeature {

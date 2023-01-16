@@ -8,12 +8,17 @@ const combatEncounters: Record<string, CombatEncounter> = {
     militaryStrength: 100,
     unlockedBy: '',
     staticCards: [
-      ['', '', 'ratQueen', '', ''],
+      ['', '', '', '', ''],
       ['', 'rat', '', 'rat', ''],
-      ['rat', '', '', '', 'rat'],
+      ['rat', '', '', '', ''],
+      ['', '', '', 'rat', ''],
       ['', '', '', '', ''],
-      ['', '', '', '', ''],
-    ]
+    ],
+    rewards: {
+      cards: {
+        'ratSnack': 2
+      }
+    }
   },
   'moreRats': {
     id: '',
@@ -27,7 +32,12 @@ const combatEncounters: Record<string, CombatEncounter> = {
       ['rat', '', '', '', 'rat'],
       ['', 'rat', '', 'rat', ''],
       ['', '', '', '', ''],
-    ]
+    ],
+    rewards: {
+      cards: {
+        'ratSnack': 6
+      }
+    }
   },
   'ratden': {
     id: '',
@@ -41,7 +51,14 @@ const combatEncounters: Record<string, CombatEncounter> = {
       ['ratDenEnemy', 'rat', '', 'rat', 'ratDenEnemy'],
       ['rat', '', '', '', 'rat'],
       ['', '', '', '', ''],
-    ]
+    ],
+    rewards: {
+      cards: {
+        'ratSnack': 10,
+        'ratDen': 1,
+      },
+      unlockedCards: ['ratDen']
+    }
   },
 }
 

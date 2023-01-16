@@ -7,6 +7,7 @@ import { enumFromKey, getExponentialValue, getExpValueMultiple, getMultipleFromE
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { StatsSlice } from "./stats";
 import { StoreApi } from "zustand";
+import { DiscoverySlice } from "./discovery";
 
 export interface PacksSlice<T extends PackItem> {
   packs: Record<string, RealizedPack<T>>,
@@ -24,6 +25,7 @@ export default function getPackSliceCreator<T extends PackItem>(
   set: StoreApi<PacksSlice<T>>['setState'],
   get: StoreApi<PacksSlice<T>>['getState'],
   stats: () => StatsSlice,
+  discovery: () => DiscoverySlice,
   initialPackConfig: Record<string, Pack<T>>,
   earnItems: (items: T[]) => void,
 ): PacksSlice<T> {
@@ -50,7 +52,7 @@ export default function getPackSliceCreator<T extends PackItem>(
 
       stats().useResources(pack.cost);
 
-      const itemsFromPack = generateFromPack<T>(pack);
+      const itemsFromPack = generateFromPack<T>(pack, discovery().unlockedCards);
       earnItems(itemsFromPack);
 
       const newPacks = {...get().packs};
@@ -79,7 +81,7 @@ export default function getPackSliceCreator<T extends PackItem>(
 
       let itemsFromPacks: T[] = [];
       for (let i = 0; i < numMaxBuy; ++i) {
-        itemsFromPacks = itemsFromPacks.concat(generateFromPack(pack));
+        itemsFromPacks = itemsFromPacks.concat(generateFromPack(pack, discovery().unlockedCards));
       }
       earnItems(itemsFromPacks);
 
