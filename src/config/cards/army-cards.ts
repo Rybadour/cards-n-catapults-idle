@@ -19,6 +19,7 @@ export default {
     bonusToAdjacent: {
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Enemy],
+      cardTiers: [1],
       strength: -1,
     },
     costPerSec: {

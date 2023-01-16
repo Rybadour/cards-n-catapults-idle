@@ -8,7 +8,7 @@ const combatEncounters: Record<string, CombatEncounter> = {
     militaryStrength: 100,
     unlockedBy: '',
     staticCards: [
-      ['', '', '', '', ''],
+      ['', '', 'ratQueen', '', ''],
       ['', 'rat', '', 'rat', ''],
       ['rat', '', '', '', 'rat'],
       ['', '', '', '', ''],

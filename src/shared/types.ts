@@ -90,6 +90,7 @@ export type GridMatch = {
   shape: MatchingGridShape,
   cards?: string[],
   cardTypes?: CardType[],
+  cardTiers?: number[],
 }
 
 export type RealizedCard = {

@@ -19,11 +19,28 @@ export default {
       bonusPer: 0.1,
     }
   },
+  ratQueen: {
+    id: "",
+    name: "Rat Queen",
+    icon: "rat-red",
+    tier: 2,
+    type: CardType.Enemy,
+    description: "",
+    passive: {
+      strength: -5,
+      resource: ResourceType.MilitaryPower,
+    },
+    mastery: {
+      baseCost: 1,
+      growth: 1,
+      bonusPer: 0.1,
+    }
+  },
   ratDenEnemy: {
     id: "",
     name: "Rat Den",
     icon: "cave-entrance-black",
-    tier: 1,
+    tier: 2,
     type: CardType.Enemy,
     description: "",
     passive: {

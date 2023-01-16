@@ -42,7 +42,7 @@ module.exports = {
       apiOptions: {
         cssImageRef: "~sprite-sheet.png"
       }
-    })
+    }),
   ],
   performance: {
     hints: false,

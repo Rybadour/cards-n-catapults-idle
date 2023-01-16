@@ -433,8 +433,12 @@ function iterateGridMatch(
     if (match.cards?.includes(cardId)) {
       callback(card, ax, ay);
     }
-    if (card && match.cardTypes?.includes(cardDefs[card.cardId].type)) {
-      callback(card, ax, ay);
+    if (card && (!!match.cardTypes || !!match.cardTiers)) {
+      const matchOnType = !match.cardTypes || match.cardTypes?.includes(cardDefs[card.cardId].type);
+      const matchOnTier = !match.cardTiers || match.cardTiers?.includes(cardDefs[card.cardId].tier);
+      if (matchOnType && matchOnTier) {
+        callback(card, ax, ay);
+      }
     }
   });
 }
