@@ -17,5 +17,6 @@ export function createCard(card: Card, quantity: number): RealizedCard {
     cardMarks: {},
     statusIcon: '',
     statusText: '',
+    appliedEffects: {},
   };
 }

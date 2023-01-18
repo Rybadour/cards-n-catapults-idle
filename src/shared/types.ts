@@ -63,6 +63,11 @@ export type Card = {
     targetCard: string,
     resultingCard: string,
   },
+  targettedEffect?: {
+    effect: TargettedEffectType,
+    duration: number,
+    match: GridMatch,
+  },
 
   costPerUse?: ResourceCost,
   costPerSec?: ResourceCost,
@@ -109,6 +114,12 @@ export type RealizedCard = {
   cardMarks: Record<string, MarkType>,
   statusIcon: string,
   statusText: string,
+  appliedEffects: Partial<Record<TargettedEffectType, AppliedEffect>>,
+}
+
+export type AppliedEffect = {
+  duration: number,
+  strength: number,
 }
 
 export enum Rarity {
@@ -149,6 +160,10 @@ export enum AbilityImprovementStat {
 export enum ModifierBehaviour {
   WhenMatching,
   WhenNotMatching,
+}
+
+export enum TargettedEffectType {
+  Disable = 'disable',
 }
 
 export type Grid = (RealizedCard | null)[][];

@@ -2,9 +2,9 @@ import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
 import {
   RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap,
-  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour
+  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour, TargettedEffectType
 } from "../shared/types";
-import { getRandomFromArray, using } from "../shared/utils";
+import { enumFromKey, getRandomFromArray, using } from "../shared/utils";
 import { StatsSlice } from "../store/stats";
 
 export type UpdateGridTotalsResults = {
@@ -73,6 +73,10 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
         });
         return isDisabled;
       });
+    }
+
+    if (!card.isDisabled && card.appliedEffects[TargettedEffectType.Disable]) {
+      card.isDisabled = true;
     }
 
     results.grid[y][x] = card;
@@ -185,6 +189,14 @@ export function updateGrid(
         results.anyChanged = true;
       } else if (!card.isDisabled && resources[cps.resource] <= 0) {
         card.isDisabled = true;
+        results.anyChanged = true;
+      }
+    });
+
+    Object.entries(card.appliedEffects).forEach(([effectType, effect]) => {
+      effect.duration -= elapsed;
+      if (effect.duration <= 0) {
+        delete card.appliedEffects[enumFromKey(TargettedEffectType, effectType) as TargettedEffectType];
         results.anyChanged = true;
       }
     });
@@ -343,6 +355,15 @@ function activateCard(
     }
 
     return found;
+  } else if (cardDef.targettedEffect) {
+    const effect = cardDef.targettedEffect;
+    const chosen = getOneOfRandomMatching(results.grid, cardDefs, x, y, effect.match);
+    if (chosen) {
+      chosen.appliedEffects[effect.effect] = chosen.appliedEffects[effect.effect] ?? {duration: 0, strength: 1};
+      chosen.appliedEffects[effect.effect]!.duration += effect.duration;
+      results.anyChanged = true;
+    }
+    return !!chosen;
   }
 
   return false;
@@ -441,6 +462,18 @@ function iterateGridMatch(
       }
     }
   });
+}
+
+function getOneOfRandomMatching(
+  grid: Grid, cardDefs: Record<CardId, Card>, x: number, y: number, match: GridMatch
+): RealizedCard | null {
+  const matching: RealizedCard[] = []; 
+  iterateGridMatch(grid, cardDefs, x, y, match, (card) => {
+    if (card) {
+      matching.push(card);
+    }
+  });
+  return matching.length > 0 ? getRandomFromArray(matching) : null;
 }
 
 function canAfford(resources: ResourcesMap, cost: ResourceCost) {

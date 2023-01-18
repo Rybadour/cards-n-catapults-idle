@@ -1,5 +1,5 @@
 
-import { Card, CardType, MatchingGridShape, ModifierBehaviour, ResourceType } from "../../shared/types";
+import { Card, CardType, MatchingGridShape, ModifierBehaviour, ResourceType, TargettedEffectType } from "../../shared/types";
 
 const hungryDisable = {
   onMatch: false,
@@ -8,6 +8,28 @@ const hungryDisable = {
 };
 
 export default {
+  militia: {
+    id: "",
+    name: "Miltia",
+    icon: "farmer",
+    tier: 1,
+    type: CardType.Soldier,
+    description: "Produces {{passiveAmount}}.",
+    foodDrain: 0.1,
+    passive: {
+      strength: 1,
+      resource: ResourceType.MilitaryPower,
+    },
+    costPerSec: {
+      cost: 1,
+      resource: ResourceType.Gold,
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.1,
+    }
+  },
   pikeman: {
     id: "",
     name: "Pikeman",
@@ -32,6 +54,33 @@ export default {
       growth: 2,
       bonusPer: 0.1,
     }
+  },
+  bolasThrower: {
+    id: "",
+    name: "Bolas Thrower",
+    icon: "bolas",
+    tier: 2,
+    type: CardType.Soldier,
+    description: "Stuns a nearby enemy every {{cooldownSecs}} for 0.5s.",
+    foodDrain: 1,
+    cooldownMs: 3000,
+    targettedEffect: {
+      effect: TargettedEffectType.Disable,
+      duration: 1500,
+      match: {
+        shape: MatchingGridShape.AllAdjacent,
+        cardTypes: [CardType.Enemy],
+      },
+    },
+    costPerSec: {
+      cost: 2,
+      resource: ResourceType.Gold,
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.1,
+    } 
   },
   cavalry: {
     id: "",

@@ -7,7 +7,10 @@ import { Scene } from "../store/scenes";
 const global = {
   version: "0.2.0",
   startingGold: 20000,
-  startingCards: {beggar: 1, bard: 2, ratSnack: 20, berries: 10, mushrooms: 20, archer: 2, pikeman: 4, cavalry: 2, campfire: 2},
+  startingCards: {
+    beggar: 1, bard: 2, ratSnack: 20, berries: 10, mushrooms: 20, archer: 2, pikeman: 4, cavalry: 2, campfire: 2,
+    bolasThrower: 2,
+  },
   startingTown: [
     ['beggar', 'beggar', 'beggar', '', ''],
     ['beggar', 'bard', 'beggar', '', ''],
