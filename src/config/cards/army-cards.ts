@@ -15,7 +15,7 @@ export default {
     tier: 1,
     type: CardType.Soldier,
     description: "Produces {{passiveAmount}}.",
-    foodDrain: 0.1,
+    foodDrain: 0.2,
     passive: {
       strength: 1,
       resource: ResourceType.MilitaryPower,
@@ -24,6 +24,7 @@ export default {
       cost: 1,
       resource: ResourceType.Gold,
     },
+    disableRules: [hungryDisable],
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -36,13 +37,15 @@ export default {
     icon: "pikeman",
     tier: 1,
     type: CardType.Soldier,
-    description: "Produces {{passiveAmount}}.",
+    description: "Produces {{passiveAmount}} for each nearby enemy.",
     foodDrain: 0.2,
-    bonusToAdjacent: {
-      shape: MatchingGridShape.OrthoAdjacent,
-      cardTypes: [CardType.Enemy],
-      cardTiers: [1],
-      strength: -1,
+    passive: {
+      resource: ResourceType.MilitaryPower,
+      strength: 0.5,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cardTypes: [CardType.Enemy],
+      },
     },
     costPerSec: {
       cost: 1,
@@ -76,6 +79,36 @@ export default {
       cost: 2,
       resource: ResourceType.Gold,
     },
+    disableRules: [hungryDisable],
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.1,
+    } 
+  },
+  rockThrower: {
+    id: "",
+    name: "Rock Thrower",
+    icon: "throwing-ball",
+    tier: 1,
+    type: CardType.Soldier,
+    description: "Produces some military power",
+    foodDrain: 1,
+    passive: {
+      resource: ResourceType.MilitaryPower,
+      strength: 1.5,
+    },
+    costPerSec: {
+      cost: 2,
+      resource: ResourceType.Gold,
+    },
+    disableRules: [
+      {
+        onMatch: false,
+        shape: MatchingGridShape.DiagAdjacent,
+      },  
+      hungryDisable
+    ],
     mastery: {
       baseCost: 2,
       growth: 2,

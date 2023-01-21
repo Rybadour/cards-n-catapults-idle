@@ -15,13 +15,16 @@ const armyPacks: Record<string, CardPack> = {
     unlocked: true,
     possibleThings: [{
       thing: armyCardsConfig.pikeman,
-      chance: 0.3,
+      chance: 0.2,
     }, {
       thing: armyCardsConfig.militia,
-      chance: 0.5,
+      chance: 0.4,
     }, {
       thing: armyCardsConfig.bolasThrower,
       chance: 0.2,
+    }, {
+      thing: armyCardsConfig.rockThrower,
+      chance: 0.2
     }]
   },
   'soldier': {
