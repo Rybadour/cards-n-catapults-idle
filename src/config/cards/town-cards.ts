@@ -1,19 +1,35 @@
-import { Card, CardType, EMPTY_CARD, MatchingGridShape, ModifierBehaviour, ResourceType } from "../../shared/types";
-import { formatNumber, using } from "../../shared/utils";
+import { BonusType, Card, CardType, EMPTY_CARD, MatchingGridShape, ResourceType } from "../../shared/types";
+
+const hungryDisable = {
+  onMatch: false,
+  shape: MatchingGridShape.OrthoAdjacent,
+  cardTypes: [CardType.Food],
+};
 
 export default {
-  beggar: {
+  farmer: {
     id: "",
-    name: "Beggar",
-    icon: "bindle",
+    name: "Farmer",
+    icon: "farmer",
     tier: 1,
     type: CardType.Person,
-    description: "Produces {{passiveAmount}}.",
+    description: "Produces {{passiveAmount}} for each nearby food item and speeds up farms by 50%.",
     foodDrain: 0.2,
     passive: {
-      strength: 1,
+      strength: 0.5,
       resource: ResourceType.Gold,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.OrthoAdjacent,
+        cardTypes: [CardType.Food],
+      }
     },
+    bonusToAdjacent: {
+      strength: 0.5,
+      bonusType: BonusType.Strength,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cards: ['farm'],
+    },
+    disableRules: [hungryDisable],
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -37,10 +53,12 @@ export default {
       }
     },
     bonusToAdjacent: {
-      strength: 0.2,
+      strength: 0.5,
+      bonusType: BonusType.Strength,
       shape: MatchingGridShape.AllAdjacent,
       cards: ['forest'],
     },
+    disableRules: [hungryDisable],
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -53,27 +71,17 @@ export default {
     icon: "farmer",
     tier: 2,
     type: CardType.Person,
-    description: "Produces {{passiveAmount}} except when near low tier cards. When not fed it's production is reduced to {{modifiedStrength}}.",
+    description: "Produces {{passiveAmount}} except when near low tier cards.",
     foodDrain: 0.5,
     passive: {
       strength: 3,
       resource: ResourceType.Gold,
     },
-    abilityStrengthModifier: {
-      behaviour: ModifierBehaviour.WhenNotMatching,
-      factor: 0.333,
-      statusIcon: 'opened-food-can',
-      statusText: '(Hungry)',
-      match: {
-        shape: MatchingGridShape.OrthoAdjacent,
-        cardTypes: [CardType.Food],
-      }
-    },
     disableRules: [{
       onMatch: true,
       shape: MatchingGridShape.OrthoAdjacent,
       maxTier: 1,
-    }],
+    }, hungryDisable],
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -117,6 +125,7 @@ export default {
     },
     bonusToAdjacent: {
       strength: 1,
+      bonusType: BonusType.Strength,
       shape: MatchingGridShape.AllAdjacent,
       cards: ['forest'],
     },
@@ -157,7 +166,8 @@ export default {
     description: "{{bonusToAdjacent}}",
     maxDurability: 8,
     bonusToAdjacent: {
-      strength: 0.2,
+      strength: 0.35,
+      bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Person],
     },
@@ -180,8 +190,27 @@ export default {
       resource: ResourceType.Gold,
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
-        cards: ['mushrooms', 'forest', EMPTY_CARD],
+        cards: ['mushrooms', 'forest', EMPTY_CARD, 'farm'],
       }
+    },
+    mastery: {
+      baseCost: 4,
+      growth: 2,
+      bonusPer: 0.05,
+    }
+  },
+  corn: {
+    id: "",
+    name: "Corn",
+    icon: "corn",
+    tier: 1,
+    type: CardType.Food,
+    description: "Reduces the food drain of nearby people.",
+    maxDurability: 16,
+    bonusToAdjacent: {
+      strength: 0.5,
+      bonusType: BonusType.FoodDrain,
+      shape: MatchingGridShape.OrthoAdjacent,
     },
     mastery: {
       baseCost: 4,
@@ -199,6 +228,7 @@ export default {
     maxDurability: 5,
     bonusToAdjacent: {
       strength: 1,
+      bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Person],
     },
@@ -232,6 +262,7 @@ export default {
     maxDurability: 1000,
     bonusToAdjacent: {
       strength: 2,
+      bonusType: BonusType.Strength,
       shape: MatchingGridShape.AllAdjacent,
       cardTypes: [CardType.Person],
     },
@@ -252,10 +283,14 @@ export default {
     icon: "birch-trees",
     tier: 2,
     type: CardType.Resource,
-    description: "Produces {{passiveAmount}}.",
+    description: "Generates wood when near a lumberjack or lumbermill.",
     passive: {
-      strength: 1,
+      strength: 0.5,
       resource: ResourceType.Wood,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cards: ['lumberjack', 'lumbermill'],
+      }
     },
     mastery: {
       baseCost: 2,
@@ -301,6 +336,25 @@ export default {
       growth: 2,
       bonusPer: 0.1,
     }
+  },
+  farm: {
+    id: "",
+    name: "Farm",
+    icon: "plow",
+    tier: 2,
+    type: CardType.Building,
+    description: "Copies any fruit or vegetable nearby every {{cooldownSecs}}s.",
+    cooldownMs: 60000,
+    produceCardEffect: {
+      shape: MatchingGridShape.OrthoAdjacent,
+      possibleCards: ['berries', 'mushrooms', 'corn'],
+      produceByCopying: true,
+    },
+    mastery: {
+      baseCost: 1,
+      growth: 2,
+      bonusPer: 1,
+    },
   },
   forager: {
     id: "",
@@ -357,6 +411,7 @@ export default {
     description: "{{bonusToAdjacent}}. Uses {{costPerSec}}.",
     bonusToAdjacent: {
       strength: 0.25,
+      bonusType: BonusType.Strength,
       shape: MatchingGridShape.RowAndColumn,
       cardTypes: [CardType.Person, CardType.Building],
     },
@@ -405,6 +460,7 @@ export default {
     cooldownMs: 10000,
     bonusToAdjacent: {
       strength: 1,
+      bonusType: BonusType.Strength,
       shape: MatchingGridShape.Grid,
       cardTypes: [CardType.Person]
     },

@@ -1,9 +1,12 @@
-import { Card, RealizedCard } from "../shared/types";
+import { BonusType, Card, RealizedCard } from "../shared/types";
 
 export function createCard(card: Card, quantity: number): RealizedCard {
   return {
     cardId: card.id,
-    bonus: 1,
+    bonuses: {
+      [BonusType.Strength]: 1,
+      [BonusType.FoodDrain]: 1,
+    },
     totalStrength: 0,
     totalCost: 0,
     shouldBeReserved: false,

@@ -1,6 +1,6 @@
-import { mergeWith } from "lodash";
+import { mergeWith, uniq } from "lodash";
 import allPacksConfig from "../config/card-packs";
-import { CardId, CardPack } from "./types";
+import { Card, CardId, CardPack, RealizedCard } from "./types";
 
 export function formatNumber(n: number, minimumFractionDigits: number, maximumFractionDigits: number): string {
   if (isNaN(n)) return '';
@@ -69,4 +69,8 @@ export function findPacksContainingCard(cardId: CardId): CardPack[] {
   });
 
   return cardPacksFound;
+}
+
+export function getUniqueCardIdsFromRealizedCards(cards: RealizedCard[]) {
+  return uniq(cards.map(c => c.cardId));
 }

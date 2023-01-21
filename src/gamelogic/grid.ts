@@ -2,9 +2,9 @@ import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
 import {
   RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap,
-  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour, TargettedEffectType
+  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour, TargettedEffectType, BonusType
 } from "../shared/types";
-import { enumFromKey, getRandomFromArray, using } from "../shared/utils";
+import { enumFromKey, getRandomFromArray, getUniqueCardIdsFromRealizedCards, using } from "../shared/utils";
 import { StatsSlice } from "../store/stats";
 
 export type UpdateGridTotalsResults = {
@@ -20,7 +20,10 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
 
   // Disable and reset
   iterateGrid(grid, (card, x, y) => {
-    card.bonus = 1;
+    card.bonuses = {
+      [BonusType.Strength]: 1,
+      [BonusType.FoodDrain]: 1,
+    };
     card.statusIcon = '';
     card.statusText = '';
     card.durabilityBonus = 1;
@@ -90,7 +93,7 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
     using(cardDef.bonusToAdjacent, (bta) => {
       iterateGridMatch(grid, cardDefs, x, y, bta, (adj, x2, y2) => {
         if (!adj) return;
-        adj.bonus *= 1 + bta.strength;
+        adj.bonuses[bta.bonusType] *= 1 + bta.strength;
         card.cardMarks[`${x2}:${y2}`] = (bta.strength > 0 ? MarkType.Buff : MarkType.Exclusion);
       });
     });
@@ -116,7 +119,7 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
       });
 
       if (isModified) {
-        card.bonus *= mod.factor;
+        card.bonuses[BonusType.Strength] *= mod.factor;
         card.statusIcon = mod.statusIcon ?? '';
         card.statusText = mod.statusText ?? '';
       }
@@ -133,7 +136,7 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
     using(cardDef.passive, (p) => {
       const strength = p.scaledToResource ?
         getScaledResourceAsStrength(card, cardDef, stats.resources[p.scaledToResource]) :
-        p.strength * card.bonus;
+        p.strength * card.bonuses[BonusType.Strength];
       if (p.multiplyByAdjacent) {
         const mba = p.multiplyByAdjacent;
         iterateGridMatch(grid, cardDefs, x, y, mba, (adj, ax, ay) => {
@@ -223,7 +226,7 @@ export function updateGrid(
         } 
       }); 
 
-      const foodDrain = (elapsed/1000 * cardDef.foodDrain) / adjacentFood.length;
+      const foodDrain = (elapsed/1000 * cardDef.foodDrain * card.bonuses[BonusType.FoodDrain]) / adjacentFood.length;
       adjacentFood.forEach(food => {
         const foodBonus = food.card.durabilityBonus;
         food.card.durability = (food.card.durability ?? 0) - (foodDrain / foodBonus);
@@ -243,7 +246,7 @@ export function updateGrid(
 
     if (cardDef.cooldownMs) {
       if ((card.timeLeftMs ?? 0) > 0) {
-        card.timeLeftMs = (card.timeLeftMs ?? 0) - (elapsed * card.bonus);
+        card.timeLeftMs = (card.timeLeftMs ?? 0) - (elapsed * card.bonuses[BonusType.Strength]);
         if (card.timeLeftMs > 0) return;
       }
 
@@ -281,7 +284,13 @@ function activateCard(
 ): boolean {
   if (cardDef.produceCardEffect) {
     const pc = cardDef.produceCardEffect;
-    const newCardId = getRandomFromArray(pc.possibleCards);
+    const possibleCards = pc.produceByCopying ?
+      getUniqueCardIdsFromRealizedCards(
+        getMatchingCards(results.grid, cardDefs, x, y, {shape: pc.shape, cards: pc.possibleCards})
+      ) :
+      pc.possibleCards;
+
+    const newCardId = getRandomFromArray(possibleCards);
     let found = false;
     iterateGridShape(results.grid, x, y, pc.shape, (adjCard, ax, ay) => {
       if (found) return;
@@ -464,15 +473,23 @@ function iterateGridMatch(
   });
 }
 
-function getOneOfRandomMatching(
+
+function getMatchingCards(
   grid: Grid, cardDefs: Record<CardId, Card>, x: number, y: number, match: GridMatch
-): RealizedCard | null {
+): RealizedCard[] {
   const matching: RealizedCard[] = []; 
   iterateGridMatch(grid, cardDefs, x, y, match, (card) => {
     if (card) {
       matching.push(card);
     }
   });
+  return matching;
+}
+
+function getOneOfRandomMatching(
+  grid: Grid, cardDefs: Record<CardId, Card>, x: number, y: number, match: GridMatch
+): RealizedCard | null {
+  const matching = getMatchingCards(grid, cardDefs, x, y, match); 
   return matching.length > 0 ? getRandomFromArray(matching) : null;
 }
 
@@ -482,7 +499,7 @@ function canAfford(resources: ResourcesMap, cost: ResourceCost) {
 
 function getScaledResourceAsStrength(card: RealizedCard, cardDef: Card, resource: number) {
   if (cardDef.passive && cardDef.passive.scaledToResource) {
-    return cardDef.passive.strength * card.bonus * (resource > 0 ? Math.log10(resource) : 0);
+    return cardDef.passive.strength * card.bonuses[BonusType.Strength] * (resource > 0 ? Math.log10(resource) : 0);
   }
 
   return 0;

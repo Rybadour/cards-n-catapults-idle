@@ -43,6 +43,7 @@ export type Card = {
   },
   bonusToAdjacent?: {
     strength: number,
+    bonusType: BonusType,
   } & GridMatch,
   bonusToFoodCapacity?: {
     strength: number,
@@ -52,6 +53,7 @@ export type Card = {
   produceCardEffect?: {
     shape: MatchingGridShape,
     possibleCards: string[],
+    produceByCopying?: boolean,
   },
   autoReplaceEffect?: {
     cardType: CardType,
@@ -100,7 +102,7 @@ export type GridMatch = {
 
 export type RealizedCard = {
   cardId: CardId,
-  bonus: number,
+  bonuses: Record<BonusType, number>,
   totalStrength: number,
   totalCost: number,
   shouldBeReserved: boolean,
@@ -120,6 +122,11 @@ export type RealizedCard = {
 export type AppliedEffect = {
   duration: number,
   strength: number,
+}
+
+export enum BonusType {
+  Strength = "Strength",
+  FoodDrain = "FoodDrain",
 }
 
 export enum Rarity {

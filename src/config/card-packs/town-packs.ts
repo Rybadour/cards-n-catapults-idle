@@ -27,19 +27,25 @@ export default {
       chance: 0.075,
     }, {
       thing: cards.forest,
-      chance: 0.1,
+      chance: 0.075,
     }, {
-      thing: cards.beggar,
-      chance: 0.1,
+      thing: cards.farm,
+      chance: 0.05,
+    }, {
+      thing: cards.farmer,
+      chance: 0.075,
     }, {
       thing: cards.ratSnack,
-      chance: 0.3,
+      chance: 0.15,
     }, {
       thing: cards.berries,
       chance: 0.175,
     }, {
       thing: cards.mushrooms,
       chance: 0.175,
+    }, {
+      thing: cards.corn,
+      chance: 0.15,
     }],
   },
   stone: {
