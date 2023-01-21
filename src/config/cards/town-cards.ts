@@ -65,6 +65,27 @@ export default {
       bonusPer: 0.1,
     }
   },
+  soothsayer: {
+    id: "",
+    name: "Soothsayer",
+    icon: "sun-priest",
+    tier: 2,
+    type: CardType.Person,
+    description: "Improves nearby people by 50%.",
+    foodDrain: 0.5,
+    bonusToAdjacent: {
+      strength: 0.5,
+      bonusType: BonusType.Strength,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cardTypes: [CardType.Person],
+    },
+    disableRules: [hungryDisable],
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.1,
+    }
+  },
   peasant: {
     id: "",
     name: "Peasant",

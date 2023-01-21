@@ -26,6 +26,9 @@ export default {
       thing: cards.lumberjack,
       chance: 0.075,
     }, {
+      thing: cards.soothsayer,
+      chance: 0.05,
+    }, {
       thing: cards.forest,
       chance: 0.075,
     }, {
@@ -39,10 +42,10 @@ export default {
       chance: 0.15,
     }, {
       thing: cards.berries,
-      chance: 0.175,
+      chance: 0.15,
     }, {
       thing: cards.mushrooms,
-      chance: 0.175,
+      chance: 0.15,
     }, {
       thing: cards.corn,
       chance: 0.15,
