@@ -213,6 +213,49 @@ export function updateGrid(
       }
     }
 
+    if (card.durability && cardDef.regeneration) {
+      const regen = cardDef.regeneration;
+
+      let isRegen = true;
+      if (regen.matchCondition) {
+        isRegen = false;
+        iterateGridMatch(grid, cardDefs, x, y, regen.matchCondition, (adj, x2, y2) => {
+          if (!adj || adj.isExpiredAndReserved) return;
+
+          isRegen = true;
+          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
+        });
+      }
+
+      if (isRegen) {
+        card.durability += regen.durabilityPerSec * (elapsed / 1000); 
+        if (card.durability > (cardDef.maxDurability ?? 0)) {
+          card.durability = (cardDef.maxDurability ?? 0);
+        }
+      }
+    }
+
+    if (card.durability && cardDef.degeneration) {
+      const degen = cardDef.degeneration;
+
+      let totalPerSec = 0;
+      if (degen.multiplyByAdjacent) {
+        iterateGridMatch(grid, cardDefs, x, y, degen.multiplyByAdjacent, (adj, x2, y2) => {
+          if (!adj || adj.isExpiredAndReserved || adj.isDisabled) return;
+
+          totalPerSec += degen.durabilityPerSec;
+        });
+      } else {
+        totalPerSec = degen.durabilityPerSec;
+      }
+
+      card.durability -= totalPerSec * (elapsed / 1000); 
+      if (card.durability <= 0) {
+        results.grid[y][x] = null;
+        results.anyChanged = true;
+      }
+    }
+
     if (cardDef.foodDrain) {
       const adjacentFood: {
         card: RealizedCard,
@@ -242,28 +285,6 @@ export function updateGrid(
           results.anyChanged = true;
         }
       })
-    }
-
-    if (card.durability && cardDef.regeneration) {
-      const regen = cardDef.regeneration;
-
-      let isRegen = true;
-      if (regen.matchCondition) {
-        isRegen = false;
-        iterateGridMatch(grid, cardDefs, x, y, regen.matchCondition, (adj, x2, y2) => {
-          if (!adj || adj.isExpiredAndReserved) return;
-
-          isRegen = true;
-          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
-        });
-      }
-
-      if (isRegen) {
-        card.durability += regen.durabilityPerSec * (elapsed / 1000); 
-        if (card.durability > (cardDef.maxDurability ?? 0)) {
-          card.durability = (cardDef.maxDurability ?? 0);
-        }
-      }
     }
 
     if (cardDef.cooldownMs) {

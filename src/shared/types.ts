@@ -52,6 +52,10 @@ export type Card = {
     durabilityPerSec: number,
     matchCondition: GridMatch,
   },
+  degeneration?: {
+    durabilityPerSec: number,
+    multiplyByAdjacent?: GridMatch,
+  },
 
   cooldownMs?: number,
   produceCardEffect?: {

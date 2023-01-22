@@ -6,16 +6,16 @@ import { Scene } from "../store/scenes";
 // Otherwise a patch version is used. Ex. Between 0.2.123 and 0.2.450 no migration is required.
 const global = {
   version: "0.2.0",
-  startingGold: 1000,
+  startingGold: 200,
   startingCards: {
-    farmer: 1,
+    lumberjack: 1,
   },
   startingTown: [
-    //['beggar', 'beggar', 'beggar', '', ''],
-    //['beggar', 'bard', 'beggar', '', ''],
-    //['beggar', 'beggar', 'beggar', 'beggar', 'beggar'],
-    //['', '', 'beggar', 'bard', 'beggar'],
-    //['', '', 'beggar', 'beggar', 'beggar'],
+    ['forest', 'forest', 'forest', 'forest', 'forest'],
+    ['forest', '', '', 'forest', 'forest'],
+    ['forest', 'clearingForest', '', '', 'forest'],
+    ['forest', '', '', '', 'forest'],
+    ['forest', 'forest', 'forest', 'forest', 'forest'],
   ],
   unlockedPacks: [],
   startingPrestige: 0,

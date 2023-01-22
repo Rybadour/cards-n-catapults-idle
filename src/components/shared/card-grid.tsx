@@ -268,7 +268,10 @@ const GridSpace = styled.div<GridSpaceProps>`
 `;
 
 const CardIcon = styled.div<{isExpired: boolean, isStatic: boolean}>`
-  filter: drop-shadow(1px 1px 6px ${props => props.isStatic ? "grey" : "black"});
+  filter: drop-shadow(1px 1px 6px black);
+  ${props => props.isStatic && css`
+    filter: opacity(0.75);
+  `}
 
   ${props => props.isExpired && css`
     filter: opacity(0.5);

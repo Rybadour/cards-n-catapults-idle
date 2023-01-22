@@ -29,9 +29,6 @@ export default {
       thing: cards.soothsayer,
       chance: 0.05,
     }, {
-      thing: cards.forest,
-      chance: 0.075,
-    }, {
       thing: cards.farm,
       chance: 0.05,
     }, {

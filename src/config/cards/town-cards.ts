@@ -324,6 +324,35 @@ export default {
       bonusPer: 0.1,
     }
   },
+  clearingForest: {
+    id: "",
+    name: "Clearing Forest",
+    icon: "logging",
+    tier: 1,
+    type: CardType.Resource,
+    description: "Use lumberjacks or lumbermills to clear this forest tile and generate a lot of wood!",
+    maxDurability: 10,
+    passive: {
+      strength: 5,
+      resource: ResourceType.Wood,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cards: ['lumberjack', 'lumbermill'],
+      }
+    },
+    degeneration: {
+      durabilityPerSec: 0.3,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cards: ['lumberjack', 'lumbermill'],
+      }
+    },
+    mastery: {
+      baseCost: 2,
+      growth: 2,
+      bonusPer: 0.1,
+    }
+  },
   ratDen: {
     id: "",
     name: "Rat Den",

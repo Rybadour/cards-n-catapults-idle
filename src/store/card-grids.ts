@@ -91,7 +91,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
   return {
     initialized: false,
     grids: {
-      town: getInitializedGrid(global.startingTown, false),
+      town: getInitializedGrid(global.startingTown, true),
       combat: getEmptyGrid(),
     },
     gridsResourcesPerSec: {
