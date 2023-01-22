@@ -48,6 +48,10 @@ export type Card = {
   bonusToFoodCapacity?: {
     strength: number,
   } & GridMatch,
+  regeneration?: {
+    durabilityPerSec: number,
+    matchCondition: GridMatch,
+  },
 
   cooldownMs?: number,
   produceCardEffect?: {

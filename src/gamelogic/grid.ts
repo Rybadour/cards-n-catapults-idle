@@ -244,6 +244,28 @@ export function updateGrid(
       })
     }
 
+    if (card.durability && cardDef.regeneration) {
+      const regen = cardDef.regeneration;
+
+      let isRegen = true;
+      if (regen.matchCondition) {
+        isRegen = false;
+        iterateGridMatch(grid, cardDefs, x, y, regen.matchCondition, (adj, x2, y2) => {
+          if (!adj || adj.isExpiredAndReserved) return;
+
+          isRegen = true;
+          card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
+        });
+      }
+
+      if (isRegen) {
+        card.durability += regen.durabilityPerSec * (elapsed / 1000); 
+        if (card.durability > (cardDef.maxDurability ?? 0)) {
+          card.durability = (cardDef.maxDurability ?? 0);
+        }
+      }
+    }
+
     if (cardDef.cooldownMs) {
       if ((card.timeLeftMs ?? 0) > 0) {
         card.timeLeftMs = (card.timeLeftMs ?? 0) - (elapsed * card.bonuses[BonusType.Strength]);

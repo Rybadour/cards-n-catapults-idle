@@ -204,14 +204,19 @@ export default {
     icon: "mushrooms",
     tier: 1,
     type: CardType.Food,
-    description: "Produces {{passiveAmount}} {{passiveAdjacent}}.",
-    maxDurability: 10,
-    passive: {
-      strength: 0.1,
-      resource: ResourceType.Gold,
-      multiplyByAdjacent: {
+    description: "Improves nearby people and regenerates when next to other mushrooms.",
+    maxDurability: 6,
+    bonusToAdjacent: {
+      strength: 0.2,
+      bonusType: BonusType.Strength,
+      shape: MatchingGridShape.OrthoAdjacent,
+      cardTypes: [CardType.Person],
+    },
+    regeneration: {
+      durabilityPerSec: 0.3,
+      matchCondition: {
         shape: MatchingGridShape.AllAdjacent,
-        cards: ['mushrooms', 'forest', EMPTY_CARD, 'farm'],
+        cards: ['mushrooms'],
       }
     },
     mastery: {
