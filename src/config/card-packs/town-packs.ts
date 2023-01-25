@@ -7,10 +7,10 @@ const packs: Record<string, CardPack> = {
     name: "Dirt Pack",
     feature: GameFeature.Economy,
     baseCost: {
-      [ResourceType.Gold]: 150,
+      [ResourceType.Gold]: 75,
     },
     costGrowth: 1.08,
-    quantity: 4,
+    quantity: 5,
     unlocked: true,
     possibleThings: [{
       thing: cards.pauline,

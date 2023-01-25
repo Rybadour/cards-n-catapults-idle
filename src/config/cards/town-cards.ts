@@ -45,7 +45,7 @@ const cards: Record<CardId, Card> = {
     description: "Produce {{passiveAmount}} and {{bonusToAdjacent}}",
     foodDrain: 0.3,
     passive: {
-      strength: 0.2,
+      strength: 0.35,
       resource: ResourceType.Gold,
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
