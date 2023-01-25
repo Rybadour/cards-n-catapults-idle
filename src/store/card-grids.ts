@@ -17,7 +17,7 @@ export interface CardGridsSlice {
   gridsResourcesPerSec: Record<string, ResourcesMap>,
   updateAll: (elapsed: number) => void,
   cardDefsChanged: () => void,
-  replaceCard: (gridId: string, x: number, y: number, newCard: RealizedCard) => void,
+  replaceCard: (gridId: string, x: number, y: number, newCard: RealizedCard, shouldReturnCard?: boolean) => void,
   returnCard: (gridId: string, x: number, y: number) => void,
   clearGrid: (gridId: string) => void,
   clearAllGrids: () => void,
@@ -36,7 +36,7 @@ type UpdateDefsResults = Omit<UpdateGridTotalsResults, 'grid'>;
 const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () => CardDefsSlice, () => StatsSlice, () => CardsSlice]>
 = (set, get, discovery, cardDefs, stats, cards) => {
 
-  function replaceCard(gridId: string, x: number, y: number, newCard: RealizedCard | null) {
+  function replaceCard(gridId: string, x: number, y: number, newCard: RealizedCard | null, shouldReturnCard: boolean = true) {
     const gridSpaces = get().grids[gridId];
     if (!gridSpaces) return;
 
@@ -50,7 +50,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     });
     updateResourcesOfGrid(gridId, results.resourcesPerSec);
 
-    if (oldCard) {
+    if (oldCard && shouldReturnCard) {
       cards().returnCard(oldCard);
     }
   }
@@ -177,8 +177,8 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       set({grids: newGrids});
     },
 
-    replaceCard: (gridId, x, y, newCard) => {
-      replaceCard(gridId, x, y, newCard);
+    replaceCard: (gridId, x, y, newCard, shouldReturnCard = true) => {
+      replaceCard(gridId, x, y, newCard, shouldReturnCard);
     },
 
     returnCard: (gridId, x, y) => {

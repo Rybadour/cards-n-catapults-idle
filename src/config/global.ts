@@ -13,7 +13,7 @@ const global = {
   startingTown: [
     ['forest', 'forest', 'forest', 'forest', 'forest'],
     ['forest', '', '', 'forest', 'forest'],
-    ['forest', 'clearingForest', '', '', 'forest'],
+    ['forest', 'forest', '', '', 'forest'],
     ['forest', '', '', '', 'forest'],
     ['forest', 'forest', 'forest', 'forest', 'forest'],
   ],

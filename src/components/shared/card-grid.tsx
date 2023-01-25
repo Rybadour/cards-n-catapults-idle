@@ -1,3 +1,4 @@
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { pick } from 'lodash';
 import { useCallback, useState } from 'react';
@@ -7,13 +8,14 @@ import shallow from 'zustand/shallow';
 import resourceIconMap from '../../config/resources';
 import Icon from '../../shared/components/icon';
 import { BUILDING_BLUE, FOOD_RED } from '../../shared/constants';
-import { CardType, MarkType, RealizedCard } from '../../shared/types';
+import { MarkType, RealizedCard } from '../../shared/types';
 import { autoFormatNumber, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { ProgressBar } from './progress-bar';
 
 interface CardGridProps {
   gridId: string,
+  cardControlsInjection?: (card: RealizedCard | undefined, x: number, y: number) => ReactJSXElement | undefined
 }
 export default function CardGrid(props: CardGridProps) {
   const cardGrids = useStore(s => pick(s.cardGrids, [
@@ -64,6 +66,7 @@ export default function CardGrid(props: CardGridProps) {
               onLeaveCard={leaveCard}
               onReplaceCard={onReplaceCard}
               onReturnCard={onReturnCard}
+              cardControlsInjection={props.cardControlsInjection}
               x={x} y={y}
             />
           })}
@@ -81,6 +84,7 @@ type GridTileProps = {
   onLeaveCard: () => void,
   onReplaceCard: (x: number, y: number, card: RealizedCard) => void,
   onReturnCard: (x: number, y: number) => void,
+  cardControlsInjection?: (card: RealizedCard | undefined, x: number, y: number) => ReactJSXElement | undefined
 };
 function GridTile(props: GridTileProps) {
   const cardDefs = useStore(s => s.cardDefs.defs)
@@ -153,6 +157,7 @@ function GridTile(props: GridTileProps) {
       </StatusIcon>
       <Details>
         <div className="name">{cardDef.name}</div>
+        {props.cardControlsInjection ? props.cardControlsInjection(props.card, props.x, props.y) : null}
         <div className="status">
           {props.card.isDisabled ? '(disabled)' : ''}
           {props.card.isExpiredAndReserved ? '(reserved)' : ''}
@@ -202,7 +207,7 @@ const Details = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  grid-gap: 8px;
+  grid-gap: 6px;
   width: 100%;
   height: 100%;
   background-color: rgba(100, 100, 100, 0.9);
