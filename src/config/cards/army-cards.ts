@@ -1,5 +1,4 @@
-
-import { Card, CardType, MatchingGridShape, ModifierBehaviour, ResourceType, TargettedEffectType } from "../../shared/types";
+import { Card, CardId, CardType, MatchingGridShape, ModifierBehaviour, ResourceType, TargettedEffectType } from "../../shared/types";
 
 const hungryDisable = {
   onMatch: false,
@@ -7,7 +6,7 @@ const hungryDisable = {
   cardTypes: [CardType.Food],
 };
 
-export default {
+const cards: Record<CardId, Card> = {
   militia: {
     id: "",
     name: "Miltia",
@@ -187,4 +186,6 @@ export default {
       bonusPer: 0.1,
     }
   },
-} as Record<string, Card>;
+};
+
+export default cards;

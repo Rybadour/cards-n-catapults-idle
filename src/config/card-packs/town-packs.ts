@@ -1,7 +1,7 @@
 import { CardPack, GameFeature, ResourceType } from "../../shared/types";
 import cards from "../cards/town-cards";
 
-export default {
+const packs: Record<string, CardPack> = {
   dirt: {
     id: "",
     name: "Dirt Pack",
@@ -118,4 +118,6 @@ export default {
       chance: 0.3,
     }]
   },
-} as Record<string, CardPack>;
+};
+
+export default packs;

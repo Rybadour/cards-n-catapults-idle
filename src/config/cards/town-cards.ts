@@ -1,4 +1,4 @@
-import { BonusType, Card, CardType, EMPTY_CARD, MatchingGridShape, ResourceType } from "../../shared/types";
+import { BonusType, Card, CardId, CardType, EMPTY_CARD, MatchingGridShape, ResourceType } from "../../shared/types";
 
 const hungryDisable = {
   onMatch: false,
@@ -6,7 +6,7 @@ const hungryDisable = {
   cardTypes: [CardType.Food],
 };
 
-export default {
+const cards: Record<CardId, Card> = {
   farmer: {
     id: "",
     name: "Farmer",
@@ -529,4 +529,6 @@ export default {
       bonusPer: 0.25,
     }
   }
-} as Record<string, Card>;
+};
+
+export default cards;
