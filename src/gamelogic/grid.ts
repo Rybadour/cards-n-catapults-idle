@@ -2,7 +2,7 @@ import cardsConfig from "../config/cards";
 import { createCard } from "./grid-cards";
 import {
   RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap,
-  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour, TargettedEffectType, BonusType
+  MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour, TargettedEffectType, BonusType, GridCoords
 } from "../shared/types";
 import { enumFromKey, getRandomFromArray, getUniqueCardIdsFromRealizedCards, using } from "../shared/utils";
 import { StatsSlice } from "../store/stats";
@@ -546,4 +546,9 @@ function getScaledResourceAsStrength(card: RealizedCard, cardDef: Card, resource
   }
 
   return 0;
+}
+
+export function getGridDistance(a: GridCoords, b: GridCoords) {
+  const diff: GridCoords = {x: Math.abs(a.x - b.x), y: Math.abs(a.y - b.y)};
+  return Math.max(diff.x, diff.y);
 }

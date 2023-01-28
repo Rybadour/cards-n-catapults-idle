@@ -12,6 +12,7 @@ import shallow from "zustand/shallow";
 import { useCallback } from "react";
 import { createCard } from "../../gamelogic/grid-cards";
 import allCardsConfig from "../../config/cards";
+import { getGridDistance } from "../../gamelogic/grid";
 
 export default function TownScene() {
   const stats = useStore(s => pick(s.stats, [
@@ -28,7 +29,6 @@ export default function TownScene() {
     }
   }, [stats.canAfford, stats.useResource, cardGrids.replaceCard]);
 
-  const cost = 50;
   return <>
     <SideSection>
       <PackList feature={GameFeature.Economy} />
@@ -38,6 +38,8 @@ export default function TownScene() {
       <CardGrid
         gridId="town"
         cardControlsInjection={(card, x, y) => {
+          const distanceFromCenter = getGridDistance({x, y}, {x: 2, y: 2});
+          const cost = 50 * Math.pow(10,  (distanceFromCenter - 1));
           if (card?.cardId === 'forest') {
             return <ClearForestButton data-tip="Clear Forest" onClick={() => startClearingForest(cost, x, y)}>
               <ClearForestIcon>

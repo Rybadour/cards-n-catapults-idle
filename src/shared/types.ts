@@ -286,6 +286,11 @@ export type CombatEncounter = {
   }
 };
 
+export interface GridCoords {
+  x: number;
+  y: number;
+}
+
 export enum GameFeature {
   Economy,
   Combat,
