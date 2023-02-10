@@ -10,8 +10,6 @@ import useStore from "../../store";
 import { pick } from "lodash";
 import shallow from "zustand/shallow";
 import { useCallback } from "react";
-import { createCard } from "../../gamelogic/grid-cards";
-import allCardsConfig from "../../config/cards";
 import { getGridDistance } from "../../gamelogic/grid";
 
 export default function TownScene() {
@@ -19,15 +17,15 @@ export default function TownScene() {
     'canAfford', 'useResource'
   ]), shallow);
   const cardGrids = useStore(s => pick(s.cardGrids, [
-    'replaceCard'   
+    'removeCard'   
   ]), shallow);
 
   const startClearingForest = useCallback((cost: number, x: number, y: number) => {
     if (stats.canAfford({[ResourceType.Gold]: cost})) {
       stats.useResource(ResourceType.Gold, cost);
-      cardGrids.replaceCard('town', x, y, createCard(allCardsConfig['clearingForest'], 1));
+      cardGrids.removeCard('town', x, y, false);
     }
-  }, [stats.canAfford, stats.useResource, cardGrids.replaceCard]);
+  }, [stats.canAfford, stats.useResource, cardGrids.removeCard]);
 
   return <>
     <SideSection>

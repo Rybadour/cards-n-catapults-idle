@@ -19,7 +19,7 @@ interface CardGridProps {
 }
 export default function CardGrid(props: CardGridProps) {
   const cardGrids = useStore(s => pick(s.cardGrids, [
-    'grids', 'clearGrid', 'returnCard', 'replaceCard'
+    'grids', 'clearGrid', 'removeCard', 'replaceCard'
   ]), shallow);
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
@@ -38,8 +38,8 @@ export default function CardGrid(props: CardGridProps) {
   }, [cardGrids.replaceCard, props.gridId]);
 
   const onReturnCard = useCallback((x: number, y: number) => {
-    cardGrids.returnCard(props.gridId, x, y);
-  }, [cardGrids.returnCard, props.gridId]);
+    cardGrids.removeCard(props.gridId, x, y);
+  }, [cardGrids.removeCard, props.gridId]);
 
   const onClearGrid = useCallback(() => {
     cardGrids.clearGrid(props.gridId);

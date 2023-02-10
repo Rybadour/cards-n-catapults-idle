@@ -18,7 +18,7 @@ export interface CardGridsSlice {
   updateAll: (elapsed: number) => void,
   cardDefsChanged: () => void,
   replaceCard: (gridId: string, x: number, y: number, newCard: RealizedCard, shouldReturnCard?: boolean) => void,
-  returnCard: (gridId: string, x: number, y: number) => void,
+  removeCard: (gridId: string, x: number, y: number, shouldReturnCard?: boolean) => void,
   clearGrid: (gridId: string) => void,
   clearAllGrids: () => void,
   initializeGrid: (gridId: string, staticCards: GridTemplate) => void,
@@ -181,8 +181,8 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       replaceCard(gridId, x, y, newCard, shouldReturnCard);
     },
 
-    returnCard: (gridId, x, y) => {
-      replaceCard(gridId, x, y, null);
+    removeCard: (gridId, x, y, shouldReturnCard = true) => {
+      replaceCard(gridId, x, y, null, shouldReturnCard);
     },
 
     clearGrid: (gridId) => {
