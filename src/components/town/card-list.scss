@@ -5,8 +5,7 @@ $card-list-padding: 10px;
 
 .card-inventory {
   box-sizing: border-box;
-  width: 100%;
-  max-width: $card-width * 2 + $cards-gap + $card-list-padding * 2;
+  width: $card-width * 2 + $cards-gap + $card-list-padding * 2;
   max-height: 600px;
   
   > .cards {

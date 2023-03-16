@@ -41,18 +41,7 @@ export default function CardGrid(props: CardGridProps) {
     cardGrids.removeCard(props.gridId, x, y);
   }, [cardGrids.removeCard, props.gridId]);
 
-  const onClearGrid = useCallback(() => {
-    cardGrids.clearGrid(props.gridId);
-  }, [cardGrids.clearGrid, props.gridId]);
-
   return <div>
-    <GridControls>
-      <button
-        className='secondary-button'
-        data-tip="Returns all cards to your inventory."
-        onClick={onClearGrid}
-      >Clear Grid</button>
-    </GridControls>
     <GridRows>
       {cardGrids.grids[props.gridId].map((gridRow, y) => 
         <GridRow key={y}>
@@ -179,12 +168,6 @@ function GridTile(props: GridTileProps) {
     </> : null}
   </GridSpace>;
 }
-
-const GridControls = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
-  margin-bottom: 10px;
-`;
 
 const GridRows = styled.div`
   display: flex;

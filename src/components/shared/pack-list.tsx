@@ -77,7 +77,7 @@ function getCostText(cost: Partial<ResourcesMap>) {
 
 const Section = styled.div`
   width: 100%;
-  min-width: 240px;
+  min-width: 300px;
   max-width: 350px;
 `;
 

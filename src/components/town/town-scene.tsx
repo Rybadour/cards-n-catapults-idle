@@ -11,6 +11,8 @@ import { pick } from "lodash";
 import shallow from "zustand/shallow";
 import { useCallback } from "react";
 import { getGridDistance } from "../../gamelogic/grid";
+import { ScrollableContainer } from "../shared/scrollable-container";
+import { GridControls } from "../shared/grid-controls";
 
 export default function TownScene() {
   const stats = useStore(s => pick(s.stats, [
@@ -33,21 +35,24 @@ export default function TownScene() {
     </SideSection>
     <MiddleSection>
       <Resources />
-      <CardGrid
-        gridId="town"
-        cardControlsInjection={(card, x, y) => {
-          const distanceFromCenter = getGridDistance({x, y}, {x: 2, y: 2});
-          const cost = 50 * Math.pow(10,  (distanceFromCenter - 1));
-          if (card?.cardId === 'forest') {
-            return <ClearForestButton data-tip="Clear Forest" onClick={() => startClearingForest(cost, x, y)}>
-              <ClearForestIcon>
-                <Icon icon="logging" size="xs" />
-              </ClearForestIcon>
-              {cost} gold
-            </ClearForestButton>;
-          }
-        }}
-      />
+      <GridControls gridId="town" />
+      <ScrollableContainer>
+        <CardGrid
+          gridId="town"
+          cardControlsInjection={(card, x, y) => {
+            const distanceFromCenter = getGridDistance({x, y}, {x: 2, y: 2});
+            const cost = 50 * Math.pow(10,  (distanceFromCenter - 1));
+            if (card?.cardId === 'forest') {
+              return <ClearForestButton data-tip="Clear Forest" onClick={() => startClearingForest(cost, x, y)}>
+                <ClearForestIcon>
+                  <Icon icon="logging" size="xs" />
+                </ClearForestIcon>
+                {cost} gold
+              </ClearForestButton>;
+            }
+          }}
+        />
+      </ScrollableContainer>
     </MiddleSection>
     <SideSection>
       <CardList allowedCards={{
@@ -68,7 +73,11 @@ const SideSection = styled.div`
 `;
 
 const MiddleSection = styled.div`
-  margin: 20px 30px 0;
+  margin: 20px 30px 20px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ClearForestButton = styled.button`
