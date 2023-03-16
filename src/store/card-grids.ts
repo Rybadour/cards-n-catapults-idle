@@ -1,12 +1,12 @@
 import { mapValues } from "lodash";
 
-import { defaultResourcesMap, Grid, GridTemplate, MyCreateSlice, RealizedCard, ResourcesMap } from "../shared/types";
+import { CardId, defaultResourcesMap, Grid, GridCoords, GridTemplate, MyCreateSlice, RealizedCard, ResourcesMap } from "../shared/types";
 import { CardsSlice } from "./cards";
 import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/grid";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
 import { CardDefsSlice } from "./card-definitions";
-import { mergeSum } from "../shared/utils";
+import { getTranslatedGridCoords, mergeSum } from "../shared/utils";
 import { createCard } from "../gamelogic/grid-cards";
 import allCardsConfig from "../config/cards";
 import global from "../config/global";
@@ -79,7 +79,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
   function getEmptyGridWithStatics(gridId: string) {
     const grid = get().grids[gridId];
-    const newGrid = getEmptyGrid();
+    const newGrid = getEmptyGrid(grid[0].length, grid.length);
     iterateGrid(grid, (card, x, y) => {
       if (card.isStatic) {
         newGrid[y][x] = card;
@@ -91,8 +91,11 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
   return {
     initialized: false,
     grids: {
-      town: getInitializedGrid(global.startingTown, true),
-      combat: getEmptyGrid(),
+      town: removeGridTiles(
+        getEmptyGrid(global.startingTown.width, global.startingTown.height, global.startingTown.fill),
+        getTranslatedGridCoords(global.startingTown.empties, global.startingTown.center),
+      ),
+      combat: getEmptyGrid(5, 5),
     },
     gridsResourcesPerSec: {
       town: {...defaultResourcesMap},
@@ -216,7 +219,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
     prestigeReset: () => {
       set({
-        grids: mapValues(get().grids, (g) => getEmptyGrid()),
+        grids: mapValues(get().grids, (g) => getEmptyGrid(g[0].length, g.length)),
         gridsResourcesPerSec: mapValues(get().grids, (g) => ({...defaultResourcesMap})),
       });
     },
@@ -261,23 +264,33 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
   }
 }
 
-const WIDTH = 5;
-const HEIGHT = 5;
-
-export function getEmptyGrid() {
+export function getEmptyGrid(width: number, height: number, staticFillCard?: CardId) {
   const gridSpaces = [];
-  for (let i = 0; i < HEIGHT; ++i) {
+  for (let i = 0; i < height; ++i) {
     const row: (RealizedCard | null)[] = [];
-    for (let j = 0; j < WIDTH; ++j) {
-      row.push(null);
+    for (let j = 0; j < width; ++j) {
+      let card: RealizedCard | null = null;
+      if (staticFillCard) {
+        card = createCard(allCardsConfig[staticFillCard], 1);
+        card.isStatic = true;
+      }
+      row.push(card);
     }
     gridSpaces.push(row);
   }
   return gridSpaces;
 }
 
+export function removeGridTiles(grid: Grid, tiles: GridCoords[]) {
+  const newGrid = [...grid];
+  tiles.forEach(tile => {
+    newGrid[tile.y][tile.x] = null;
+  });
+  return newGrid;
+}
+
 function getInitializedGrid(template: GridTemplate, isStatic = false) {
-  const newGrid = getEmptyGrid();
+  const newGrid = getEmptyGrid(template[0].length, template.length);
 
   for (let y = 0; y < template.length; y++) {
     for (let x = 0; x < template[y].length; x++) {

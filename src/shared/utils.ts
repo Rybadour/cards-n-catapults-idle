@@ -1,6 +1,6 @@
 import { mergeWith, uniq } from "lodash";
 import allPacksConfig from "../config/card-packs";
-import { Card, CardId, CardPack, RealizedCard } from "./types";
+import { Card, CardId, CardPack, GridCoords, RealizedCard } from "./types";
 
 export function formatNumber(n: number, minimumFractionDigits: number, maximumFractionDigits: number): string {
   if (isNaN(n)) return '';
@@ -73,4 +73,8 @@ export function findPacksContainingCard(cardId: CardId): CardPack[] {
 
 export function getUniqueCardIdsFromRealizedCards(cards: RealizedCard[]) {
   return uniq(cards.map(c => c.cardId));
+}
+
+export function getTranslatedGridCoords(coords: GridCoords[], center: GridCoords) {
+  return coords.map(coords => ({x: coords.x + center.x, y: coords.y + center.y}));
 }

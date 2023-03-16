@@ -10,13 +10,20 @@ const global = {
   startingCards: {
     lumberjack: 1,
   },
-  startingTown: [
-    ['forest', 'forest', 'forest', 'forest', 'forest'],
-    ['forest', '', '', 'forest', 'forest'],
-    ['forest', 'forest', '', '', 'forest'],
-    ['forest', '', '', '', 'forest'],
-    ['forest', 'forest', 'forest', 'forest', 'forest'],
-  ],
+  startingTown: {
+    fill: 'forest',
+    width: 9,
+    height: 9,
+    center: {x: 4, y: 4},
+    empties: [
+      {x: -1, y: -1},
+      {x: 0, y: -1},
+      {x: 0, y: 0},
+      {x: 1, y: 0},
+      {x: 0, y: 1},
+      {x: 1, y: 1},
+    ]
+  },
   unlockedPacks: [],
   startingPrestige: 0,
   startingScene: Scene.Economy,
