@@ -1,7 +1,9 @@
-import global from "../config/global";
-import { Card, CardId, MyCreateSlice, PrestigeEffects, ResourceType } from "../shared/types";
-import cardPacks from "../config/card-packs";
 import { pick } from "lodash";
+
+import global from "../config/global";
+import { Card, CardId, PrestigeEffects, ResourceType } from "../shared/types";
+import cardPacks from "../config/card-packs";
+import { MyCreateSlice } from ".";
 
 export interface DiscoverySlice {
   discoveredCards: Record<string, boolean>,

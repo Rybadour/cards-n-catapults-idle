@@ -4,7 +4,7 @@ import global from "../config/global";
 import packsConfig from "../config/prestige-packs";
 import upgradesConfig, { PRESTIGE_COST, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
 import { DEFAULT_EFFECTS } from "../shared/constants";
-import { MyCreateSlice, PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
+import { PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { CardMasterySlice } from "./card-mastery";
@@ -13,6 +13,7 @@ import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
 import { CardGridsSlice } from "./card-grids";
 import { StatsSlice } from "./stats";
+import { MyCreateSlice } from ".";
 
 const defaultUpgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};
 const realizedPacks: Record<string, RealizedPrestigePack> = {};

@@ -1,5 +1,5 @@
-import combatEncounters from "../config/combat-encounters";
-import { CombatEncounter, MyCreateSlice, ResourceType } from "../shared/types";
+import { MyCreateSlice } from ".";
+import { CombatEncounter, ResourceType } from "../shared/types";
 import { CardGridsSlice, getEmptyGrid } from "./card-grids";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";

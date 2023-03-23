@@ -1,5 +1,5 @@
+import { MyCreateSlice } from ".";
 import global from "../config/global";
-import { MyCreateSlice } from "../shared/types";
 
 export enum Scene {
   Economy = "Economy",

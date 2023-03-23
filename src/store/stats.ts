@@ -1,7 +1,9 @@
 import { mapValues } from "lodash";
+import { MyCreateSlice } from ".";
+
 import global from "../config/global";
-import { defaultResourcesMap, MyCreateSlice, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
-import { enumFromKey, mergeSum, mergeSumPartial } from "../shared/utils";
+import { defaultResourcesMap, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
+import { enumFromKey, mergeSumPartial } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 
 export interface StatsSlice {

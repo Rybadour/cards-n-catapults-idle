@@ -1,9 +1,10 @@
-import { Card, CardId, MyCreateSlice } from "../shared/types";
+import { Card, CardId } from "../shared/types";
 import cardsConfig from "../config/cards";
 import { CardsSlice } from "./cards";
 import { getExpValueMultiple, getMultipleFromExpValue } from "../shared/utils";
 import { cloneDeep } from "lodash";
 import { CardDefsSlice } from "./card-definitions";
+import { MyCreateSlice } from ".";
 
 export type CardMastery = {
   level: number,

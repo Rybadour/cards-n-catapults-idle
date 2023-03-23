@@ -1,9 +1,10 @@
-import { Card, MyCreateSlice} from "../shared/types";
+import { Card } from "../shared/types";
 import cardPacksConfig from "../config/card-packs";
 import { CardsSlice } from "./cards";
 import { StatsSlice } from "./stats";
 import getPackSliceCreator, { PacksSlice } from "./generic-packs";
 import { DiscoverySlice } from "./discovery";
+import { MyCreateSlice } from ".";
 
 export type CardPacksSlice = PacksSlice<Card>;
 

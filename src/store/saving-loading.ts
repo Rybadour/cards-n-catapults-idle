@@ -2,7 +2,6 @@ import { cloneDeep } from "lodash";
 import global from "../config/global";
 import { isMajorAndMinorVersionEqual, migrateSaveData } from "../save-data-migrations";
 import { DEFAULT_EFFECTS } from "../shared/constants";
-import { MyCreateSlice } from "../shared/types";
 import { CardMasterySlice } from "./card-mastery";
 import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
@@ -10,6 +9,7 @@ import { DiscoverySlice } from "./discovery";
 import { CardGridsSlice } from "./card-grids";
 import { PrestigeSlice } from "./prestige";
 import { StatsSlice } from "./stats";
+import { MyCreateSlice } from ".";
 
 const AUTO_SAVE_KEY = 'cnc-auto-save';
 const MIGRATION_BACKUP_KEY = 'cnc-migration-backup';

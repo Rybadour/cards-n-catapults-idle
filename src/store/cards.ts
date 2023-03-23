@@ -1,6 +1,7 @@
+import { MyCreateSlice } from ".";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
-import { Card, CardId, MyCreateSlice, PrestigeEffects, RealizedCard } from "../shared/types";
+import { Card, CardId, PrestigeEffects, RealizedCard } from "../shared/types";
 import { mergeSumPartial } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";

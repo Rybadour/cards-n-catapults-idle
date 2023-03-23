@@ -1,6 +1,6 @@
 import { mapValues } from "lodash";
 
-import { CardId, defaultResourcesMap, Grid, GridCoords, GridTemplate, MyCreateSlice, RealizedCard, ResourcesMap } from "../shared/types";
+import { CardId, defaultResourcesMap, Grid, GridCoords, GridTemplate, RealizedCard, ResourcesMap } from "../shared/types";
 import { CardsSlice } from "./cards";
 import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/grid";
 import { StatsSlice } from "./stats";
@@ -10,6 +10,7 @@ import { getTranslatedGridCoords, mergeSum } from "../shared/utils";
 import { createCard } from "../gamelogic/grid-cards";
 import allCardsConfig from "../config/cards";
 import global from "../config/global";
+import { MyCreateSlice } from ".";
 
 export interface CardGridsSlice {
   initialized: boolean,
