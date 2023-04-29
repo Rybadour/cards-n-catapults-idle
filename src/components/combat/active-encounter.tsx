@@ -7,7 +7,6 @@ import { formatNumber } from '../../shared/utils';
 
 import useStore from '../../store';
 import CardGrid from '../shared/card-grid';
-import PackList from '../shared/pack-list';
 import { ProgressBar } from '../shared/progress-bar';
 import { Resources } from '../shared/resources';
 import CardList from '../town/card-list';
@@ -23,8 +22,6 @@ export default function ActiveEncounter() {
   }
 
   return <Page>
-    <PackList feature={GameFeature.Combat} />
-
     <div>
       <CombatTitle>Fighting {combat.encounter.name}</CombatTitle>
       <CombatDescription>{combat.encounter.description}</CombatDescription>

@@ -1,6 +1,5 @@
 import { mergeWith, uniq } from "lodash";
-import allPacksConfig from "../config/card-packs";
-import { Card, CardId, CardPack, GridCoords, RealizedCard } from "./types";
+import { GridCoords, RealizedCard } from "./types";
 
 export function formatNumber(n: number, minimumFractionDigits: number, maximumFractionDigits: number): string {
   if (isNaN(n)) return '';
@@ -56,19 +55,6 @@ export function mergeSum<T extends {[s: string]: number}>(a: T, b: T): T {
 
 export function mergeSumPartial<T extends {[s: string]: number}>(a: T, b: Partial<T>): T {
   return mergeWith(a, b, (aVal, bVal) => (aVal ?? 0) + (bVal ?? 0));
-}
-
-export function findPacksContainingCard(cardId: CardId): CardPack[] {
-  const cardPacksFound: CardPack[] = [];
-
-  Object.values(allPacksConfig).forEach((pack) => {
-    const found = pack.possibleThings.findIndex((thing) => thing.thing.id === cardId);
-    if (found >= 0) {
-      cardPacksFound.push(pack);
-    }
-  });
-
-  return cardPacksFound;
 }
 
 export function getUniqueCardIdsFromRealizedCards(cards: RealizedCard[]) {

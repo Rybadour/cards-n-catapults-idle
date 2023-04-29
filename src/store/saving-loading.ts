@@ -2,8 +2,6 @@ import { cloneDeep } from "lodash";
 import global from "../config/global";
 import { isMajorAndMinorVersionEqual, migrateSaveData } from "../save-data-migrations";
 import { DEFAULT_EFFECTS } from "../shared/constants";
-import { CardMasterySlice } from "./card-mastery";
-import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
 import { CardGridsSlice } from "./card-grids";
@@ -26,8 +24,6 @@ type SliceMap = {
   discovery: () => ISaveLoad,
   grid: () => ISaveLoad,
   cards: () => ISaveLoad,
-  cardPacks: () => ISaveLoad,
-  cardMastery: () => ISaveLoad,
 };
 
 export type SavingLoadingSlice = {
@@ -47,12 +43,11 @@ export type SavingLoadingSlice = {
 
 const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
   () => StatsSlice, () => PrestigeSlice, () => DiscoverySlice, () => CardGridsSlice, () => CardsSlice,
-  () => CardPacksSlice, () => CardMasterySlice
 ]> = 
-(set, get, stats, prestige, discovery, grid, cards, cardPacks, cardMastery) => {
+(set, get, stats, prestige, discovery, grid, cards) => {
 
   const sliceDataMap: SliceMap = {
-    stats, prestige, discovery, grid, cards, cardPacks, cardMastery,
+    stats, prestige, discovery, grid, cards
   };
 
   function save() {
@@ -88,8 +83,6 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
     // Order matters here since things lower in the list have dependencies on those higher
     stats().loadSaveData(saveData.stats);
     discovery().loadSaveData(saveData.discovery);
-    cardPacks().loadSaveData(saveData.cardPacks);
-    cardMastery().loadSaveData(saveData.cardMastery);
     cards().loadSaveData(saveData.cards);
     grid().loadSaveData(saveData.grid);
     prestige().loadSaveData(saveData.prestige);
@@ -131,9 +124,7 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
       localStorage.removeItem(AUTO_SAVE_KEY);
       discovery().completeReset();
       prestige().completeReset();
-      cardMastery().completeReset();
       grid().prestigeReset();
-      cardPacks().prestigeReset();
       const effects = cloneDeep(DEFAULT_EFFECTS);
       cards().prestigeReset(effects);
       stats().prestigeReset(effects);

@@ -1,109 +1,71 @@
+import { mapValues } from "lodash";
 import { MyCreateSlice } from ".";
+import allCardsConfig from "../config/cards";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
-import { Card, CardId, PrestigeEffects, RealizedCard } from "../shared/types";
-import { mergeSumPartial } from "../shared/utils";
+import { Card, CardId, CardTracking, PrestigeEffects, RealizedCard, ResourceType } from "../shared/types";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
+import { StatsSlice } from "./stats";
 
 export interface CardsSlice {
-  cards: Record<CardId, number>,
+  cards: Record<CardId, CardTracking>,
   selectedCard: CardId | null,
   setSelectedCard: (card: CardId) => void,
-  hasCard: (card: Card) => boolean,
+  canAffordCard: (id: CardId) => boolean,
+  buyCard: (id: CardId) => RealizedCard,
   returnCard: (card: RealizedCard) => void,
-  spendCards: (card: Card, num: number) => void,
-  takeSelectedCard: () => RealizedCard | null,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
-  drawCards: (cardsToDraw: Card[]) => void,
-  drawCardsFromMap: (cardsToDraw: Record<CardId, number>) => void,
   prestigeReset: (prestigeEffects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
 }
 
-const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => CardDefsSlice]>
-= (set, get, discovery, cardDefs) => {
-  function removeCard(id: string, num = 1) {
-    const newCards = { ...get().cards };
-    newCards[id] = (newCards[id] ?? 0) - num;
-    if (newCards[id] < 0) {
-      newCards[id] = 0;
-    }
-    return newCards;
-  }
-
-  function getCardDef(card: RealizedCard) {
-    return cardDefs().defs[card.cardId];
-  }
-
+const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => StatsSlice, () => CardDefsSlice]>
+= (set, get, discovery, stats, cardDefs) => {
   return {
-    cards: global.startingCards,
+    cards: mapValues(allCardsConfig, (card) => ({
+      numPurchased: 0,
+      numActive: 0,
+      cost: card.baseCost,
+    })),
     selectedCard: null,
 
     setSelectedCard: (cardId) => {
       set({selectedCard: cardId});
     },
 
-    hasCard: (card) => (get().cards[card.id] ?? 0) > 0,
+    canAffordCard: (id: CardId) => {
+      const tracking = get().cards[id];
+      return stats().canAfford({[ResourceType.Gold]: tracking?.cost});
+    },
+
+    buyCard: (id) => {
+      const tracking = get().cards[id];
+      stats().useResource(ResourceType.Gold, tracking.cost);
+
+      return createCard(cardDefs().defs[id]);
+    },
 
     returnCard: (card) => {
-      const newCards = {...get().cards};
-      addRealizedCard(newCards, card, getCardDef(card));
-
-      set({cards: newCards});
-    },
-
-    takeSelectedCard: () => {
-      const selected = get().selectedCard;
-      if (selected == null || (get().cards[selected] ?? 0) <= 0) {
-        return null;
-      }
-
-      const newCard = createCard(cardDefs().defs[selected], get().cards[selected]);
-
-      set({cards: removeCard(selected)});
-
-      return newCard;
-    },
-
-    spendCards: (card, num) => {
-      set({cards: removeCard(card.id, num)});
+      const tracking = get().cards[card.cardId];
+      stats().useResource(ResourceType.Gold, -tracking.cost);
     },
 
     updateInventory: (cardsDelta) => {
       if (Object.keys(cardsDelta).length <= 0) return;
 
-      const newCardMap = {...get().cards};
+      const newCards = {...get().cards};
       Object.entries(cardsDelta)
         .forEach(([cardId, amount]) => {
-          newCardMap[cardId] = (newCardMap[cardId] ?? 0) + amount
+          newCards[cardId].numPurchased += amount;
         });
-      set({cards: newCardMap});
-    },
-
-    drawCards: (cardsToDraw) => {
-      discovery().discoverCards(cardsToDraw);
-
-      const newCards = { ...get().cards };
-      cardsToDraw.forEach(card => {
-        newCards[card.id] = (newCards[card.id] ?? 0) + 1;
-      });
       set({cards: newCards});
-    },
-
-    drawCardsFromMap: (cardMap) => {
-      set({cards: mergeSumPartial(get().cards, cardMap)});
     },
 
     prestigeReset: (prestigeEffects) => {
-      const newCards: Record<string, number> = {...global.startingCards};
-      Object.entries(prestigeEffects.extraStartCards)
-        .forEach(([c, amount]) => {
-          newCards[c] = (newCards[c] ?? 0) + amount;
-        });
-      set({cards: newCards});
-      discovery().prestigeReset(newCards, prestigeEffects);
+      // TODO: Extra start cards?
+      discovery().prestigeReset(prestigeEffects);
     },
 
     getSaveData: () => ({cards: get().cards}),
@@ -117,16 +79,5 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => C
     },
   }
 };
-
-function addRealizedCard(cards: Record<string, number>, card: RealizedCard, cardDef: Card) {
-  let amount = 1;
-  if (card.durability !== undefined && cardDef.maxDurability) {
-    amount = card.durability / cardDef.maxDurability;
-    if (amount > 0.95) {
-      amount = 1;
-    }
-  }
-  cards[card.cardId] = (cards[card.cardId] ?? 0) + amount;
-}
 
 export default createCardsSlice;

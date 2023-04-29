@@ -1,6 +1,6 @@
 import { BonusType, Card, RealizedCard } from "../shared/types";
 
-export function createCard(card: Card, quantity: number): RealizedCard {
+export function createCard(card: Card): RealizedCard {
   return {
     cardId: card.id,
     bonuses: {
@@ -14,7 +14,7 @@ export function createCard(card: Card, quantity: number): RealizedCard {
     isExpiredAndReserved: false,
     isStatic: false,
     maxDurability: (card.maxDurability ?? 0),
-    durability: (quantity >= 1 ? 1 : quantity) * (card.maxDurability ?? 0),
+    durability: (card.maxDurability ?? 0),
     durabilityBonus: 1,
     timeLeftMs: card.cooldownMs,
     cardMarks: {},

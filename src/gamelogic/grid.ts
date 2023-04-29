@@ -345,7 +345,7 @@ function activateCard(
       }
 
       found = true;
-      const newCard = createCard(cardsConfig[newCardId], 1);
+      const newCard = createCard(cardsConfig[newCardId]);
       newCard.shouldBeReserved = adjCard?.shouldBeReserved ?? false;
       results.grid[ay][ax] = newCard;
       results.newCards.push(cardsConfig[newCardId]);
@@ -374,7 +374,7 @@ function activateCard(
 
       found = true;
 
-      const newCard = createCard(cardsConfig[otherCard.cardId], cards[otherCard.cardId]);
+      const newCard = createCard(cardsConfig[otherCard.cardId]);
       newCard.shouldBeReserved = true;
       results.grid[y2][x2] = newCard;
 
@@ -392,7 +392,7 @@ function activateCard(
       if (found || !other || other.isExpiredAndReserved) return;
 
       if (other.cardId == convert.targetCard) {
-        results.grid[y2][x2] = createCard(cardsConfig[convert.resultingCard], 1);
+        results.grid[y2][x2] = createCard(cardsConfig[convert.resultingCard]);
         results.anyChanged = true;
         found = true;
       }

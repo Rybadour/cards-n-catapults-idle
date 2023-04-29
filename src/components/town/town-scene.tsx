@@ -1,15 +1,14 @@
 import styled from "styled-components";
+import { pick } from "lodash";
+import shallow from "zustand/shallow";
+import { useCallback } from "react";
 
-import PackList from "../shared/pack-list";
 import CardList from './card-list';
-import { CardType, GameFeature, RealizedCard, ResourceType } from "../../shared/types";
+import { CardType, ResourceType } from "../../shared/types";
 import CardGrid from "../shared/card-grid";
 import { Resources } from "../shared/resources";
 import Icon from "../../shared/components/icon";
 import useStore from "../../store";
-import { pick } from "lodash";
-import shallow from "zustand/shallow";
-import { useCallback } from "react";
 import { getGridDistance } from "../../gamelogic/grid";
 import { ScrollableContainer } from "../shared/scrollable-container";
 import { GridControls } from "../shared/grid-controls";
@@ -32,7 +31,6 @@ export default function TownScene() {
 
   return <>
     <SideSection>
-      <PackList feature={GameFeature.Economy} />
     </SideSection>
     <MiddleSection>
       <Resources />

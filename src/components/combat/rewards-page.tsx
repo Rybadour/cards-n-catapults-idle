@@ -4,7 +4,6 @@ import shallow from "zustand/shallow";
 import allCardsConfig from "../../config/cards";
 import Icon from "../../shared/components/icon";
 import { BUILDING_BLUE } from "../../shared/constants";
-import { findPacksContainingCard } from "../../shared/utils";
 import useStore from "../../store";
 
 export default function RewardsPage() {
@@ -31,16 +30,11 @@ export default function RewardsPage() {
       }
       {combat.encounter?.rewards.unlockedCards ? 
         combat.encounter?.rewards.unlockedCards.map((cardId) => {
-          const cardPacks = findPacksContainingCard(cardId);
-          let cardPackDesc = '';
-          if (cardPacks.length > 0) {
-            cardPackDesc = ' in ' + cardPacks[0].name;
-          }
           return <Reward id={"unlockCardReward_" + cardId}>
             <RewardIcon>
               <Icon icon={allCardsConfig[cardId].icon} size="md" />
             </RewardIcon>
-            <RewardTitle>Unlocked {allCardsConfig[cardId].name}{cardPackDesc}</RewardTitle>
+            <RewardTitle>Unlocked {allCardsConfig[cardId].name}</RewardTitle>
           </Reward>;
         }): null
       }

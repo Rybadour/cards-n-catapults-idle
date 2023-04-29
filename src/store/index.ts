@@ -3,8 +3,6 @@ import { createLens } from "@dhmk/zustand-lens";
 import create from "zustand";
 
 import createCardDefsSlice, { CardDefsSlice } from "./card-definitions";
-import createCardMasterySlice, { CardMasterySlice } from "./card-mastery";
-import createCardPacksSlice, { CardPacksSlice } from "./card-packs";
 import createCardsSlice, { CardsSlice } from "./cards";
 import createCombatSlice, { CombatSlice } from "./combat";
 import createDiscoverySlice, { DiscoverySlice } from "./discovery";
@@ -17,9 +15,7 @@ import createStatsSlice, { StatsSlice } from "./stats";
 export type FullStore = {
   cardDefs: CardDefsSlice,
   cards: CardsSlice,
-  cardMastery: CardMasterySlice,
   cardGrids: CardGridsSlice,
-  cardPacks: CardPacksSlice,
 
   combat: CombatSlice,
 
@@ -33,9 +29,7 @@ export type FullStore = {
 const useStore = create<FullStore>((set, get) => {
   const cardDefs = createLens(set, get, 'cardDefs');
   const cards = createLens(set, get, 'cards');
-  const cardMastery = createLens(set, get, 'cardMastery');
   const cardGrids = createLens(set, get, 'cardGrids');
-  const cardPacks = createLens(set, get, 'cardPacks');
 
   const combat = createLens(set, get, 'combat');
 
@@ -49,15 +43,13 @@ const useStore = create<FullStore>((set, get) => {
     discovery: createDiscoverySlice(...discovery),
     stats: createStatsSlice(...stats, discovery[1]),
     cardDefs: createCardDefsSlice(...cardDefs, cardGrids[1]),
-    cards: createCardsSlice(...cards, discovery[1], cardDefs[1]),
-    cardMastery: createCardMasterySlice(...cardMastery, cards[1], cardDefs[1]),
+    cards: createCardsSlice(...cards, discovery[1], stats[1], cardDefs[1]),
     cardGrids: createGridSlice(...cardGrids, discovery[1], cardDefs[1], stats[1], cards[1]),
-    cardPacks: createCardPacksSlice(...cardPacks, stats[1], cards[1], discovery[1]),
     prestige: createPrestigeSlice(
-      ...prestige, stats[1], discovery[1], cardDefs[1], cards[1], cardGrids[1], cardPacks[1], cardMastery[1]
+      ...prestige, stats[1], discovery[1], cardDefs[1], cards[1], cardGrids[1]
     ),
     savingLoading: createSavingLoadingSlice(
-      ...savingLoading, stats[1], prestige[1], discovery[1], cardGrids[1], cards[1], cardPacks[1], cardMastery[1]
+      ...savingLoading, stats[1], prestige[1], discovery[1], cardGrids[1], cards[1]
     ),
     combat: createCombatSlice(...combat, cardGrids[1], stats[1], cards[1], discovery[1]),
     scenes: createScenesSlice(...scenes),

@@ -1,4 +1,3 @@
-import { shouldForwardProp } from "@mui/styled-engine";
 import { cloneDeep, pick, shuffle } from "lodash";
 import global from "../config/global";
 import packsConfig from "../config/prestige-packs";
@@ -7,8 +6,6 @@ import { DEFAULT_EFFECTS } from "../shared/constants";
 import { PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
-import { CardMasterySlice } from "./card-mastery";
-import { CardPacksSlice } from "./card-packs";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
 import { CardGridsSlice } from "./card-grids";
@@ -62,12 +59,10 @@ export type PrestigeSlice = {
 };
 
 const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
-  () => StatsSlice, () => DiscoverySlice, () => CardDefsSlice, () => CardsSlice,
-  () => CardGridsSlice, () => CardPacksSlice, () => CardMasterySlice
-]> = (set, get, stats, discovery, cardDefs, cards, cardGrids, cardPacks, cardMastery) => {
+  () => StatsSlice, () => DiscoverySlice, () => CardDefsSlice, () => CardsSlice, () => CardGridsSlice
+]> = (set, get, stats, discovery, cardDefs, cards, cardGrids) => {
   function onUpgradesChanged(newEffects: PrestigeEffects) {
     cardDefs().prestigeUpdate(newEffects);
-    cardPacks().prestigeUpdate(newEffects);
     discovery().prestigeUpdate(newEffects);
   }
 
@@ -97,7 +92,6 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
   }
 
   function prestige() {
-    cardPacks().prestigeReset();
     cardGrids().prestigeReset();
 
     set({
@@ -142,7 +136,6 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
       }
 
       cardGrids().clearAllGrids();
-      cardMastery().sacrificeAll();
 
       prestige();
       return true;

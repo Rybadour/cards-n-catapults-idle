@@ -1,8 +1,5 @@
-import { flatten } from "lodash";
-import { getItemRarity } from "../gamelogic/card-packs";
 import { PrestigeUpgrade, Rarity } from "../shared/types";
 import { formatNumber } from "../shared/utils";
-import cardPacks from "./card-packs";
 
 export const PRESTIGE_COST = {
   base: 100,
@@ -100,15 +97,7 @@ Object.keys(upgrades)
     const upgrade = upgrades[id];
     upgrade.id = id;
 
-    if (upgrade.randomStartingCards && upgrade.randomStartingCards.possibleCardRarity) {
-      upgrade.randomStartingCards.possibleCards = flatten(
-        Object.values(cardPacks).map(cardPack => 
-          cardPack.possibleThings
-            .filter(({thing, chance}) => getItemRarity(chance) == upgrade.randomStartingCards?.possibleCardRarity)
-            .map(possible => possible.thing.id)
-        )
-      );
-    }
+    // TODO: Re-implement random card upgrades
 
     function replaceInDescription(variable: string, value: string) {
       upgrade.description = upgrade.description.replaceAll(`{{${variable}}}`, value);

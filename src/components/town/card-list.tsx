@@ -1,9 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Modal from 'react-modal';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
-import shallow from 'zustand/shallow';
 import { pick } from 'lodash';
 
 import cardsConfig from '../../config/cards';
@@ -11,9 +9,7 @@ import { CardButton, CardButtons } from '../../shared/components/card-buttons';
 import Icon from '../../shared/components/icon';
 import { Card, CardType } from '../../shared/types';
 import { enumFromKey, formatNumber } from '../../shared/utils';
-import { STANDARD_MODAL_STYLE } from '../../shared/constants';
 import useStore from '../../store';
-import { getMasteryBonus } from '../../store/card-mastery';
 import { SectionHeader } from '../shared/common-styles';
 
 import './card-list.scss';
@@ -24,7 +20,6 @@ export interface CardListProps {
 
 export default function CardList(props: CardListProps) {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
-  const [currentMasteryCard, setCurrentMasteryCard] = useState<Card | null>(null)
   const cardsDiscovered = useStore(s => s.discovery.cardsDiscoveredThisPrestige);
 
   const onToggleCategory = useCallback((cardType: CardType) => {
@@ -64,21 +59,10 @@ export default function CardList(props: CardListProps) {
           cardList={cardList}
           isOpen={closedCategories[cardType!] ?? false}
           onToggleCategory={onToggleCategory}
-          setCurrentMasteryCard={setCurrentMasteryCard}
         />
       )
     }
     </div>
-
-    <Modal
-      isOpen={!!currentMasteryCard}
-      onRequestClose={() => setCurrentMasteryCard(null)}
-      style={STANDARD_MODAL_STYLE}
-      contentLabel="Card Mastery"
-      className="card-mastery-modal center-modal"
-    >
-      <CardMasteryModal card={currentMasteryCard} />
-    </Modal>
   </div>;
 }
 
@@ -87,7 +71,6 @@ type CardCategoryProps = {
   cardList: Card[],
   isOpen: boolean,
   onToggleCategory: (cardType: CardType) => void
-  setCurrentMasteryCard: (card: Card | null) => void,
 };
 function CardCategory(props: CardCategoryProps) {
   const toggleCategory = useCallback(() => {
@@ -104,41 +87,27 @@ function CardCategory(props: CardCategoryProps) {
     </div>
     <div className={classNames("card-list", {hidden: props.isOpen})}>
       {props.cardList.map(card =>
-        <CardInInventory key={card.id} card={card} setMasteryCard={props.setCurrentMasteryCard} />
+        <CardInInventory key={card.id} card={card} />
       )}
     </div>
   </div>
 }
 
-function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null) => void}) {
-  const cards = useStore(s => s.cards.cards);
+function CardInInventory(props: {card: Card}) {
+  const cards = useStore(s => pick(s.cards, 'cards', 'selectedCard', 'setSelectedCard'));
   const cardDef = useStore(s => s.cardDefs.defs[props.card.id]);
-  const selectedCard = useStore(s => s.cards.selectedCard);
-  const setSelectedCard = useStore(s => s.cards.setSelectedCard);
-  const cardMasteries = useStore(s => s.cardMastery.cardMasteries);
-
-  useEffect(() => {
-    ReactTooltip.rebuild();
-  }, [cardMasteries]);
-
-  const onSetMasteryCard = useCallback(() => {
-    props.setMasteryCard(props.card);
-  }, [props.card, props.setMasteryCard]);
-
-  const masteryBonus = getMasteryBonus(cardMasteries[props.card.id], props.card) - 1;
 
   return <div className="card-container" key={props.card.id}>
     <div
       className={classNames("card", {
-        selected: props.card.id === selectedCard,
-        empty: (cards[props.card.id] ?? 0) <= 0,
+        selected: props.card.id === cards.selectedCard,
       })}
-      onClick={() => setSelectedCard(props.card.id)}
+      onClick={() => cards.setSelectedCard(props.card.id)}
     >
       <div className="title">
         <Icon size="sm" icon={cardDef.icon} />
         <span className="name">{cardDef.name}</span>
-        <span className="amount">{formatNumber(cards[props.card.id] ?? 0, 0, 1)}</span>
+        <span className="amount">{formatNumber(cards.cards[props.card.id].numPurchased, 0, 1)}</span>
       </div>
 
       <div className="description">{cardDef.description}</div>
@@ -169,68 +138,21 @@ function CardInInventory(props: {card: Card, setMasteryCard: (card: Card | null)
           </div> :
           null
         }
-        {masteryBonus > 0 ?
-          <div className="stat" data-tip="Mastery Bonus" data-offset="{'bottom': -5}">
-            <Icon size="xs" icon="progression" />
-            <span>{formatNumber(masteryBonus * 100, 0, 0)}%</span>
-          </div> :
-          null
-        }
       </div>
-      <CardButtons width={46}>
-        <CardButton
-          label={
-            <span data-tip="Mastery Bonus" data-place="left" data-offset="{'left': 7}">
-              <Icon icon="progression" size="xs" />
-            </span>
-          }
-          onClick={onSetMasteryCard}
-        />
-      </CardButtons>
     </div>
   </div>;
 }
 
-function CardMasteryModal(props: {card: Card | null}) {
-  const cardMastery = useStore(s => pick(s.cardMastery, [
-    'cardMasteries', 'sacrificeCard', 'sacrificeMax', 'sacrificeUpToLevel'
-  ]), shallow);
-
-  const onSacrificeCard = useCallback((card: Card) => {
-    cardMastery.sacrificeCard(card);
-  }, [cardMastery.sacrificeCard]);
-
-  const onSacrificeUpToLevel = useCallback((card: Card) => {
-    cardMastery.sacrificeUpToLevel(card);
-  }, [cardMastery.sacrificeUpToLevel]);
-
-  const onSacrificeMax = useCallback((card: Card) => {
-    cardMastery.sacrificeMax(card);
-  }, [cardMastery.sacrificeMax]);
-
-  if (!props.card) return null;
-
-  const masteryBonusPer = props.card.mastery.bonusPer * 100;
-  const mastery = cardMastery.cardMasteries[props.card.id];
-  return <>
-    <h3>Card Mastery for {props.card.name}</h3>
-    <Icon icon={props.card.icon} size="lg" />
-    <div className="card-mastery-bonus">+{mastery.level * masteryBonusPer}%</div>
-
-    <div className="card-mastery-progress">
-      <span>{mastery.currentSpent}</span>
-      <span>/</span>
-      <span>{mastery.currentCost}</span>
-    </div>
-    <div>+{masteryBonusPer}%</div>
-
-    <div>
-      <p>Sacrifice Cards for Mastery Bonus</p>
-      <div className='card-mastery-sacrifice-buttons'>
-        <button onClick={() => onSacrificeCard(props.card!)}>One</button>
-        <button onClick={() => onSacrificeUpToLevel(props.card!)}>To Level</button>
-        <button onClick={() => onSacrificeMax(props.card!)}>Max</button>
-      </div>
-    </div>
-  </>;
-}
+/* *
+TODO: Remember card buttons exist!
+<CardButtons width={46}>
+  <CardButton
+    label={
+      <span data-tip="Mastery Bonus" data-place="left" data-offset="{'left': 7}">
+        <Icon icon="progression" size="xs" />
+      </span>
+    }
+    onClick={() => {}}
+  />
+</CardButtons>
+/* */

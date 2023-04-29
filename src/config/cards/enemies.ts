@@ -9,6 +9,8 @@ export default {
     type: CardType.Enemy,
     description: "Eats your food and nibbles at your ankles!",
     foodDrain: 0.2,
+    baseCost: 0,
+    costGrowth: 0,
     passive: {
       strength: -0.25,
       resource: ResourceType.MilitaryPower,
@@ -26,6 +28,8 @@ export default {
     tier: 2,
     type: CardType.Enemy,
     description: "",
+    baseCost: 0,
+    costGrowth: 0,
     passive: {
       strength: -5,
       resource: ResourceType.MilitaryPower,
@@ -43,6 +47,8 @@ export default {
     tier: 2,
     type: CardType.Enemy,
     description: "",
+    baseCost: 0,
+    costGrowth: 0,
     passive: {
       strength: -1.5,
       resource: ResourceType.MilitaryPower,

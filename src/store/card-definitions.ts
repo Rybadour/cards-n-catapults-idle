@@ -4,24 +4,21 @@ import baseCardsConfig from "../config/cards";
 import { DEFAULT_EFFECTS } from "../shared/constants";
 import { Card, CardId, PrestigeEffects, ResourceType } from "../shared/types";
 import { autoFormatNumber, formatNumber, using } from "../shared/utils";
-import { CardMasteries, getMasteryBonus } from "./card-mastery";
 import { CardGridsSlice } from "./card-grids";
 import { MyCreateSlice } from ".";
 
 export interface CardDefsSlice {
   defs: Record<CardId, Card>,
   effects: PrestigeEffects,
-  cardMasteries: CardMasteries,
   prestigeUpdate: (effects: PrestigeEffects) => void,
-  cardMasteryUpdate: (cardMasteries: CardMasteries) => void,
 }
 
 const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> = (set, get, cardGrids) => {
-  function getUpdatedCardDefs(effects: PrestigeEffects, cardMasteries: CardMasteries) {
+  function getUpdatedCardDefs(effects: PrestigeEffects) {
     const newDefs: Record<CardId, Card> = {};
     Object.values(baseCardsConfig).forEach(card => {
       const def = cloneDeep(card);
-      const bonus = cardMasteries[card.id] ? getMasteryBonus(cardMasteries[card.id], card) : 1;
+      const bonus = 1;
 
       function replaceInDescription(variable: string, value: string) {
         def.description = def.description.replaceAll(`{{${variable}}}`, value);
@@ -59,25 +56,17 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> 
   const initialCardMasteries = {};
 
   return {
-    defs: getUpdatedCardDefs(initialEffects, initialCardMasteries),
+    defs: getUpdatedCardDefs(initialEffects),
     effects: initialEffects,
     cardMasteries: initialCardMasteries,
 
     prestigeUpdate: (effects) => {
       set({
         effects,
-        defs: getUpdatedCardDefs(effects, get().cardMasteries)
+        defs: getUpdatedCardDefs(effects)
       });
       cardGrids().cardDefsChanged();
     },
-
-    cardMasteryUpdate: (cardMasteries) => {
-      set({
-        cardMasteries,
-        defs: getUpdatedCardDefs(get().effects, cardMasteries)
-      });
-      cardGrids().cardDefsChanged();
-    }
   }
 };
 

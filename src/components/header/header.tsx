@@ -50,7 +50,7 @@ function Header() {
 
   return <>
     <header>
-      <h1>Cards & Catapults Idle</h1>
+      <h1>Swords & Spades Idle</h1>
 
       <div className="options">
         <button className="no-style" onClick={() => setIsHelpModalOpen(true)} data-tip="Help">

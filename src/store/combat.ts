@@ -45,7 +45,8 @@ const createCombatSlice: MyCreateSlice<CombatSlice, [
     claimRewards: () => {
       const rewards = get().encounter?.rewards;
       if (rewards?.cards) {
-        cards().drawCardsFromMap(rewards.cards);
+        // TODO
+        //cards().drawCardsFromMap(rewards.cards);
       }
       if (rewards?.unlockedCards) {
         discovery().unlockCards(rewards.unlockedCards);       

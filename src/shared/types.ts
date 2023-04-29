@@ -32,6 +32,8 @@ export type Card = {
   description: string,
   foodDrain?: number,
   maxDurability?: number,
+  baseCost: number,
+  costGrowth: number,
 
   passive?: {
     strength: number,
@@ -125,6 +127,12 @@ export type RealizedCard = {
   appliedEffects: Partial<Record<TargettedEffectType, AppliedEffect>>,
 }
 
+export type CardTracking = {
+  numPurchased: number,
+  numActive: number,
+  cost: number,
+}
+
 export type AppliedEffect = {
   duration: number,
   strength: number,
@@ -180,35 +188,6 @@ export enum TargettedEffectType {
 }
 
 export type Grid = (RealizedCard | null)[][];
-
-export type PackItem = {
-  id: string;
-  name: string;
-  icon: string;
-};
-
-export type Pack<T extends PackItem> = {
-  id: string,
-  name: string,
-  feature: GameFeature,
-  baseCost: Partial<ResourcesMap>,
-  costGrowth: number,
-  quantity: number,
-  unlocked: boolean,
-  possibleThings: {
-    thing: T,
-    chance: number,
-    locked?: boolean,
-  }[]
-};
-
-export type RealizedPack<T extends PackItem> = Pack<T> & {
-  cost: Partial<ResourcesMap>,
-  numBought: number,
-};
-
-export type CardPack = Pack<Card>;
-export type RealizedCardPack = RealizedPack<Card>;
 
 export type CardId = string;
 

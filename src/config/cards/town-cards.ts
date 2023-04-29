@@ -15,6 +15,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "Produces {{passiveAmount}} for each nearby food item and speeds up farms by 50%.",
     foodDrain: 0.2,
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 0.5,
       resource: ResourceType.Gold,
@@ -44,6 +46,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "Produce {{passiveAmount}} and {{bonusToAdjacent}}",
     foodDrain: 0.3,
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 0.35,
       resource: ResourceType.Gold,
@@ -73,6 +77,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "Improves nearby people by 50%.",
     foodDrain: 0.5,
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.Strength,
@@ -94,6 +100,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "Produces {{passiveAmount}} except when near low tier cards.",
     foodDrain: 0.5,
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 3,
       resource: ResourceType.Gold,
@@ -117,6 +125,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 2,
       resource: ResourceType.Renown,
@@ -139,6 +149,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "The woman, the myth, the legend. Produces Gold based on total Wood and improves nearby Forests by {{bonusToAdjacentAmount}}.",
     foodDrain: 0.1,
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 3,
       resource: ResourceType.Gold,
@@ -164,6 +176,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Produces {{passiveAmount}} {{passiveAdjacent}}",
     maxDurability: 12,
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 0.25,
       resource: ResourceType.Gold,
@@ -186,6 +200,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
     maxDurability: 8,
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.35,
       bonusType: BonusType.Strength,
@@ -206,6 +222,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Improves nearby people and regenerates when next to other mushrooms.",
     maxDurability: 6,
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.2,
       bonusType: BonusType.Strength,
@@ -233,6 +251,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Reduces the food drain of nearby people.",
     maxDurability: 16,
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.FoodDrain,
@@ -252,6 +272,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
     maxDurability: 5,
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 1,
       bonusType: BonusType.Strength,
@@ -272,6 +294,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Just food, that's it.",
     maxDurability: 40,
+    baseCost: 100,
+    costGrowth: 1.1,
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -286,6 +310,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Food of the gods. {{bonusToAdjacentAmount}} bonus to any nearby Person and {{bonusToFoodAmount}} to all food capacity.",
     maxDurability: 1000,
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 2,
       bonusType: BonusType.Strength,
@@ -310,6 +336,8 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Resource,
     description: "Generates wood when near a lumberjack or lumbermill.",
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 0.5,
       resource: ResourceType.Wood,
@@ -331,6 +359,8 @@ const cards: Record<CardId, Card> = {
     tier: 1,
     type: CardType.Building,
     description: "{{produceCard}} every {{cooldownSecs}} seconds.",
+    baseCost: 100,
+    costGrowth: 1.1,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
       possibleCards: ["ratSnack"],
@@ -349,6 +379,8 @@ const cards: Record<CardId, Card> = {
     tier: 1,
     type: CardType.Building,
     description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{costPerUse}}.",
+    baseCost: 100,
+    costGrowth: 1.1,
     autoReplaceEffect: {
       cardType: CardType.Food,
     },
@@ -371,6 +403,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Building,
     description: "Copies any fruit or vegetable nearby every {{cooldownSecs}}s.",
     cooldownMs: 60000,
+    baseCost: 100,
+    costGrowth: 1.1,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
       possibleCards: ['berries', 'mushrooms', 'corn'],
@@ -389,6 +423,8 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "{{produceCard}} when next to a forest every {{cooldownSecs}} seconds.",
+    baseCost: 100,
+    costGrowth: 1.1,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
       possibleCards: ['mushrooms', 'berries'],
@@ -413,6 +449,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Building,
     description: "{{drawCard}} every {{cooldownSecs}} seconds while consuming food.",
     foodDrain: 2,
+    baseCost: 100,
+    costGrowth: 1.1,
     drawCardEffect: {
       possibleCards: ['haunch'],
     },
@@ -435,6 +473,8 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "{{bonusToAdjacent}}. Uses {{costPerSec}}.",
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.25,
       bonusType: BonusType.Strength,
@@ -458,6 +498,8 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "Sells {{costPerSec}} for {{passiveAmount}} for each adjacent forest, in all directions",
+    baseCost: 100,
+    costGrowth: 1.1,
     passive: {
       strength: 2,
       resource: ResourceType.Gold,
@@ -484,6 +526,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Building,
     description: "Knowledge is power! Converts a Beggar into a Peasant every {{cooldownSecs}}s and improves all people by {{bonusToAdjacentAmount}}.",
     cooldownMs: 10000,
+    baseCost: 100,
+    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 1,
       bonusType: BonusType.Strength,

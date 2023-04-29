@@ -105,7 +105,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
 
     updateAll: (elapsed) => {
       const resources = {...stats().resources};
-      const inventory = {...cards().cards};
+      const inventory = mapValues(cards().cards, 'numPurchased');
       const gridsResourcesPerSec = {...get().gridsResourcesPerSec};
       const newGrids: Record<string, Grid> = {};
       const results: UpdateResults = Object.entries(get().grids).map(([id, grid]) => {
@@ -272,7 +272,7 @@ export function getEmptyGrid(width: number, height: number, staticFillCard?: Car
     for (let j = 0; j < width; ++j) {
       let card: RealizedCard | null = null;
       if (staticFillCard) {
-        card = createCard(allCardsConfig[staticFillCard], 1);
+        card = createCard(allCardsConfig[staticFillCard]);
         card.isStatic = true;
       }
       row.push(card);
@@ -297,7 +297,7 @@ function getInitializedGrid(template: GridTemplate, isStatic = false) {
     for (let x = 0; x < template[y].length; x++) {
       const cardId = template[y][x];
       if (cardId) {
-        const newCard = createCard(allCardsConfig[cardId], 1);
+        const newCard = createCard(allCardsConfig[cardId]);
         newCard.isStatic = isStatic;
         newGrid[y][x] = newCard;
       }
