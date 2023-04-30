@@ -31,10 +31,10 @@ const Container = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  border: 2px solid #222;
   border-radius: 24px;
   overflow: hidden;
   background-color: #444;
+  box-shadow: 0 0 5px 1px #777 inset;
 `;
 
 const InnerContainer = styled.div`
