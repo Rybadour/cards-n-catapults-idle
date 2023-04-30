@@ -77,8 +77,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "Improves nearby people by 50%.",
     foodDrain: 0.5,
-    baseCost: 100,
-    costGrowth: 1.1,
+    baseCost: 1000,
+    costGrowth: 1.2,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.Strength,
@@ -200,8 +200,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
     maxDurability: 8,
-    baseCost: 100,
-    costGrowth: 1.1,
+    baseCost: 50,
+    costGrowth: 1.05,
     bonusToAdjacent: {
       strength: 0.35,
       bonusType: BonusType.Strength,
@@ -222,7 +222,7 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Improves nearby people and regenerates when next to other mushrooms.",
     maxDurability: 6,
-    baseCost: 100,
+    baseCost: 80,
     costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.2,
@@ -251,7 +251,7 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Reduces the food drain of nearby people.",
     maxDurability: 16,
-    baseCost: 100,
+    baseCost: 64,
     costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.5,
@@ -379,7 +379,7 @@ const cards: Record<CardId, Card> = {
     tier: 1,
     type: CardType.Building,
     description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{costPerUse}}.",
-    baseCost: 100,
+    baseCost: 300,
     costGrowth: 1.1,
     autoReplaceEffect: {
       cardType: CardType.Food,
@@ -403,7 +403,7 @@ const cards: Record<CardId, Card> = {
     type: CardType.Building,
     description: "Copies any fruit or vegetable nearby every {{cooldownSecs}}s.",
     cooldownMs: 60000,
-    baseCost: 100,
+    baseCost: 120,
     costGrowth: 1.1,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
