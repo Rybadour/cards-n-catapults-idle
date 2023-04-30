@@ -15,6 +15,7 @@ export interface CardsSlice {
   setSelectedCard: (card: CardId) => void,
   canAffordCard: (id: CardId) => boolean,
   buyCard: (id: CardId) => RealizedCard,
+  useCard: (id: CardId) => RealizedCard,
   returnCard: (card: RealizedCard) => void,
   updateInventory: (cardsDelta: Record<CardId, number>) => void,
   prestigeReset: (prestigeEffects: PrestigeEffects) => void,
@@ -51,6 +52,20 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       set({cards: newCards});
 
       stats().useResource(ResourceType.Gold, tracking.cost);
+
+      return createCard(cardDefs().defs[id]);
+    },
+
+    useCard: (id) => {
+      const newCards = {...get().cards};
+      const tracking = {...newCards[id]};
+      const cardDef = cardDefs().defs[id];
+      tracking.numActive += 1;
+      tracking.numPurchased -= 1;
+      updateCost(cardDef, tracking);
+
+      newCards[id] = tracking;
+      set({cards: newCards});
 
       return createCard(cardDefs().defs[id]);
     },

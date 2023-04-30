@@ -77,18 +77,27 @@ type GridTileProps = {
 };
 function GridTile(props: GridTileProps) {
   const cardDefs = useStore(s => s.cardDefs.defs)
-  const cards = useStore(s => pick(s.cards, ['selectedCard', 'canAffordCard', 'buyCard', 'returnCard']), shallow);
+  const cards = useStore(s => pick(s.cards, [
+    'cards', 'selectedCard', 'canAffordCard', 'useCard', 'buyCard', 'returnCard'
+  ]), shallow);
 
   const cardDef = props.card ? cardDefs[props.card.cardId] : null;
 
   const addCard = useCallback(() => {
     if (props.card?.isStatic || !cards.selectedCard) return;
 
-    if (cards.canAffordCard(cards.selectedCard!)) {
-      const newCard = cards.buyCard(cards.selectedCard!)
+    const tracking = cards.cards[cards.selectedCard];
+    let newCard: RealizedCard | null = null;
+    if (tracking.numPurchased > 0) {
+      newCard = cards.useCard(cards.selectedCard!)
+    } else if (cards.canAffordCard(cards.selectedCard!)) {
+      newCard = cards.buyCard(cards.selectedCard!)
+    }
+
+    if (newCard) {
       props.onReplaceCard(props.x, props.y, newCard);
     }
-  }, [props.onReplaceCard, cards.selectedCard, cards.canAffordCard, cards.buyCard, props.card, props.x, props.y]);
+  }, [props.onReplaceCard, cards, props.card, props.x, props.y]);
 
   const returnCard = useCallback((evt) => {
     evt.preventDefault();
