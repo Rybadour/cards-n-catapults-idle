@@ -8,7 +8,7 @@ import shallow from 'zustand/shallow';
 import resourceIconMap from '../../config/resources';
 import Icon from '../../shared/components/icon';
 import { BUILDING_BLUE, FOOD_RED } from '../../shared/constants';
-import { MarkType, RealizedCard } from '../../shared/types';
+import { CardType, MarkType, RealizedCard } from '../../shared/types';
 import { autoFormatNumber, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { ProgressBar } from './progress-bar';
@@ -95,6 +95,7 @@ function GridTile(props: GridTileProps) {
     }
 
     if (newCard) {
+      newCard.shouldBeReserved = cardDefs[cards.selectedCard].type === CardType.Food;
       props.onReplaceCard(props.x, props.y, newCard);
     }
   }, [props.onReplaceCard, cards, props.card, props.x, props.y]);

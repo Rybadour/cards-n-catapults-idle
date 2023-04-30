@@ -1,3 +1,4 @@
+import { CardId } from "../shared/types";
 import { Scene } from "../store/scenes";
 
 // Note: Version has 3 parts: major, minor and patch
@@ -7,12 +8,13 @@ const global = {
   version: "0.2.0",
   startingGold: 20000,
   startingCards: {
-    lumberjack: 1,
-    corn: 1,
-    berries: 1,
-    farm: 1,
-    farmer: 1,
-  },
+    lumberjack: 0,
+    corn: 10,
+    berries: 10,
+    farm: 0,
+    farmer: 0,
+    campfire: 0,
+  } as Partial<Record<CardId, number>>,
   startingTown: {
     fill: 'forest',
     width: 9,

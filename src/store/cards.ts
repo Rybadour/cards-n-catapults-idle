@@ -27,7 +27,7 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
 = (set, get, discovery, stats, cardDefs) => {
   return {
     cards: mapValues(allCardsConfig, (card) => ({
-      numPurchased: 0,
+      numPurchased: global.startingCards[card.id] ?? 0,
       numActive: 0,
       cost: card.baseCost,
     })),
