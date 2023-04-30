@@ -1,7 +1,7 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { pick } from 'lodash';
-import { memo, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import styled, { css } from 'styled-components';
 import shallow from 'zustand/shallow';
 
@@ -75,7 +75,7 @@ type GridTileProps = {
   onReturnCard: (x: number, y: number) => void,
   cardControlsInjection?: (card: RealizedCard | undefined, x: number, y: number) => ReactJSXElement | undefined
 };
-const GridTile = memo((props: GridTileProps) => {
+function GridTile(props: GridTileProps) {
   const cardDefs = useStore(s => s.cardDefs.defs)
   const cards = useStore(s => pick(s.cards, [
     'cards', 'selectedCard', 'canAffordCard', 'useCard', 'buyCard', 'returnCard'
@@ -176,7 +176,7 @@ const GridTile = memo((props: GridTileProps) => {
       </Details>
     </> : null}
   </GridSpace>;
-});
+}
 
 const TILE_SIZE = 100;
 const GAP = 10;
