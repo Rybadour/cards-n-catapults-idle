@@ -77,7 +77,7 @@ type GridTileProps = {
 };
 function GridTile(props: GridTileProps) {
   const cardDefs = useStore(s => s.cardDefs.defs)
-  const cards = useStore(s => pick(s.cards, ['selectedCard', 'canAffordCard', 'buyCard', 'returnCard']));
+  const cards = useStore(s => pick(s.cards, ['selectedCard', 'canAffordCard', 'buyCard', 'returnCard']), shallow);
 
   const cardDef = props.card ? cardDefs[props.card.cardId] : null;
 
@@ -88,7 +88,7 @@ function GridTile(props: GridTileProps) {
       const newCard = cards.buyCard(cards.selectedCard!)
       props.onReplaceCard(props.x, props.y, newCard);
     }
-  }, [props.onReplaceCard, cards.canAffordCard, cards.buyCard, props.card, props.x, props.y]);
+  }, [props.onReplaceCard, cards.selectedCard, cards.canAffordCard, cards.buyCard, props.card, props.x, props.y]);
 
   const returnCard = useCallback((evt) => {
     evt.preventDefault();

@@ -4,6 +4,7 @@ import allCardsConfig from "../config/cards";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
 import { Card, CardId, CardTracking, PrestigeEffects, RealizedCard, ResourceType } from "../shared/types";
+import { getExponentialValue } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
 import { StatsSlice } from "./stats";
@@ -41,14 +42,28 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
     },
 
     buyCard: (id) => {
-      const tracking = get().cards[id];
+      const newCards = {...get().cards};
+      const tracking = {...newCards[id]};
+      const cardDef = cardDefs().defs[id];
+      tracking.numActive += 1;
+      updateCost(cardDef, tracking);
+      newCards[id] = tracking;
+      set({cards: newCards});
+
       stats().useResource(ResourceType.Gold, tracking.cost);
 
       return createCard(cardDefs().defs[id]);
     },
 
     returnCard: (card) => {
-      const tracking = get().cards[card.cardId];
+      const newCards = {...get().cards};
+      const tracking = {...newCards[card.cardId]};
+      const cardDef = cardDefs().defs[card.cardId];
+      tracking.numActive -= 1;
+      updateCost(cardDef, tracking);
+      newCards[card.cardId] = tracking;
+      set({cards: newCards});
+
       stats().useResource(ResourceType.Gold, -tracking.cost);
     },
 
@@ -59,6 +74,7 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       Object.entries(cardsDelta)
         .forEach(([cardId, amount]) => {
           newCards[cardId].numPurchased += amount;
+          updateCost(cardDefs().defs[cardId], newCards[cardId]);
         });
       set({cards: newCards});
     },
@@ -79,5 +95,9 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
     },
   }
 };
+
+function updateCost(cardDef: Card, tracking: CardTracking) {
+  tracking.cost = getExponentialValue(cardDef.baseCost, cardDef.costGrowth, tracking.numActive + tracking.numPurchased);
+}
 
 export default createCardsSlice;

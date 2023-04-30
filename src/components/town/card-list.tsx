@@ -7,12 +7,14 @@ import { pick } from 'lodash';
 import cardsConfig from '../../config/cards';
 import { CardButton, CardButtons } from '../../shared/components/card-buttons';
 import Icon from '../../shared/components/icon';
-import { Card, CardType } from '../../shared/types';
+import { Card, CardType, ResourceType } from '../../shared/types';
 import { enumFromKey, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { SectionHeader } from '../shared/common-styles';
 
 import './card-list.scss';
+import resourceIconMap from '../../config/resources';
+import shallow from 'zustand/shallow';
 
 export interface CardListProps {
   allowedCards: Record<CardType, boolean | string[]>,
@@ -94,8 +96,9 @@ function CardCategory(props: CardCategoryProps) {
 }
 
 function CardInInventory(props: {card: Card}) {
-  const cards = useStore(s => pick(s.cards, 'cards', 'selectedCard', 'setSelectedCard'));
+  const cards = useStore(s => pick(s.cards, ['cards', 'selectedCard', 'setSelectedCard']), shallow);
   const cardDef = useStore(s => s.cardDefs.defs[props.card.id]);
+  const cardTracking = cards.cards[props.card.id];
 
   return <div className="card-container" key={props.card.id}>
     <div
@@ -107,7 +110,11 @@ function CardInInventory(props: {card: Card}) {
       <div className="title">
         <Icon size="sm" icon={cardDef.icon} />
         <span className="name">{cardDef.name}</span>
-        <span className="amount">{formatNumber(cards.cards[props.card.id].numPurchased, 0, 1)}</span>
+        <span className="amount">{formatNumber(cardTracking.numPurchased, 0, 1)}</span>
+      </div>
+      <div className="cost">
+        <Icon size="xs" icon={resourceIconMap[ResourceType.Gold]} />
+        <span>{formatNumber(cardTracking.cost, 0, 0)}</span>
       </div>
 
       <div className="description">{cardDef.description}</div>
