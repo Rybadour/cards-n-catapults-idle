@@ -20,6 +20,7 @@ export function ScrollableContainer(props: {children: ReactNode}) {
     onMouseDown={() => setIsDragging(true)}
     onMouseUp={() => setIsDragging(false)}
     onMouseMove={(evt) => moveMouse(evt)}
+    onMouseLeave={() => setIsDragging(false)}
   >
     <InnerContainer style={{top: panOffset.y, left: panOffset.x}}>
       {props.children}
