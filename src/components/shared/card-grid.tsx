@@ -178,20 +178,22 @@ const GridTile = memo((props: GridTileProps) => {
   </GridSpace>;
 });
 
+const TILE_SIZE = 100;
+const GAP = 10;
+export const GRID_SIZE = TILE_SIZE + GAP * 2;
+
 const GridRows = styled.div`
   display: flex;
   flex-direction: column;
-  grid-gap: 10px;
+  grid-gap: ${GAP}px;
 `;
 
-const cardWidth = '100px';
-const cardHeight = '100px';
 const GridRow = styled.div`
   display: flex;
   flex-direction: row;
-  grid-gap: 10px;
+  grid-gap: ${GAP}px;
   width: 100%;
-  height: ${cardHeight};
+  height: ${TILE_SIZE}px;
 `;
 
 const Details = styled.div`
@@ -227,8 +229,8 @@ const GridSpace = styled.div<GridSpaceProps>`
   justify-content: center;
   grid-gap: 6px;
 
-  width: ${cardWidth};
-  height: ${cardHeight};
+  width: ${TILE_SIZE}px;
+  height: ${TILE_SIZE}px;
   background-color: #666;
   color: white;
   border-radius: 5px;

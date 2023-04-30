@@ -1,14 +1,23 @@
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-interface Coords {
+export interface Coords {
   x: number;
   y: number;
 }
 
-export function ScrollableContainer(props: {children: ReactNode}) {
+export function ScrollableContainer(props: {defaultCenter: Coords, children: ReactNode}) {
+  const ref = useRef<HTMLDivElement>(null);
   const [panOffset, setPanOffset] = useState<Coords>({x: 0, y: 0});
   const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const width = ref.current.offsetWidth;
+    const height = ref.current.offsetHeight;
+    setPanOffset({x: props.defaultCenter.x + width/2, y: props.defaultCenter.y + height/2});
+  }, [setPanOffset]);
 
   const moveMouse = useCallback((evt: React.MouseEvent<Element, MouseEvent>) => {
     if (isDragging) {
@@ -17,6 +26,7 @@ export function ScrollableContainer(props: {children: ReactNode}) {
   }, [isDragging, panOffset, setPanOffset]);
 
   return <Container
+    ref={ref}
     onMouseDown={() => setIsDragging(true)}
     onMouseUp={() => setIsDragging(false)}
     onMouseMove={(evt) => moveMouse(evt)}

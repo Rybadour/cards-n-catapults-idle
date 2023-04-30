@@ -5,7 +5,7 @@ import { useCallback } from "react";
 
 import CardList from './card-list';
 import { CardType, ResourceType } from "../../shared/types";
-import CardGrid from "../shared/card-grid";
+import CardGrid, { GRID_SIZE } from "../shared/card-grid";
 import { Resources } from "../shared/resources";
 import Icon from "../../shared/components/icon";
 import useStore from "../../store";
@@ -29,13 +29,17 @@ export default function TownScene() {
     }
   }, [stats.canAfford, stats.useResource, cardGrids.removeCard]);
 
+  const defaultCenter = {...global.startingTown.center};
+  defaultCenter.x *= -1 * GRID_SIZE;
+  defaultCenter.y *= -1 * GRID_SIZE;
+
   return <>
     <SideSection>
     </SideSection>
     <MiddleSection>
       <Resources />
       <GridControls gridId="town" />
-      <ScrollableContainer>
+      <ScrollableContainer defaultCenter={defaultCenter}>
         <CardGrid
           gridId="town"
           cardControlsInjection={(card, x, y) => {
