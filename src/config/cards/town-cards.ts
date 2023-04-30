@@ -46,10 +46,10 @@ const cards: Record<CardId, Card> = {
     type: CardType.Person,
     description: "Produce {{passiveAmount}} and {{bonusToAdjacent}}",
     foodDrain: 0.3,
-    baseCost: 100,
-    costGrowth: 1.1,
+    baseCost: 50,
+    costGrowth: 2,
     passive: {
-      strength: 0.35,
+      strength: 0.65,
       resource: ResourceType.Gold,
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
@@ -199,11 +199,11 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
-    maxDurability: 8,
+    maxDurability: 5,
     baseCost: 50,
     costGrowth: 1.05,
     bonusToAdjacent: {
-      strength: 0.35,
+      strength: 0.5,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Person],
@@ -423,8 +423,8 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "{{produceCard}} when next to a forest every {{cooldownSecs}} seconds.",
-    baseCost: 100,
-    costGrowth: 1.1,
+    baseCost: 20,
+    costGrowth: 1.5,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
       possibleCards: ['mushrooms', 'berries'],
