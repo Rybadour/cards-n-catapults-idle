@@ -167,6 +167,7 @@ export type UpdateGridResults = {
   resourcesSpent: ResourcesMap,
   anyChanged: boolean,
   inventoryDelta: Record<CardId, number>,
+  expiredCards: Record<CardId, number>,
   newCards: Card[],
 }
 
@@ -182,6 +183,7 @@ export function updateGrid(
     resourcesSpent: { ...defaultResourcesMap },
     anyChanged: false,
     inventoryDelta: {},
+    expiredCards: {},
     newCards: [],
   } as UpdateGridResults;
 
@@ -282,6 +284,7 @@ export function updateGrid(
             results.grid[food.y][food.x] = null;
           }
 
+          results.expiredCards[food.card.cardId] = (results.expiredCards[food.card.cardId] ?? 0) + 1;
           results.anyChanged = true;
         }
       })

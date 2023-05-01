@@ -17,7 +17,7 @@ export interface CardsSlice {
   buyCard: (id: CardId) => RealizedCard,
   useCard: (id: CardId) => RealizedCard,
   returnCard: (card: RealizedCard) => void,
-  updateInventory: (cardsDelta: Record<CardId, number>) => void,
+  updateInventory: (cardsDelta: Record<CardId, number>, expiredCards: Record<CardId, number>) => void,
   prestigeReset: (prestigeEffects: PrestigeEffects) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
@@ -26,11 +26,15 @@ export interface CardsSlice {
 const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => StatsSlice, () => CardDefsSlice]>
 = (set, get, discovery, stats, cardDefs) => {
   return {
-    cards: mapValues(allCardsConfig, (card) => ({
-      numPurchased: global.startingCards[card.id] ?? 0,
-      numActive: 0,
-      cost: card.baseCost,
-    })),
+    cards: mapValues(allCardsConfig, (card) => {
+      const tracking = {
+        numPurchased: global.startingCards[card.id] ?? 0,
+        numActive: 0,
+        cost: 0,
+      };
+      updateCost(card, tracking);
+      return tracking;
+    }),
     selectedCard: null,
 
     setSelectedCard: (cardId) => {
@@ -71,6 +75,8 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
     },
 
     returnCard: (card) => {
+      if (card.isExpiredAndReserved) return;
+
       const newCards = {...get().cards};
       const tracking = {...newCards[card.cardId]};
       const cardDef = cardDefs().defs[card.cardId];
@@ -82,13 +88,18 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       stats().useResource(ResourceType.Gold, -tracking.cost);
     },
 
-    updateInventory: (cardsDelta) => {
-      if (Object.keys(cardsDelta).length <= 0) return;
+    updateInventory: (cardsDelta, expiredCards) => {
+      if (Object.keys(cardsDelta).length + Object.keys(expiredCards).length <= 0) return;
 
       const newCards = {...get().cards};
       Object.entries(cardsDelta)
         .forEach(([cardId, amount]) => {
           newCards[cardId].numPurchased += amount;
+          updateCost(cardDefs().defs[cardId], newCards[cardId]);
+        });
+      Object.entries(expiredCards)
+        .forEach(([cardId, amount]) => {
+          newCards[cardId].numActive -= amount;
           updateCost(cardDefs().defs[cardId], newCards[cardId]);
         });
       set({cards: newCards});

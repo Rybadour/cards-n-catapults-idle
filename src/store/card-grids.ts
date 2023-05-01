@@ -128,10 +128,14 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         return {
           newCards: [...mergedResults.newCards, ...results.newCards],
           inventoryDelta: mergeSum(mergedResults.inventoryDelta, results.inventoryDelta),
+          expiredCards: mergeSum(mergedResults.expiredCards, results.expiredCards),
           resourcesSpent: mergeSum(mergedResults.resourcesSpent, results.resourcesSpent),
           resourcesPerSec: mergeSum(mergedResults.resourcesPerSec, gridsResourcesPerSec[results.gridId])
         };
-      }, {newCards: [], inventoryDelta: {}, resourcesSpent: {...defaultResourcesMap}, resourcesPerSec: {...defaultResourcesMap}});
+      }, {
+        newCards: [], expiredCards: {}, inventoryDelta: {}, resourcesSpent: {...defaultResourcesMap},
+        resourcesPerSec: {...defaultResourcesMap}
+      });
 
       if (results.newCards.length > 0) {
         discovery().discoverCards(results.newCards);
@@ -140,9 +144,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       stats().useResources(results.resourcesSpent);
       stats().update(elapsed, results.resourcesPerSec);
 
-      if (Object.keys(results.inventoryDelta).length > 0) {
-        cards().updateInventory(results.inventoryDelta);
-      }
+      cards().updateInventory(results.inventoryDelta, results.expiredCards);
 
       set({
         grids: newGrids,
@@ -190,7 +192,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     },
 
     clearGrid: (gridId) => {
-      cards().updateInventory(getCardsFromGrid(gridId));
+      cards().updateInventory(getCardsFromGrid(gridId), {});
       set({grids: {...get().grids, [gridId]: getEmptyGridWithStatics(gridId)}});
       updateResourcesOfGrid(gridId, {...defaultResourcesMap});
     },
@@ -202,7 +204,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         returnedCards = mergeSum(returnedCards, getCardsFromGrid(gridId));
       });
 
-      cards().updateInventory(returnedCards);
+      cards().updateInventory(returnedCards, {});
       set({
         grids: mapValues(grids, (grid, gridId) => getEmptyGridWithStatics(gridId)),
         gridsResourcesPerSec: mapValues(grids, (grid) => ({...defaultResourcesMap})),
