@@ -50,12 +50,13 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       const newCards = {...get().cards};
       const tracking = {...newCards[id]};
       const cardDef = cardDefs().defs[id];
+
+      stats().useResource(ResourceType.Gold, tracking.cost);
+
       tracking.numActive += 1;
       updateCost(cardDef, tracking);
       newCards[id] = tracking;
       set({cards: newCards});
-
-      stats().useResource(ResourceType.Gold, tracking.cost);
 
       return createCard(cardDefs().defs[id]);
     },

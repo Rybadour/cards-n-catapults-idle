@@ -180,7 +180,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         };
       }, {resourcesPerSec: {...defaultResourcesMap}});
 
-      stats().update(0, results.resourcesPerSec);
+      stats().updatePerSec(results.resourcesPerSec);
       set({
         grids: newGrids,
         gridsResourcesPerSec: gridsResourcesPerSec,
