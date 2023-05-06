@@ -51,7 +51,7 @@ const useStore = create<FullStore>((set, get) => {
     cards: createCardsSlice(...cards, discovery[1], stats[1], cardDefs[1]),
     cardGrids: createGridSlice(...cardGrids, discovery[1], cardDefs[1], stats[1], cards[1]),
 
-    upgrades: createUpgradesSlice(...upgrades),
+    upgrades: createUpgradesSlice(...upgrades, stats[1]),
 
     prestige: createPrestigeSlice(
       ...prestige, stats[1], discovery[1], cardDefs[1], cards[1], cardGrids[1]

@@ -1,4 +1,5 @@
 import { MyCreateSlice } from ".";
+import { StatsSlice } from "./stats";
 
 export interface UpgradesSlice {
   purchasedUpgrades: Record<string, boolean>;
@@ -6,7 +7,7 @@ export interface UpgradesSlice {
   purchaseUpgrade: (id: string) => void;
 }
 
-const createUpgradesSlice: MyCreateSlice<UpgradesSlice, []> = (set, get) => {
+const createUpgradesSlice: MyCreateSlice<UpgradesSlice, [() => StatsSlice]> = (set, get, stats) => {
   return {
     purchasedUpgrades: {},
 
