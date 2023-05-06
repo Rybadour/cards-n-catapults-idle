@@ -23,7 +23,7 @@ function HelpModal() {
     content: <>
       <h3>Food Drain</h3>
 
-      <p>You&apos;ll find that most person cards (Beggars and Peasants) and some special cards will have a food drain stat.
+      <p>You&apos;ll find that most person cards (Lumberjacks and Farmers) and some special cards will have a food drain stat.
       This is the rate at which they eat food and it&apos;s always listed as per second. Cards generally eat food that is
       adjacent to them (orthogonally) and will eat food from all those cards at an equal rate.</p>
 
@@ -66,25 +66,6 @@ function HelpModal() {
       speed up their abilities by that amount. Production bonuses are applied multiplicatively. You can tell if a
       card is apply a bonus to another card by hovering over the bonus applying card. Cards that it&apos;s applying a
       bonus to will be highlighted green.</p>
-    </>
-  }, {
-    title: "Card Mastery",
-    content: <>
-      <h3>Card Mastery</h3>
-
-      <img className="float-right" src="card-mastery-screenshot.png" />
-
-      <p className="flow-around">Once unlocked each card in the standard grid can be upgraded permanently by sacrificing cards. To access
-      the card mastery modal click the mastery button to the left of the card while hovering it.</p>
-
-      <p className="flow-around">Each mastery level increases the bonus to all the card&apos;s abilities. This includes speeding up a card&apos;s
-      cooldown, resource generation, food capacity and the bonuses it applies. It does not increase the amount
-      of cards produced and does not reduce how much food a card consumes.</p>
-
-      <p>Mastery levels are permanent, they persist through prestiges.</p>
-
-      <p>When you prestige you will be given an option to automatically sacrifice all cards for a mastery bonus so don&apos;t worry about doing that
-      yourself before you prestige!</p>
     </>
   }];
 
