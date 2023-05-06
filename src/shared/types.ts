@@ -99,7 +99,7 @@ export type Card = {
     growth: number,
     bonusPer: number,
   }
-}
+};
 
 export type GridMatch = {
   shape: MatchingGridShape,
@@ -231,6 +231,7 @@ export interface BonusValues {
 export interface CardBonuses {
   foodCapacity: BonusValues,
   goldGain: BonusValues,
+  woodGain: BonusValues,
 }
 
 export type CardPartialBonuses = {

@@ -50,7 +50,7 @@ const cards: Record<CardId, Card> = {
     costGrowth: 2,
     passive: {
       strength: 0.5,
-      resource: ResourceType.Gold,
+      resource: ResourceType.Wood,
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
         cards: ['forest'],
@@ -194,8 +194,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
     maxDurability: 5,
-    baseCost: 50,
-    costGrowth: 1.05,
+    baseCost: 20,
+    costGrowth: 1.5,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.Strength,
@@ -366,7 +366,7 @@ const cards: Record<CardId, Card> = {
     type: CardType.Building,
     description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{costPerUse}}.",
     baseCost: 300,
-    costGrowth: 1.1,
+    costGrowth: 2,
     autoReplaceEffect: {
       cardType: CardType.Food,
     },

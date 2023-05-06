@@ -1,6 +1,9 @@
 import { pick } from "lodash";
+import { useCallback, useState } from "react";
 import styled from "styled-components";
 import shallow from "zustand/shallow";
+import {useFloating, useHover, useInteractions, safePolygon} from '@floating-ui/react';
+
 import resourceIconMap from "../../config/resources";
 import Icon from "../../shared/components/icon";
 import { ResourceType } from "../../shared/types";
@@ -9,24 +12,72 @@ import useStore from "../../store";
 
 export function Resources() {
   const stats = useStore(s => pick(s.stats, [
-    'resources', 'resourcesPerSec',
+    'resources', 'resourcesPerSec', 'sellResource'
   ]), shallow);
   const discoveredResources = useStore(s => s.discovery.discoveredResources);
 
+  const onSell = useCallback((resource: ResourceType, percent: number) => {
+    stats.sellResource(resource, percent);
+  }, [stats.sellResource]);
+
   return <ResourcesList>
     {Object.keys(stats.resources)
-      .map(res => enumFromKey(ResourceType, res))
+      .map(res => enumFromKey(ResourceType, res)!)
       .filter(resource => resource && discoveredResources[resource])
       .map(resource =>
-        <Resource data-tip={resource} key={resource}>
-          <Icon size="md" icon={resourceIconMap[resource!]} />
-          <Amounts>
-            <Total>{formatNumber(stats.resources[resource!], 0, 0)}</Total>
-            <div className='per-sec'>{formatNumber(stats.resourcesPerSec[resource!], 0, 1)}/s</div>
-          </Amounts>
-        </Resource>
+        <Resource
+          key={resource}
+          resource={resource}
+          amount={stats.resources[resource]}
+          perSec={stats.resourcesPerSec[resource]}
+          onSell={onSell}
+        />
       )}
   </ResourcesList>;
+}
+
+interface ResourceProps {
+  resource: ResourceType;
+  amount: number;
+  perSec: number;
+  onSell: (resource: ResourceType, percent: number) => void,
+}
+function Resource(props: ResourceProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const {refs, floatingStyles, context} = useFloating({
+    placement: "bottom",
+    open: isOpen,
+    onOpenChange: setIsOpen,
+  });
+  const hover = useHover(context, {
+    handleClose: safePolygon(),
+  });
+  const {getReferenceProps, getFloatingProps} = useInteractions([hover]);
+
+  return <>
+    <StyledResource
+      ref={refs.setReference}
+      {...getReferenceProps()}
+    >
+      <Icon size="md" icon={resourceIconMap[props.resource]} />
+      <Amounts>
+        <Total>{formatNumber(props.amount, 0, 0)}</Total>
+        <div className='per-sec'>{formatNumber(props.perSec, 0, 1)}/s</div>
+      </Amounts>
+    </StyledResource>
+
+    {(isOpen && props.resource !== ResourceType.Gold) &&
+      <Tooltip ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+        <TooltipTitle>Sell for 1<Icon size="xs" icon={resourceIconMap[ResourceType.Gold]} /> each</TooltipTitle>
+        
+        <SellButtons>
+          <button onClick={() => props.onSell(props.resource, 0.1)}>10%</button>
+          <button onClick={() => props.onSell(props.resource, 0.5)}>Half</button>
+          <button onClick={() => props.onSell(props.resource, 1)}>All</button>
+        </SellButtons>
+      </Tooltip>
+    }
+  </>;
 }
 
 const ResourcesList = styled.div`
@@ -39,7 +90,7 @@ const ResourcesList = styled.div`
   margin-bottom: 20px;
 `;
 
-const Resource = styled.div`
+const StyledResource = styled.div`
   display: flex;
   flex-direction: row;
   min-width: 100px;
@@ -55,4 +106,27 @@ const Amounts = styled.div`
 const Total = styled.div`
   font-size: 20px;
   font-weight: bold;
+`;
+
+const Tooltip = styled.div`
+  background-color: #222;
+  border-radius: 5px;
+  padding: 10px;
+  color: white;
+  z-index: 10;
+`;
+
+const TooltipTitle = styled.strong`
+  display: flex;
+  margin-bottom: 8px;
+
+  .icon {
+    margin-left: 1px;
+    margin-right: 5px;
+  }
+`;
+
+const SellButtons = styled.div`
+  display: flex;
+  gap: 3px;
 `;

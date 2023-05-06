@@ -9,11 +9,13 @@ import { DiscoverySlice } from "./discovery";
 export interface StatsSlice {
   resources: ResourcesMap,
   resourcesPerSec: ResourcesMap,
+
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
   canAfford: (resources: Partial<ResourcesMap>) => boolean,
   useResource: (resource: ResourceType, amount: number) => void,
   useResources: (resources: Partial<ResourcesMap>) => void,
+  sellResource: (resource: ResourceType, percent: number) => void,
   resetResource: (resource: ResourceType) => void,
   prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
   getSaveData: () => any,
@@ -70,6 +72,18 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
 
     useResources: (resources) => {
       set({resources: mergeSumPartial(get().resources, mapValues(resources, r => -(r ?? 0)))});
+    },
+
+    sellResource: (resource, percent) => {
+      const resources = get().resources;
+      const resourcesUsed = resources[resource] * percent;
+      const goldGiven = resourcesUsed;
+      set({
+        resources: mergeSumPartial(resources, {
+          [ResourceType.Gold]: goldGiven,
+          [resource]: -resourcesUsed,
+        })
+      })
     },
 
     resetResource: (res) => {

@@ -83,6 +83,9 @@ function getRecomputedCardDef(cardId: CardId, bonuses: CardBonuses) {
     if (def.passive.resource === ResourceType.Gold) {
       def.passive.strength = getFinalBonusValue(def.passive.strength, bonuses.goldGain);
     }
+    if (def.passive.resource === ResourceType.Wood) {
+      def.passive.strength = getFinalBonusValue(def.passive.strength, bonuses.woodGain);
+    }
     replaceInDescription('passiveAmount', `${autoFormatNumber(def.passive.strength)} ${def.passive.resource}/s`)
   }
   if (def.cooldownMs) {

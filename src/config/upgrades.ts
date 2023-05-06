@@ -1,18 +1,35 @@
 import { ResourceType, TownUpgrade } from "../shared/types";
 
 const upgrades: Record<string, TownUpgrade> = {
-  woody: {
+  betterBerries: {
     id: '',
-    name: 'Wood Chopping',
+    name: 'Bigger Berries',
+    icon: 'cornucopia',
+    description: 'Berries provide twice as much food.',
+    summary: '',
+    cost: {
+      [ResourceType.Gold]: 150,
+    },
+    cardsBonuses: {
+      'berries': {
+        foodCapacity: {
+          baseMulti: 2,
+        },
+      }
+    }
+  },
+  woodChopping: {
+    id: '',
+    name: 'Faster Chomping',
     icon: 'axe-in-stump',
-    description: 'Lumberjacks produce twice as much gold.',
+    description: 'Lumberjacks produce twice as much wood.',
     summary: '',
     cost: {
       [ResourceType.Gold]: 300,
     },
     cardsBonuses: {
       'lumberjack': {
-        goldGain: {
+        woodGain: {
           baseAdd: 0.5,
         },
       }
@@ -21,14 +38,26 @@ const upgrades: Record<string, TownUpgrade> = {
   cultivation: {
     id: '',
     name: 'Cultivation',
-    icon: 'cornucopia',
-    description: 'Unlocks farming.',
+    icon: 'plow',
+    description: 'Unlocks new cards.',
     summary: '',
     cost: {
       [ResourceType.Gold]: 1000,
     },
     unlockedCards: ['farmer', 'farm', 'corn']
   },
+  campfireCooking: {
+    id: '',
+    name: 'Campfire Cooking',
+    icon: 'campfire',
+    description: 'Unlocks automated food placement.',
+    summary: '',
+    cost: {
+      [ResourceType.Gold]: 500,
+      [ResourceType.Wood]: 500,
+    },
+    unlockedCards: ['campfire']
+  }
 }
 
 Object.keys(upgrades)
