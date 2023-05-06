@@ -201,7 +201,7 @@ export interface Upgrade {
   summary: string,
   bonus?: {
     amount: number,
-    field: keyof(PrestigeBonuses),
+    field: keyof(Bonuses),
   },
 }
 
@@ -227,10 +227,10 @@ export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
 export type PrestigeEffects = {
   extraStartCards: Record<string, number>,
   unlockedCardPacks: string[],
-  bonuses: PrestigeBonuses,
+  bonuses: Bonuses,
 }
 
-export type PrestigeBonuses = {
+export type Bonuses = {
   foodCapacity: number,
   startingGold: number,
   goldGain: number,
