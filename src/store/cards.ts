@@ -3,7 +3,7 @@ import { MyCreateSlice } from ".";
 import allCardsConfig from "../config/cards";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
-import { Card, CardId, CardTracking, PrestigeEffects, RealizedCard, ResourceType } from "../shared/types";
+import { Card, CardId, CardTracking, PrestigeUpgrade, RealizedCard, ResourceType } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
@@ -18,7 +18,7 @@ export interface CardsSlice {
   useCard: (id: CardId) => RealizedCard,
   returnCard: (card: RealizedCard) => void,
   updateInventory: (cardsDelta: Record<CardId, number>, expiredCards: Record<CardId, number>) => void,
-  prestigeReset: (prestigeEffects: PrestigeEffects) => void,
+  prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
 }
@@ -105,9 +105,9 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       set({cards: newCards});
     },
 
-    prestigeReset: (prestigeEffects) => {
+    prestigeReset: (prestigeUpgrades) => {
       // TODO: Extra start cards?
-      discovery().prestigeReset(prestigeEffects);
+      //discovery().prestigeReset(prestigeEffects);
     },
 
     getSaveData: () => ({cards: get().cards}),

@@ -43,18 +43,29 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> 
     },
 
     addUpgrade: (upgrade) => {
+      const cardsBonuses = get().cardsBonuses;
+      let cardsChanged: CardId[] = [];
       if (upgrade.bonuses) {
-        Object.values(newCardsBonuses)
+        cardsChanged = Object.keys(cardsBonuses);
+        Object.values(cardsBonuses)
           .forEach((cardBonuses) => mergeCardBonuses(cardBonuses, upgrade.bonuses!));
       }
       if (upgrade.cardsBonuses) {
         Object.entries(upgrade.cardsBonuses)
-          .forEach(([cardId, newBonuses]) => mergeCardBonuses(newCardsBonuses[cardId], newBonuses));
+          .forEach(([cardId, newBonuses]) => {
+            cardsChanged.push(cardId);
+            mergeCardBonuses(cardsBonuses[cardId], newBonuses)
+          });
       }
 
+      const newDefs = { ...get().defs }
+      cardsChanged.forEach((cardId) => {
+        newDefs[cardId] = getRecomputedCardDef(cardId, cardsBonuses[cardId]);
+      });
+
       set({
-        bonuses: bonuses,
-        defs: getUpdatedCardDefs(get().prestigeEffects, bonuses)
+        cardsBonuses: cardsBonuses,
+        defs: newDefs,
       });
       cardGrids().cardDefsChanged();
     },

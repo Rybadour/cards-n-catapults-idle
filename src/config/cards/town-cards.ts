@@ -1,4 +1,4 @@
-import { BonusType, Card, CardId, CardType, EMPTY_CARD, MatchingGridShape, ResourceType } from "../../shared/types";
+import { BonusType, Card, CardId, CardType, MatchingGridShape, ResourceType } from "../../shared/types";
 
 const hungryDisable = {
   onMatch: false,

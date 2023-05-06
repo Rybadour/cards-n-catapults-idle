@@ -2,7 +2,7 @@ import { mapValues } from "lodash";
 import { MyCreateSlice } from ".";
 
 import global from "../config/global";
-import { defaultResourcesMap, PrestigeEffects, ResourcesMap, ResourceType } from "../shared/types";
+import { defaultResourcesMap, PrestigeUpgrade, ResourcesMap, ResourceType } from "../shared/types";
 import { enumFromKey, mergeSumPartial } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 
@@ -15,7 +15,7 @@ export interface StatsSlice {
   useResource: (resource: ResourceType, amount: number) => void,
   useResources: (resources: Partial<ResourcesMap>) => void,
   resetResource: (resource: ResourceType) => void,
-  prestigeReset: (effects: PrestigeEffects) => void,
+  prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => any,
 }
@@ -78,9 +78,10 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
       });
     },
 
-    prestigeReset: (effects) => {
+    prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => {
       const newResources = {...DEFAULT_RESOURCES};
-      newResources.Gold += effects.bonuses.startingGold;
+      // TODO
+      //newResources.Gold += effects.bonuses.startingGold;
       set({
         resources: newResources,
         resourcesPerSec: {...defaultResourcesMap},

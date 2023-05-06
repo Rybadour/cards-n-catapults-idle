@@ -1,5 +1,4 @@
 import { PrestigeUpgrade, Rarity } from "../shared/types";
-import { formatNumber } from "../shared/utils";
 
 export const PRESTIGE_COST = {
   base: 100,
@@ -31,9 +30,10 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     icon: 'cornucopia',
     description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
     summary: '+{{bonusAsPercent}} food capacity',
-    bonus: {
-      amount: 0.05,
-      field: 'foodCapacity',
+    bonuses: {
+      foodCapacity: {
+        baseMulti: 1.5,
+      }
     }
   },
   charity: {
@@ -42,10 +42,7 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     icon: 'receive-money',
     description: 'Provides {{bonusAsAmount}} extra gold on reset per upgrade',
     summary: '+{{bonusAsAmount}} gold on reset',
-    bonus: {
-      amount: 50,
-      field: 'startingGold',
-    }
+    // TODO: ???
   },
   market: {
     id: '',
@@ -55,26 +52,16 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     summary: '',
     unlockedCardPack: 'food',
   },
-  tradeDeal: {
-    id: '',
-    name: 'Trade Deal',
-    icon: 'trade',
-    description: 'Reduces the cost of card packs by {{bonusAsPercent}} per upgrade',
-    summary: '-{{bonusAsPercent}} card pack cost',
-    bonus: {
-      amount: 0.1,
-      field: 'cardPackCostReduction',
-    }
-  },
   taxes: {
     id: '',
     name: 'Taxes',
     icon: 'cash',
     description: 'Increases all gold gain by {{bonusAsPercent}} per upgrade',
     summary: '+{{bonusAsPercent}} gold gain',
-    bonus: {
-      amount: 0.1,
-      field: 'goldGain',
+    bonuses: {
+      goldGain: {
+        baseMulti: 1.5,
+      }
     }
   },
   treasureMap: {
@@ -103,10 +90,13 @@ Object.keys(upgrades)
       upgrade.description = upgrade.description.replaceAll(`{{${variable}}}`, value);
     }
 
-    if (upgrade.bonus) {
+    /* *
+    TODO: Hmmmm
+    if (upgrade.bonuses) {
       replaceInDescription('bonusAsPercent', formatNumber(upgrade.bonus.amount * 100, 0, 0) + '%');
       replaceInDescription('bonusAsAmount', formatNumber(upgrade.bonus.amount, 0, 0));
     }
+    /* */
   });
 
 export default upgrades;

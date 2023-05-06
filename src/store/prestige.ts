@@ -2,8 +2,7 @@ import { cloneDeep, pick, shuffle } from "lodash";
 import global from "../config/global";
 import packsConfig from "../config/prestige-packs";
 import upgradesConfig, { PRESTIGE_COST, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
-import { DEFAULT_EFFECTS } from "../shared/constants";
-import { PrestigeEffects, PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
+import { PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { CardsSlice } from "./cards";
@@ -42,7 +41,6 @@ export type PrestigeSlice = {
   isReseting: boolean,
   shouldAutoSacrificeAll: boolean,
   isPromptOpen: boolean,
-  prestigeEffects: PrestigeEffects,
   openPrompt: () => void,
   closePrompt: () => void,
   toggleShouldAutoSacrifice: () => void,
@@ -61,12 +59,15 @@ export type PrestigeSlice = {
 const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
   () => StatsSlice, () => DiscoverySlice, () => CardDefsSlice, () => CardsSlice, () => CardGridsSlice
 ]> = (set, get, stats, discovery, cardDefs, cards, cardGrids) => {
-  function onUpgradesChanged(newEffects: PrestigeEffects) {
-    cardDefs().prestigeUpdate(newEffects);
-    discovery().prestigeUpdate(newEffects);
+  function onUpgradesChanged() {
+    // TODO?
+    //cardDefs().prestigeUpdate(newEffects);
+    //discovery().prestigeUpdate(newEffects);
   }
 
-  function onReset(effects: PrestigeEffects) {
+  function onReset(upgrades: PrestigeUpgrade[]) {
+    /* *
+    TODO
     const newEffects = cloneDeep(effects);
     Object.values(get().upgrades).forEach(upgradesInPack => {
       Object.values(upgradesInPack).forEach(upgrade => {
@@ -86,9 +87,10 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         });
       });
     });
+    /* */
     
-    cards().prestigeReset(newEffects);
-    stats().prestigeReset(newEffects);
+    cards().prestigeReset(upgrades);
+    stats().prestigeReset(upgrades);
   }
 
   function prestige() {
@@ -115,7 +117,6 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
     isReseting: false,
     shouldAutoSacrificeAll: false,
     isPromptOpen: false,
-    prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
 
     openPrompt: () => set({isPromptOpen: true}),
     closePrompt: () => set({isPromptOpen: false}),
@@ -157,8 +158,9 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
       }
       newUpgrades[upgradeId] = upgrade;
 
-      const newEffects = {...get().prestigeEffects};
-      applyUpgrade(newEffects, upgrade, 1);
+      // TODO
+      //const newEffects = {...get().prestigeEffects};
+      //applyUpgrade(newEffects, upgrade, 1);
 
       const oldPackCost = pack.cost;
       const newPacks = {...get().packs};
@@ -173,12 +175,12 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
           ...get().upgrades,
           [pack.id]: newUpgrades,
         },
-        prestigeEffects: newEffects,
         packs: newPacks,
       });
 
 
-      onUpgradesChanged(newEffects);
+      // TODO
+      //onUpgradesChanged(newEffects);
     },
 
     refundUpgrade: (upgrade) => {
@@ -205,6 +207,8 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
       }
 
 
+      /* *
+      // TODO
       const newEffects = {...get().prestigeEffects};
       if (upgrade.extraStartingCards) {
         Object.entries(upgrade.extraStartingCards).forEach(([c, amount]) => {
@@ -220,6 +224,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
       if (upgrade.bonus) {
         newEffects.bonuses[upgrade.bonus.field] = (newEffects.bonuses[upgrade.bonus.field] ?? 0) - upgrade.bonus.amount;
       }
+      /* */
 
       const oldPackRefund = pack.refund;
       const newPacks = {...get().packs};
@@ -234,11 +239,11 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
           [pack.id]: newUpgrades,
         },
         prestigePoints: get().prestigePoints + oldPackRefund,
-        prestigeEffects: newEffects,
         packs: newPacks,
       });
 
-      onUpgradesChanged(newEffects);
+      // TODO
+      //onUpgradesChanged(newEffects);
     },
 
     update: () => {
@@ -255,7 +260,8 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
 
     closeMenu: () => {
       if (get().isReseting) {
-        onReset(get().prestigeEffects);
+        // TODO
+        //onReset(get().prestigeEffects);
       }
 
       set({isMenuOpen: false, isReseting: false});
@@ -300,9 +306,11 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         pack.refund = Math.round(getExponentialValue(pack.baseCost, pack.costGrowth, pack.numBought - 1) * PRESTIGE_REFUND_FACTOR);
       });
 
+      /* *
       const newEffects: PrestigeEffects = cloneDeep(DEFAULT_EFFECTS);
       Object.entries(data.upgrades as Record<string, number>)
         .forEach(([up, quantity]) => applyUpgrade(newEffects, upgradesConfig[up], quantity));
+      /* */
 
       set({
         isReseting: false,
@@ -312,13 +320,14 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         nextRenownCost: getRenownFromPrestigePoints(1),
         packs: newPacks,
         upgrades: upgrades,
-        prestigeEffects: newEffects,
       });
 
-      onUpgradesChanged(newEffects);
+      // TODO
+      //onUpgradesChanged(upgrades);
 
       if (data.isReseting) {
-        onReset(newEffects);
+        // TODO
+        //onReset(upgrades);
       }
 
       return true;
@@ -333,7 +342,6 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         nextRenownCost: getRenownFromPrestigePoints(1),
         packs: cloneDeep(realizedPacks),
         upgrades: cloneDeep(defaultUpgrades),
-        prestigeEffects: cloneDeep(DEFAULT_EFFECTS),
       });
     },
   }
@@ -349,6 +357,8 @@ function getRenownFromPrestigePoints(pp: number) {
   return Math.floor(Math.pow(pp, growthExp)/growthFactor + base);
 }
 
+/* *
+TODO
 function applyUpgrade(effects: PrestigeEffects, upgrade: PrestigeUpgrade, quantity: number) {
   if (upgrade.extraStartingCards) {
     Object.entries(upgrade.extraStartingCards).forEach(([c, amount]) => {
@@ -362,5 +372,6 @@ function applyUpgrade(effects: PrestigeEffects, upgrade: PrestigeUpgrade, quanti
     effects.bonuses[upgrade.bonus.field] = (effects.bonuses[upgrade.bonus.field] ?? 0) + upgrade.bonus.amount * quantity;
   }
 }
+/* */
 
 export default createPrestigeSlice;

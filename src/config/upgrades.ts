@@ -4,7 +4,7 @@ const upgrades: Record<string, TownUpgrade> = {
   woody: {
     id: '',
     name: 'Wood Chopping',
-    icon: 'cornucopia',
+    icon: 'axe-in-stump',
     description: 'Lumberjacks produce twice as much gold.',
     summary: '',
     cost: {
@@ -13,9 +13,24 @@ const upgrades: Record<string, TownUpgrade> = {
     cardsBonuses: {
       'lumberjack': {
         goldGain: {
-          baseMulti: 2,
+          baseAdd: 0.65,
         },
       }
+    }
+  },
+  camps: {
+    id: '',
+    name: 'Logging Camps',
+    icon: 'camping-tent',
+    description: 'All people produce more gold.',
+    summary: '',
+    cost: {
+      [ResourceType.Gold]: 100,
+    },
+    bonuses: {
+      goldGain: {
+        baseMulti: 2,
+      },
     }
   },
   cultivation: {
@@ -25,7 +40,7 @@ const upgrades: Record<string, TownUpgrade> = {
     description: 'Unlocks farming.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 1000,
+      [ResourceType.Gold]: 500,
     },
     unlockedCards: ['farmer', 'farm', 'corn']
   },

@@ -1,7 +1,5 @@
-import { cloneDeep } from "lodash";
 import global from "../config/global";
 import { isMajorAndMinorVersionEqual, migrateSaveData } from "../save-data-migrations";
-import { DEFAULT_EFFECTS } from "../shared/constants";
 import { CardsSlice } from "./cards";
 import { DiscoverySlice } from "./discovery";
 import { CardGridsSlice } from "./card-grids";
@@ -125,9 +123,8 @@ const createSavingLoadingSlice:MyCreateSlice<SavingLoadingSlice, [
       discovery().completeReset();
       prestige().completeReset();
       grid().prestigeReset();
-      const effects = cloneDeep(DEFAULT_EFFECTS);
-      cards().prestigeReset(effects);
-      stats().prestigeReset(effects);
+      cards().prestigeReset([]);
+      stats().prestigeReset([]);
     },
 
     update: (elapsed: number) => {

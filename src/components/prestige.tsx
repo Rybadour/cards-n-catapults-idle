@@ -127,6 +127,8 @@ export default function Prestige() {
 
 function getSummary(upgrade: RealizedPrestigeUpgrade) {
   let summary = upgrade.summary;
+  /* *
+  TODO: hmmmm
   if (upgrade.bonus) {
     summary = summary.replaceAll(
       '{{bonusAsPercent}}',
@@ -137,6 +139,7 @@ function getSummary(upgrade: RealizedPrestigeUpgrade) {
       formatNumber((upgrade.bonus?.amount ?? 0) * upgrade.quantity, 0, 0)
     );
   }
+  /* */
 
   if (upgrade.extraStartingCards) {
     const extraCardsSummary = Object.entries(upgrade.extraStartingCards)
