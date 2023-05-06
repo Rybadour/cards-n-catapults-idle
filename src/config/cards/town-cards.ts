@@ -44,23 +44,17 @@ const cards: Record<CardId, Card> = {
     icon: "axe-in-stump",
     tier: 2,
     type: CardType.Person,
-    description: "Produce {{passiveAmount}} and {{bonusToAdjacent}}",
+    description: "Produce {{passiveAmount}} per adjacent forest.",
     foodDrain: 0.3,
     baseCost: 50,
     costGrowth: 2,
     passive: {
-      strength: 0.65,
+      strength: 0.5,
       resource: ResourceType.Gold,
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
         cards: ['forest'],
       }
-    },
-    bonusToAdjacent: {
-      strength: 0.5,
-      bonusType: BonusType.Strength,
-      shape: MatchingGridShape.AllAdjacent,
-      cards: ['forest'],
     },
     disableRules: [hungryDisable],
     mastery: {
@@ -335,17 +329,9 @@ const cards: Record<CardId, Card> = {
     icon: "birch-trees",
     tier: 2,
     type: CardType.Resource,
-    description: "Generates wood when near a lumberjack or lumbermill.",
-    baseCost: 100,
-    costGrowth: 1.1,
-    passive: {
-      strength: 0.5,
-      resource: ResourceType.Wood,
-      multiplyByAdjacent: {
-        shape: MatchingGridShape.AllAdjacent,
-        cards: ['lumberjack', 'lumbermill'],
-      }
-    },
+    description: "Forest of trees",
+    baseCost: 0,
+    costGrowth: 0,
     mastery: {
       baseCost: 2,
       growth: 2,
