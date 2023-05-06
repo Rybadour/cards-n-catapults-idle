@@ -11,11 +11,14 @@ import createPrestigeSlice, { PrestigeSlice } from "./prestige";
 import createSavingLoadingSlice, { SavingLoadingSlice } from "./saving-loading";
 import createScenesSlice, { ScenesSlice } from "./scenes";
 import createStatsSlice, { StatsSlice } from "./stats";
+import createUpgradesSlice, { UpgradesSlice } from "./upgrades";
 
 export type FullStore = {
   cardDefs: CardDefsSlice,
   cards: CardsSlice,
   cardGrids: CardGridsSlice,
+
+  upgrades: UpgradesSlice,
 
   combat: CombatSlice,
 
@@ -31,6 +34,8 @@ const useStore = create<FullStore>((set, get) => {
   const cards = createLens(set, get, 'cards');
   const cardGrids = createLens(set, get, 'cardGrids');
 
+  const upgrades = createLens(set, get, 'upgrades');
+
   const combat = createLens(set, get, 'combat');
 
   const stats = createLens(set, get, 'stats');
@@ -45,6 +50,9 @@ const useStore = create<FullStore>((set, get) => {
     cardDefs: createCardDefsSlice(...cardDefs, cardGrids[1]),
     cards: createCardsSlice(...cards, discovery[1], stats[1], cardDefs[1]),
     cardGrids: createGridSlice(...cardGrids, discovery[1], cardDefs[1], stats[1], cards[1]),
+
+    upgrades: createUpgradesSlice(...upgrades),
+
     prestige: createPrestigeSlice(
       ...prestige, stats[1], discovery[1], cardDefs[1], cards[1], cardGrids[1]
     ),

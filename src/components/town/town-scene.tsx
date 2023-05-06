@@ -13,6 +13,7 @@ import { getGridDistance } from "../../gamelogic/grid";
 import { ScrollableContainer } from "../shared/scrollable-container";
 import { GridControls } from "../shared/grid-controls";
 import global from "../../config/global";
+import Upgrades from "./upgrades";
 
 export default function TownScene() {
   const stats = useStore(s => pick(s.stats, [
@@ -35,6 +36,7 @@ export default function TownScene() {
 
   return <>
     <SideSection>
+      <Upgrades />
     </SideSection>
     <MiddleSection>
       <Resources />
