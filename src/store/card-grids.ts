@@ -37,7 +37,7 @@ type UpdateDefsResults = Omit<UpdateGridTotalsResults, 'grid'>;
 const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () => CardDefsSlice, () => StatsSlice, () => CardsSlice]>
 = (set, get, discovery, cardDefs, stats, cards) => {
 
-  function replaceCard(gridId: string, x: number, y: number, newCard: RealizedCard | null, shouldReturnCard: boolean = true) {
+  function replaceCard(gridId: string, x: number, y: number, newCard: RealizedCard | null, shouldReturnCard = true) {
     const gridSpaces = get().grids[gridId];
     if (!gridSpaces) return;
 
@@ -138,7 +138,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       });
 
       if (results.newCards.length > 0) {
-        discovery().discoverCards(results.newCards);
+        discovery().discoverCards(results.newCards.map(c => c.id));
       }
       
       stats().useResources(results.resourcesSpent);

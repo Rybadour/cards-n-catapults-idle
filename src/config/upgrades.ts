@@ -1,4 +1,4 @@
-import { PrestigeUpgrade, ResourceType, TownUpgrade } from "../shared/types";
+import { ResourceType, TownUpgrade } from "../shared/types";
 
 const upgrades: Record<string, TownUpgrade> = {
   rationing: {
@@ -8,26 +8,23 @@ const upgrades: Record<string, TownUpgrade> = {
     description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
     summary: '+{{bonusAsPercent}} food capacity',
     cost: {
-      [ResourceType.Gold]: 100,
+      [ResourceType.Gold]: 300,
     },
     bonus: {
       amount: 0.2,
       field: 'foodCapacity',
     }
   },
-  other: {
+  cultivation: {
     id: '',
-    name: 'Rationing',
+    name: 'Cultivation',
     icon: 'cornucopia',
-    description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
-    summary: '+{{bonusAsPercent}} food capacity',
+    description: 'Unlocks farming.',
+    summary: '',
     cost: {
-      [ResourceType.Gold]: 100,
+      [ResourceType.Gold]: 1000,
     },
-    bonus: {
-      amount: 0.2,
-      field: 'foodCapacity',
-    }
+    unlockedCards: ['farmer', 'farm', 'corn']
   },
 }
 

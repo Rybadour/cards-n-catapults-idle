@@ -12,7 +12,7 @@ export interface DiscoverySlice {
   cardsDiscoveredThisPrestige: Record<string, boolean>,
   discoveredUpgrades: Record<string, boolean>,
   discoveredResources: Partial<Record<ResourceType, boolean>>,
-  discoverCards: (cards: Card[]) => void,
+  discoverCards: (cards: CardId[]) => void,
   unlockCards: (card: CardId[]) => void,
   discoverResources: (resources: ResourceType[]) => void,
   prestigeReset: (prestigeEffects: PrestigeEffects) => void,
@@ -32,10 +32,9 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
       [ResourceType.Gold]: true,
     },
 
-    discoverCards: (cards) => {
-      if (cards.length <= 0) return;
+    discoverCards: (cardIds) => {
+      if (cardIds.length <= 0) return;
 
-      const cardIds = cards.map(c => c.id);
       set({
         discoveredCards: addToDiscoverMap(get().discoveredCards, cardIds),
         cardsDiscoveredThisPrestige: addToDiscoverMap(get().cardsDiscoveredThisPrestige, cardIds)
@@ -72,6 +71,7 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
     },
 
     prestigeUpdate: (effects) => {
+      // noop
     },
 
     getSaveData: () => pick(get(), [

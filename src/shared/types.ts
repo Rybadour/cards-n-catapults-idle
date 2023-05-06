@@ -207,6 +207,7 @@ export interface Upgrade {
 
 export type TownUpgrade = Upgrade & {
   cost: Partial<ResourcesMap>,
+  unlockedCards?: CardId[],
 }
 
 export type PrestigeUpgrade = Upgrade & {
