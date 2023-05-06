@@ -167,6 +167,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
           }
         });
         const totalResults = updateGridTotals(grid, defs, stats());
+        gridsResourcesPerSec[id] = totalResults.resourcesPerSec;
         newGrids[id] = totalResults.grid;
 
         return {
@@ -180,7 +181,10 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       }, {resourcesPerSec: {...defaultResourcesMap}});
 
       stats().update(0, results.resourcesPerSec);
-      set({grids: newGrids});
+      set({
+        grids: newGrids,
+        gridsResourcesPerSec: gridsResourcesPerSec,
+      });
     },
 
     replaceCard: (gridId, x, y, newCard, shouldReturnCard = true) => {

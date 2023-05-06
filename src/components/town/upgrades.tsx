@@ -5,13 +5,17 @@ import upgradesConfig from "../../config/upgrades";
 import Icon from "../../shared/components/icon";
 import useStore from "../../store";
 import { SectionHeader } from "../shared/common-styles";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ResourceType, TownUpgrade } from "../../shared/types";
 import resourceIconMap from "../../config/resources";
 import { enumFromKey } from "../../shared/utils";
 
 export default function Upgrades() {
   const upgrades = useStore(s => s.upgrades);
+
+  const onPurchase = useCallback((upId: string) => {
+    upgrades.purchaseUpgrade(upId);
+  }, [upgrades]);
 
   return <Container>
     <SectionHeader>Upgrades</SectionHeader>
@@ -22,7 +26,7 @@ export default function Upgrades() {
           key={up.id}
           upgrade={up}
           bought={upgrades.purchasedUpgrades[up.id]}
-          onPurchase={() => upgrades.purchaseUpgrade(up.id)}
+          onPurchase={() => onPurchase(up.id)}
         />
       )}
     </UpgradeList>
