@@ -193,12 +193,23 @@ export type CardId = string;
 
 export const EMPTY_CARD = 'EMPTY';
 
-export type PrestigeUpgrade = {
+export interface Upgrade {
   id: string,
   name: string,
   icon: string,
   description: string,
   summary: string,
+  bonus?: {
+    amount: number,
+    field: keyof(PrestigeBonuses),
+  },
+}
+
+export type TownUpgrade = Upgrade & {
+  cost: Partial<ResourcesMap>,
+}
+
+export type PrestigeUpgrade = Upgrade & {
   extraStartingCards?: Record<string, number>,
   unlockedCardPack?: string,
   randomStartingCards?: {
@@ -206,10 +217,6 @@ export type PrestigeUpgrade = {
     possibleCardRarity?: Rarity,
     amount: number,
     onlyIfDiscovered: boolean,
-  },
-  bonus?: {
-    amount: number,
-    field: keyof(PrestigeBonuses),
   },
 };
 

@@ -6,7 +6,9 @@ import Icon from "../../shared/components/icon";
 import useStore from "../../store";
 import { SectionHeader } from "../shared/common-styles";
 import { useState } from "react";
-import { PrestigeUpgrade } from "../../shared/types";
+import { ResourceType, TownUpgrade } from "../../shared/types";
+import resourceIconMap from "../../config/resources";
+import { enumFromKey } from "../../shared/utils";
 
 export default function Upgrades() {
   const upgrades = useStore(s => s.upgrades);
@@ -15,7 +17,7 @@ export default function Upgrades() {
     <SectionHeader>Upgrades</SectionHeader>
 
     <UpgradeList>
-      {Object.values(upgradesConfig).map((up) => 
+      {Object.values(upgradesConfig).map((up) =>
         <Upgrade
           key={up.id}
           upgrade={up}
@@ -27,9 +29,10 @@ export default function Upgrades() {
   </Container>
 }
 
-function Upgrade(props: {upgrade: PrestigeUpgrade, bought: boolean, onPurchase: () => void}) {
+function Upgrade(props: {upgrade: TownUpgrade, bought: boolean, onPurchase: () => void}) {
   const [isOpen, setIsOpen] = useState(false);
   const {refs, floatingStyles, context} = useFloating({
+    placement: "bottom-start",
     open: isOpen,
     onOpenChange: setIsOpen,
   });
@@ -47,9 +50,24 @@ function Upgrade(props: {upgrade: PrestigeUpgrade, bought: boolean, onPurchase: 
     </UpgradeButton>
 
     {isOpen &&
-      <div ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-        {props.upgrade.name}
-      </div>
+      <Tooltip ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+        <strong>{props.upgrade.name}</strong>
+        <Description>{props.upgrade.description}</Description>
+        
+        {props.bought ?
+          <div>Purchased!</div> :
+          <Costs>
+          {Object.entries(props.upgrade.cost)
+            .map(([resource, cost]) => [enumFromKey(ResourceType, resource) as ResourceType, cost] as const)
+            .map(([resource, cost]) => 
+              <CostLine key={resource}>
+                <Icon size="xs" icon={resourceIconMap[resource]} />
+                <span>{cost}</span>
+              </CostLine>
+          )}
+          </Costs>
+        }
+      </Tooltip>
     }
   </>;
 }
@@ -67,13 +85,43 @@ const UpgradeButton = styled.button<{bought: boolean}>`
   width: 40px;
   height: 40px;
   border: 1px solid #999;
+  background-color: #333;
   border-radius: 3px;
   padding: 3px;
   display: flex;
   justify-content: center;
   align-items: center;
 
+
   ${p => p.bought ? css`
     border-color: white;
-  ` : ''}
+  ` : css`
+    filter: saturate(0);
+  `}
+`;
+
+const Tooltip = styled.div`
+  width: 200px;
+  background-color: #222;
+  border-radius: 5px;
+  padding: 10px;
+  color: white;
+  z-index: 10;
+`;
+
+const Description = styled.p`
+  color: #AAA;
+  font-size: 15px;
+`
+
+const Costs = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+const CostLine = styled.div`
+  display: flex;
+  gap: 3px;
 `;

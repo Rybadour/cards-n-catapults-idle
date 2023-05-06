@@ -1,12 +1,15 @@
-import { PrestigeUpgrade } from "../shared/types";
+import { PrestigeUpgrade, ResourceType, TownUpgrade } from "../shared/types";
 
-const upgrades: Record<string, PrestigeUpgrade> = {
+const upgrades: Record<string, TownUpgrade> = {
   rationing: {
     id: '',
     name: 'Rationing',
     icon: 'cornucopia',
     description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
     summary: '+{{bonusAsPercent}} food capacity',
+    cost: {
+      [ResourceType.Gold]: 100,
+    },
     bonus: {
       amount: 0.2,
       field: 'foodCapacity',
@@ -18,6 +21,9 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     icon: 'cornucopia',
     description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
     summary: '+{{bonusAsPercent}} food capacity',
+    cost: {
+      [ResourceType.Gold]: 100,
+    },
     bonus: {
       amount: 0.2,
       field: 'foodCapacity',
