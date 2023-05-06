@@ -1,7 +1,7 @@
 import { pick } from "lodash";
 
 import global from "../config/global";
-import { Card, CardId, PrestigeEffects, ResourceType } from "../shared/types";
+import { CardId, PrestigeUpgrade, ResourceType } from "../shared/types";
 import { MyCreateSlice } from ".";
 
 const DEFAULT_UPGRADES: string[] = [];
@@ -15,8 +15,8 @@ export interface DiscoverySlice {
   discoverCards: (cards: CardId[]) => void,
   unlockCards: (card: CardId[]) => void,
   discoverResources: (resources: ResourceType[]) => void,
-  prestigeReset: (prestigeEffects: PrestigeEffects) => void,
-  prestigeUpdate: (effects: PrestigeEffects) => void,
+  prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
+  prestigeUpdate: () => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
   completeReset: () => void,
@@ -55,11 +55,12 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
       set({discoveredResources: newDiscover});
     },
 
-    prestigeReset: (prestigeEffects) => {
-      // TODO: STarting cards!?
-      set({
-        cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys({})),
-      });
+    prestigeReset: (prestigeUpgrades) => {
+      // noop
+    },
+
+    prestigeUpdate: () => {
+      // noop
     },
 
     completeReset: () => {
@@ -68,10 +69,6 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
         cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys(global.startingCards)),
         discoveredUpgrades: addToDiscoverMap({}, DEFAULT_UPGRADES),
       });
-    },
-
-    prestigeUpdate: (effects) => {
-      // noop
     },
 
     getSaveData: () => pick(get(), [

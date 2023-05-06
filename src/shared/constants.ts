@@ -1,15 +1,13 @@
-import { PrestigeEffects } from "./types";
+import { BonusValues, CardBonuses } from "./types";
 
-export const DEFAULT_EFFECTS: PrestigeEffects = {
-  bonuses: {
-    foodCapacity: 1,
-    startingGold: 0,
-    goldGain: 1,
-    cardPackCostReduction: 0,
-  },
-  extraStartCards: {},
-  unlockedCardPacks: [],
-};
+export const DEFAULT_BONUS_VALUES: BonusValues = {
+  baseAdd: 0,
+  baseMulti: 1,
+}
+export const DEFAULT_CARD_BONUSES: CardBonuses = {
+  foodCapacity: {...DEFAULT_BONUS_VALUES},
+  goldGain: {...DEFAULT_BONUS_VALUES},
+}
 
 export const STANDARD_MODAL_STYLE = {
   overlay: {

@@ -199,15 +199,13 @@ export interface Upgrade {
   icon: string,
   description: string,
   summary: string,
-  bonus?: {
-    amount: number,
-    field: keyof(Bonuses),
-  },
+  unlockedCards?: CardId[],
+  bonuses?: Partial<CardPartialBonuses>,
+  cardsBonuses?: Record<CardId, Partial<CardPartialBonuses>>,
 }
 
 export type TownUpgrade = Upgrade & {
   cost: Partial<ResourcesMap>,
-  unlockedCards?: CardId[],
 }
 
 export type PrestigeUpgrade = Upgrade & {
@@ -225,17 +223,18 @@ export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
   quantity: number;
 };
 
-export type PrestigeEffects = {
-  extraStartCards: Record<string, number>,
-  unlockedCardPacks: string[],
-  bonuses: Bonuses,
+export interface BonusValues {
+  baseAdd: number;
+  baseMulti: number;
 }
 
-export type Bonuses = {
-  foodCapacity: number,
-  startingGold: number,
-  goldGain: number,
-  cardPackCostReduction: number,
+export interface CardBonuses {
+  foodCapacity: BonusValues,
+  goldGain: BonusValues,
+}
+
+export type CardPartialBonuses = {
+  [Property in keyof CardBonuses]: Partial<BonusValues>;
 }
 
 export type PrestigePack = {

@@ -1,18 +1,21 @@
 import { ResourceType, TownUpgrade } from "../shared/types";
 
 const upgrades: Record<string, TownUpgrade> = {
-  rationing: {
+  woody: {
     id: '',
-    name: 'Rationing',
+    name: 'Wood Chopping',
     icon: 'cornucopia',
-    description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
-    summary: '+{{bonusAsPercent}} food capacity',
+    description: 'Lumberjacks produce twice as much gold.',
+    summary: '',
     cost: {
       [ResourceType.Gold]: 300,
     },
-    bonus: {
-      amount: 0.2,
-      field: 'foodCapacity',
+    cardsBonuses: {
+      'lumberjack': {
+        goldGain: {
+          baseMulti: 2,
+        },
+      }
     }
   },
   cultivation: {
