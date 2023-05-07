@@ -100,7 +100,10 @@ const UpgradeButton = styled.button<{bought: boolean}>`
   ${p => p.bought ? css`
     border-color: white;
   ` : css`
-    filter: saturate(0);
+    filter: opacity(0.5);
+    &:hover {
+      filter: opacity(0.9);
+    }
   `}
 `;
 
