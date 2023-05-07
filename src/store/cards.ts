@@ -3,7 +3,7 @@ import { MyCreateSlice } from ".";
 import allCardsConfig from "../config/cards";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
-import { Card, CardId, CardTracking, PrestigeUpgrade, RealizedCard, ResourceType } from "../shared/types";
+import { Card, CardId, CardTracking, CardType, PrestigeUpgrade, RealizedCard, ResourceType } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
@@ -86,7 +86,11 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       newCards[card.cardId] = tracking;
       set({cards: newCards});
 
-      stats().useResource(ResourceType.Gold, -tracking.cost);
+      let sellAmount = tracking.cost;
+      if (allCardsConfig[card.cardId].type === CardType.Food) {
+        sellAmount *= (card.durability ?? 0) / card.maxDurability;
+      }
+      stats().useResource(ResourceType.Gold, -sellAmount);
     },
 
     updateInventory: (cardsDelta, expiredCards) => {
