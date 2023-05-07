@@ -57,7 +57,7 @@ const upgrades: Record<string, TownUpgrade> = {
       [ResourceType.Wood]: 500,
     },
     unlockedCards: ['campfire']
-  }
+  },
 }
 
 Object.keys(upgrades)

@@ -13,20 +13,12 @@ const cards: Record<CardId, Card> = {
     icon: "farmer",
     tier: 1,
     type: CardType.Person,
-    description: "Produces {{passiveAmount}} for each nearby food item and speeds up farms by 50%.",
+    description: "Improves the speed of farms by 500%.",
     foodDrain: 0.2,
-    baseCost: 100,
+    baseCost: 200,
     costGrowth: 1.1,
-    passive: {
-      strength: 0.5,
-      resource: ResourceType.Gold,
-      multiplyByAdjacent: {
-        shape: MatchingGridShape.OrthoAdjacent,
-        cardTypes: [CardType.Food],
-      }
-    },
     bonusToAdjacent: {
-      strength: 0.5,
+      strength: 5,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
       cards: ['farm'],
@@ -86,31 +78,6 @@ const cards: Record<CardId, Card> = {
       bonusPer: 0.1,
     }
   },
-  peasant: {
-    id: "",
-    name: "Peasant",
-    icon: "farmer",
-    tier: 2,
-    type: CardType.Person,
-    description: "Produces {{passiveAmount}} except when near low tier cards.",
-    foodDrain: 0.5,
-    baseCost: 100,
-    costGrowth: 1.1,
-    passive: {
-      strength: 3,
-      resource: ResourceType.Gold,
-    },
-    disableRules: [{
-      onMatch: true,
-      shape: MatchingGridShape.OrthoAdjacent,
-      maxTier: 1,
-    }, hungryDisable],
-    mastery: {
-      baseCost: 2,
-      growth: 2,
-      bonusPer: 0.1,
-    }
-  },
   bard: {
     id: "",
     name: "Bard",
@@ -133,33 +100,6 @@ const cards: Record<CardId, Card> = {
       baseCost: 2,
       growth: 2,
       bonusPer: 0.1,
-    }
-  },
-  pauline: {
-    id: "",
-    name: "Pauline Bunion",
-    icon: "magic-axe",
-    tier: 3,
-    type: CardType.Person,
-    description: "The woman, the myth, the legend. Produces Gold based on total Wood and improves nearby Forests by {{bonusToAdjacentAmount}}.",
-    foodDrain: 0.1,
-    baseCost: 100,
-    costGrowth: 1.1,
-    passive: {
-      strength: 3,
-      resource: ResourceType.Gold,
-      scaledToResource: ResourceType.Wood,
-    },
-    bonusToAdjacent: {
-      strength: 1,
-      bonusType: BonusType.Strength,
-      shape: MatchingGridShape.AllAdjacent,
-      cards: ['forest'],
-    },
-    mastery: {
-      baseCost: 1,
-      growth: 2,
-      bonusPer: 0.2,
     }
   },
   ratSnack: {
@@ -296,48 +236,6 @@ const cards: Record<CardId, Card> = {
       bonusPer: 0.25,
     }
   },
-  ambrosia: {
-    id: "",
-    name: "Ambrosia",
-    icon: "cool-spices",
-    tier: 4,
-    type: CardType.Food,
-    description: "Food of the gods. {{bonusToAdjacentAmount}} bonus to any nearby Person and {{bonusToFoodAmount}} to all food capacity.",
-    maxDurability: 1000,
-    baseCost: 100,
-    costGrowth: 1.1,
-    bonusToAdjacent: {
-      strength: 2,
-      bonusType: BonusType.Strength,
-      shape: MatchingGridShape.AllAdjacent,
-      cardTypes: [CardType.Person],
-    },
-    bonusToFoodCapacity: {
-      strength: 2,
-      shape: MatchingGridShape.Grid,
-      cardTypes: [CardType.Food],
-    },
-    mastery: {
-      baseCost: 1,
-      growth: 2,
-      bonusPer: 0.25,
-    }
-  },
-  forest: {
-    id: "",
-    name: "Forest",
-    icon: "forest",
-    tier: 2,
-    type: CardType.Resource,
-    description: "Forest of trees",
-    baseCost: 0,
-    costGrowth: 0,
-    mastery: {
-      baseCost: 2,
-      growth: 2,
-      bonusPer: 0.1,
-    }
-  },
   ratDen: {
     id: "",
     name: "Rat Den",
@@ -372,7 +270,7 @@ const cards: Record<CardId, Card> = {
     },
     costPerUse: {
       resource: ResourceType.Wood,
-      cost: 1,
+      cost: 10,
     },
     cooldownMs: 5000,
     mastery: {
@@ -388,8 +286,8 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "Copies any fruit or vegetable nearby every {{cooldownSecs}}s.",
-    cooldownMs: 60000,
-    baseCost: 120,
+    cooldownMs: 20000,
+    baseCost: 250,
     costGrowth: 1.1,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
@@ -459,17 +357,17 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "{{bonusToAdjacent}}. Uses {{costPerSec}}.",
-    baseCost: 100,
-    costGrowth: 1.1,
+    baseCost: 500,
+    costGrowth: 1.5,
     bonusToAdjacent: {
-      strength: 0.25,
+      strength: 1,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.RowAndColumn,
       cardTypes: [CardType.Person, CardType.Building],
     },
     costPerSec: {
       resource: ResourceType.Wood,
-      cost: 2,
+      cost: 5,
     },
     mastery: {
       baseCost: 1,
@@ -504,32 +402,21 @@ const cards: Record<CardId, Card> = {
       bonusPer: 0.1,
     }
   },
-  schoolHouse: {
+  forest: {
     id: "",
-    name: "School House",
-    icon: "family-house",
-    tier: 3,
-    type: CardType.Building,
-    description: "Knowledge is power! Converts a Beggar into a Peasant every {{cooldownSecs}}s and improves all people by {{bonusToAdjacentAmount}}.",
-    cooldownMs: 10000,
-    baseCost: 100,
-    costGrowth: 1.1,
-    bonusToAdjacent: {
-      strength: 1,
-      bonusType: BonusType.Strength,
-      shape: MatchingGridShape.Grid,
-      cardTypes: [CardType.Person]
-    },
-    convertCardEffect: {
-      targetCard: 'beggar',
-      resultingCard: 'peasant',
-    },
+    name: "Forest",
+    icon: "forest",
+    tier: 2,
+    type: CardType.Resource,
+    description: "Forest of trees",
+    baseCost: 0,
+    costGrowth: 0,
     mastery: {
-      baseCost: 1,
+      baseCost: 2,
       growth: 2,
-      bonusPer: 0.25,
+      bonusPer: 0.1,
     }
-  }
+  },
 };
 
 export default cards;
