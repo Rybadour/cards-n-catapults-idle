@@ -326,7 +326,7 @@ const cards: Record<CardId, Card> = {
   forest: {
     id: "",
     name: "Forest",
-    icon: "birch-trees",
+    icon: "forest",
     tier: 2,
     type: CardType.Resource,
     description: "Forest of trees",

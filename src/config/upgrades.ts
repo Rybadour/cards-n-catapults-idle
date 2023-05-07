@@ -42,7 +42,7 @@ const upgrades: Record<string, TownUpgrade> = {
     description: 'Unlocks new cards.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 1000,
+      [ResourceType.Gold]: 800,
     },
     unlockedCards: ['farmer', 'farm', 'corn']
   },
@@ -53,7 +53,7 @@ const upgrades: Record<string, TownUpgrade> = {
     description: 'Unlocks automated food placement.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 500,
+      [ResourceType.Gold]: 1000,
       [ResourceType.Wood]: 500,
     },
     unlockedCards: ['campfire']
