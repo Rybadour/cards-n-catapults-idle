@@ -171,7 +171,7 @@ const cards: Record<CardId, Card> = {
     description: "Produces {{passiveAmount}} {{passiveAdjacent}}",
     maxDurability: 12,
     baseCost: 100,
-    costGrowth: 1.1,
+    costGrowth: 1,
     passive: {
       strength: 0.25,
       resource: ResourceType.Gold,
@@ -194,8 +194,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
     maxDurability: 5,
-    baseCost: 20,
-    costGrowth: 1.5,
+    baseCost: 30,
+    costGrowth: 1,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.Strength,
@@ -245,8 +245,8 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Reduces the food drain of nearby people.",
     maxDurability: 16,
-    baseCost: 64,
-    costGrowth: 1.1,
+    baseCost: 80,
+    costGrowth: 1,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.FoodDrain,
@@ -267,7 +267,7 @@ const cards: Record<CardId, Card> = {
     description: "{{bonusToAdjacent}}",
     maxDurability: 5,
     baseCost: 100,
-    costGrowth: 1.1,
+    costGrowth: 1,
     bonusToAdjacent: {
       strength: 1,
       bonusType: BonusType.Strength,
@@ -289,7 +289,7 @@ const cards: Record<CardId, Card> = {
     description: "Just food, that's it.",
     maxDurability: 40,
     baseCost: 100,
-    costGrowth: 1.1,
+    costGrowth: 1,
     mastery: {
       baseCost: 2,
       growth: 2,
