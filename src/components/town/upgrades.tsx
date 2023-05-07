@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import {useFloating, useHover, useInteractions} from '@floating-ui/react';
 
-import upgradesConfig from "../../config/upgrades";
+import agesConfig from "../../config/technologies/ages";
 import Icon from "../../shared/components/icon";
 import useStore from "../../store";
 import { SectionHeader } from "../shared/common-styles";
@@ -13,23 +13,27 @@ import { enumFromKey } from "../../shared/utils";
 export default function Upgrades() {
   const upgrades = useStore(s => s.upgrades);
 
-  const onPurchase = useCallback((upId: string) => {
-    upgrades.purchaseUpgrade(upId);
+  const onPurchase = useCallback((ageId: string, upId: string) => {
+    upgrades.purchaseUpgrade(ageId, upId);
   }, [upgrades]);
 
   return <Container>
-    <SectionHeader>Upgrades</SectionHeader>
+    {Object.values(agesConfig).map((age) => 
+      <>
+        <SectionHeader>{age.name}</SectionHeader>
 
-    <UpgradeList>
-      {Object.values(upgradesConfig).map((up) =>
-        <Upgrade
-          key={up.id}
-          upgrade={up}
-          bought={upgrades.purchasedUpgrades[up.id]}
-          onPurchase={() => onPurchase(up.id)}
-        />
-      )}
-    </UpgradeList>
+        <UpgradeList>
+          {Object.values(age.upgrades).map((up) =>
+            <Upgrade
+              key={up.id}
+              upgrade={up}
+              bought={upgrades.purchasedUpgrades[age.id][up.id]}
+              onPurchase={() => onPurchase(age.id, up.id)}
+            />
+          )}
+        </UpgradeList>
+      </>
+    )}
   </Container>
 }
 

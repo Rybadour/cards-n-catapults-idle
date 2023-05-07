@@ -1,6 +1,6 @@
-import { ResourceType, TownUpgrade } from "../shared/types";
+import { ResourceType, TownUpgrade } from "../../shared/types";
 
-const upgrades: Record<string, TownUpgrade> = {
+export const stoneAgeTech: Record<string, TownUpgrade> = {
   betterBerries: {
     id: '',
     name: 'Bigger Berries',
@@ -59,11 +59,3 @@ const upgrades: Record<string, TownUpgrade> = {
     unlockedCards: ['campfire']
   },
 }
-
-Object.keys(upgrades)
-  .forEach((id) => {
-    const upgrade = upgrades[id];
-    upgrade.id = id;
-  });
-
-export default upgrades;

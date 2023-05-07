@@ -199,6 +199,7 @@ export interface Upgrade {
   icon: string,
   description: string,
   summary: string,
+  completeAge?: true,
   unlockedCards?: CardId[],
   bonuses?: Partial<CardPartialBonuses>,
   cardsBonuses?: Record<CardId, Partial<CardPartialBonuses>>,
@@ -236,6 +237,13 @@ export interface CardBonuses {
 
 export type CardPartialBonuses = {
   [Property in keyof CardBonuses]: Partial<BonusValues>;
+}
+
+export interface TechAge {
+  id: string,
+  name: string,
+  description: string,
+  upgrades: Record<string, TownUpgrade>,
 }
 
 export type PrestigePack = {

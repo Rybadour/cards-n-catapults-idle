@@ -1,27 +1,34 @@
 import { MyCreateSlice } from ".";
-import upgrades from "../config/upgrades";
+import agesConfig from "../config/technologies/ages";
 import { CardDefsSlice } from "./card-definitions";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
+import { mapValues } from "lodash";
 
 export interface UpgradesSlice {
-  purchasedUpgrades: Record<string, boolean>;
+  purchasedUpgrades: Record<string, Record<string, boolean>>;
 
-  purchaseUpgrade: (id: string) => void;
+  purchaseUpgrade: (ageId: string, upId: string) => void;
 }
 
 const createUpgradesSlice: MyCreateSlice<UpgradesSlice, [() => StatsSlice, () => CardDefsSlice, () => DiscoverySlice]>
 = (set, get, stats, cardDefs, discovery) => {
   return {
-    purchasedUpgrades: {},
+    purchasedUpgrades: mapValues(agesConfig, (age) => ({})),
 
-    purchaseUpgrade: (id) => {
+    purchaseUpgrade: (ageId, upId) => {
       const purchasedUpgrades = get().purchasedUpgrades;
-      const upgrade = upgrades[id];
-      if (purchasedUpgrades[id] || !stats().canAfford(upgrade.cost)) return;
+      const upgrade = agesConfig[ageId].upgrades[upId];
+      if (purchasedUpgrades[ageId][upId] || !stats().canAfford(upgrade.cost)) return;
 
       const newState: Partial<UpgradesSlice> = {
-        purchasedUpgrades: { ...get().purchasedUpgrades, [id]: true }
+        purchasedUpgrades: mapValues(get().purchasedUpgrades, (upgrades, theAgeId) => {
+          if (theAgeId === ageId) {
+            return { ...upgrades, [upId]: true };
+          } else {
+            return upgrades;
+          }
+        })
       };
       cardDefs().addUpgrade(upgrade);
 
