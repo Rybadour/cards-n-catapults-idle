@@ -4,9 +4,11 @@ import { CardDefsSlice } from "./card-definitions";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
 import { mapValues } from "lodash";
+import { AgeId, UpgradeId } from "../shared/types";
 
 export interface UpgradesSlice {
-  purchasedUpgrades: Record<string, Record<string, boolean>>;
+  unlockedAges: AgeId[],
+  purchasedUpgrades: Record<AgeId, Record<UpgradeId, boolean>>;
 
   purchaseUpgrade: (ageId: string, upId: string) => void;
 }
@@ -14,6 +16,7 @@ export interface UpgradesSlice {
 const createUpgradesSlice: MyCreateSlice<UpgradesSlice, [() => StatsSlice, () => CardDefsSlice, () => DiscoverySlice]>
 = (set, get, stats, cardDefs, discovery) => {
   return {
+    unlockedAges: ['stoneAge'],
     purchasedUpgrades: mapValues(agesConfig, (age) => ({})),
 
     purchaseUpgrade: (ageId, upId) => {
@@ -30,13 +33,17 @@ const createUpgradesSlice: MyCreateSlice<UpgradesSlice, [() => StatsSlice, () =>
           }
         })
       };
+      if (upgrade.unlockAge) {
+        newState.unlockedAges = [...get().unlockedAges, upgrade.unlockAge];
+      }
+      set(newState);
+
       cardDefs().addUpgrade(upgrade);
 
       if (upgrade.unlockedCards) {
         discovery().discoverCards(upgrade.unlockedCards);
       }
 
-      set(newState);
       stats().useResources(upgrade.cost);
     }
   };

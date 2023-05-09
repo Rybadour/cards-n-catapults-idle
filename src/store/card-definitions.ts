@@ -43,6 +43,8 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> 
     },
 
     addUpgrade: (upgrade) => {
+      if (!upgrade.bonuses || !upgrade.cardsBonuses) return;
+
       const cardsBonuses = get().cardsBonuses;
       let cardsChanged: CardId[] = [];
       if (upgrade.bonuses) {

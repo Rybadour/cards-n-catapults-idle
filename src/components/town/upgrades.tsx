@@ -18,21 +18,23 @@ export default function Upgrades() {
   }, [upgrades]);
 
   return <Container>
-    {Object.values(agesConfig).map((age) => 
-      <>
-        <SectionHeader>{age.name}</SectionHeader>
+    {Object.values(agesConfig)
+      .filter((age) => upgrades.unlockedAges.includes(age.id))
+      .map((age) => 
+        <TechAgeSection>
+          <SectionHeader>{age.name}</SectionHeader>
 
-        <UpgradeList>
-          {Object.values(age.upgrades).map((up) =>
-            <Upgrade
-              key={up.id}
-              upgrade={up}
-              bought={upgrades.purchasedUpgrades[age.id][up.id]}
-              onPurchase={() => onPurchase(age.id, up.id)}
-            />
-          )}
-        </UpgradeList>
-      </>
+          <UpgradeList>
+            {Object.values(age.upgrades).map((up) =>
+              <Upgrade
+                key={up.id}
+                upgrade={up}
+                bought={upgrades.purchasedUpgrades[age.id][up.id]}
+                onPurchase={() => onPurchase(age.id, up.id)}
+              />
+            )}
+          </UpgradeList>
+        </TechAgeSection>
     )}
   </Container>
 }
@@ -87,6 +89,10 @@ const Container = styled.div`
 const UpgradeList = styled.div`
   display: flex;
   gap: 6px;
+`;
+
+const TechAgeSection = styled.div`
+  margin-bottom: 20px;
 `;
 
 const UpgradeButton = styled.button<{bought: boolean}>`

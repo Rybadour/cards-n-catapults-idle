@@ -1,4 +1,4 @@
-import { TechAge, TownUpgrade } from "../../shared/types";
+import { ResourceType, TechAge, TownUpgrade } from "../../shared/types";
 import { stoneAgeTech } from "./stone-age";
 
 const ages: Record<string, TechAge> = {
@@ -6,7 +6,29 @@ const ages: Record<string, TechAge> = {
     id: '',
     name: 'Stone Age',
     description: '',
-    upgrades: stoneAgeTech
+    upgrades: stoneAgeTech,
+    megaUpgrades: {
+      tradeDeal: {
+        id: '',
+        name: 'Secret Trade Deal',
+        icon: 'cornucopia',
+        description: 'Wood can be sold for twice as much.',
+        summary: '',
+        cost: {}, // Note: Unused atm
+        sellResourceBonus: {
+          [ResourceType.Wood]: {
+            baseMulti: 2,
+          }
+        }
+      }
+    }
+  },
+  bronzeAge: {
+    id: '',
+    name: 'Bronze Age',
+    description: '',
+    upgrades: {},
+    megaUpgrades: {}
   }
 }
 

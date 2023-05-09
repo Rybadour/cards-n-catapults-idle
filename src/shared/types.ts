@@ -190,19 +190,22 @@ export enum TargettedEffectType {
 export type Grid = (RealizedCard | null)[][];
 
 export type CardId = string;
+export type AgeId = string;
+export type UpgradeId = string;
 
 export const EMPTY_CARD = 'EMPTY';
 
 export interface Upgrade {
-  id: string,
+  id: UpgradeId,
   name: string,
   icon: string,
   description: string,
   summary: string,
-  completeAge?: true,
   unlockedCards?: CardId[],
   bonuses?: Partial<CardPartialBonuses>,
   cardsBonuses?: Record<CardId, Partial<CardPartialBonuses>>,
+  sellResourceBonus?: Partial<Record<ResourceType, Partial<BonusValues>>>,
+  unlockAge?: string,
 }
 
 export type TownUpgrade = Upgrade & {
@@ -240,10 +243,11 @@ export type CardPartialBonuses = {
 }
 
 export interface TechAge {
-  id: string,
+  id: AgeId,
   name: string,
   description: string,
   upgrades: Record<string, TownUpgrade>,
+  megaUpgrades: Record<string, TownUpgrade>,
 }
 
 export type PrestigePack = {

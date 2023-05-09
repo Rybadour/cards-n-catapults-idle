@@ -1,6 +1,6 @@
-import { ResourceType, TownUpgrade } from "../../shared/types";
+import { ResourceType, TownUpgrade, UpgradeId } from "../../shared/types";
 
-export const stoneAgeTech: Record<string, TownUpgrade> = {
+export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
   betterBerries: {
     id: '',
     name: 'Bigger Berries',
@@ -56,6 +56,18 @@ export const stoneAgeTech: Record<string, TownUpgrade> = {
       [ResourceType.Gold]: 1000,
       [ResourceType.Wood]: 500,
     },
-    unlockedCards: ['campfire']
+    unlockedCards: ['campfire', 'rat-snack']
   },
+  nextAge: {
+    id: '',
+    name: 'Dawn of a New Age',
+    icon: 'laurel-crown',
+    description: 'Unlocks something new!',
+    summary: '',
+    cost: {
+      [ResourceType.Gold]: 10000,
+      [ResourceType.Wood]: 1,
+    },
+    unlockAge: 'bronzeAge',
+  }
 }
