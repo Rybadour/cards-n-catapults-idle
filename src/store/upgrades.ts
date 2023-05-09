@@ -4,20 +4,37 @@ import { CardDefsSlice } from "./card-definitions";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
 import { mapValues } from "lodash";
-import { AgeId, UpgradeId } from "../shared/types";
+import { AgeId, RealizedTechAge, Upgrade, UpgradeId } from "../shared/types";
 
 export interface UpgradesSlice {
-  unlockedAges: AgeId[],
-  purchasedUpgrades: Record<AgeId, Record<UpgradeId, boolean>>;
+  techAges: Record<AgeId, RealizedTechAge>,
+  purchasedUpgrades: Record<AgeId, Record<UpgradeId, boolean>>,
 
   purchaseUpgrade: (ageId: string, upId: string) => void;
+  chooseMegaUpgrade: (ageId: string, upId: string) => void;
 }
 
 const createUpgradesSlice: MyCreateSlice<UpgradesSlice, [() => StatsSlice, () => CardDefsSlice, () => DiscoverySlice]>
 = (set, get, stats, cardDefs, discovery) => {
+  function applyUpgrade(upgrade: Upgrade) {
+    if (upgrade.bonuses || upgrade.cardsBonuses) {
+      cardDefs().addUpgrade(upgrade);
+    }
+    if (upgrade.unlockedCards) {
+      discovery().discoverCards(upgrade.unlockedCards);
+    }
+    if (upgrade.sellResourceBonus) {
+      stats().addSellResourceBonus(upgrade.sellResourceBonus);
+    }
+  }
+
   return {
-    unlockedAges: ['stoneAge'],
     purchasedUpgrades: mapValues(agesConfig, (age) => ({})),
+    techAges: mapValues(agesConfig, (age) => ({
+      ...age,
+      unlocked: age.id === 'stoneAge',
+      completed: false,
+    })),
 
     purchaseUpgrade: (ageId, upId) => {
       const purchasedUpgrades = get().purchasedUpgrades;
@@ -34,18 +51,33 @@ const createUpgradesSlice: MyCreateSlice<UpgradesSlice, [() => StatsSlice, () =>
         })
       };
       if (upgrade.unlockAge) {
-        newState.unlockedAges = [...get().unlockedAges, upgrade.unlockAge];
+        const techAges = { ...get().techAges };
+        techAges[ageId].completed = true;
+        techAges[upgrade.unlockAge].unlocked = true;
+        newState.techAges = techAges;
       }
       set(newState);
-
-      cardDefs().addUpgrade(upgrade);
-
-      if (upgrade.unlockedCards) {
-        discovery().discoverCards(upgrade.unlockedCards);
-      }
-
       stats().useResources(upgrade.cost);
-    }
+      applyUpgrade(upgrade);
+    },
+
+    chooseMegaUpgrade: (ageId, upId) => {
+      const upgrade = agesConfig[ageId].megaUpgrades[upId];
+      if (!upgrade) return;
+
+      const techAges = get().techAges;
+      set({
+        techAges: {
+          ...techAges,
+          [ageId]: {
+            ...techAges[ageId],
+            chosenMegaUpgrade: upId,
+          }
+        },
+      });
+
+      applyUpgrade(upgrade);
+    },
   };
 };
 

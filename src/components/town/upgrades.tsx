@@ -18,8 +18,8 @@ export default function Upgrades() {
   }, [upgrades]);
 
   return <Container>
-    {Object.values(agesConfig)
-      .filter((age) => upgrades.unlockedAges.includes(age.id))
+    {Object.values(upgrades.techAges)
+      .filter((age) => age.unlocked)
       .map((age) => 
         <TechAgeSection>
           <SectionHeader>{age.name}</SectionHeader>
@@ -34,6 +34,25 @@ export default function Upgrades() {
               />
             )}
           </UpgradeList>
+
+          {age.completed && 
+            <MegaUpgradesContainer>
+              <MegaUpgradesTitle>Choose one major breakthrough:</MegaUpgradesTitle>
+
+              <MegaUpgradesList>
+                <UpgradeList>
+                  {Object.values(age.megaUpgrades).map((up) =>
+                    <Upgrade
+                      key={up.id}
+                      upgrade={up}
+                      bought={age.chosenMegaUpgrade === up.id}
+                      onPurchase={() => upgrades.chooseMegaUpgrade(age.id, up.id)}
+                    />
+                  )}
+                </UpgradeList>
+              </MegaUpgradesList>
+            </MegaUpgradesContainer>
+          }
         </TechAgeSection>
     )}
   </Container>
@@ -141,4 +160,21 @@ const Costs = styled.div`
 const CostLine = styled.div`
   display: flex;
   gap: 3px;
+`;
+
+const MegaUpgradesContainer = styled.div`
+  margin-top: 12px;
+`;
+
+const MegaUpgradesTitle = styled.strong`
+  display: block;
+  color: #AAA;
+  margin-bottom: 4px;
+`;
+
+const MegaUpgradesList = styled.div`
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 6px;
+  display: inline-block;
 `;

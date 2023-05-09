@@ -3,7 +3,7 @@ import { cloneDeep, mapValues } from "lodash";
 import baseCardsConfig from "../config/cards";
 import { DEFAULT_CARD_BONUSES } from "../shared/constants";
 import { BonusValues, Card, CardBonuses, CardId, CardPartialBonuses, ResourceType, Upgrade } from "../shared/types";
-import { autoFormatNumber, formatNumber, using } from "../shared/utils";
+import { addToBonusValue, autoFormatNumber, formatNumber, getFinalBonusValue, using } from "../shared/utils";
 import { CardGridsSlice } from "./card-grids";
 import { MyCreateSlice } from ".";
 
@@ -106,14 +106,9 @@ function getRecomputedCardDef(cardId: CardId, bonuses: CardBonuses) {
   return def;
 }
 
-function getFinalBonusValue(base: number, bonus: BonusValues) {
-  return (base + bonus.baseAdd) * bonus.baseMulti
-}
-
 function mergeCardBonuses(cardBonuses: CardBonuses, newBonuses: Partial<CardPartialBonuses>) {
   (Object.keys(newBonuses) as (keyof CardBonuses)[]).forEach(p => {
-    cardBonuses[p].baseAdd += newBonuses[p]?.baseAdd ?? 0; 
-    cardBonuses[p].baseMulti *= newBonuses[p]?.baseMulti ?? 1; 
+    addToBonusValue(cardBonuses[p], newBonuses[p]!);
   })
 }
 

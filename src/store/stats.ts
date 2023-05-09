@@ -1,14 +1,17 @@
-import { mapValues } from "lodash";
+import { mapValues, mergeWith } from "lodash";
 import { MyCreateSlice } from ".";
 
 import global from "../config/global";
-import { defaultResourcesMap, PrestigeUpgrade, ResourcesMap, ResourceType } from "../shared/types";
-import { enumFromKey, mergeSumPartial } from "../shared/utils";
+import { DEFAULT_BONUS_VALUES } from "../shared/constants";
+import { BonusValues, defaultResourcesMap, PrestigeUpgrade, ResourcesMap, ResourceType } from "../shared/types";
+import { addToBonusValue, enumFromKey, getFinalBonusValue, mergeSumPartial } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 
 export interface StatsSlice {
   resources: ResourcesMap,
   resourcesPerSec: ResourcesMap,
+  sellResourceBonuses: Record<ResourceType, BonusValues>;
+  sellResourcePrice: Record<ResourceType, number>;
 
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => void,
   updatePerSec: (newPerSec: ResourcesMap) => void,
@@ -16,6 +19,7 @@ export interface StatsSlice {
   useResource: (resource: ResourceType, amount: number) => void,
   useResources: (resources: Partial<ResourcesMap>) => void,
   sellResource: (resource: ResourceType, percent: number) => void,
+  addSellResourceBonus: (sellResourceBonus: Partial<Record<ResourceType, Partial<BonusValues>>>) => void,
   resetResource: (resource: ResourceType) => void,
   prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
   getSaveData: () => any,
@@ -31,6 +35,8 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
   return {
     resources: {...DEFAULT_RESOURCES},
     resourcesPerSec: { ...defaultResourcesMap },
+    sellResourceBonuses: mapValues(DEFAULT_RESOURCES, (_) => ({...DEFAULT_BONUS_VALUES})),
+    sellResourcePrice: mapValues(DEFAULT_RESOURCES, () => 1),
 
     update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => {
       if (newResourcesPerSec) {
@@ -77,11 +83,28 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
     sellResource: (resource, percent) => {
       const resources = get().resources;
       const resourcesUsed = resources[resource] * percent;
-      const goldGiven = resourcesUsed;
+      const goldGiven = resourcesUsed * get().sellResourcePrice[resource];
       set({
         resources: mergeSumPartial(resources, {
           [ResourceType.Gold]: goldGiven,
           [resource]: -resourcesUsed,
+        })
+      })
+    },
+
+    addSellResourceBonus: (sellResourceBonus) => {
+      const newSellResourceBonuses = mergeWith(get().sellResourceBonuses, sellResourceBonus, (a, b) => {
+        addToBonusValue(a, b);
+        return a;
+      });
+      set({
+        sellResourceBonuses: newSellResourceBonuses,
+        sellResourcePrice: mapValues(get().sellResourcePrice, (oldPrice, resource) => {
+          if (sellResourceBonus[resource as ResourceType]) {
+            return getFinalBonusValue(1, newSellResourceBonuses[resource as ResourceType]);
+          } else {
+            return oldPrice;
+          }
         })
       })
     },

@@ -12,7 +12,7 @@ import useStore from "../../store";
 
 export function Resources() {
   const stats = useStore(s => pick(s.stats, [
-    'resources', 'resourcesPerSec', 'sellResource'
+    'resources', 'resourcesPerSec', 'sellResourcePrice', 'sellResource'
   ]), shallow);
   const discoveredResources = useStore(s => s.discovery.discoveredResources);
 
@@ -30,6 +30,7 @@ export function Resources() {
           resource={resource}
           amount={stats.resources[resource]}
           perSec={stats.resourcesPerSec[resource]}
+          sellPrice={stats.sellResourcePrice[resource]}
           onSell={onSell}
         />
       )}
@@ -40,6 +41,7 @@ interface ResourceProps {
   resource: ResourceType;
   amount: number;
   perSec: number;
+  sellPrice: number;
   onSell: (resource: ResourceType, percent: number) => void,
 }
 function Resource(props: ResourceProps) {
@@ -68,7 +70,7 @@ function Resource(props: ResourceProps) {
 
     {(isOpen && props.resource !== ResourceType.Gold) &&
       <Tooltip ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-        <TooltipTitle>Sell for 1<Icon size="xs" icon={resourceIconMap[ResourceType.Gold]} /> each</TooltipTitle>
+        <TooltipTitle>Sell for {props.sellPrice}<Icon size="xs" icon={resourceIconMap[ResourceType.Gold]} /> each</TooltipTitle>
         
         <SellButtons>
           <button onClick={() => props.onSell(props.resource, 0.1)}>10%</button>

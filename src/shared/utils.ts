@@ -1,5 +1,5 @@
 import { mergeWith, uniq } from "lodash";
-import { GridCoords, RealizedCard } from "./types";
+import { BonusValues, GridCoords, RealizedCard } from "./types";
 
 export function formatNumber(n: number, minimumFractionDigits: number, maximumFractionDigits: number): string {
   if (isNaN(n)) return '';
@@ -63,4 +63,13 @@ export function getUniqueCardIdsFromRealizedCards(cards: RealizedCard[]) {
 
 export function getTranslatedGridCoords(coords: GridCoords[], center: GridCoords) {
   return coords.map(coords => ({x: coords.x + center.x, y: coords.y + center.y}));
+}
+
+export function getFinalBonusValue(base: number, bonus: BonusValues) {
+  return (base + bonus.baseAdd) * bonus.baseMulti
+}
+
+export function addToBonusValue(a: BonusValues, b: Partial<BonusValues>) {
+  a.baseAdd += b.baseAdd ?? 0; 
+  a.baseMulti *= b.baseMulti ?? 1; 
 }

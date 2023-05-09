@@ -1,4 +1,4 @@
-import { ResourceType, TechAge, TownUpgrade } from "../../shared/types";
+import { ResourceType, TechAge } from "../../shared/types";
 import { stoneAgeTech } from "./stone-age";
 
 const ages: Record<string, TechAge> = {
@@ -40,6 +40,11 @@ Object.keys(ages)
     Object.keys(age.upgrades)
       .forEach((id) => {
         age.upgrades[id].id = id;
+      });
+
+    Object.keys(age.megaUpgrades)
+      .forEach((id) => {
+        age.megaUpgrades[id].id = id;
       });
   });
 

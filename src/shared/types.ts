@@ -250,6 +250,12 @@ export interface TechAge {
   megaUpgrades: Record<string, TownUpgrade>,
 }
 
+export type RealizedTechAge = {
+  unlocked: boolean,
+  completed: boolean,
+  chosenMegaUpgrade?: UpgradeId,
+} & TechAge;
+
 export type PrestigePack = {
   id: string,
   name: string,

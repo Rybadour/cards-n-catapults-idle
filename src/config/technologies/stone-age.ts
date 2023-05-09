@@ -65,8 +65,8 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Unlocks something new!',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 10000,
-      [ResourceType.Wood]: 1,
+      [ResourceType.Gold]: 3000,
+      [ResourceType.Wood]: 2000,
     },
     unlockAge: 'bronzeAge',
   }
