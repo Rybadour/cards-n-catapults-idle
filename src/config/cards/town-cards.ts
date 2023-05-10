@@ -61,16 +61,23 @@ const cards: Record<CardId, Card> = {
     icon: "sun-priest",
     tier: 2,
     type: CardType.Person,
-    description: "Improves nearby people by 50%.",
-    foodDrain: 0.5,
+    description: "Generates renown for every adjacent person but costs gold.",
+    foodDrain: 0.2,
     baseCost: 1000,
-    costGrowth: 1.2,
-    bonusToAdjacent: {
-      strength: 0.5,
-      bonusType: BonusType.Strength,
-      shape: MatchingGridShape.OrthoAdjacent,
-      cardTypes: [CardType.Person],
+    costGrowth: 1.5,
+    passive: {
+      strength: 1,
+      resource: ResourceType.Renown,
+      multiplyByAdjacent: {
+        shape: MatchingGridShape.AllAdjacent,
+        cardTypes: [CardType.Person],
+      }
     },
+    costPerSec: {
+      resource: ResourceType.Gold,
+      cost: 0.5,
+    },
+    multiplyCostPerAdjacent: true,
     disableRules: [hungryDisable],
     mastery: {
       baseCost: 2,

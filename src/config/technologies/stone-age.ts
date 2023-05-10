@@ -58,11 +58,22 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     },
     unlockedCards: ['campfire', 'rat-snack']
   },
+  religion: {
+    id: '',
+    name: 'Religion',
+    icon: 'sun-priest',
+    description: 'Unlocks a way to generate Renown.',
+    summary: '',
+    cost: {
+      [ResourceType.Gold]: 1500,
+    },
+    unlockedCards: ['soothsayer']
+  },
   nextAge: {
     id: '',
     name: 'Dawn of a New Age',
     icon: 'laurel-crown',
-    description: 'Unlocks something new!',
+    description: 'One big step...',
     summary: '',
     cost: {
       [ResourceType.Gold]: 3000,
