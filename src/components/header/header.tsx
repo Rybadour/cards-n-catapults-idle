@@ -46,7 +46,7 @@ function Header() {
     scenes.switchScene(scene);
   }, [scenes.switchScene]);
 
-  const sceneList = [Scene.Economy, Scene.Prestige, Scene.Combat];
+  const sceneList = [Scene.Economy];
 
   return <>
     <header>
