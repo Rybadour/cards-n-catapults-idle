@@ -3,7 +3,7 @@ import { MyCreateSlice } from ".";
 
 import global from "../config/global";
 import { DEFAULT_BONUS_VALUES } from "../shared/constants";
-import { BonusValues, defaultResourcesMap, PrestigeUpgrade, ResourcesMap, ResourceType } from "../shared/types";
+import { BonusValues, defaultResourcesMap, DynamicBonus, PrestigeUpgrade, ResourcesMap, ResourceType } from "../shared/types";
 import { addToBonusValue, enumFromKey, getFinalBonusValue, mergeSumPartial } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 
@@ -11,6 +11,7 @@ export interface StatsSlice {
   resources: ResourcesMap,
   resourcesPerSec: ResourcesMap,
   sellResourceBonuses: Record<ResourceType, BonusValues>;
+  dynamicSellResourceBonuses: Record<ResourceType, BonusValues>;
   sellResourcePrice: Record<ResourceType, number>;
 
   update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => void,
@@ -36,6 +37,7 @@ const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set
     resources: {...DEFAULT_RESOURCES},
     resourcesPerSec: { ...defaultResourcesMap },
     sellResourceBonuses: mapValues(DEFAULT_RESOURCES, (_) => ({...DEFAULT_BONUS_VALUES})),
+    dynamicSellResourceBonuses: mapValues(DEFAULT_RESOURCES, (_) => ({...DEFAULT_BONUS_VALUES})),
     sellResourcePrice: mapValues(DEFAULT_RESOURCES, () => 1),
 
     update: (elapsed: number, newResourcesPerSec: ResourcesMap | null) => {

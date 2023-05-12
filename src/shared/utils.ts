@@ -1,5 +1,5 @@
 import { mergeWith, uniq } from "lodash";
-import { BonusValues, GridCoords, RealizedCard } from "./types";
+import { BonusValues, DynamicBonus, GridCoords, RealizedCard } from "./types";
 
 export function formatNumber(n: number, minimumFractionDigits: number, maximumFractionDigits: number): string {
   if (isNaN(n)) return '';

@@ -12,12 +12,15 @@ const ages: Record<string, TechAge> = {
         id: '',
         name: 'Secret Trade Deal',
         icon: 'cornucopia',
-        description: 'Wood can be sold for twice as much.',
+        description: '(Broken) Gain a bonus to selling wood based on Renown.',
         summary: '',
         cost: {}, // Note: Unused atm
-        sellResourceBonus: {
+        dynamicSellResourceBonus: {
           [ResourceType.Wood]: {
-            baseMulti: 2,
+            trigger: [DynamicTriggerType.Resource, ResourceType.Renown],
+            getBonus: (input) => ({
+              baseMulti: Math.pow(input, 0.2),
+            })
           }
         }
       }

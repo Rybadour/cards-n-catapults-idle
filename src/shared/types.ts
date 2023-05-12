@@ -209,6 +209,7 @@ export interface Upgrade {
   bonuses?: Partial<CardPartialBonuses>,
   cardsBonuses?: Record<CardId, Partial<CardPartialBonuses>>,
   sellResourceBonus?: Partial<Record<ResourceType, Partial<BonusValues>>>,
+  dynamicSellResourceBonus?: Partial<Record<ResourceType, DynamicBonus>>,
   unlockAge?: string,
 }
 
@@ -230,6 +231,15 @@ export type PrestigeUpgrade = Upgrade & {
 export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
   quantity: number;
 };
+
+export enum DynamicTriggerType {
+  Resource = "Resource",  
+}
+
+export interface DynamicBonus {
+  trigger: [DynamicTriggerType.Resource, ResourceType],
+  getBonus: (input: number) => Partial<BonusValues>;
+}
 
 export interface BonusValues {
   baseAdd: number;
