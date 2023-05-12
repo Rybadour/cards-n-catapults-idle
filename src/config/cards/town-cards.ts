@@ -363,18 +363,22 @@ const cards: Record<CardId, Card> = {
     icon: "hammer-nails",
     tier: 2,
     type: CardType.Building,
-    description: "{{bonusToAdjacent}}. Uses {{costPerSec}}.",
+    description: "Makes tools and boosts all people and buildings in the same row and column.",
     baseCost: 500,
-    costGrowth: 1.5,
+    costGrowth: 2,
     bonusToAdjacent: {
       strength: 1,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.RowAndColumn,
       cardTypes: [CardType.Person, CardType.Building],
     },
+    passive: {
+      strength: 0.05,
+      resource: ResourceType.Tools,
+    },
     costPerSec: {
       resource: ResourceType.Wood,
-      cost: 5,
+      cost: 4,
     },
     mastery: {
       baseCost: 1,
@@ -418,6 +422,8 @@ const cards: Record<CardId, Card> = {
     description: "Forest of trees",
     baseCost: 0,
     costGrowth: 0,
+    noEffect: true,
+
     mastery: {
       baseCost: 2,
       growth: 2,

@@ -28,7 +28,7 @@ export interface StatsSlice {
 
 const DEFAULT_RESOURCES = {
   ...defaultResourcesMap,
-  [ResourceType.Gold]: global.startingGold
+  ...global.startingResources,
 };
 
 const createStatsSlice: MyCreateSlice<StatsSlice, [() => DiscoverySlice]> = (set, get, discovery) => {

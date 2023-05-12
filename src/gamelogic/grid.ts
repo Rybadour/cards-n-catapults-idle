@@ -20,6 +20,9 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
 
   // Disable and reset
   iterateGrid(grid, (card, x, y) => {
+    const cardDef = cardDefs[card.cardId];
+    if (cardDef.noEffect) return;
+
     card.bonuses = {
       [BonusType.Strength]: 1,
       [BonusType.FoodDrain]: 1,
@@ -30,7 +33,6 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
     card.totalStrength = 0;
     card.totalCost = 0;
     card.cardMarks = {};
-    const cardDef = cardDefs[card.cardId];
 
     if (cardDef.foodDrain) {
       iterateGridShape(grid, x, y, MatchingGridShape.OrthoAdjacent, (other, x2, y2) => {
@@ -89,13 +91,14 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
   iterateGrid(grid, (card, x, y) => {
     if (card.isDisabled || card.isExpiredAndReserved) return;
     const cardDef = cardDefs[card.cardId];
+    if (cardDef.noEffect) return;
 
     using(cardDef.bonusToAdjacent, (bta) => {
       iterateGridMatch(grid, cardDefs, x, y, bta, (adj, x2, y2) => {
         if (!adj) return;
         adj.bonuses[bta.bonusType] *= 1 + bta.strength;
         card.cardMarks[`${x2}:${y2}`] = (bta.strength > 0 ? MarkType.Buff : MarkType.Exclusion);
-      });
+      }, true);
     });
 
     using(cardDef.bonusToFoodCapacity, (btfc) => {
@@ -103,7 +106,7 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
         if (!adj) return;
         adj.durabilityBonus *= btfc.strength;
         card.cardMarks[`${x2}:${y2}`] = MarkType.Buff;
-      });
+      }, true);
     });
     
     using(cardDef.abilityStrengthModifier, (mod) => {
@@ -130,6 +133,7 @@ export function updateGridTotals(grid: Grid, cardDefs: Record<CardId, Card>, sta
   iterateGrid(grid, (card, x, y) => {
     if (card.isDisabled || card.isExpiredAndReserved) return;
     const cardDef = cardDefs[card.cardId];
+    if (cardDef.noEffect) return;
 
     let numAdjacent = 0;
 
@@ -189,6 +193,8 @@ export function updateGrid(
 
   iterateGrid(grid, (card, x, y) => {
     const cardDef = cardDefs[card.cardId];
+    if (cardDef.noEffect) return;
+
     using(cardDef.costPerSec, (cps) => {
       if (card.isDisabled && canAfford(resources, cps)) {
         results.anyChanged = true;
@@ -502,9 +508,16 @@ function iterateGridShapeCards(
 
 function iterateGridMatch(
   grid: Grid, cardDefs: Record<CardId, Card>, x: number, y: number, match: GridMatch,
-  callback: (card: RealizedCard | null, x: number, y: number) => void
+  callback: (card: RealizedCard | null, x: number, y: number) => void,
+  excludeNoEffect = false
 ) {
   iterateGridShape(grid, x, y, match.shape, (card, ax, ay) => {
+    if (excludeNoEffect) {
+      if (!card || (card && (card.isDisabled || card.isExpiredAndReserved || cardDefs[card.cardId].noEffect))) {
+        return;
+      }
+    }
+
     const cardId = (card && !card.isExpiredAndReserved) ? card.cardId : EMPTY_CARD;
     if (match.cards?.includes(cardId)) {
       callback(card, ax, ay);

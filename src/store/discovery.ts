@@ -1,4 +1,4 @@
-import { pick } from "lodash";
+import { mapValues, pick } from "lodash";
 
 import global from "../config/global";
 import { CardId, PrestigeUpgrade, ResourceType } from "../shared/types";
@@ -28,9 +28,7 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
     unlockedCards: {},
     cardsDiscoveredThisPrestige: addToDiscoverMap({}, Object.keys(global.startingCards)),
     discoveredUpgrades: addToDiscoverMap({}, DEFAULT_UPGRADES),
-    discoveredResources: {
-      [ResourceType.Gold]: true,
-    },
+    discoveredResources: mapValues(global.startingResources, (_) => true),
 
     discoverCards: (cardIds) => {
       if (cardIds.length <= 0) return;

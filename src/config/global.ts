@@ -1,4 +1,4 @@
-import { CardId } from "../shared/types";
+import { CardId, ResourceType } from "../shared/types";
 import { Scene } from "../store/scenes";
 
 // Note: Version has 3 parts: major, minor and patch
@@ -6,7 +6,9 @@ import { Scene } from "../store/scenes";
 // Otherwise a patch version is used. Ex. Between 0.2.123 and 0.2.450 no migration is required.
 const global = {
   version: "0.2.0",
-  startingGold: 50,
+  startingResources: {
+    [ResourceType.Gold]: 50,
+  },
   startingCards: {
     lumberjack: 0,
     berries: 2,

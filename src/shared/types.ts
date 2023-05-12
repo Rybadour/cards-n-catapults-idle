@@ -11,6 +11,7 @@ export enum CardType {
 export enum ResourceType {
   Gold = "Gold",
   Wood = "Wood",
+  Tools = "Tools",
   Renown = "Renown",
   MilitaryPower = "Power",
 }
@@ -19,6 +20,7 @@ export type ResourcesMap = Record<ResourceType, number>;
 export const defaultResourcesMap: ResourcesMap = {
   [ResourceType.Gold]: 0,
   [ResourceType.Wood]: 0,
+  [ResourceType.Tools]: 0,
   [ResourceType.Renown]: 0,
   [ResourceType.MilitaryPower]: 0,
 };
@@ -30,10 +32,13 @@ export type Card = {
   tier: number,
   type: CardType,
   description: string,
-  foodDrain?: number,
-  maxDurability?: number,
   baseCost: number,
   costGrowth: number,
+  noEffect?: true,
+
+
+  foodDrain?: number,
+  maxDurability?: number,
 
   passive?: {
     strength: number,

@@ -35,6 +35,18 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
       }
     }
   },
+  toolTech: {
+    id: '',
+    name: 'Primitive Tool Tech',
+    icon: 'stone-crafting',
+    description: 'Unlocks the ability to make tools!',
+    summary: '',
+    cost: {
+      [ResourceType.Gold]: 200,
+      [ResourceType.Wood]: 500,
+    },
+    unlockedCards: ['carpenter']
+  },
   cultivation: {
     id: '',
     name: 'Cultivation',
@@ -42,7 +54,8 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Unlocks new cards.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 800,
+      [ResourceType.Gold]: 500,
+      [ResourceType.Wood]: 500,
     },
     unlockedCards: ['farmer', 'farm', 'corn']
   },

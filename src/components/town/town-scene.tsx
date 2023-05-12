@@ -15,6 +15,7 @@ import { GridControls } from "../shared/grid-controls";
 import global from "../../config/global";
 import Upgrades from "./upgrades";
 
+
 export default function TownScene() {
   const stats = useStore(s => pick(s.stats, [
     'canAfford', 'useResource'
@@ -24,8 +25,8 @@ export default function TownScene() {
   ]), shallow);
 
   const startClearingForest = useCallback((cost: number, x: number, y: number) => {
-    if (stats.canAfford({[ResourceType.Gold]: cost})) {
-      stats.useResource(ResourceType.Gold, cost);
+    if (stats.canAfford({[ResourceType.Tools]: cost})) {
+      stats.useResource(ResourceType.Tools, cost);
       cardGrids.removeCard('town', x, y, false);
     }
   }, [stats.canAfford, stats.useResource, cardGrids.removeCard]);
@@ -46,13 +47,13 @@ export default function TownScene() {
           gridId="town"
           cardControlsInjection={(card, x, y) => {
             const distanceFromCenter = getGridDistance({x, y}, global.startingTown.center);
-            const cost = 50 * Math.pow(10,  (distanceFromCenter - 1));
+            const cost = 5 * Math.pow(5,  (distanceFromCenter - 1));
             if (card?.cardId === 'forest') {
               return <ClearForestButton data-tip="Clear Forest" onClick={() => startClearingForest(cost, x, y)}>
                 <ClearForestIcon>
                   <Icon icon="logging" size="xs" />
                 </ClearForestIcon>
-                {cost} gold
+                {cost} Tools
               </ClearForestButton>;
             }
           }}
