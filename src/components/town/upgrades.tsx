@@ -108,6 +108,7 @@ const Container = styled.div`
 const UpgradeList = styled.div`
   display: flex;
   gap: 6px;
+  flex-wrap: wrap;
 `;
 
 const TechAgeSection = styled.div`

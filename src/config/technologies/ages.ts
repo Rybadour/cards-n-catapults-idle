@@ -1,4 +1,4 @@
-import { ResourceType, TechAge } from "../../shared/types";
+import { DynamicTriggerType, ResourceType, TechAge } from "../../shared/types";
 import { stoneAgeTech } from "./stone-age";
 
 const ages: Record<string, TechAge> = {

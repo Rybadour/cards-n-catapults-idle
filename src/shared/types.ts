@@ -36,7 +36,6 @@ export type Card = {
   costGrowth: number,
   noEffect?: true,
 
-
   foodDrain?: number,
   maxDurability?: number,
 

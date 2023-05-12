@@ -39,7 +39,7 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     id: '',
     name: 'Primitive Tool Tech',
     icon: 'stone-crafting',
-    description: 'Unlocks the ability to make tools!',
+    description: 'Unlocks the ability to make tools.',
     summary: '',
     cost: {
       [ResourceType.Gold]: 200,
