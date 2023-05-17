@@ -40,7 +40,7 @@ export default function CardList(props: CardListProps) {
   }
 
   return <div className="card-inventory">
-    <SectionHeader>Your Cards</SectionHeader>
+    <SectionHeader>Market</SectionHeader>
     <div className="cards">
     {Object.keys(CardType)
       .map(c => enumFromKey(CardType, c))

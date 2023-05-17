@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from "react-dom";
 
 import Header from './components/header/header';
@@ -11,8 +11,11 @@ import { Scene } from './store/scenes';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { CombatScene } from './components/combat/combat-scene';
 import TownScene from './components/town/town-scene';
+import { TutorialModal } from './components/tutorial-modal';
 
 function App() {
+  const [isTutorialOpen, setIsTutorialOpen] = useState(true);
+
   return (
     <div className="App">
       <Header />
@@ -27,6 +30,8 @@ function App() {
           under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
         </div>
       </footer>
+
+      <TutorialModal isOpen={isTutorialOpen} onClose={() => setIsTutorialOpen(false)} />
     </div>
   );
 }
