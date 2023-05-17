@@ -1,9 +1,9 @@
-import { mapValues } from "lodash";
+import { mapValues, uniq, uniqBy } from "lodash";
 import { MyCreateSlice } from ".";
 import allCardsConfig from "../config/cards";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
-import { Card, CardId, CardTracking, CardType, PrestigeUpgrade, RealizedCard, ResourceType } from "../shared/types";
+import { Card, CardId, CardTracking, CardType, PrestigeUpgrade, RealizedCard, ResourceType, defaultResourcesMap } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
@@ -16,7 +16,8 @@ export interface CardsSlice {
   canAffordCard: (id: CardId) => boolean,
   buyCard: (id: CardId) => RealizedCard,
   useCard: (id: CardId) => RealizedCard,
-  returnCard: (card: RealizedCard) => void,
+  sellCard: (card: RealizedCard) => void,
+  sellCards: (card: RealizedCard[]) => void,
   updateInventory: (cardsDelta: Record<CardId, number>, expiredCards: Record<CardId, number>) => void,
   prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
   getSaveData: () => any,
@@ -25,6 +26,29 @@ export interface CardsSlice {
 
 const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => StatsSlice, () => CardDefsSlice]>
 = (set, get, discovery, stats, cardDefs) => {
+  function sellCards(cards: RealizedCard[]) {
+    const newCards = {...get().cards};
+    const providedResources = {...defaultResourcesMap};
+
+    cards.forEach((card) => {
+      if (card.isExpiredAndReserved) return;
+
+      const tracking = {...newCards[card.cardId]};
+      tracking.numActive -= 1;
+      updateCost(cardDefs().defs[card.cardId], tracking);
+      newCards[card.cardId] = tracking;
+
+      let sellAmount = tracking.cost;
+      if (allCardsConfig[card.cardId].type === CardType.Food) {
+        sellAmount *= (card.durability ?? 0) / card.maxDurability;
+      }
+      providedResources[ResourceType.Gold] -= sellAmount;
+    });
+
+    set({cards: newCards});
+    stats().useResources(providedResources);
+  }
+
   return {
     cards: mapValues(allCardsConfig, (card) => {
       const tracking = {
@@ -75,22 +99,12 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       return createCard(cardDefs().defs[id]);
     },
 
-    returnCard: (card) => {
-      if (card.isExpiredAndReserved) return;
+    sellCard: (card) => {
+      sellCards([card]);
+    },
 
-      const newCards = {...get().cards};
-      const tracking = {...newCards[card.cardId]};
-      const cardDef = cardDefs().defs[card.cardId];
-      tracking.numActive -= 1;
-      updateCost(cardDef, tracking);
-      newCards[card.cardId] = tracking;
-      set({cards: newCards});
-
-      let sellAmount = tracking.cost;
-      if (allCardsConfig[card.cardId].type === CardType.Food) {
-        sellAmount *= (card.durability ?? 0) / card.maxDurability;
-      }
-      stats().useResource(ResourceType.Gold, -sellAmount);
+    sellCards: (cards) => {
+      sellCards(cards);
     },
 
     updateInventory: (cardsDelta, expiredCards) => {

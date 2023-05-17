@@ -52,7 +52,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     updateResourcesOfGrid(gridId, results.resourcesPerSec);
 
     if (oldCard && shouldReturnCard) {
-      cards().returnCard(oldCard);
+      cards().sellCard(oldCard);
     }
   }
 
@@ -67,11 +67,11 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
   }
 
   function getCardsFromGrid(gridId: string) {
-    const returnedCards: Record<string, number> = {};
+    const returnedCards: RealizedCard[] = [];
     get().grids[gridId].forEach((row, y) => {
       row.forEach((card, x) => {
         if (card && !card.isStatic) {
-          returnedCards[card.cardId] = (returnedCards[card.cardId] ?? 0) + 1;
+          returnedCards.push(card);
         }
       })
     });
@@ -196,19 +196,19 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     },
 
     clearGrid: (gridId) => {
-      cards().updateInventory(getCardsFromGrid(gridId), {});
+      cards().sellCards(getCardsFromGrid(gridId));
       set({grids: {...get().grids, [gridId]: getEmptyGridWithStatics(gridId)}});
       updateResourcesOfGrid(gridId, {...defaultResourcesMap});
     },
 
     clearAllGrids: () => {
       const grids = get().grids;
-      let returnedCards: Record<string, number> = {};
+      let returnedCards: RealizedCard[] = [];
       Object.keys(grids).forEach((gridId) => {
-        returnedCards = mergeSum(returnedCards, getCardsFromGrid(gridId));
+        returnedCards = returnedCards.concat(getCardsFromGrid(gridId));
       });
 
-      cards().updateInventory(returnedCards, {});
+      cards().sellCards(returnedCards);
       set({
         grids: mapValues(grids, (grid, gridId) => getEmptyGridWithStatics(gridId)),
         gridsResourcesPerSec: mapValues(grids, (grid) => ({...defaultResourcesMap})),

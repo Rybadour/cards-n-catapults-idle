@@ -19,7 +19,7 @@ interface CardGridProps {
 }
 export default function CardGrid(props: CardGridProps) {
   const cardGrids = useStore(s => pick(s.cardGrids, [
-    'grids', 'clearGrid', 'removeCard', 'replaceCard'
+    'grids', 'removeCard', 'replaceCard'
   ]), shallow);
   const [marks, setMarks] = useState<Record<string, MarkType>>({});
 
@@ -78,7 +78,7 @@ type GridTileProps = {
 function GridTile(props: GridTileProps) {
   const cardDefs = useStore(s => s.cardDefs.defs)
   const cards = useStore(s => pick(s.cards, [
-    'cards', 'selectedCard', 'canAffordCard', 'useCard', 'buyCard', 'returnCard'
+    'cards', 'selectedCard', 'canAffordCard', 'useCard', 'buyCard'
   ]), shallow);
 
   const cardDef = props.card ? cardDefs[props.card.cardId] : null;

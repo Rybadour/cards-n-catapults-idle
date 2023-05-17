@@ -18,7 +18,7 @@ export function GridControls(props: {gridId: string}) {
       className='secondary-button'
       data-tip="Returns all cards to your inventory."
       onClick={onClearGrid}
-    >Clear Grid</button>
+    >Sell All, Clear Grid</button>
   </Container>;
 }
 
