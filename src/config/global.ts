@@ -7,11 +7,11 @@ import { Scene } from "../store/scenes";
 const global = {
   version: "0.2.0",
   startingResources: {
-    [ResourceType.Gold]: 50,
+    [ResourceType.Gold]: 110,
   },
   startingCards: {
     lumberjack: 0,
-    berries: 2,
+    berries: 0,
   } as Partial<Record<CardId, number>>,
   startingTown: {
     fill: 'forest',

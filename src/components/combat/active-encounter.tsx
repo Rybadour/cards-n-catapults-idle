@@ -9,7 +9,7 @@ import useStore from '../../store';
 import CardGrid from '../shared/card-grid';
 import { ProgressBar } from '../shared/progress-bar';
 import { Resources } from '../shared/resources';
-import CardList from '../town/card-list';
+import MarketList from '../town/market-list';
 
 export default function ActiveEncounter() {
   const combat = useStore(s => pick(
@@ -43,7 +43,7 @@ export default function ActiveEncounter() {
       <CardGrid gridId='combat' />
     </div>
 
-    <CardList allowedCards={{
+    <MarketList allowedCards={{
       [CardType.Soldier]: true,
       [CardType.Building]: ['campfire'],
       [CardType.Food]: true,

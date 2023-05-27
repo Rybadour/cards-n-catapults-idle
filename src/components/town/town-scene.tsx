@@ -3,7 +3,7 @@ import { pick } from "lodash";
 import shallow from "zustand/shallow";
 import { useCallback } from "react";
 
-import CardList from './card-list';
+import MarketList from './market-list';
 import { CardType, ResourceType } from "../../shared/types";
 import CardGrid, { GRID_SIZE } from "../shared/card-grid";
 import { Resources } from "../shared/resources";
@@ -61,7 +61,7 @@ export default function TownScene() {
       </ScrollableContainer>
     </MiddleSection>
     <SideSection>
-      <CardList allowedCards={{
+      <MarketList allowedCards={{
         [CardType.Building]: true,
         [CardType.Food]: true,
         [CardType.Person]: true,

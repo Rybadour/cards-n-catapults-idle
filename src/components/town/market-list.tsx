@@ -10,16 +10,16 @@ import Icon from '../../shared/components/icon';
 import { Card, CardType, ResourceType } from '../../shared/types';
 import { enumFromKey, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
-import { SectionHeader } from '../shared/common-styles';
+import { SectionBlurb, SectionHeader } from '../shared/common-styles';
 import resourcesConfig from '../../config/resources';
 
-import './card-list.scss';
+import './market-list.scss';
 
-export interface CardListProps {
+export interface MarketListProps {
   allowedCards: Record<CardType, boolean | string[]>,
 }
 
-export default function CardList(props: CardListProps) {
+export default function MarketList(props: MarketListProps) {
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const cardsDiscovered = useStore(s => s.discovery.cardsDiscoveredThisPrestige);
 
@@ -38,9 +38,10 @@ export default function CardList(props: CardListProps) {
     return typeof allowed === "boolean" ? allowed : allowed.includes(card.id);
   }
 
-  return <div className="card-inventory">
+  return <div className="market">
     <SectionHeader>Market</SectionHeader>
-    <div className="cards">
+    <SectionBlurb>Select and place something into the grid to purchase it.</SectionBlurb>
+    <div className="category-list">
     {Object.keys(CardType)
       .map(c => enumFromKey(CardType, c))
       .filter(cardType => !!cardType && props.allowedCards[cardType])
@@ -54,7 +55,7 @@ export default function CardList(props: CardListProps) {
       }))
       .filter(({cardList}) => cardList.length > 0)
       .map(({cardType, cardList}) =>
-        <CardCategory
+        <Category
           key={cardType}
           cardType={cardType!}
           cardList={cardList}
@@ -67,13 +68,13 @@ export default function CardList(props: CardListProps) {
   </div>;
 }
 
-type CardCategoryProps = {
+type CategoryProps = {
   cardType: CardType,
   cardList: Card[],
   isOpen: boolean,
   onToggleCategory: (cardType: CardType) => void
 };
-function CardCategory(props: CardCategoryProps) {
+function Category(props: CategoryProps) {
   const toggleCategory = useCallback(() => {
     props.onToggleCategory(props.cardType);
   }, [props.onToggleCategory, props.cardType]);
@@ -86,7 +87,7 @@ function CardCategory(props: CardCategoryProps) {
       }
       <span className="label">{props.cardType}</span>
     </div>
-    <div className={classNames("card-list", {hidden: props.isOpen})}>
+    <div className={classNames("market-list", {hidden: props.isOpen})}>
       {props.cardList.map(card =>
         <CardInInventory key={card.id} card={card} />
       )}
@@ -109,7 +110,6 @@ function CardInInventory(props: {card: Card}) {
       <div className="title">
         <Icon size="sm" icon={cardDef.icon} />
         <span className="name">{cardDef.name}</span>
-        <span className="amount">{formatNumber(cardTracking.numPurchased, 0, 1)}</span>
       </div>
       <div className="cost">
         <Icon size="xs" icon={resourcesConfig[ResourceType.Gold].icon} />

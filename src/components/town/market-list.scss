@@ -3,12 +3,12 @@ $card-height: 220px;
 $cards-gap: 10px;
 $card-list-padding: 10px;
 
-.card-inventory {
+.market {
   box-sizing: border-box;
   width: $card-width * 2 + $cards-gap + $card-list-padding * 2;
   max-height: 600px;
   
-  > .cards {
+  > .category-list {
     height: 100%;
   }
 
@@ -34,7 +34,7 @@ $card-list-padding: 10px;
   }
 }
 
-.card-list {
+.market-list {
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -50,7 +50,7 @@ $card-list-padding: 10px;
   }
 }
 
-.card-list .card-container {
+.market-list .card-container {
   position: relative;
   width: $card-width;
   height: 64px;
@@ -62,7 +62,7 @@ $card-list-padding: 10px;
   }
 }
 
-.card-list .card {
+.market-list .card {
   position: absolute;
   top: 0;
   left: 0;
