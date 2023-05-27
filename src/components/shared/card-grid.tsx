@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import styled, { css } from 'styled-components';
 import shallow from 'zustand/shallow';
 
-import resourceIconMap from '../../config/resources';
+import resourcesConfig from '../../config/resources';
 import Icon from '../../shared/components/icon';
 import { BUILDING_BLUE, FOOD_RED } from '../../shared/constants';
 import { CardType, MarkType, RealizedCard } from '../../shared/types';
@@ -163,13 +163,13 @@ function GridTile(props: GridTileProps) {
         </div>
         <AbilityStat>
           {typeof props.card.totalStrength === "number" && cardDef.passive ? <>
-            <Icon size="sm" icon={resourceIconMap[cardDef.passive.resource]} />
+            <Icon size="sm" icon={resourcesConfig[cardDef.passive.resource].icon} />
             {autoFormatNumber(props.card.totalStrength)}/s
           </> : null }
         </AbilityStat>
         <AbilityStat>
           {typeof props.card.totalCost === "number" && cardDef.costPerSec ? <>
-            <Icon size="sm" icon={resourceIconMap[cardDef.costPerSec.resource]} />
+            <Icon size="sm" icon={resourcesConfig[cardDef.costPerSec.resource].icon} />
             -{formatNumber(props.card.totalCost, 0, 1)}/s
           </> : null }
         </AbilityStat>

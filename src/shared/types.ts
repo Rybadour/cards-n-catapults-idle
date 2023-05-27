@@ -16,6 +16,11 @@ export enum ResourceType {
   MilitaryPower = "Power",
 }
 
+export interface ResourceConfig {
+  icon: string;
+  sellPrice: number;
+}
+
 export type ResourcesMap = Record<ResourceType, number>;
 export const defaultResourcesMap: ResourcesMap = {
   [ResourceType.Gold]: 0,

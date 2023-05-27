@@ -4,11 +4,11 @@ import styled from "styled-components";
 import shallow from "zustand/shallow";
 import {useFloating, useHover, useInteractions, safePolygon} from '@floating-ui/react';
 
-import resourceIconMap from "../../config/resources";
 import Icon from "../../shared/components/icon";
 import { ResourceType } from "../../shared/types";
-import { autoFormatNumber, enumFromKey, formatNumber } from "../../shared/utils";
+import { autoFormatNumber, enumFromKey } from "../../shared/utils";
 import useStore from "../../store";
+import resourcesConfig from "../../config/resources";
 
 export function Resources() {
   const stats = useStore(s => pick(s.stats, [
@@ -61,16 +61,16 @@ function Resource(props: ResourceProps) {
       ref={refs.setReference}
       {...getReferenceProps()}
     >
-      <Icon size="md" icon={resourceIconMap[props.resource]} />
+      <Icon size="md" icon={resourcesConfig[props.resource].icon} />
       <Amounts>
         <Total>{autoFormatNumber(props.amount)}</Total>
         <div className='per-sec'>{autoFormatNumber(props.perSec)}/s</div>
       </Amounts>
     </StyledResource>
 
-    {(isOpen && props.resource !== ResourceType.Gold) &&
+    {(isOpen && props.resource !== ResourceType.Gold && props.sellPrice > 0) &&
       <Tooltip ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
-        <TooltipTitle>Sell for {props.sellPrice}<Icon size="xs" icon={resourceIconMap[ResourceType.Gold]} /> each</TooltipTitle>
+        <TooltipTitle>Sell for {props.sellPrice}<Icon size="xs" icon={resourcesConfig[ResourceType.Gold].icon} /> each</TooltipTitle>
         
         <SellButtons>
           <button onClick={() => props.onSell(props.resource, 0.1)}>10%</button>

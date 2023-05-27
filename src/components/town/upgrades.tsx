@@ -9,6 +9,7 @@ import { useCallback, useState } from "react";
 import { ResourceType, TownUpgrade } from "../../shared/types";
 import resourceIconMap from "../../config/resources";
 import { enumFromKey } from "../../shared/utils";
+import resourcesConfig from "../../config/resources";
 
 export default function Upgrades() {
   const upgrades = useStore(s => s.upgrades);
@@ -90,7 +91,7 @@ function Upgrade(props: {upgrade: TownUpgrade, bought: boolean, onPurchase: () =
             .map(([resource, cost]) => [enumFromKey(ResourceType, resource) as ResourceType, cost] as const)
             .map(([resource, cost]) => 
               <CostLine key={resource}>
-                <Icon size="xs" icon={resourceIconMap[resource]} />
+                <Icon size="xs" icon={resourcesConfig[resource].icon} />
                 <span>{cost}</span>
               </CostLine>
           )}

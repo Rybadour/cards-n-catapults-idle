@@ -3,18 +3,17 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { pick } from 'lodash';
+import shallow from 'zustand/shallow';
 
 import cardsConfig from '../../config/cards';
-import { CardButton, CardButtons } from '../../shared/components/card-buttons';
 import Icon from '../../shared/components/icon';
 import { Card, CardType, ResourceType } from '../../shared/types';
 import { enumFromKey, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { SectionHeader } from '../shared/common-styles';
+import resourcesConfig from '../../config/resources';
 
 import './card-list.scss';
-import resourceIconMap from '../../config/resources';
-import shallow from 'zustand/shallow';
 
 export interface CardListProps {
   allowedCards: Record<CardType, boolean | string[]>,
@@ -113,7 +112,7 @@ function CardInInventory(props: {card: Card}) {
         <span className="amount">{formatNumber(cardTracking.numPurchased, 0, 1)}</span>
       </div>
       <div className="cost">
-        <Icon size="xs" icon={resourceIconMap[ResourceType.Gold]} />
+        <Icon size="xs" icon={resourcesConfig[ResourceType.Gold].icon} />
         <span>{formatNumber(cardTracking.cost, 0, 0)}</span>
       </div>
 
