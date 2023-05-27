@@ -7,7 +7,7 @@ import {useFloating, useHover, useInteractions, safePolygon} from '@floating-ui/
 import resourceIconMap from "../../config/resources";
 import Icon from "../../shared/components/icon";
 import { ResourceType } from "../../shared/types";
-import { enumFromKey, formatNumber } from "../../shared/utils";
+import { autoFormatNumber, enumFromKey, formatNumber } from "../../shared/utils";
 import useStore from "../../store";
 
 export function Resources() {
@@ -63,8 +63,8 @@ function Resource(props: ResourceProps) {
     >
       <Icon size="md" icon={resourceIconMap[props.resource]} />
       <Amounts>
-        <Total>{formatNumber(props.amount, 0, 0)}</Total>
-        <div className='per-sec'>{formatNumber(props.perSec, 0, 1)}/s</div>
+        <Total>{autoFormatNumber(props.amount)}</Total>
+        <div className='per-sec'>{autoFormatNumber(props.perSec)}/s</div>
       </Amounts>
     </StyledResource>
 
