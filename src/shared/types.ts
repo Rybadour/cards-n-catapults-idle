@@ -255,6 +255,7 @@ export interface CardBonuses {
   foodCapacity: BonusValues,
   goldGain: BonusValues,
   woodGain: BonusValues,
+  toolGain: BonusValues,
 }
 
 export type CardPartialBonuses = {

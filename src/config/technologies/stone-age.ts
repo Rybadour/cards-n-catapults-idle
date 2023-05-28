@@ -47,17 +47,23 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     },
     unlockedCards: ['carpenter']
   },
-  cultivation: {
+  sharperStones: {
     id: '',
-    name: 'Cultivation',
-    icon: 'plow',
-    description: 'Unlocks new cards.',
+    name: 'Sharper Stones',
+    icon: 'stone-crafting',
+    description: 'Doubles carpenter tool production.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 500,
-      [ResourceType.Wood]: 500,
+      [ResourceType.Gold]: 200,
+      [ResourceType.Wood]: 1000,
     },
-    unlockedCards: ['farmer', 'farm', 'corn']
+    cardsBonuses: {
+      carpenter: {
+        toolGain: {
+          baseMulti: 2,
+        }
+      }
+    }
   },
   campfireCooking: {
     id: '',
@@ -95,3 +101,18 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     unlockAge: 'bronzeAge',
   }
 }
+
+/* *
+  cultivation: {
+    id: '',
+    name: 'Cultivation',
+    icon: 'plow',
+    description: 'Unlocks new cards.',
+    summary: '',
+    cost: {
+      [ResourceType.Gold]: 500,
+      [ResourceType.Wood]: 500,
+    },
+    unlockedCards: ['farmer', 'farm', 'corn']
+  },
+/* */

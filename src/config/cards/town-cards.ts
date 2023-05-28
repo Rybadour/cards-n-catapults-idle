@@ -363,7 +363,7 @@ const cards: Record<CardId, Card> = {
     icon: "hammer-nails",
     tier: 2,
     type: CardType.Building,
-    description: "Makes tools and boosts all people and buildings in the same row and column.",
+    description: "Makes tools and boosts all people and buildings in the same row and column by 100%.",
     baseCost: 500,
     costGrowth: 2,
     bonusToAdjacent: {

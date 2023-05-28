@@ -8,6 +8,7 @@ export const DEFAULT_CARD_BONUSES: CardBonuses = {
   foodCapacity: {...DEFAULT_BONUS_VALUES},
   goldGain: {...DEFAULT_BONUS_VALUES},
   woodGain: {...DEFAULT_BONUS_VALUES},
+  toolGain: {...DEFAULT_BONUS_VALUES}
 }
 
 export const STANDARD_MODAL_STYLE = {
