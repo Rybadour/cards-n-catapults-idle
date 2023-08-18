@@ -55,11 +55,11 @@ function Resource(props: ResourceProps) {
     handleClose: safePolygon(),
   });
   const {getReferenceProps, getFloatingProps} = useInteractions([hover]);
+      //ref={refs.setReference}
+      //{...getReferenceProps()}
 
   return <>
     <StyledResource
-      ref={refs.setReference}
-      {...getReferenceProps()}
     >
       <Icon size="md" icon={resourcesConfig[props.resource].icon} />
       <Amounts>

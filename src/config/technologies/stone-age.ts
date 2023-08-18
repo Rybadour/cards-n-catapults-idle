@@ -8,7 +8,7 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Berries provide twice as much food.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 150,
+      [ResourceType.Wood]: 200,
     },
     cardsBonuses: {
       'berries': {
@@ -25,7 +25,7 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Lumberjacks produce twice as much wood.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 300,
+      [ResourceType.Wood]: 300,
     },
     cardsBonuses: {
       'lumberjack': {
@@ -42,8 +42,7 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Unlocks the ability to make tools.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 200,
-      [ResourceType.Wood]: 500,
+      [ResourceType.Wood]: 800,
     },
     unlockedCards: ['carpenter']
   },
@@ -54,7 +53,7 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Doubles carpenter tool production.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 200,
+      [ResourceType.Tools]: 10,
       [ResourceType.Wood]: 1000,
     },
     cardsBonuses: {
@@ -72,7 +71,7 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Unlocks automated food placement.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 1000,
+      [ResourceType.Tools]: 20,
       [ResourceType.Wood]: 500,
     },
     unlockedCards: ['campfire', 'rat-snack']
@@ -84,7 +83,8 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     description: 'Unlocks a way to generate Renown.',
     summary: '',
     cost: {
-      [ResourceType.Gold]: 1500,
+      [ResourceType.Tools]: 100,
+      [ResourceType.Wood]: 1000,
     },
     unlockedCards: ['soothsayer']
   },
@@ -96,7 +96,8 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     summary: '',
     cost: {
       [ResourceType.Renown]: 200,
-      [ResourceType.Gold]: 2000,
+      [ResourceType.Tools]: 200,
+      [ResourceType.Wood]: 2000,
     },
     unlockAge: 'bronzeAge',
   }

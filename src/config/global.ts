@@ -7,7 +7,8 @@ import { Scene } from "../store/scenes";
 const global = {
   version: "0.2.0",
   startingResources: {
-    [ResourceType.Gold]: 110,
+    [ResourceType.Wood]: 5000,
+    [ResourceType.Tools]: 5000,
   },
   startingCards: {
     lumberjack: 0,

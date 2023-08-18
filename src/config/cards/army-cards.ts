@@ -16,6 +16,7 @@ const cards: Record<CardId, Card> = {
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
     baseCost: 100,
+    costResource: ResourceType.Gold,
     costGrowth: 1.1,
     passive: {
       strength: 1,
@@ -41,6 +42,7 @@ const cards: Record<CardId, Card> = {
     description: "Produces {{passiveAmount}} for each nearby enemy.",
     foodDrain: 0.2,
     baseCost: 100,
+    costResource: ResourceType.Gold,
     costGrowth: 1.1,
     passive: {
       resource: ResourceType.MilitaryPower,
@@ -71,6 +73,7 @@ const cards: Record<CardId, Card> = {
     foodDrain: 1,
     cooldownMs: 3000,
     baseCost: 100,
+    costResource: ResourceType.Gold,
     costGrowth: 1.1,
     targettedEffect: {
       effect: TargettedEffectType.Disable,
@@ -100,6 +103,7 @@ const cards: Record<CardId, Card> = {
     description: "Produces some military power",
     foodDrain: 1,
     baseCost: 100,
+    costResource: ResourceType.Gold,
     costGrowth: 1.1,
     passive: {
       resource: ResourceType.MilitaryPower,
@@ -131,6 +135,7 @@ const cards: Record<CardId, Card> = {
     description: "Produces {{passiveAmount}}.",
     foodDrain: 1,
     baseCost: 100,
+    costResource: ResourceType.Gold,
     costGrowth: 1.1,
     passive: {
       strength: 4,
@@ -168,6 +173,7 @@ const cards: Record<CardId, Card> = {
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
     baseCost: 100,
+    costResource: ResourceType.Gold,
     costGrowth: 1.1,
     passive: {
       strength: 3,

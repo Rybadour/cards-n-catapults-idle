@@ -38,6 +38,7 @@ export type Card = {
   type: CardType,
   description: string,
   baseCost: number,
+  costResource: ResourceType,
   costGrowth: number,
   noEffect?: true,
 

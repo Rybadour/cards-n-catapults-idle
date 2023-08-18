@@ -10,6 +10,7 @@ export default {
     description: "Eats your food and nibbles at your ankles!",
     foodDrain: 0.2,
     baseCost: 0,
+    costResource: ResourceType.Gold,
     costGrowth: 0,
     passive: {
       strength: -0.25,
@@ -29,6 +30,7 @@ export default {
     type: CardType.Enemy,
     description: "",
     baseCost: 0,
+    costResource: ResourceType.Gold,
     costGrowth: 0,
     passive: {
       strength: -5,
@@ -49,6 +51,7 @@ export default {
     description: "",
     baseCost: 0,
     costGrowth: 0,
+    costResource: ResourceType.Gold,
     passive: {
       strength: -1.5,
       resource: ResourceType.MilitaryPower,

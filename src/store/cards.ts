@@ -35,14 +35,15 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
 
       const tracking = {...newCards[card.cardId]};
       tracking.numActive -= 1;
-      updateCost(cardDefs().defs[card.cardId], tracking);
+      const cardDef = cardDefs().defs[card.cardId];
+      updateCost(cardDef, tracking);
       newCards[card.cardId] = tracking;
 
       let sellAmount = tracking.cost;
       if (allCardsConfig[card.cardId].type === CardType.Food) {
         sellAmount *= (card.durability ?? 0) / card.maxDurability;
       }
-      providedResources[ResourceType.Gold] -= sellAmount;
+      providedResources[cardDef.costResource] -= sellAmount;
     });
 
     set({cards: newCards});
@@ -67,7 +68,8 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
 
     canAffordCard: (id: CardId) => {
       const tracking = get().cards[id];
-      return stats().canAfford({[ResourceType.Gold]: tracking?.cost});
+      const cardDef = cardDefs().defs[id];
+      return stats().canAfford({[cardDef.costResource]: tracking?.cost});
     },
 
     buyCard: (id) => {
@@ -75,7 +77,7 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       const tracking = {...newCards[id]};
       const cardDef = cardDefs().defs[id];
 
-      stats().useResource(ResourceType.Gold, tracking.cost);
+      stats().useResource(cardDef.costResource, tracking.cost);
 
       tracking.numActive += 1;
       updateCost(cardDef, tracking);
