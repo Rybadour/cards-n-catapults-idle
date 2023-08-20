@@ -17,9 +17,7 @@ export interface UpgradesSlice {
 const createUpgradesSlice: MyCreateSlice<UpgradesSlice, [() => StatsSlice, () => CardDefsSlice, () => DiscoverySlice]>
 = (set, get, stats, cardDefs, discovery) => {
   function applyUpgrade(upgrade: Upgrade) {
-    if (upgrade.bonuses || upgrade.cardsBonuses) {
-      cardDefs().addUpgrade(upgrade);
-    }
+    cardDefs().addUpgrade(upgrade);
     if (upgrade.unlockedCards) {
       discovery().discoverCards(upgrade.unlockedCards);
     }

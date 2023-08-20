@@ -9,10 +9,12 @@ export enum CardType {
 }
 
 export enum ResourceType {
-  Gold = "Gold",
+  Berries = "Berries",
+  ShinyRocks = "ShinyRocks",
   Wood = "Wood",
   Tools = "Tools",
   Renown = "Renown",
+  Gold = "Gold",
   MilitaryPower = "Power",
 }
 
@@ -23,6 +25,8 @@ export interface ResourceConfig {
 
 export type ResourcesMap = Record<ResourceType, number>;
 export const defaultResourcesMap: ResourcesMap = {
+  [ResourceType.Berries]: 0,
+  [ResourceType.ShinyRocks]: 0,
   [ResourceType.Gold]: 0,
   [ResourceType.Wood]: 0,
   [ResourceType.Tools]: 0,
@@ -45,6 +49,16 @@ export type Card = {
   foodDrain?: number,
   maxDurability?: number,
 
+  unlockableFeatures?: Partial<Record<UnlockableCardFeature, CardFeatures>>,
+
+  mastery: {
+    baseCost: number,
+    growth: number,
+    bonusPer: number,
+  }
+} & CardFeatures;
+
+export type CardFeatures = {
   passive?: {
     strength: number,
     resource: ResourceType,
@@ -104,12 +118,7 @@ export type Card = {
     maxTier?: number,
   } & GridMatch)[],
 
-  mastery: {
-    baseCost: number,
-    growth: number,
-    bonusPer: number,
-  }
-};
+}
 
 export type GridMatch = {
   shape: MatchingGridShape,
@@ -217,6 +226,7 @@ export interface Upgrade {
   sellResourceBonus?: Partial<Record<ResourceType, Partial<BonusValues>>>,
   dynamicSellResourceBonus?: Partial<Record<ResourceType, DynamicBonus>>,
   unlockAge?: string,
+  unlockedCardFeaured?: UnlockableCardFeature,
 }
 
 export type TownUpgrade = Upgrade & {
@@ -318,4 +328,8 @@ export interface GridCoords {
 export enum GameFeature {
   Economy,
   Combat,
+}
+
+export enum UnlockableCardFeature {
+  ForagerWood = "ForagerWood",
 }

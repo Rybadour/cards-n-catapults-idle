@@ -1,6 +1,6 @@
 import { mapValues } from "lodash";
 
-import { CardId, defaultResourcesMap, Grid, GridCoords, GridTemplate, RealizedCard, ResourcesMap } from "../shared/types";
+import { CardId, CardType, defaultResourcesMap, Grid, GridCoords, GridTemplate, RealizedCard, ResourcesMap } from "../shared/types";
 import { CardsSlice } from "./cards";
 import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/grid";
 import { StatsSlice } from "./stats";
@@ -52,7 +52,12 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     updateResourcesOfGrid(gridId, results.resourcesPerSec);
 
     if (oldCard && shouldReturnCard) {
-      cards().sellCard(oldCard);
+      const cardDef = cardDefs().defs[oldCard.cardId];
+      if (cardDef.type === CardType.Food) {
+        cards().updateInventory({[oldCard.cardId]: 1}, {});
+      } else {
+        cards().sellCard(oldCard);
+      }
     }
   }
 

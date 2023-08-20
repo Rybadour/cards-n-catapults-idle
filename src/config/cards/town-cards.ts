@@ -325,21 +325,34 @@ const cards: Record<CardId, Card> = {
     name: "Forager",
     icon: "granary",
     tier: 2,
-    type: CardType.Building,
+    type: CardType.Person,
     description: "{{produceCard}} when next to a forest every {{cooldownSecs}} seconds.",
+    foodDrain: 0.5,
     baseCost: 20,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.5,
+    costResource: ResourceType.ShinyRocks,
+    costGrowth: 2,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
-      possibleCards: ['mushrooms', 'berries'],
+      possibleCards: ['berries'],
+    },
+    unlockableFeatures: {
+      ForagerWood: {
+        passive: {
+          strength: 0.1,
+          resource: ResourceType.Wood,
+          multiplyByAdjacent: {
+            shape: MatchingGridShape.OrthoAdjacent,
+            cards: ["forest"],
+          }
+        },
+      }
     },
     cooldownMs: 10000,
     disableRules: [{
       onMatch: false,
       shape: MatchingGridShape.OrthoAdjacent,
       cards: ['forest'],
-    }],
+    }, hungryDisable],
     mastery: {
       baseCost: 1,
       growth: 2,
