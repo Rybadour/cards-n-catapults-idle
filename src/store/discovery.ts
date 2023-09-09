@@ -1,17 +1,18 @@
 import { mapValues, pick } from "lodash";
 
 import global from "../config/global";
-import { CardId, ResourceType } from "../shared/types";
+import { ResourceType } from "../shared/types";
 import { MyCreateSlice } from ".";
 import { PrestigeUpgrade } from "../config/prestige-upgrades";
+import { CardId } from "../config/cards";
 
 const DEFAULT_UPGRADES: string[] = [];
 
 export interface DiscoverySlice {
-  discoveredCards: Record<string, boolean>,
-  unlockedCards: Record<CardId, boolean>,
-  cardsDiscoveredThisPrestige: Record<string, boolean>,
-  discoveredUpgrades: Record<string, boolean>,
+  discoveredCards: Partial<Record<CardId, boolean>>,
+  unlockedCards: Partial<Record<CardId, boolean>>,
+  cardsDiscoveredThisPrestige: Partial<Record<CardId, boolean>>,
+  discoveredUpgrades: Partial<Record<string, boolean>>,
   discoveredResources: Partial<Record<ResourceType, boolean>>,
   discoverCards: (cards: CardId[]) => void,
   unlockCards: (card: CardId[]) => void,
@@ -87,7 +88,7 @@ const createDiscoverySlice: MyCreateSlice<DiscoverySlice, []> = (set, get): Disc
   };
 }  
 
-function addToDiscoverMap<K extends string | symbol>(map: Record<K, boolean>, keys: K[]) {
+function addToDiscoverMap<K extends string | symbol>(map: Partial<Record<K, boolean>>, keys: K[]) {
   const newMap = {...map};
   keys.forEach(k => {
     newMap[k] = true;

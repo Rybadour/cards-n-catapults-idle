@@ -1,4 +1,7 @@
-import { Card, CardId, CardType, MatchingGridShape, ModifierBehaviour, ResourceType, TargettedEffectType } from "../../shared/types";
+import { Card, CardType, MatchingGridShape, ModifierBehaviour, ResourceType, TargettedEffectType } from "../../shared/types";
+
+export type ArmyCardId = "militia" | "pikeman" | "bolasThrower" | "rockThrower" | "cavalry"
+ | "archer";
 
 const hungryDisable = {
   onMatch: false,
@@ -6,10 +9,9 @@ const hungryDisable = {
   cardTypes: [CardType.Food],
 };
 
-const cards: Record<CardId, Card> = {
+const cards: Record<ArmyCardId, Omit<Card, "id">> = {
   militia: {
-    id: "",
-    name: "Miltia",
+    name: "Militia",
     icon: "farmer",
     tier: 1,
     type: CardType.Soldier,
@@ -31,7 +33,6 @@ const cards: Record<CardId, Card> = {
     }
   },
   pikeman: {
-    id: "",
     name: "Pikeman",
     icon: "pikeman",
     tier: 1,
@@ -58,7 +59,6 @@ const cards: Record<CardId, Card> = {
     }
   },
   bolasThrower: {
-    id: "",
     name: "Bolas Thrower",
     icon: "bolas",
     tier: 2,
@@ -86,7 +86,6 @@ const cards: Record<CardId, Card> = {
     } 
   },
   rockThrower: {
-    id: "",
     name: "Rock Thrower",
     icon: "throwing-ball",
     tier: 1,
@@ -115,7 +114,6 @@ const cards: Record<CardId, Card> = {
     } 
   },
   cavalry: {
-    id: "",
     name: "Cavalry",
     icon: "mounted-knight",
     tier: 3,
@@ -150,7 +148,6 @@ const cards: Record<CardId, Card> = {
     }
   },
   archer: {
-    id: "",
     name: "Archer",
     icon: "bowman",
     tier: 1,

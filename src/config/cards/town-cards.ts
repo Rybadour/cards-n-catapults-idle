@@ -1,14 +1,17 @@
 import { BonusType, Card, CardType, MatchingGridShape, ResourceType } from "../../shared/types";
 
+export type TownCardId = "farmer" | "lumberjack" | "soothsayer" | "bard" | "ratSnack" | "berries"
+ | "mushrooms" | "corn" | "haunch" | "bread" | "campfire" | "farm" | "forager" | "carpenter"
+ | "pigPen" | "lumbermill" | "forest";
+
 const hungryDisable = {
   onMatch: false,
   shape: MatchingGridShape.OrthoAdjacent,
   cardTypes: [CardType.Food],
 };
 
-const cards: Record<string, Card> = {
+const cards: Record<TownCardId, Omit<Card, "id">> = {
   farmer: {
-    id: "",
     name: "Farmer",
     icon: "farmer",
     tier: 1,
@@ -34,7 +37,6 @@ const cards: Record<string, Card> = {
     }
   },
   lumberjack: {
-    id: "",
     name: "Lumberjack",
     icon: "axe-in-stump",
     tier: 2,
@@ -62,7 +64,6 @@ const cards: Record<string, Card> = {
     }
   },
   soothsayer: {
-    id: "",
     name: "Soothsayer",
     icon: "sun-priest",
     tier: 2,
@@ -90,7 +91,6 @@ const cards: Record<string, Card> = {
     }
   },
   bard: {
-    id: "",
     name: "Bard",
     icon: "lyre",
     tier: 2,
@@ -112,7 +112,6 @@ const cards: Record<string, Card> = {
     }
   },
   ratSnack: {
-    id: "",
     name: "Rat Snack",
     icon: "rat-red",
     tier: 1,
@@ -134,7 +133,6 @@ const cards: Record<string, Card> = {
     }
   },
   berries: {
-    id: "",
     name: "Berries",
     icon: "berries-bowl",
     tier: 2,
@@ -154,7 +152,6 @@ const cards: Record<string, Card> = {
     }
   },
   mushrooms: {
-    id: "",
     name: "Mushrooms",
     icon: "mushrooms",
     tier: 1,
@@ -181,7 +178,6 @@ const cards: Record<string, Card> = {
     }
   },
   corn: {
-    id: "",
     name: "Corn",
     icon: "corn",
     tier: 1,
@@ -200,7 +196,6 @@ const cards: Record<string, Card> = {
     }
   },
   haunch: {
-    id: "",
     name: "Meat Haunch",
     icon: "ham-shank",
     tier: 2,
@@ -220,7 +215,6 @@ const cards: Record<string, Card> = {
     }
   },
   bread: {
-    id: "",
     name: "Bread",
     icon: "sliced-bread",
     tier: 2,
@@ -234,7 +228,6 @@ const cards: Record<string, Card> = {
     }
   },
   campfire: {
-    id: "",
     name: "Campfire",
     icon: "campfire",
     tier: 1,
@@ -260,7 +253,6 @@ const cards: Record<string, Card> = {
     }
   },
   farm: {
-    id: "",
     name: "Farm",
     icon: "plow",
     tier: 2,
@@ -283,7 +275,6 @@ const cards: Record<string, Card> = {
     },
   },
   forager: {
-    id: "",
     name: "Forager",
     icon: "granary",
     tier: 2,
@@ -319,7 +310,6 @@ const cards: Record<string, Card> = {
     }
   },
   pigPen: {
-    id: "",
     name: "Pig Pen",
     icon: "pig",
     tier: 1,
@@ -342,7 +332,6 @@ const cards: Record<string, Card> = {
     }
   },
   carpenter: {
-    id: "",
     name: "Carpenter",
     icon: "hammer-nails",
     tier: 2,
@@ -374,7 +363,6 @@ const cards: Record<string, Card> = {
     }
   },
   lumbermill: {
-    id: "",
     name: "Lumbermill",
     icon: "cleaver",
     tier: 2,
@@ -399,7 +387,6 @@ const cards: Record<string, Card> = {
     }
   },
   forest: {
-    id: "",
     name: "Forest",
     icon: "forest",
     tier: 2,

@@ -1,7 +1,7 @@
-import cardsConfig from "../config/cards";
+import cardsConfig, { CardId, CardIdAndEmpty } from "../config/cards";
 import { createCard } from "./grid-cards";
 import {
-  RealizedCard, Grid, CardType, ResourceType, Card, CardId, ResourcesMap, defaultResourcesMap,
+  RealizedCard, Grid, CardType, ResourceType, Card, ResourcesMap, defaultResourcesMap,
   MatchingGridShape, ResourceCost, EMPTY_CARD, MarkType, GridMatch, ModifierBehaviour, TargettedEffectType, BonusType, GridCoords
 } from "../shared/types";
 import { enumFromKey, getRandomFromArray, getUniqueCardIdsFromRealizedCards, using } from "../shared/utils";
@@ -170,8 +170,8 @@ export type UpdateGridResults = {
   grid: Grid,
   resourcesSpent: ResourcesMap,
   anyChanged: boolean,
-  inventoryDelta: Record<CardId, number>,
-  expiredCards: Record<CardId, number>,
+  inventoryDelta: Partial<Record<CardId, number>>,
+  expiredCards: Partial<Record<CardId, number>>,
   newCards: Card[],
 }
 
@@ -507,7 +507,7 @@ function iterateGridShapeCards(
 }
 
 function iterateGridMatch(
-  grid: Grid, cardDefs: Record<CardId, Card>, x: number, y: number, match: GridMatch,
+  grid: Grid, cardDefs: Record<CardId, Card>, x: number, y: number, match: GridMatch<CardIdAndEmpty>,
   callback: (card: RealizedCard | null, x: number, y: number) => void,
   excludeNoEffect = false
 ) {

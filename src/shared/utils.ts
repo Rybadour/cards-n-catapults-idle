@@ -1,4 +1,4 @@
-import { mergeWith, uniq } from "lodash";
+import { mapValues, mergeWith, uniq } from "lodash";
 import { BonusValues, DynamicBonus, GridCoords, RealizedCard } from "./types";
 
 export function formatNumber(n: number, minimumFractionDigits: number, maximumFractionDigits: number): string {
@@ -72,4 +72,16 @@ export function getFinalBonusValue(base: number, bonus: BonusValues) {
 export function addToBonusValue(a: BonusValues, b: Partial<BonusValues>) {
   a.baseAdd += b.baseAdd ?? 0; 
   a.baseMulti *= b.baseMulti ?? 1; 
+}
+
+export function getEntries<T extends object, K extends keyof T>(record: T) {
+  return Object.entries(record) as [K, T[K]][];
+}
+
+export function getPartialEntries<K extends string, T>(record: Partial<Record<K, T>>) {
+  return Object.entries(record) as [K, T][];
+}
+
+export function mapRecordValues<K extends string, T, T2>(record: Record<K, T>, callback: (value: T, key: K) => T2): Record<K, T2> {
+  return mapValues(record, callback) as Record<K, T2>;
 }

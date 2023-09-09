@@ -1,5 +1,6 @@
-import { CardId, ResourceType } from "../shared/types";
+import { ResourceType } from "../shared/types";
 import { Scene } from "../store/scenes";
+import { CardId } from "./cards";
 
 // Note: Version has 3 parts: major, minor and patch
 // If major or minor is different than a save data migration is required.
@@ -16,7 +17,7 @@ const global = {
     berries: 1,
   } as Partial<Record<CardId, number>>,
   startingTown: {
-    fill: 'forest',
+    fill: 'forest' as CardId,
     width: 9,
     height: 9,
     center: {x: 4, y: 4},

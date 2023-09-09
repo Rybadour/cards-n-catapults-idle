@@ -5,11 +5,11 @@ import ReactModal from "react-modal";
 import ReactTooltip from "react-tooltip";
 import shallow from "zustand/shallow";
 
-import cards from "../config/cards/town-cards";
+import allCards, { CardId } from "../config/cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import Icon from "../shared/components/icon";
 import { STANDARD_MODAL_STYLE } from "../shared/constants";
-import { formatNumber } from "../shared/utils";
+import { formatNumber, getPartialEntries } from "../shared/utils";
 import useStore from "../store";
 
 import './prestige.scss';
@@ -142,9 +142,9 @@ function getSummary(upgrade: RealizedPrestigeUpgrade) {
   /* */
 
   if (upgrade.extraStartingCards) {
-    const extraCardsSummary = Object.entries(upgrade.extraStartingCards)
+    const extraCardsSummary = getPartialEntries(upgrade.extraStartingCards)
       .map(([c, amount]) => 
-        '+' + (amount * upgrade.quantity) + ' ' + cards[c].name
+        '+' + (amount * upgrade.quantity) + ' ' + allCards[c].name
       ).join(', ');
 
     summary = summary.replaceAll('{{extraCards}}', extraCardsSummary);

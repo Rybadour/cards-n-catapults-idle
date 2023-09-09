@@ -74,7 +74,7 @@ export const stoneAgeTech: Record<string, TownUpgrade> = {
       [ResourceType.Tools]: 20,
       [ResourceType.Wood]: 500,
     },
-    unlockedCards: ['campfire', 'rat-snack']
+    unlockedCards: ['campfire']
   },
   religion: {
     id: '',

@@ -54,7 +54,7 @@ const combatEncounters: Record<string, CombatEncounter> = {
     ],
     rewards: {
       cards: {
-        'ratSnack': 10,
+        ratSnack: 10,
       }
     }
   },

@@ -1,10 +1,10 @@
 import { mapValues } from "lodash";
 import { MyCreateSlice } from ".";
-import allCardsConfig from "../config/cards";
+import allCardsConfig, { CardId } from "../config/cards";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
-import { Card, CardId, CardTracking, CardType, RealizedCard, ResourceType, defaultResourcesMap } from "../shared/types";
-import { getExponentialValue } from "../shared/utils";
+import { Card, CardTracking, CardType, RealizedCard, ResourceType, defaultResourcesMap } from "../shared/types";
+import { getExponentialValue, getPartialEntries } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
 import { StatsSlice } from "./stats";
@@ -19,7 +19,7 @@ export interface CardsSlice {
   useCard: (id: CardId) => RealizedCard,
   sellCard: (card: RealizedCard) => void,
   sellCards: (card: RealizedCard[]) => void,
-  updateInventory: (cardsDelta: Record<CardId, number>, expiredCards: Record<CardId, number>) => void,
+  updateInventory: (cardsDelta: Partial<Record<CardId, number>>, expiredCards: Partial<Record<CardId, number>>) => void,
   prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
   getSaveData: () => any,
   loadSaveData: (data: any) => boolean,
@@ -121,16 +121,14 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       if (Object.keys(cardsDelta).length + Object.keys(expiredCards).length <= 0) return;
 
       const newCards = {...get().cards};
-      Object.entries(cardsDelta)
-        .forEach(([cardId, amount]) => {
-          newCards[cardId].numPurchased += amount;
-          updateCost(cardDefs().defs[cardId], newCards[cardId]);
-        });
-      Object.entries(expiredCards)
-        .forEach(([cardId, amount]) => {
-          newCards[cardId].numActive -= amount;
-          updateCost(cardDefs().defs[cardId], newCards[cardId]);
-        });
+      getPartialEntries(cardsDelta).forEach(([cardId, amount]) => {
+        newCards[cardId].numPurchased += amount;
+        updateCost(cardDefs().defs[cardId], newCards[cardId]);
+      });
+      getPartialEntries(expiredCards).forEach(([cardId, amount]) => {
+        newCards[cardId].numActive -= amount;
+        updateCost(cardDefs().defs[cardId], newCards[cardId]);
+      });
       set({cards: newCards});
     },
 

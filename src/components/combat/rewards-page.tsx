@@ -1,10 +1,11 @@
 import { pick } from "lodash";
 import styled from "styled-components";
 import shallow from "zustand/shallow";
-import allCardsConfig from "../../config/cards";
+import allCardsConfig, { CardId } from "../../config/cards";
 import Icon from "../../shared/components/icon";
 import { BUILDING_BLUE } from "../../shared/constants";
 import useStore from "../../store";
+import { getPartialEntries } from "../../shared/utils";
 
 export default function RewardsPage() {
   const combat = useStore(s => pick(
@@ -18,7 +19,7 @@ export default function RewardsPage() {
 
     <RewardList>
       {combat.encounter?.rewards.cards ? 
-        Object.entries(combat.encounter?.rewards.cards).map(([cardId, num]) => 
+        getPartialEntries(combat.encounter?.rewards.cards).map(([cardId, num]) => 
           <Reward id={"cardReward_" + cardId}>
             <RewardIcon>
               <Icon icon={allCardsConfig[cardId].icon} size="md" />

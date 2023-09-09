@@ -1,7 +1,4 @@
-import { PrestigePackId } from "../config/prestige-packs";
-import { PrestigeUpgradeId } from "../config/prestige-upgrades";
-
-export type CardId = string;
+import { CardId, CardIdAndEmpty } from "../config/cards";
 
 export enum CardType {
   Building = "Building",
@@ -38,7 +35,7 @@ export const defaultResourcesMap: ResourcesMap = {
 };
 
 export type Card = {
-  id: string,
+  id: CardId,
   name: string,
   icon: string,
   tier: number,
@@ -67,7 +64,7 @@ export type CardFeatures = {
   passive?: {
     strength: number,
     resource: ResourceType,
-    multiplyByAdjacent?: GridMatch,
+    multiplyByAdjacent?: GridMatch<CardIdAndEmpty>,
     scaledToResource?: ResourceType,
   },
   bonusToAdjacent?: {
@@ -79,28 +76,28 @@ export type CardFeatures = {
   } & GridMatch,
   regeneration?: {
     durabilityPerSec: number,
-    matchCondition: GridMatch,
+    matchCondition: GridMatch<CardIdAndEmpty>,
   },
   degeneration?: {
     durabilityPerSec: number,
-    multiplyByAdjacent?: GridMatch,
+    multiplyByAdjacent?: GridMatch<CardIdAndEmpty>,
   },
 
   cooldownMs?: number,
   produceCardEffect?: {
     shape: MatchingGridShape,
-    possibleCards: string[],
+    possibleCards: CardId[],
     produceByCopying?: boolean,
   },
   autoReplaceEffect?: {
     cardType: CardType,
   },
   drawCardEffect?: {
-    possibleCards: string[],
+    possibleCards: CardId[],
   },
   convertCardEffect?: {
-    targetCard: string,
-    resultingCard: string,
+    targetCard: CardId,
+    resultingCard: CardId,
   },
   targettedEffect?: {
     effect: TargettedEffectType,
@@ -114,26 +111,26 @@ export type CardFeatures = {
   abilityStrengthModifier?: {
     behaviour: ModifierBehaviour,
     factor: number,
-    match: GridMatch,
+    match: GridMatch<CardIdAndEmpty>,
     statusIcon: string,
     statusText: string,
   },
   disableRules?: ({
     onMatch: boolean,
     maxTier?: number,
-  } & GridMatch)[],
+  } & GridMatch<CardIdAndEmpty>)[],
 
 }
 
-export type GridMatch = {
+export type GridMatch<C = CardId> = {
   shape: MatchingGridShape,
-  cards?: string[],
+  cards?: C[],
   cardTypes?: CardType[],
   cardTiers?: number[],
 }
 
 export type RealizedCard = {
-  cardId: string,
+  cardId: CardId,
   bonuses: Record<BonusType, number>,
   totalStrength: number,
   totalCost: number,
@@ -220,9 +217,9 @@ export interface Upgrade {
   icon: string,
   description: string,
   summary: string,
-  unlockedCards?: string[],
+  unlockedCards?: CardId[],
   bonuses?: Partial<CardPartialBonuses>,
-  cardsBonuses?: Record<string, Partial<CardPartialBonuses>>,
+  cardsBonuses?: Partial<Record<CardId, Partial<CardPartialBonuses>>>,
   sellResourceBonus?: Partial<Record<ResourceType, Partial<BonusValues>>>,
   dynamicSellResourceBonus?: Partial<Record<ResourceType, DynamicBonus>>,
   unlockAge?: string,
@@ -254,7 +251,7 @@ export type CardPartialBonuses = {
   [Property in keyof CardBonuses]: Partial<BonusValues>;
 }
 
-export type GridTemplate = CardId[][];
+export type GridTemplate = (CardId | '')[][];
 
 export type CombatEncounter = {
   id: string,
@@ -264,7 +261,7 @@ export type CombatEncounter = {
   staticCards: GridTemplate,
   unlockedBy: string,
   rewards: {
-    cards?: Record<CardId, number>,
+    cards?: Partial<Record<CardId, number>>,
     unlockedCards?: CardId[],
   }
 };

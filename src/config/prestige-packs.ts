@@ -7,9 +7,6 @@ const packs = {
     baseCost: 10,
     costGrowth: 1.12,
     upgrades: [{
-      upgrade: upgrades.hoboVillage,
-      quantity: 3,
-    }, {
       upgrade: upgrades.rationing,
       quantity: 10,
     }, {

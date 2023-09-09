@@ -1,5 +1,6 @@
 import { mapValues } from "lodash";
 import { Rarity, Upgrade } from "../shared/types";
+import { CardId } from "./cards";
 
 export const PRESTIGE_COST = {
   base: 100,
@@ -9,13 +10,6 @@ export const PRESTIGE_COST = {
 export const PRESTIGE_REFUND_FACTOR = 0.5;
 
 const upgrades = {
-  hoboVillage: {
-    name: 'Hobo Village',
-    icon: 'camping-tent',
-    description: 'Get more Beggars at the start of each game.',
-    summary: '{{extraCards}} on reset',
-    extraStartingCards: {beggar: 1},
-  },
   rationing: {
     name: 'Rationing',
     icon: 'cornucopia',
@@ -68,7 +62,7 @@ const upgrades = {
 
 export type PrestigeUpgradeId = keyof typeof upgrades;
 
-const upgradesWithIds: Record<PrestigeUpgradeId, PrestigeUpgrade> = mapValues(upgrades, (upgrade, key) => {
+const upgradesWithIds = mapValues(upgrades, (upgrade, key) => {
   const id = key as PrestigeUpgradeId;
   return {
     ...upgrade,
@@ -94,10 +88,10 @@ export default upgradesWithIds;
 
 export type PrestigeUpgrade = Upgrade & {
   id: PrestigeUpgradeId,
-  extraStartingCards?: Record<string, number>,
+  extraStartingCards?: Record<CardId, number>,
   unlockedCardPack?: string,
   randomStartingCards?: {
-    possibleCards: string[],
+    possibleCards: CardId[],
     possibleCardRarity?: Rarity,
     amount: number,
     onlyIfDiscovered: boolean,

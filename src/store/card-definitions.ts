@@ -1,9 +1,9 @@
 import { cloneDeep, mapValues } from "lodash";
 
-import baseCardsConfig from "../config/cards";
+import baseCardsConfig, { CardId } from "../config/cards";
 import { DEFAULT_CARD_BONUSES } from "../shared/constants";
-import { Card, CardBonuses, CardId, CardPartialBonuses, ResourceType, UnlockableCardFeature, Upgrade } from "../shared/types";
-import { addToBonusValue, autoFormatNumber, formatNumber, getFinalBonusValue, using } from "../shared/utils";
+import { Card, CardBonuses, CardPartialBonuses, ResourceType, UnlockableCardFeature, Upgrade } from "../shared/types";
+import { addToBonusValue, autoFormatNumber, formatNumber, getEntries, getFinalBonusValue, getPartialEntries, mapRecordValues, using } from "../shared/utils";
 import { CardGridsSlice } from "./card-grids";
 import { MyCreateSlice } from ".";
 
@@ -17,12 +17,12 @@ export interface CardDefsSlice {
   addUpgrade: (upgrade: Upgrade) => void,
 }
 
-const initialBonuses = mapValues(baseCardsConfig, (card) => cloneDeep(DEFAULT_CARD_BONUSES));
+const initialBonuses: Record<CardId, CardBonuses> = mapValues(baseCardsConfig, (card) => cloneDeep(DEFAULT_CARD_BONUSES));
 
 const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> = (set, get, cardGrids) => {
 
-  function getRecomputedCardDef(baseCardConfigs: Record<CardId, Card>, cardId: CardId, bonuses: CardBonuses) {
-    const def = cloneDeep(baseCardConfigs[cardId]);
+  function getRecomputedCardDef(baseCardConfigs: Record<CardId, Card>, cardId: CardId, bonuses: CardBonuses): Card {
+    const def: Card = cloneDeep(baseCardConfigs[cardId]);
 
     function replaceInDescription(variable: string, value: string) {
       def.description = def.description.replaceAll(`{{${variable}}}`, value);
@@ -58,27 +58,27 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> 
 
   return {
     baseCardConfigs: cloneDeep(baseCardsConfig),
-    defs: mapValues(initialBonuses, (bonuses, cardId) => getRecomputedCardDef(baseCardsConfig, cardId, bonuses)),
+    defs: mapRecordValues(initialBonuses, (bonuses, cardId: CardId) => getRecomputedCardDef(baseCardsConfig, cardId, bonuses)),
     cardsBonuses: initialBonuses,
     unlockables: {
       ForagerWood: false,
     },
 
     prestigeReset: (prestigeUpgrades) => {
-      const newCardsBonuses = cloneDeep(initialBonuses);
+      const newCardsBonuses: Record<CardId, CardBonuses> = cloneDeep(initialBonuses);
       prestigeUpgrades.forEach(pu => {
         if (pu.bonuses) {
           Object.values(newCardsBonuses)
             .forEach((cardBonuses) => mergeCardBonuses(cardBonuses, pu.bonuses!));
         }
         if (pu.cardsBonuses) {
-          Object.entries(pu.cardsBonuses)
+          getPartialEntries(pu.cardsBonuses)
             .forEach(([cardId, newBonuses]) => mergeCardBonuses(newCardsBonuses[cardId], newBonuses));
         }
       })
 
       set({
-        defs: mapValues(newCardsBonuses, (bonuses, cardId) => getRecomputedCardDef(get().baseCardConfigs, cardId, bonuses)),
+        defs: mapRecordValues(newCardsBonuses, (bonuses: CardBonuses, cardId: CardId) => getRecomputedCardDef(get().baseCardConfigs, cardId, bonuses)),
         cardsBonuses: newCardsBonuses,
       });
       cardGrids().cardDefsChanged();
@@ -90,12 +90,12 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> 
       const cardsBonuses = get().cardsBonuses;
       let cardsChanged: CardId[] = [];
       if (upgrade.bonuses) {
-        cardsChanged = Object.keys(cardsBonuses);
+        cardsChanged = Object.keys(cardsBonuses) as CardId[];
         Object.values(cardsBonuses)
           .forEach((cardBonuses) => mergeCardBonuses(cardBonuses, upgrade.bonuses!));
       }
       if (upgrade.cardsBonuses) {
-        Object.entries(upgrade.cardsBonuses)
+        getPartialEntries(upgrade.cardsBonuses)
           .forEach(([cardId, newBonuses]) => {
             cardsChanged.push(cardId);
             mergeCardBonuses(cardsBonuses[cardId], newBonuses)
@@ -104,7 +104,7 @@ const createCardDefsSlice: MyCreateSlice<CardDefsSlice, [() => CardGridsSlice]> 
 
       if (upgrade.unlockedCardFeaured) {
         const newBaseConfigs = { ...get().baseCardConfigs };
-        Object.entries(newBaseConfigs).forEach(([cardId, baseDef]) => {
+        getEntries(newBaseConfigs).forEach(([cardId, baseDef]) => {
           Object.entries(baseDef.unlockableFeatures ?? {}).forEach(([unlockable, cardFeatures]) => {
             if (unlockable === upgrade.unlockedCardFeaured) {
               newBaseConfigs[cardId] = {...baseDef, ...cardFeatures};
