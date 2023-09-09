@@ -1,4 +1,5 @@
-import { PrestigeUpgrade, Rarity } from "../shared/types";
+import { mapValues } from "lodash";
+import { Rarity, Upgrade } from "../shared/types";
 
 export const PRESTIGE_COST = {
   base: 100,
@@ -7,17 +8,8 @@ export const PRESTIGE_COST = {
 };
 export const PRESTIGE_REFUND_FACTOR = 0.5;
 
-const upgrades: Record<string, PrestigeUpgrade> = {
-  ratz: {
-    id: '',
-    name: 'Ratz!',
-    icon: 'cave-entrance',
-    description: 'Get a Rat Den at the start of each game.',
-    summary: '{{extraCards}} on reset',
-    extraStartingCards: {ratDen: 1},
-  },
+const upgrades = {
   hoboVillage: {
-    id: '',
     name: 'Hobo Village',
     icon: 'camping-tent',
     description: 'Get more Beggars at the start of each game.',
@@ -25,7 +17,6 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     extraStartingCards: {beggar: 1},
   },
   rationing: {
-    id: '',
     name: 'Rationing',
     icon: 'cornucopia',
     description: 'All food has {{bonusAsPercent}} more capacity per upgrade',
@@ -37,7 +28,6 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     }
   },
   charity: {
-    id: '',
     name: 'Charity',
     icon: 'receive-money',
     description: 'Provides {{bonusAsAmount}} extra gold on reset per upgrade',
@@ -45,7 +35,6 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     // TODO: ???
   },
   market: {
-    id: '',
     name: 'Marketplace',
     icon: 'desert-camp',
     description: 'Unlocks the food pack',
@@ -53,7 +42,6 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     unlockedCardPack: 'food',
   },
   taxes: {
-    id: '',
     name: 'Taxes',
     icon: 'cash',
     description: 'Increases all gold gain by {{bonusAsPercent}} per upgrade',
@@ -65,7 +53,6 @@ const upgrades: Record<string, PrestigeUpgrade> = {
     }
   },
   treasureMap: {
-    id: '',
     name: 'Treasure Map',
     icon: 'treasure-map',
     description: 'Gives you one of the ultra rare cards you\'ve discovered on reset',
@@ -77,26 +64,46 @@ const upgrades: Record<string, PrestigeUpgrade> = {
       onlyIfDiscovered: true,
     }
   }
+} satisfies Record<string, Omit<PrestigeUpgrade, "id">>;
+
+export type PrestigeUpgradeId = keyof typeof upgrades;
+
+const upgradesWithIds: Record<PrestigeUpgradeId, PrestigeUpgrade> = mapValues(upgrades, (upgrade, key) => {
+  const id = key as PrestigeUpgradeId;
+  return {
+    ...upgrade,
+    id,
+  };
+
+  // TODO: Re-implement random card upgrades
+
+  function replaceInDescription(variable: string, value: string) {
+    upgrade.description = upgrade.description.replaceAll(`{{${variable}}}`, value);
+  }
+
+  /* *
+  TODO: Hmmmm
+  if (upgrade.bonuses) {
+    replaceInDescription('bonusAsPercent', formatNumber(upgrade.bonus.amount * 100, 0, 0) + '%');
+    replaceInDescription('bonusAsAmount', formatNumber(upgrade.bonus.amount, 0, 0));
+  }
+  /* */
+});
+
+export default upgradesWithIds;
+
+export type PrestigeUpgrade = Upgrade & {
+  id: PrestigeUpgradeId,
+  extraStartingCards?: Record<string, number>,
+  unlockedCardPack?: string,
+  randomStartingCards?: {
+    possibleCards: string[],
+    possibleCardRarity?: Rarity,
+    amount: number,
+    onlyIfDiscovered: boolean,
+  },
 };
 
-Object.keys(upgrades)
-  .forEach((id) => {
-    const upgrade = upgrades[id];
-    upgrade.id = id;
-
-    // TODO: Re-implement random card upgrades
-
-    function replaceInDescription(variable: string, value: string) {
-      upgrade.description = upgrade.description.replaceAll(`{{${variable}}}`, value);
-    }
-
-    /* *
-    TODO: Hmmmm
-    if (upgrade.bonuses) {
-      replaceInDescription('bonusAsPercent', formatNumber(upgrade.bonus.amount * 100, 0, 0) + '%');
-      replaceInDescription('bonusAsAmount', formatNumber(upgrade.bonus.amount, 0, 0));
-    }
-    /* */
-  });
-
-export default upgrades;
+export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
+  quantity: number;
+};

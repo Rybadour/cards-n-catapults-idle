@@ -1,8 +1,7 @@
-import { cloneDeep, pick, shuffle } from "lodash";
+import { cloneDeep, mapValues, pick, shuffle } from "lodash";
 import global from "../config/global";
-import packsConfig from "../config/prestige-packs";
-import upgradesConfig, { PRESTIGE_COST, PRESTIGE_REFUND_FACTOR } from "../config/prestige-upgrades";
-import { PrestigeUpgrade, RealizedPrestigePack, RealizedPrestigeUpgrade } from "../shared/types";
+import packsConfig, { PrestigePackId, RealizedPrestigePack } from "../config/prestige-packs";
+import upgradesConfig, { PRESTIGE_COST, PRESTIGE_REFUND_FACTOR, PrestigeUpgrade, PrestigeUpgradeId, RealizedPrestigeUpgrade } from "../config/prestige-upgrades";
 import { getExponentialValue, getRandomFromArray, using } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { CardsSlice } from "./cards";
@@ -11,32 +10,32 @@ import { CardGridsSlice } from "./card-grids";
 import { StatsSlice } from "./stats";
 import { MyCreateSlice } from ".";
 
-const defaultUpgrades: Record<string, Record<string, RealizedPrestigeUpgrade>> = {};
-const realizedPacks: Record<string, RealizedPrestigePack> = {};
-Object.values(packsConfig).forEach(pack => {
-  const totalUpgrades: string[] = [];
+const defaultUpgrades: Record<PrestigePackId, Record<string, RealizedPrestigeUpgrade>> = mapValues(packsConfig, (pack, key) => {
+  return {};
+});
+const realizedPacks: Record<PrestigePackId, RealizedPrestigePack> = mapValues(packsConfig, (pack, key) => {
+  const totalUpgrades: PrestigeUpgradeId[] = [];
   pack.upgrades.forEach(u => {
     for (let i = 0; i < u.quantity; ++i) {
       totalUpgrades.push(u.upgrade.id);
     }
   });
 
-  realizedPacks[pack.id] = {
+  return {
     ...pack,
     cost: pack.baseCost,
     refund: 0,
     numBought: 0,
     remainingUpgrades: shuffle(totalUpgrades),
   };
-  defaultUpgrades[pack.id] = {};
 });
 
 export type PrestigeSlice = {
   prestigePoints: number,
   nextPoints: number,
   nextRenownCost: number,
-  upgrades: Record<string, Record<string, RealizedPrestigeUpgrade>>,
-  packs: Record<string, RealizedPrestigePack>,
+  upgrades: Record<PrestigePackId, Record<PrestigeUpgradeId, RealizedPrestigeUpgrade>>,
+  packs: Record<PrestigePackId, RealizedPrestigePack>,
   isMenuOpen: boolean,
   isReseting: boolean,
   shouldAutoSacrificeAll: boolean,
@@ -152,7 +151,7 @@ const createPrestigeSlice: MyCreateSlice<PrestigeSlice, [
         upgrade = {
           ...(upgradesConfig[upgradeId]),
           quantity: 1,
-        } as RealizedPrestigeUpgrade;
+        };
       } else {
         upgrade.quantity += 1;
       }

@@ -15,9 +15,6 @@ const cards: Record<CardId, Card> = {
     type: CardType.Soldier,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
-    baseCost: 100,
-    costResource: ResourceType.Gold,
-    costGrowth: 1.1,
     passive: {
       strength: 1,
       resource: ResourceType.MilitaryPower,
@@ -41,9 +38,6 @@ const cards: Record<CardId, Card> = {
     type: CardType.Soldier,
     description: "Produces {{passiveAmount}} for each nearby enemy.",
     foodDrain: 0.2,
-    baseCost: 100,
-    costResource: ResourceType.Gold,
-    costGrowth: 1.1,
     passive: {
       resource: ResourceType.MilitaryPower,
       strength: 0.5,
@@ -72,9 +66,6 @@ const cards: Record<CardId, Card> = {
     description: "Stuns a nearby enemy every {{cooldownSecs}} for 0.5s.",
     foodDrain: 1,
     cooldownMs: 3000,
-    baseCost: 100,
-    costResource: ResourceType.Gold,
-    costGrowth: 1.1,
     targettedEffect: {
       effect: TargettedEffectType.Disable,
       duration: 1500,
@@ -102,9 +93,6 @@ const cards: Record<CardId, Card> = {
     type: CardType.Soldier,
     description: "Produces some military power",
     foodDrain: 1,
-    baseCost: 100,
-    costResource: ResourceType.Gold,
-    costGrowth: 1.1,
     passive: {
       resource: ResourceType.MilitaryPower,
       strength: 1.5,
@@ -134,9 +122,6 @@ const cards: Record<CardId, Card> = {
     type: CardType.Soldier,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 1,
-    baseCost: 100,
-    costResource: ResourceType.Gold,
-    costGrowth: 1.1,
     passive: {
       strength: 4,
       resource: ResourceType.MilitaryPower,
@@ -172,9 +157,6 @@ const cards: Record<CardId, Card> = {
     type: CardType.Soldier,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
-    baseCost: 100,
-    costResource: ResourceType.Gold,
-    costGrowth: 1.1,
     passive: {
       strength: 3,
       resource: ResourceType.MilitaryPower,

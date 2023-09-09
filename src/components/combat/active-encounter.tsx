@@ -47,7 +47,7 @@ export default function ActiveEncounter() {
       [CardType.Soldier]: true,
       [CardType.Building]: ['campfire'],
       [CardType.Food]: true,
-      [CardType.Person]: false,
+      [CardType.Worker]: false,
       [CardType.Resource]: false, 
       [CardType.Treasure]: false,
       [CardType.Enemy]: false,

@@ -1,15 +1,19 @@
+import { PrestigePackId } from "../config/prestige-packs";
+import { PrestigeUpgradeId } from "../config/prestige-upgrades";
+
+export type CardId = string;
+
 export enum CardType {
   Building = "Building",
   Food = "Food",
   Enemy = "Enemy",
-  Person = "Person",
+  Worker = "Worker",
   Resource = "Resource",
   Soldier = "Soldier",
   Treasure = "Treasure",
 }
 
 export enum ResourceType {
-  Berries = "Berries",
   ShinyRocks = "ShinyRocks",
   Wood = "Wood",
   Tools = "Tools",
@@ -25,7 +29,6 @@ export interface ResourceConfig {
 
 export type ResourcesMap = Record<ResourceType, number>;
 export const defaultResourcesMap: ResourcesMap = {
-  [ResourceType.Berries]: 0,
   [ResourceType.ShinyRocks]: 0,
   [ResourceType.Gold]: 0,
   [ResourceType.Wood]: 0,
@@ -41,9 +44,11 @@ export type Card = {
   tier: number,
   type: CardType,
   description: string,
-  baseCost: number,
-  costResource: ResourceType,
-  costGrowth: number,
+  cost?: {
+    base: number,
+    growth: number,
+    resource: ResourceType,
+  },
   noEffect?: true,
 
   foodDrain?: number,
@@ -128,7 +133,7 @@ export type GridMatch = {
 }
 
 export type RealizedCard = {
-  cardId: CardId,
+  cardId: string,
   bonuses: Record<BonusType, number>,
   totalStrength: number,
   totalCost: number,
@@ -208,45 +213,21 @@ export enum TargettedEffectType {
 
 export type Grid = (RealizedCard | null)[][];
 
-export type CardId = string;
-export type AgeId = string;
-export type UpgradeId = string;
-
 export const EMPTY_CARD = 'EMPTY';
 
 export interface Upgrade {
-  id: UpgradeId,
   name: string,
   icon: string,
   description: string,
   summary: string,
-  unlockedCards?: CardId[],
+  unlockedCards?: string[],
   bonuses?: Partial<CardPartialBonuses>,
-  cardsBonuses?: Record<CardId, Partial<CardPartialBonuses>>,
+  cardsBonuses?: Record<string, Partial<CardPartialBonuses>>,
   sellResourceBonus?: Partial<Record<ResourceType, Partial<BonusValues>>>,
   dynamicSellResourceBonus?: Partial<Record<ResourceType, DynamicBonus>>,
   unlockAge?: string,
   unlockedCardFeaured?: UnlockableCardFeature,
 }
-
-export type TownUpgrade = Upgrade & {
-  cost: Partial<ResourcesMap>,
-}
-
-export type PrestigeUpgrade = Upgrade & {
-  extraStartingCards?: Record<string, number>,
-  unlockedCardPack?: string,
-  randomStartingCards?: {
-    possibleCards: string[],
-    possibleCardRarity?: Rarity,
-    amount: number,
-    onlyIfDiscovered: boolean,
-  },
-};
-
-export type RealizedPrestigeUpgrade = PrestigeUpgrade & {
-  quantity: number;
-};
 
 export enum DynamicTriggerType {
   Resource = "Resource",  
@@ -272,38 +253,6 @@ export interface CardBonuses {
 export type CardPartialBonuses = {
   [Property in keyof CardBonuses]: Partial<BonusValues>;
 }
-
-export interface TechAge {
-  id: AgeId,
-  name: string,
-  description: string,
-  upgrades: Record<string, TownUpgrade>,
-  megaUpgrades: Record<string, TownUpgrade>,
-}
-
-export type RealizedTechAge = {
-  unlocked: boolean,
-  completed: boolean,
-  chosenMegaUpgrade?: UpgradeId,
-} & TechAge;
-
-export type PrestigePack = {
-  id: string,
-  name: string,
-  baseCost: number,
-  costGrowth: number,
-  upgrades: {
-    upgrade: PrestigeUpgrade,
-    quantity: number,
-  }[]
-};
-
-export type RealizedPrestigePack = PrestigePack & {
-  cost: number,
-  refund: number,
-  numBought: number,
-  remainingUpgrades: string[],
-};
 
 export type GridTemplate = CardId[][];
 

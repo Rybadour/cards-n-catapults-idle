@@ -113,10 +113,11 @@ function CardInInventory(props: {card: Card}) {
         <span className="amount">{formatNumber(cardTracking.numPurchased, 0, 1)}</span>
       </div>
       <div className="cost">
-        <Icon size="xs" icon={resourcesConfig[cardDef.costResource].icon} />
+        {cardDef.cost && <>
+        <Icon size="xs" icon={resourcesConfig[cardDef.cost.resource].icon} />
         <span>{formatNumber(cardTracking.cost, 0, 0)}</span>
+        </>}
       </div>
-
       <div className="description">{cardDef.description}</div>
 
       <div className="stats">

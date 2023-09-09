@@ -6,10 +6,11 @@ import Icon from "../../shared/components/icon";
 import useStore from "../../store";
 import { SectionHeader } from "../shared/common-styles";
 import { useCallback, useState } from "react";
-import { ResourceType, TownUpgrade } from "../../shared/types";
+import { ResourceType } from "../../shared/types";
 import resourceIconMap from "../../config/resources";
 import { enumFromKey } from "../../shared/utils";
 import resourcesConfig from "../../config/resources";
+import { TownUpgrade } from "../../config/technologies/stone-age";
 
 export default function Upgrades() {
   const upgrades = useStore(s => s.upgrades);

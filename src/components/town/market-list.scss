@@ -115,6 +115,7 @@ $card-list-padding: 10px;
 
   .cost {
     display: flex;
+    min-height: 16px;
     gap: 4px;
     align-items: center;
     padding-left: 7px;

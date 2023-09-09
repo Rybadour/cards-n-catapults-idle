@@ -1,14 +1,14 @@
 import { MyCreateSlice } from ".";
-import agesConfig from "../config/technologies/ages";
+import agesConfig, { RealizedTechAge } from "../config/technologies/ages";
 import { CardDefsSlice } from "./card-definitions";
 import { StatsSlice } from "./stats";
 import { DiscoverySlice } from "./discovery";
 import { mapValues } from "lodash";
-import { AgeId, RealizedTechAge, Upgrade, UpgradeId } from "../shared/types";
+import { Upgrade } from "../shared/types";
 
 export interface UpgradesSlice {
-  techAges: Record<AgeId, RealizedTechAge>,
-  purchasedUpgrades: Record<AgeId, Record<UpgradeId, boolean>>,
+  techAges: Record<string, RealizedTechAge>,
+  purchasedUpgrades: Record<string, Record<string, boolean>>,
 
   purchaseUpgrade: (ageId: string, upId: string) => void;
   chooseMegaUpgrade: (ageId: string, upId: string) => void;

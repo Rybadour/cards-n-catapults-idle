@@ -64,7 +64,7 @@ export default function TownScene() {
       <MarketList allowedCards={{
         [CardType.Building]: true,
         [CardType.Food]: true,
-        [CardType.Person]: true,
+        [CardType.Worker]: true,
         [CardType.Resource]: true, 
         [CardType.Treasure]: true,
         [CardType.Enemy]: false,

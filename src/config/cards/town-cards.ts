@@ -1,4 +1,4 @@
-import { BonusType, Card, CardId, CardType, MatchingGridShape, ResourceType } from "../../shared/types";
+import { BonusType, Card, CardType, MatchingGridShape, ResourceType } from "../../shared/types";
 
 const hungryDisable = {
   onMatch: false,
@@ -6,18 +6,20 @@ const hungryDisable = {
   cardTypes: [CardType.Food],
 };
 
-const cards: Record<CardId, Card> = {
+const cards: Record<string, Card> = {
   farmer: {
     id: "",
     name: "Farmer",
     icon: "farmer",
     tier: 1,
-    type: CardType.Person,
+    type: CardType.Worker,
     description: "Improves the speed of farms by 500%.",
     foodDrain: 0.2,
-    baseCost: 200,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.1,
+    cost: {
+      base: 100,
+      resource: ResourceType.ShinyRocks,
+      growth: 1.1,
+    },
     bonusToAdjacent: {
       strength: 5,
       bonusType: BonusType.Strength,
@@ -36,12 +38,14 @@ const cards: Record<CardId, Card> = {
     name: "Lumberjack",
     icon: "axe-in-stump",
     tier: 2,
-    type: CardType.Person,
+    type: CardType.Worker,
     description: "Produce {{passiveAmount}} per adjacent forest.",
     foodDrain: 0.3,
-    baseCost: 50,
-    costResource: ResourceType.Wood,
-    costGrowth: 2,
+    cost: {
+      base: 50,
+      resource: ResourceType.ShinyRocks,
+      growth: 2,
+    },
     passive: {
       strength: 0.5,
       resource: ResourceType.Wood,
@@ -62,18 +66,15 @@ const cards: Record<CardId, Card> = {
     name: "Soothsayer",
     icon: "sun-priest",
     tier: 2,
-    type: CardType.Person,
+    type: CardType.Worker,
     description: "Generates renown for every adjacent person but costs gold.",
     foodDrain: 0.2,
-    baseCost: 1000,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.5,
     passive: {
       strength: 1,
       resource: ResourceType.Renown,
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
-        cardTypes: [CardType.Person],
+        cardTypes: [CardType.Worker],
       }
     },
     costPerSec: {
@@ -93,18 +94,15 @@ const cards: Record<CardId, Card> = {
     name: "Bard",
     icon: "lyre",
     tier: 2,
-    type: CardType.Person,
+    type: CardType.Worker,
     description: "Produces {{passiveAmount}}.",
     foodDrain: 0.2,
-    baseCost: 100,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.1,
     passive: {
       strength: 2,
       resource: ResourceType.Renown,
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
-        cardTypes: [CardType.Person],
+        cardTypes: [CardType.Worker],
       }
     },
     mastery: {
@@ -121,15 +119,12 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Produces {{passiveAmount}} {{passiveAdjacent}}",
     maxDurability: 12,
-    baseCost: 100,
-    costResource: ResourceType.Wood,
-    costGrowth: 1,
     passive: {
       strength: 0.25,
       resource: ResourceType.Gold,
       multiplyByAdjacent: {
         shape: MatchingGridShape.OrthoAdjacent,
-        cardTypes: [CardType.Person],
+        cardTypes: [CardType.Worker],
       }
     },
     mastery: {
@@ -146,14 +141,11 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
     maxDurability: 5,
-    baseCost: 30,
-    costResource: ResourceType.Wood,
-    costGrowth: 1,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
-      cardTypes: [CardType.Person],
+      cardTypes: [CardType.Worker],
     },
     mastery: {
       baseCost: 4,
@@ -169,14 +161,11 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Improves nearby people and regenerates when next to other mushrooms.",
     maxDurability: 6,
-    baseCost: 80,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.1,
     bonusToAdjacent: {
       strength: 0.2,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
-      cardTypes: [CardType.Person],
+      cardTypes: [CardType.Worker],
     },
     regeneration: {
       durabilityPerSec: 0.3,
@@ -199,9 +188,6 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Reduces the food drain of nearby people.",
     maxDurability: 16,
-    baseCost: 80,
-    costResource: ResourceType.Wood,
-    costGrowth: 1,
     bonusToAdjacent: {
       strength: 0.5,
       bonusType: BonusType.FoodDrain,
@@ -221,14 +207,11 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "{{bonusToAdjacent}}",
     maxDurability: 5,
-    baseCost: 100,
-    costResource: ResourceType.Wood,
-    costGrowth: 1,
     bonusToAdjacent: {
       strength: 1,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
-      cardTypes: [CardType.Person],
+      cardTypes: [CardType.Worker],
     },
     mastery: {
       baseCost: 3,
@@ -244,34 +227,10 @@ const cards: Record<CardId, Card> = {
     type: CardType.Food,
     description: "Just food, that's it.",
     maxDurability: 40,
-    baseCost: 100,
-    costResource: ResourceType.Wood,
-    costGrowth: 1,
     mastery: {
       baseCost: 2,
       growth: 2,
       bonusPer: 0.25,
-    }
-  },
-  ratDen: {
-    id: "",
-    name: "Rat Den",
-    icon: "cave-entrance-blue",
-    tier: 1,
-    type: CardType.Building,
-    description: "{{produceCard}} every {{cooldownSecs}} seconds.",
-    baseCost: 100,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.1,
-    produceCardEffect: {
-      shape: MatchingGridShape.OrthoAdjacent,
-      possibleCards: ["ratSnack"],
-    },
-    cooldownMs: 20000,
-    mastery: {
-      baseCost: 2,
-      growth: 2,
-      bonusPer: 0.15,
     }
   },
   campfire: {
@@ -281,9 +240,11 @@ const cards: Record<CardId, Card> = {
     tier: 1,
     type: CardType.Building,
     description: "Automatically replaces food anywhere on the grid every {{cooldownSecs}} seconds for {{costPerUse}}.",
-    baseCost: 300,
-    costResource: ResourceType.Wood,
-    costGrowth: 2,
+    cost: {
+      base: 300,
+      resource: ResourceType.Wood,
+      growth: 1.2,
+    },
     autoReplaceEffect: {
       cardType: CardType.Food,
     },
@@ -304,15 +265,16 @@ const cards: Record<CardId, Card> = {
     icon: "plow",
     tier: 2,
     type: CardType.Building,
-    description: "Copies any fruit or vegetable nearby every {{cooldownSecs}}s.",
+    description: "Produces berries every {{cooldownSecs}}s.",
     cooldownMs: 20000,
-    baseCost: 250,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.1,
+    cost: {
+      base: 100,
+      resource: ResourceType.Wood,
+      growth: 1.5,
+    },
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
-      possibleCards: ['berries', 'mushrooms', 'corn'],
-      produceByCopying: true,
+      possibleCards: ['berries'],
     },
     mastery: {
       baseCost: 1,
@@ -325,12 +287,9 @@ const cards: Record<CardId, Card> = {
     name: "Forager",
     icon: "granary",
     tier: 2,
-    type: CardType.Person,
+    type: CardType.Worker,
     description: "{{produceCard}} when next to a forest every {{cooldownSecs}} seconds.",
     foodDrain: 0.5,
-    baseCost: 20,
-    costResource: ResourceType.ShinyRocks,
-    costGrowth: 2,
     produceCardEffect: {
       shape: MatchingGridShape.OrthoAdjacent,
       possibleCards: ['berries'],
@@ -367,9 +326,6 @@ const cards: Record<CardId, Card> = {
     type: CardType.Building,
     description: "{{drawCard}} every {{cooldownSecs}} seconds while consuming food.",
     foodDrain: 2,
-    baseCost: 100,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.1,
     drawCardEffect: {
       possibleCards: ['haunch'],
     },
@@ -392,14 +348,16 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "Makes tools and boosts all people and buildings in the same row and column by 100%.",
-    baseCost: 500,
-    costResource: ResourceType.Wood,
-    costGrowth: 2,
+    cost: {
+      base: 300,
+      resource: ResourceType.Wood,
+      growth: 1.5,
+    },
     bonusToAdjacent: {
       strength: 1,
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.RowAndColumn,
-      cardTypes: [CardType.Person],
+      cardTypes: [CardType.Worker],
     },
     passive: {
       strength: 0.05,
@@ -422,9 +380,6 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Building,
     description: "Sells {{costPerSec}} for {{passiveAmount}} for each adjacent forest, in all directions",
-    baseCost: 100,
-    costResource: ResourceType.Wood,
-    costGrowth: 1.1,
     passive: {
       strength: 2,
       resource: ResourceType.Gold,
@@ -450,9 +405,6 @@ const cards: Record<CardId, Card> = {
     tier: 2,
     type: CardType.Resource,
     description: "Forest of trees",
-    baseCost: 0,
-    costResource: ResourceType.Tools,
-    costGrowth: 0,
     noEffect: true,
 
     mastery: {

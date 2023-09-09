@@ -1,5 +1,5 @@
-import { DynamicTriggerType, ResourceType, TechAge } from "../../shared/types";
-import { stoneAgeTech } from "./stone-age";
+import { DynamicTriggerType, ResourceType } from "../../shared/types";
+import { TownUpgrade, stoneAgeTech } from "./stone-age";
 
 const ages: Record<string, TechAge> = {
   stoneAge: {
@@ -52,3 +52,17 @@ Object.keys(ages)
   });
 
 export default ages;
+
+export interface TechAge {
+  id: string,
+  name: string,
+  description: string,
+  upgrades: Record<string, TownUpgrade>,
+  megaUpgrades: Record<string, TownUpgrade>,
+}
+
+export type RealizedTechAge = {
+  unlocked: boolean,
+  completed: boolean,
+  chosenMegaUpgrade?: string,
+} & TechAge;

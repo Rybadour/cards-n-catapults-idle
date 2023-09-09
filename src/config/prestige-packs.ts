@@ -1,16 +1,12 @@
-import { PrestigePack } from "../shared/types";
-import upgrades from "./prestige-upgrades";
+import { mapValues } from "lodash";
+import upgrades, { PrestigeUpgrade, PrestigeUpgradeId } from "./prestige-upgrades";
 
-const packs: Record<string, PrestigePack> = {
+const packs = {
   stoneAge: {
-    id: "",
     name: "Stone Age Pack",
     baseCost: 10,
     costGrowth: 1.12,
     upgrades: [{
-      upgrade: upgrades.ratz,
-      quantity: 1,
-    }, {
       upgrade: upgrades.hoboVillage,
       quantity: 3,
     }, {
@@ -28,7 +24,6 @@ const packs: Record<string, PrestigePack> = {
     }],
   },
   bronzeAge: {
-    id: "",
     name: "Bronze Age Pack",
     baseCost: 100,
     costGrowth: 1.12,
@@ -37,14 +32,40 @@ const packs: Record<string, PrestigePack> = {
       quantity: 1,
     }],
   },
-}
+} satisfies Record<string, Omit<PrestigePack, "id">>;
+
+export type PrestigePackId = keyof typeof packs;
 
 export const totalUpgrades: Record<string, number> = {};
-Object.keys(packs).forEach((id) => {
-  packs[id].id = id;
+
+const packsWithIds: Record<PrestigePackId, PrestigePack> = mapValues(packs, (pack, key) => {
+  const id = key as PrestigePackId;
   packs[id].upgrades.forEach((up) => {
     totalUpgrades[up.upgrade.id] = (totalUpgrades[up.upgrade.id] ?? 0) + up.quantity;
   });
+
+  return {
+    ...pack,
+    id,
+  }
 });
 
-export default packs;
+export default packsWithIds;
+
+export type PrestigePack = {
+  id: PrestigePackId,
+  name: string,
+  baseCost: number,
+  costGrowth: number,
+  upgrades: {
+    upgrade: PrestigeUpgrade,
+    quantity: number,
+  }[]
+};
+
+export type RealizedPrestigePack = PrestigePack & {
+  cost: number,
+  refund: number,
+  numBought: number,
+  remainingUpgrades: PrestigeUpgradeId[],
+};

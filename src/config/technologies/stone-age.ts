@@ -1,17 +1,6 @@
-import { ResourceType, TownUpgrade, UnlockableCardFeature, UpgradeId } from "../../shared/types";
+import { ResourceType, ResourcesMap, Upgrade } from "../../shared/types";
 
-export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
-  sticks: {
-    id: '',
-    name: 'Sticks Are Useful',
-    icon: 'wood-pile',
-    description: 'Foragers collect a small amount of wood.',
-    summary: '',
-    cost: {
-      [ResourceType.ShinyRocks]: 10,
-    },
-    unlockedCardFeaured: UnlockableCardFeature.ForagerWood,
-  },
+export const stoneAgeTech: Record<string, TownUpgrade> = {
   betterBerries: {
     id: '',
     name: 'Bigger Berries',
@@ -128,3 +117,8 @@ export const stoneAgeTech: Record<UpgradeId, TownUpgrade> = {
     unlockedCards: ['farmer', 'farm', 'corn']
   },
 /* */
+
+export type TownUpgrade = Upgrade & {
+  id: string,
+  cost: Partial<ResourcesMap>,
+}

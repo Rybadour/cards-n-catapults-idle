@@ -3,10 +3,11 @@ import { MyCreateSlice } from ".";
 
 import global from "../config/global";
 import { DEFAULT_BONUS_VALUES } from "../shared/constants";
-import { BonusValues, defaultResourcesMap, DynamicBonus, PrestigeUpgrade, ResourcesMap, ResourceType } from "../shared/types";
+import { BonusValues, defaultResourcesMap, DynamicBonus, ResourcesMap, ResourceType } from "../shared/types";
 import { addToBonusValue, enumFromKey, getFinalBonusValue, mergeSumPartial } from "../shared/utils";
 import { DiscoverySlice } from "./discovery";
 import resourcesConfig from "../config/resources";
+import { PrestigeUpgrade } from "../config/prestige-upgrades";
 
 export interface StatsSlice {
   resources: ResourcesMap,

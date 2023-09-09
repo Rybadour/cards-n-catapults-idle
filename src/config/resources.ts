@@ -5,10 +5,6 @@ const resourcesConfig: Record<ResourceType, ResourceConfig> = {
     icon: 'cool-spices',
     sellPrice: 0,
   },
-  [ResourceType.Berries]: {
-    icon: 'berries',
-    sellPrice: 0,
-  },
   [ResourceType.Gold]: {
     icon: 'two-coins',
     sellPrice: 0,

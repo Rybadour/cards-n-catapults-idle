@@ -1,20 +1,21 @@
-import { mapValues, uniq, uniqBy } from "lodash";
+import { mapValues } from "lodash";
 import { MyCreateSlice } from ".";
 import allCardsConfig from "../config/cards";
 import global from "../config/global";
 import { createCard } from "../gamelogic/grid-cards";
-import { Card, CardId, CardTracking, CardType, PrestigeUpgrade, RealizedCard, ResourceType, defaultResourcesMap } from "../shared/types";
+import { Card, CardId, CardTracking, CardType, RealizedCard, ResourceType, defaultResourcesMap } from "../shared/types";
 import { getExponentialValue } from "../shared/utils";
 import { CardDefsSlice } from "./card-definitions";
 import { DiscoverySlice } from "./discovery";
 import { StatsSlice } from "./stats";
+import { PrestigeUpgrade } from "../config/prestige-upgrades";
 
 export interface CardsSlice {
   cards: Record<CardId, CardTracking>,
   selectedCard: CardId | null,
   setSelectedCard: (card: CardId) => void,
   canAffordCard: (id: CardId) => boolean,
-  buyCard: (id: CardId) => RealizedCard,
+  buyCard: (id: CardId) => RealizedCard | null,
   useCard: (id: CardId) => RealizedCard,
   sellCard: (card: RealizedCard) => void,
   sellCards: (card: RealizedCard[]) => void,
@@ -36,14 +37,17 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       const tracking = {...newCards[card.cardId]};
       tracking.numActive -= 1;
       const cardDef = cardDefs().defs[card.cardId];
-      updateCost(cardDef, tracking);
-      newCards[card.cardId] = tracking;
 
-      let sellAmount = tracking.cost;
-      if (allCardsConfig[card.cardId].type === CardType.Food) {
-        sellAmount *= (card.durability ?? 0) / card.maxDurability;
+      if (cardDef.cost) {
+        updateCost(cardDef, tracking);
+        newCards[card.cardId] = tracking;
+
+        let sellAmount = tracking.cost;
+        if (allCardsConfig[card.cardId].type === CardType.Food) {
+          sellAmount *= (card.durability ?? 0) / card.maxDurability;
+        }
+        providedResources[cardDef.cost.resource] -= sellAmount;
       }
-      providedResources[cardDef.costResource] -= sellAmount;
     });
 
     set({cards: newCards});
@@ -67,17 +71,21 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
     },
 
     canAffordCard: (id: CardId) => {
-      const tracking = get().cards[id];
       const cardDef = cardDefs().defs[id];
-      return stats().canAfford({[cardDef.costResource]: tracking?.cost});
+      if (!cardDef.cost) return false;
+
+      const tracking = get().cards[id];
+      return stats().canAfford({[cardDef.cost.resource]: tracking?.cost});
     },
 
     buyCard: (id) => {
+      const cardDef = cardDefs().defs[id];
+      if (!cardDef.cost) return null;
+
       const newCards = {...get().cards};
       const tracking = {...newCards[id]};
-      const cardDef = cardDefs().defs[id];
 
-      stats().useResource(cardDef.costResource, tracking.cost);
+      stats().useResource(cardDef.cost.resource, tracking.cost);
 
       tracking.numActive += 1;
       updateCost(cardDef, tracking);
@@ -144,7 +152,9 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
 };
 
 function updateCost(cardDef: Card, tracking: CardTracking) {
-  tracking.cost = getExponentialValue(cardDef.baseCost, cardDef.costGrowth, tracking.numActive + tracking.numPurchased);
+  if (cardDef.cost) {
+    tracking.cost = getExponentialValue(cardDef.cost.base, cardDef.cost.growth, tracking.numActive + tracking.numPurchased);
+  }
 }
 
 export default createCardsSlice;

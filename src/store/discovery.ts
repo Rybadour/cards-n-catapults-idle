@@ -1,8 +1,9 @@
 import { mapValues, pick } from "lodash";
 
 import global from "../config/global";
-import { CardId, PrestigeUpgrade, ResourceType } from "../shared/types";
+import { CardId, ResourceType } from "../shared/types";
 import { MyCreateSlice } from ".";
+import { PrestigeUpgrade } from "../config/prestige-upgrades";
 
 const DEFAULT_UPGRADES: string[] = [];
 

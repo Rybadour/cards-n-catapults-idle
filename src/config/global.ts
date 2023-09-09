@@ -7,12 +7,12 @@ import { Scene } from "../store/scenes";
 const global = {
   version: "0.2.0",
   startingResources: {
-    [ResourceType.ShinyRocks]: 40,
-    [ResourceType.Berries]: 1,
-    [ResourceType.Wood]: 0,
+    [ResourceType.ShinyRocks]: 100,
+    [ResourceType.Wood]: 100,
   },
   startingCards: {
-    forager: 0,
+    farm: 0,
+    lumberjack: 0,
     berries: 1,
   } as Partial<Record<CardId, number>>,
   startingTown: {

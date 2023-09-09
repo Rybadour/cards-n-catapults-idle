@@ -9,11 +9,11 @@ import cards from "../config/cards/town-cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import Icon from "../shared/components/icon";
 import { STANDARD_MODAL_STYLE } from "../shared/constants";
-import { RealizedPrestigeUpgrade } from "../shared/types";
 import { formatNumber } from "../shared/utils";
 import useStore from "../store";
 
 import './prestige.scss';
+import { RealizedPrestigeUpgrade } from "../config/prestige-upgrades";
 
 export default function Prestige() {
   const prestige = useStore(s => pick(
