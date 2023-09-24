@@ -46,6 +46,7 @@ function Content() {
   const updateGrid = useStore(s => s.cardGrids.updateAll);
 
   useEffect(() => {
+    // TODO: If performance because a problem try moving this outside the component
     const interval = setInterval(() => {
       const elapsed = Date.now() - lastTime;
       lastTime = Date.now();
@@ -56,7 +57,7 @@ function Content() {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [updateGrid, updatePrestige, updateSaving]);
+  }, []); // NEVER put dependencies here
 
   const sceneMap: Record<Scene, ReactJSXElement> = {
     [Scene.Economy]: <TownScene />,
