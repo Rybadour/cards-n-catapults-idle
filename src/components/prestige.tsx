@@ -5,17 +5,18 @@ import ReactModal from "react-modal";
 import ReactTooltip from "react-tooltip";
 import shallow from "zustand/shallow";
 
-import allCards, { CardId } from "../config/cards";
 import { totalUpgrades } from "../config/prestige-packs";
 import Icon from "../shared/components/icon";
 import { STANDARD_MODAL_STYLE } from "../shared/constants";
 import { formatNumber, getPartialEntries } from "../shared/utils";
 import useStore from "../store";
+import { RealizedPrestigeUpgrade } from "../config/prestige-upgrades";
+import { CardDefsSlice } from "../store/card-definitions";
 
 import './prestige.scss';
-import { RealizedPrestigeUpgrade } from "../config/prestige-upgrades";
 
 export default function Prestige() {
+  const cardDefs = useStore(s => s.cardDefs.defs);
   const prestige = useStore(s => pick(
     s.prestige,
     ['buyPack', 'refundUpgrade', 'prestigePoints', 'packs', 'upgrades']
@@ -89,7 +90,7 @@ export default function Prestige() {
                   </div>
 
                   {upgrade.summary ?
-                    <div className="summary">{getSummary(upgrade)}</div> :
+                    <div className="summary">{getSummary(upgrade, cardDefs)}</div> :
                     null
                   }
 
@@ -125,7 +126,7 @@ export default function Prestige() {
   </div>;
 }
 
-function getSummary(upgrade: RealizedPrestigeUpgrade) {
+function getSummary(upgrade: RealizedPrestigeUpgrade, cardDefs: CardDefsSlice['defs']) {
   let summary = upgrade.summary;
   /* *
   TODO: hmmmm
@@ -144,7 +145,7 @@ function getSummary(upgrade: RealizedPrestigeUpgrade) {
   if (upgrade.extraStartingCards) {
     const extraCardsSummary = getPartialEntries(upgrade.extraStartingCards)
       .map(([c, amount]) => 
-        '+' + (amount * upgrade.quantity) + ' ' + allCards[c].name
+        '+' + (amount * upgrade.quantity) + ' ' + cardDefs[c].name
       ).join(', ');
 
     summary = summary.replaceAll('{{extraCards}}', extraCardsSummary);

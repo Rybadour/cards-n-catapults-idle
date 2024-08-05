@@ -43,7 +43,7 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
         newCards[card.cardId] = tracking;
 
         let sellAmount = tracking.cost;
-        if (allCardsConfig[card.cardId].type === CardType.Food) {
+        if (cardDef.type === CardType.Food) {
           sellAmount *= (card.durability ?? 0) / card.maxDurability;
         }
         providedResources[cardDef.cost.resource] -= sellAmount;

@@ -1,6 +1,6 @@
 import { mapValues } from "lodash";
 
-import { CardType, defaultResourcesMap, Grid, GridCoords, GridTemplate, RealizedCard, ResourcesMap } from "../shared/types";
+import { Card, CardType, defaultResourcesMap, Grid, GridCoords, GridTemplate, RealizedCard, ResourcesMap } from "../shared/types";
 import { CardsSlice } from "./cards";
 import { iterateGrid, updateGrid, UpdateGridResults, updateGridTotals, UpdateGridTotalsResults } from "../gamelogic/grid";
 import { StatsSlice } from "./stats";
@@ -8,7 +8,7 @@ import { DiscoverySlice } from "./discovery";
 import { CardDefsSlice } from "./card-definitions";
 import { getTranslatedGridCoords, mergeSum } from "../shared/utils";
 import { createCard } from "../gamelogic/grid-cards";
-import allCardsConfig, { CardId } from "../config/cards";
+import allCardsConfig from "../config/cards";
 import global from "../config/global";
 import { MyCreateSlice } from ".";
 
@@ -98,7 +98,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     initialized: false,
     grids: {
       town: removeGridTiles(
-        getEmptyGrid(global.startingTown.width, global.startingTown.height, global.startingTown.fill),
+        getEmptyGrid(global.startingTown.width, global.startingTown.height, allCardsConfig[global.startingTown.fill]),
         getTranslatedGridCoords(global.startingTown.empties, global.startingTown.center),
       ),
       combat: getEmptyGrid(5, 5),
@@ -221,8 +221,9 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     },
 
     initializeGrid: (gridId, staticCards) => {
-      const newGridSpaces = getInitializedGrid(staticCards, true);
-      const results = updateGridTotals(newGridSpaces, cardDefs().defs, stats());
+      const defs = cardDefs().defs;
+      const newGridSpaces = getInitializedGrid(staticCards, true, defs);
+      const results = updateGridTotals(newGridSpaces, defs, stats());
       set({
         grids: {...get().grids, [gridId]: newGridSpaces},
       });
@@ -276,14 +277,14 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
   }
 }
 
-export function getEmptyGrid(width: number, height: number, staticFillCard?: CardId) {
+export function getEmptyGrid(width: number, height: number, staticFillCard?: Card) {
   const gridSpaces = [];
   for (let i = 0; i < height; ++i) {
     const row: (RealizedCard | null)[] = [];
     for (let j = 0; j < width; ++j) {
       let card: RealizedCard | null = null;
       if (staticFillCard) {
-        card = createCard(allCardsConfig[staticFillCard]);
+        card = createCard(staticFillCard);
         card.isStatic = true;
       }
       row.push(card);
@@ -301,14 +302,14 @@ export function removeGridTiles(grid: Grid, tiles: GridCoords[]) {
   return newGrid;
 }
 
-function getInitializedGrid(template: GridTemplate, isStatic = false) {
+function getInitializedGrid(template: GridTemplate, isStatic = false, cardDefs: CardDefsSlice['defs']) {
   const newGrid = getEmptyGrid(template[0].length, template.length);
 
   for (let y = 0; y < template.length; y++) {
     for (let x = 0; x < template[y].length; x++) {
       const cardId = template[y][x];
       if (cardId) {
-        const newCard = createCard(allCardsConfig[cardId]);
+        const newCard = createCard(cardDefs[cardId]);
         newCard.isStatic = isStatic;
         newGrid[y][x] = newCard;
       }

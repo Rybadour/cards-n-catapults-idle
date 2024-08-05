@@ -5,9 +5,8 @@ import ReactTooltip from 'react-tooltip';
 import { pick } from 'lodash';
 import shallow from 'zustand/shallow';
 
-import cardsConfig from '../../config/cards';
 import Icon from '../../shared/components/icon';
-import { Card, CardType, ResourceType } from '../../shared/types';
+import { Card, CardType } from '../../shared/types';
 import { enumFromKey, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import { SectionBlurb, SectionHeader } from '../shared/common-styles';
@@ -20,6 +19,8 @@ export interface MarketListProps {
 }
 
 export default function MarketList(props: MarketListProps) {
+  const cardDefs = useStore(s => s.cardDefs.defs);
+
   const [closedCategories, setClosedCategories] = useState<Partial<Record<CardType, boolean>>>({})
   const cardsDiscovered = useStore(s => s.discovery.cardsDiscoveredThisPrestige);
 
@@ -47,7 +48,7 @@ export default function MarketList(props: MarketListProps) {
       .filter(cardType => !!cardType && props.allowedCards[cardType])
       .map(cardType => ({
         cardType,
-        cardList: Object.values(cardsConfig).filter(card => 
+        cardList: Object.values(cardDefs).filter(card => 
           cardsDiscovered[card.id] &&
           card.type == cardType &&
           isCardAllowed(card)
@@ -89,23 +90,23 @@ function Category(props: CategoryProps) {
     </div>
     <div className={classNames("market-list", {hidden: props.isOpen})}>
       {props.cardList.map(card =>
-        <CardInInventory key={card.id} card={card} />
+        <CardInInventory key={card.id} cardDef={card} />
       )}
     </div>
   </div>
 }
 
-function CardInInventory(props: {card: Card}) {
+function CardInInventory(props: {cardDef: Card}) {
+  const cardDef = props.cardDef;
   const cards = useStore(s => pick(s.cards, ['cards', 'selectedCard', 'setSelectedCard']), shallow);
-  const cardDef = useStore(s => s.cardDefs.defs[props.card.id]);
-  const cardTracking = cards.cards[props.card.id];
+  const cardTracking = cards.cards[cardDef.id];
 
-  return <div className="card-container" key={props.card.id}>
+  return <div className="card-container" key={cardDef.id}>
     <div
       className={classNames("card", {
-        selected: props.card.id === cards.selectedCard,
+        selected: cardDef.id === cards.selectedCard,
       })}
-      onClick={() => cards.setSelectedCard(props.card.id)}
+      onClick={() => cards.setSelectedCard(cardDef.id)}
     >
       <div className="title">
         <Icon size="sm" icon={cardDef.icon} />

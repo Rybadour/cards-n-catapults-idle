@@ -1,13 +1,13 @@
 import { pick } from "lodash";
 import styled from "styled-components";
 import shallow from "zustand/shallow";
-import allCardsConfig, { CardId } from "../../config/cards";
 import Icon from "../../shared/components/icon";
 import { BUILDING_BLUE } from "../../shared/constants";
 import useStore from "../../store";
 import { getPartialEntries } from "../../shared/utils";
 
 export default function RewardsPage() {
+  const cardDefs = useStore(s => s.cardDefs.defs);
   const combat = useStore(s => pick(
     s.combat, ['encounter', 'claimRewards']
   ), shallow);
@@ -22,9 +22,9 @@ export default function RewardsPage() {
         getPartialEntries(combat.encounter?.rewards.cards).map(([cardId, num]) => 
           <Reward id={"cardReward_" + cardId}>
             <RewardIcon>
-              <Icon icon={allCardsConfig[cardId].icon} size="md" />
+              <Icon icon={cardDefs[cardId].icon} size="md" />
             </RewardIcon>
-            <RewardTitle>{allCardsConfig[cardId].name} card</RewardTitle>
+            <RewardTitle>{cardDefs[cardId].name} card</RewardTitle>
             <RewardAmount>x{num}</RewardAmount>
           </Reward>
         ): null
@@ -33,9 +33,9 @@ export default function RewardsPage() {
         combat.encounter?.rewards.unlockedCards.map((cardId) => {
           return <Reward id={"unlockCardReward_" + cardId}>
             <RewardIcon>
-              <Icon icon={allCardsConfig[cardId].icon} size="md" />
+              <Icon icon={cardDefs[cardId].icon} size="md" />
             </RewardIcon>
-            <RewardTitle>Unlocked {allCardsConfig[cardId].name}</RewardTitle>
+            <RewardTitle>Unlocked {cardDefs[cardId].name}</RewardTitle>
           </Reward>;
         }): null
       }

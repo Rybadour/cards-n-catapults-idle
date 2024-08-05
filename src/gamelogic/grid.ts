@@ -1,4 +1,4 @@
-import cardsConfig, { CardId, CardIdAndEmpty } from "../config/cards";
+import { CardId, CardIdAndEmpty } from "../config/cards";
 import { createCard } from "./grid-cards";
 import {
   RealizedCard, Grid, CardType, ResourceType, Card, ResourcesMap, defaultResourcesMap,
@@ -354,22 +354,22 @@ function activateCard(
       }
 
       found = true;
-      const newCard = createCard(cardsConfig[newCardId]);
+      const newCard = createCard(cardDefs[newCardId]);
       newCard.shouldBeReserved = adjCard?.shouldBeReserved ?? false;
       results.grid[ay][ax] = newCard;
-      results.newCards.push(cardsConfig[newCardId]);
+      results.newCards.push(cardDefs[newCardId]);
       results.anyChanged = true;
     });
     if (!found) {
       results.inventoryDelta[newCardId] = (results.inventoryDelta[newCardId] ?? 0) + 1;
-      results.newCards.push(cardsConfig[newCardId]);
+      results.newCards.push(cardDefs[newCardId]);
     }
     return true;
 
   } else if (cardDef.drawCardEffect) {
     const newCard = getRandomFromArray(cardDef.drawCardEffect.possibleCards);
     results.inventoryDelta[newCard] = (results.inventoryDelta[newCard] ?? 0) + 1;
-    results.newCards.push(cardsConfig[newCard]);
+    results.newCards.push(cardDefs[newCard]);
     return true;
 
   } else if (cardDef.autoReplaceEffect) {
@@ -383,7 +383,7 @@ function activateCard(
 
       found = true;
 
-      const newCard = createCard(cardsConfig[otherCard.cardId]);
+      const newCard = createCard(cardDefs[otherCard.cardId]);
       newCard.shouldBeReserved = true;
       results.grid[y2][x2] = newCard;
 
@@ -401,7 +401,7 @@ function activateCard(
       if (found || !other || other.isExpiredAndReserved) return;
 
       if (other.cardId == convert.targetCard) {
-        results.grid[y2][x2] = createCard(cardsConfig[convert.resultingCard]);
+        results.grid[y2][x2] = createCard(cardDefs[convert.resultingCard]);
         results.anyChanged = true;
         found = true;
       }
@@ -410,7 +410,7 @@ function activateCard(
     if (!found && cards[convert.targetCard] > 0) {
       results.inventoryDelta[convert.targetCard] = (results.inventoryDelta[convert.targetCard] ?? 0) - 1;
       results.inventoryDelta[convert.resultingCard] = (results.inventoryDelta[convert.resultingCard] ?? 0) + 1;
-      results.newCards.push(cardsConfig[convert.resultingCard]);
+      results.newCards.push(cardDefs[convert.resultingCard]);
       results.anyChanged = true;
       return true;
     }
