@@ -14,6 +14,8 @@ import { ScrollableContainer } from "../shared/scrollable-container";
 import { GridControls } from "../shared/grid-controls";
 import global from "../../config/global";
 import Upgrades from "./upgrades";
+import { SectionBlurb, SectionHeader } from "../shared/common-styles";
+import CardList from "../shared/card-list";
 
 
 export default function TownScene() {
@@ -38,7 +40,12 @@ export default function TownScene() {
   return <>
     <SideSection>
       <Upgrades />
-    </SideSection>
+      <SectionHeader>Resources</SectionHeader>
+      <CardList allowedCards={[
+        CardType.Food,
+        CardType.Resource,
+      ]} />
+      </SideSection>
     <MiddleSection>
       <Resources />
       <GridControls gridId="town" />
@@ -61,15 +68,7 @@ export default function TownScene() {
       </ScrollableContainer>
     </MiddleSection>
     <SideSection>
-      <MarketList allowedCards={{
-        [CardType.Building]: true,
-        [CardType.Food]: true,
-        [CardType.Worker]: true,
-        [CardType.Resource]: true, 
-        [CardType.Treasure]: true,
-        [CardType.Enemy]: false,
-        [CardType.Soldier]: false,
-      }} />
+      <MarketList />
     </SideSection>
   </>;
 }
