@@ -1,4 +1,4 @@
-import { BonusType, Card, CardType, MatchingGridShape, ResourceType } from "../../shared/types";
+import { BonusType, Card, CardType, MatchingGridShape, ModifierBehaviour, ResourceType } from "../../shared/types";
 
 export type TownCardId = "farmer" | "lumberjack" | "soothsayer" | "bard" | "ratSnack" | "berries"
  | "mushrooms" | "corn" | "haunch" | "bread" | "campfire" | "farm" | "forager" | "carpenter"
@@ -8,6 +8,16 @@ const hungryDisable = {
   onMatch: false,
   shape: MatchingGridShape.OrthoAdjacent,
   cardTypes: [CardType.Food],
+};
+const hungryDebuff: Card['abilityStrengthModifier'] = {
+  behaviour: ModifierBehaviour.WhenNotMatching,
+  factor: 0.1,
+  match: {
+    cardTypes: [CardType.Food],
+    shape: MatchingGridShape.OrthoAdjacent,
+  },
+  statusIcon: 'opened-food-can',
+  statusText: '(hungry)',
 };
 
 const cards: Record<TownCardId, Omit<Card, "id">> = {
@@ -29,7 +39,7 @@ const cards: Record<TownCardId, Omit<Card, "id">> = {
       shape: MatchingGridShape.OrthoAdjacent,
       cards: ['farm'],
     },
-    disableRules: [hungryDisable],
+    abilityStrengthModifier: hungryDebuff,
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -54,9 +64,9 @@ const cards: Record<TownCardId, Omit<Card, "id">> = {
       multiplyByAdjacent: {
         shape: MatchingGridShape.AllAdjacent,
         cards: ['forest'],
-      }
+      },
     },
-    disableRules: [hungryDisable],
+    abilityStrengthModifier: hungryDebuff,
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -83,7 +93,7 @@ const cards: Record<TownCardId, Omit<Card, "id">> = {
       cost: 0.5,
     },
     multiplyCostPerAdjacent: true,
-    disableRules: [hungryDisable],
+    abilityStrengthModifier: hungryDebuff,
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -105,6 +115,7 @@ const cards: Record<TownCardId, Omit<Card, "id">> = {
         cardTypes: [CardType.Worker],
       }
     },
+    abilityStrengthModifier: hungryDebuff,
     mastery: {
       baseCost: 2,
       growth: 2,
@@ -144,6 +155,10 @@ const cards: Record<TownCardId, Omit<Card, "id">> = {
       bonusType: BonusType.Strength,
       shape: MatchingGridShape.OrthoAdjacent,
       cardTypes: [CardType.Worker],
+    },
+    sellFor: {
+      amount: 10,
+      resource: ResourceType.ShinyRocks,
     },
     mastery: {
       baseCost: 4,

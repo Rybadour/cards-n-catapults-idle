@@ -11,6 +11,7 @@ import { enumFromKey, formatNumber } from '../../shared/utils';
 import useStore from '../../store';
 import resourcesConfig from '../../config/resources';
 import styled from 'styled-components';
+import { CardButton, CardButtons } from '../../shared/components/card-buttons';
 
 export interface CardListProps {
   allowedCards: CardType[],
@@ -86,8 +87,12 @@ function Category(props: CategoryProps) {
 
 function CardInInventory(props: {cardDef: Card}) {
   const cardDef = props.cardDef;
-  const cards = useStore(s => pick(s.cards, ['cards', 'selectedCard', 'setSelectedCard']), shallow);
+  const cards = useStore(s => pick(s.cards, ['cards', 'selectedCard', 'setSelectedCard', 'sellCard']), shallow);
   const cardTracking = cards.cards[cardDef.id];
+
+  const onSellCard = useCallback(() => {
+    cards.sellCard(cardDef);
+  }, [cards]);
 
   return <CardContainer key={cardDef.id}>
     <CardStyled
@@ -139,11 +144,24 @@ function CardInInventory(props: {cardDef: Card}) {
           null
         }
       </Stats>
+
+      {cardDef.sellFor &&
+        <CardButtons width={46} side='right'>
+          <CardButton onClick={onSellCard}>
+            <span
+              data-tip={"Sell 1 for " + cardDef.sellFor.amount + " " + cardDef.sellFor.resource}
+              data-place="right"
+              data-offset="{'right': 7}"
+            >
+              <Icon icon="cash" size="xs" />
+            </span>
+          </CardButton>
+        </CardButtons>}
     </CardStyled>
   </CardContainer>;
 }
 
-const cardWidth = 164;
+export const cardWidth = 164;
 const cardHeight = 220;
 const cardsGap = 10;
 const cardListPadding = 10;
@@ -307,14 +325,4 @@ const Tier = styled.div`
 
 /* *
 TODO: Remember card buttons exist!
-<CardButtons width={46}>
-  <CardButton
-    label={
-      <span data-tip="Mastery Bonus" data-place="left" data-offset="{'left': 7}">
-        <Icon icon="progression" size="xs" />
-      </span>
-    }
-    onClick={() => {}}
-  />
-</CardButtons>
 /* */

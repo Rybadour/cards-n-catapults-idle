@@ -56,7 +56,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
       if (cardDef.type === CardType.Food) {
         cards().updateInventory({[oldCard.cardId]: 1}, {});
       } else {
-        cards().sellCard(oldCard);
+        cards().returnCard(oldCard);
       }
     }
   }
@@ -201,7 +201,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
     },
 
     clearGrid: (gridId) => {
-      cards().sellCards(getCardsFromGrid(gridId));
+      cards().returnCards(getCardsFromGrid(gridId));
       set({grids: {...get().grids, [gridId]: getEmptyGridWithStatics(gridId)}});
       updateResourcesOfGrid(gridId, {...defaultResourcesMap});
     },
@@ -213,7 +213,7 @@ const createGridsSlice: MyCreateSlice<CardGridsSlice, [() => DiscoverySlice, () 
         returnedCards = returnedCards.concat(getCardsFromGrid(gridId));
       });
 
-      cards().sellCards(returnedCards);
+      cards().returnCards(returnedCards);
       set({
         grids: mapValues(grids, (grid, gridId) => getEmptyGridWithStatics(gridId)),
         gridsResourcesPerSec: mapValues(grids, (grid) => ({...defaultResourcesMap})),

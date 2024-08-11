@@ -14,7 +14,7 @@ import TownScene from './components/town/town-scene';
 import { TutorialModal } from './components/tutorial-modal';
 
 function App() {
-  const [isTutorialOpen, setIsTutorialOpen] = useState(true);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   return (
     <div className="App">

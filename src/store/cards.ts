@@ -17,8 +17,9 @@ export interface CardsSlice {
   canAffordCard: (id: CardId) => boolean,
   buyCard: (id: CardId) => RealizedCard | null,
   useCard: (id: CardId) => RealizedCard,
-  sellCard: (card: RealizedCard) => void,
-  sellCards: (card: RealizedCard[]) => void,
+  returnCard: (card: RealizedCard) => void,
+  returnCards: (card: RealizedCard[]) => void,
+  sellCard: (card: Card) => void,
   updateInventory: (cardsDelta: Partial<Record<CardId, number>>, expiredCards: Partial<Record<CardId, number>>) => void,
   prestigeReset: (prestigeUpgrades: PrestigeUpgrade[]) => void,
   getSaveData: () => any,
@@ -27,7 +28,7 @@ export interface CardsSlice {
 
 const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => StatsSlice, () => CardDefsSlice]>
 = (set, get, discovery, stats, cardDefs) => {
-  function sellCards(cards: RealizedCard[]) {
+  function returnCards(cards: RealizedCard[]) {
     const newCards = {...get().cards};
     const providedResources = {...defaultResourcesMap};
 
@@ -109,12 +110,31 @@ const createCardsSlice: MyCreateSlice<CardsSlice, [() => DiscoverySlice, () => S
       return createCard(cardDefs().defs[id]);
     },
 
-    sellCard: (card) => {
-      sellCards([card]);
+    returnCard: (card) => {
+      returnCards([card]);
     },
 
-    sellCards: (cards) => {
-      sellCards(cards);
+    returnCards: (cards) => {
+      returnCards(cards);
+    },
+
+    sellCard: (card) => { 
+      if (!card.sellFor) {
+        return;
+      }
+
+      const newCards = {...get().cards};
+      if (newCards[card.id].numPurchased <= 0) {
+        return;
+      }
+
+      const providedResources = {...defaultResourcesMap};
+
+      newCards[card.id].numPurchased -= 1;
+      providedResources[card.sellFor.resource] -= card.sellFor.amount;
+
+      set({cards: newCards});
+      stats().useResources(providedResources);
     },
 
     updateInventory: (cardsDelta, expiredCards) => {

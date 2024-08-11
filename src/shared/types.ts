@@ -46,6 +46,10 @@ export type Card = {
     growth: number,
     resource: ResourceType,
   },
+  sellFor?: {
+    amount: number,
+    resource: ResourceType,
+  },
   noEffect?: true,
 
   foodDrain?: number,
